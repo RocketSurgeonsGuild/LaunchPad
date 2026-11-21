@@ -22,6 +22,9 @@
         <!-- web application fixtures -->
         <PackageReference Include="Alba" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+        <!-- test access tokens: the web fixtures trust a signing key of their own instead of an identity provider -->
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+        <PackageReference Include="ZeroAlloc.Authorization" ExcludeAssets="analyzers" />
     </ItemGroup>
     <ItemGroup>
         <!--

@@ -1,6 +1,8 @@
 <Project>
     <!--
-        ZeroAlloc, imported by Rocket.Surgery.LaunchPad.Detection.targets. A project that references ZeroAlloc.Validation directly (or
+        ZeroAlloc, imported by Rocket.Surgery.LaunchPad.Detection.targets. A project that references ZeroAlloc.Authorization directly gets
+        Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization, which checks the policies of its requests in the mediator pipeline, and the
+        integration packages below, which check them at the edge. A project that references ZeroAlloc.Validation directly (or
         ZeroAlloc.Mediator.Validation, which validates the mediator's requests with it) has no package of its own to add: ZeroAlloc's
         generators and Dovetail wire the mediator and the validators. It gets the integration package of each partner technology it has:
           - Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore, when it is an ASP.NET Core application (the WebApplication host model)
@@ -12,6 +14,11 @@
         LaunchPadEnableZeroAlloc set to false opts a project out; opting the partner technology out keeps its integration package out.
     -->
     <ItemGroup Condition="@(_LaunchPadTechnology->AnyHaveMetadataValue('Identity', 'ZeroAlloc')) == 'true'">
+        <DovetailSdkImplicitPackageReference
+            Include="Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization"
+            Version="$(LaunchPadVersion)"
+            Condition="@(_LaunchPadTechnology->AnyHaveMetadataValue('Identity', 'ZeroAllocAuthorization')) == 'true'"
+        />
         <DovetailSdkImplicitPackageReference
             Include="Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore"
             Version="$(LaunchPadVersion)"

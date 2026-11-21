@@ -138,7 +138,12 @@ internal sealed record OperationModel(
     string? WireSummary = null,
     string? ResponseSummary = null,
     EquatableArray<DescriptionModel> ResponseDescriptions = default,
-    RpcModel? Rpc = null
+    RpcModel? Rpc = null,
+    // Authorization (docs/design/authorization.md): the edge policy of a request with policies, where the server has the edge; the scopes
+    // its policies declare, as alternatives; and whether the GraphQL schema states them.
+    string? RequestPolicy = null,
+    EquatableArray<EquatableArray<string>> ScopeAlternatives = default,
+    bool GraphQLScopes = false
 )
 {
     public bool HasBody => Verb is HttpVerb.Post or HttpVerb.Put or HttpVerb.Patch;

@@ -5,6 +5,7 @@ using Sample.Classic.Restful;
 var builder = WebApplication
    .CreateBuilder(args);
 builder.Services.AddControllers().AddControllersAsServices();
+builder.Services.AddSampleAuthentication(builder.Configuration);
 
 var app = await builder.ConfigureDovetail();
 
@@ -17,9 +18,17 @@ app.UseRouting();
 
 app.MapOpenApi();
 app
-   .UseSwaggerUI()
+   // Authorize signs in with the samples' public client (authorization code with PKCE) for the scopes the operations require
+   .UseSwaggerUI(
+        options =>
+        {
+            options.OAuthClientId("sample-web");
+            options.OAuthUsePkce();
+        }
+    )
    .UseReDoc();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -197,12 +197,44 @@ internal static class ApiDiagnostics
         "{0} maps {1} to the proto message {2}, but ZeroAlloc.Mapping's constructor form only fills constructor parameters, and a proto message has none; declare the update-in-place form, public static partial void Map({1} src, {2} existingDst);, on {0}"
     );
 
+    // LPAD1050 and up: authorization (docs/design/authorization.md).
+    public static DiagnosticDescriptor PolicyWithoutUnauthorized { get; } = Error(
+        "LPAD1050",
+        "Request with a policy cannot answer Unauthorized",
+        "{0} has a policy, so its response must be a union with an Unauthorized case (or Problem), which a caller with no identity is answered with; {1}"
+    );
+
+    public static DiagnosticDescriptor PolicyWithoutForbidden { get; } = Error(
+        "LPAD1051",
+        "Request with a policy cannot answer Forbidden",
+        "{0} has a policy, so its response union {1} must have a Forbidden case (or Problem), which a caller a policy denies is answered with"
+    );
+
+    public static DiagnosticDescriptor TooManyScopeAlternatives { get; } = Warning(
+        "LPAD1052",
+        "Request's policies have too many alternatives",
+        "The policies of {0} expand to more than {1} alternative sets of scopes; only the first {1} are published"
+    );
+
+    public static DiagnosticDescriptor RequiresScopesInvalid { get; } = Error(
+        "LPAD1053",
+        "[RequiresScopes] is not valid here",
+        "{0} declares [RequiresScopes], but {1}"
+    );
+
+    public static DiagnosticDescriptor PolicyRequestNotReachable { get; } = Error(
+        "LPAD1054",
+        "Request with a policy cannot be given a plan",
+        "{0} has a policy, but {1}, so its policies would never be checked"
+    );
+
     public static IReadOnlyList<DiagnosticDescriptor> All { get; } =
     [
         ResponseNotFound, NoMediatorProfile, RouteTokenWithoutMember, RouteMemberNotInRoute, ComplexMemberNotBindable, RequestNotConstructible,
         MemberNotParsable, DuplicateRoute, DuplicateGraphQLField, HostMustBePartial, GrpcSerialization, StreamOnGraphQL, FeatureSkipped, HostTransportUnknown, WrongGraphQLHostKind, InputWithoutCreate, HostSettingNotApplicable, CreatedLocationInvalid, VersionNotMapped,
         PatchHandlerWithoutSender, PatchHandlerNotPartial, PatchHandlerNotAsync, UnionCaseWithoutStatus, PatchHandlerNotSupported,
         JsonMetadataMissing, RpcNotFound, MappingNotReferenced, RpcKindMismatch, MappingNotDeclared, MappingNotInPlace,
+        PolicyWithoutUnauthorized, PolicyWithoutForbidden, TooManyScopeAlternatives, RequiresScopesInvalid, PolicyRequestNotReachable,
     ];
 
     public static DiagnosticDescriptor Find(string id) => All.First(d => d.Id == id);

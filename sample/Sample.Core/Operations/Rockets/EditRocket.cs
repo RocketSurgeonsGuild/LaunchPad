@@ -1,11 +1,10 @@
 
 using Riok.Mapperly.Abstractions;
-
 using Rocket.Surgery.LaunchPad.Foundation;
-
+using Sample.Core.Authorization;
 using Sample.Core.Domain;
 using Sample.Core.Models;
-
+using ZeroAlloc.Authorization;
 using ZeroAlloc.Mediator;
 using ZeroAlloc.Validation;
 
@@ -29,6 +28,7 @@ public static partial class EditRocket
     ///     The edit operation to update a rocket
     /// </summary>
     [Validate]
+    [RequirePolicy(Policies.RocketsWrite)]
     public readonly record struct Request : IRequest<Result>
     {
         /// <summary>
@@ -64,6 +64,7 @@ public static partial class EditRocket
     ///     The changes to apply to a rocket. They are applied to the rocket's current values, and the resulting <see cref="Request" /> is validated and
     ///     sent through the mediator.
     /// </summary>
+    [RequirePolicy(Policies.RocketsWrite)]
     public readonly partial record struct PatchRequest : IRequest<Result>, IPropertyTracking<Request>
     {
         /// <summary>
@@ -72,8 +73,8 @@ public static partial class EditRocket
         public RocketId Id { get; init; }
     }
 
-    /// <summary>What the operation answers: the updated rocket, or not found.</summary>
-    public readonly union Result(RocketModel, NotFound);
+    /// <summary>What the operation answers: the updated rocket, or not found; unauthorized or forbidden when the caller may not ask.</summary>
+    public readonly union Result(RocketModel, NotFound, Unauthorized, Forbidden);
 
     // The patch is handled here rather than by the generated patch handler, whose GetRequest has to return a request and so cannot answer
     // NotFound: a missing rocket answers NotFound, and otherwise the patch is applied to the rocket's current values and sent through the mediator.

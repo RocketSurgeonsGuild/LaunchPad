@@ -270,7 +270,8 @@ public abstract class GeneratorTest() : LoggerTest<TestRecord>(TestRecord.Create
            .AddReferences(
                 typeof(WebApplication).Assembly,
                 typeof(Microsoft.AspNetCore.Routing.IEndpointRouteBuilder).Assembly,
-                typeof(EndpointRouteBuilderExtensions).Assembly,
+                // Microsoft.AspNetCore.Routing, by a type HotChocolate.AspNetCore does not declare a namesake of
+                typeof(Microsoft.AspNetCore.Routing.LinkGenerator).Assembly,
                 typeof(RouteHandlerBuilder).Assembly,
                 typeof(TypedResults).Assembly,
                 typeof(IResult).Assembly,

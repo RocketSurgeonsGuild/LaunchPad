@@ -11,6 +11,9 @@
     <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
     <!-- a direct reference, so the Primitives joints (the strong IDs in Entity Framework and OpenAPI, and the domain primitive metrics) are written into the application -->
     <ProjectReference Include="..\..\src\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />
+    <Compile Include="../Shared/SampleSignIn.cs" Link="SampleSignIn.cs" />
+    <!-- signs a caller in with the samples' identity provider (Sample.AppHost runs Keycloak) -->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Humanizer.Core" />

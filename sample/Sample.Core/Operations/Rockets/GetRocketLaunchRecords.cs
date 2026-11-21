@@ -1,14 +1,11 @@
 using System.Runtime.CompilerServices;
-
 using Microsoft.EntityFrameworkCore;
-
 using Riok.Mapperly.Abstractions;
-
 using Rocket.Surgery.LaunchPad.Foundation;
-
+using Sample.Core.Authorization;
 using Sample.Core.Domain;
 using Sample.Core.Models;
-
+using ZeroAlloc.Authorization;
 using ZeroAlloc.Mediator;
 using ZeroAlloc.Validation;
 
@@ -20,6 +17,7 @@ namespace Sample.Core.Operations.Rockets;
 public static partial class GetRocketLaunchRecords
 {
     [Validate]
+    [RequirePolicy(Policies.LaunchRecordsRead)]
     public record Request : IStreamRequest<Result>
     {
         /// <summary>
@@ -35,7 +33,7 @@ public static partial class GetRocketLaunchRecords
     ///     One item of the stream: a launch record, or not found. A stream of unions ends with its first error case, so a missing rocket answers
     ///     <see cref="NotFound" /> before any launch record.
     /// </summary>
-    public readonly union Result(LaunchRecordModel, NotFound);
+    public readonly union Result(LaunchRecordModel, NotFound, Unauthorized, Forbidden);
 
     internal class GetRocketLaunchRecordsHandler(RocketDbContext dbContext) : IStreamRequestHandler<Request, Result>
     {

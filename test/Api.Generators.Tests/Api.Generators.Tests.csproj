@@ -30,6 +30,11 @@
         <!-- Proto-first gRPC hosts: Grpc.Tools' service bases (Grpc.Core.Api), proto messages (Google.Protobuf), MapGrpcService, and the mappings. -->
         <PackageReference Include="Grpc.AspNetCore" />
         <PackageReference Include="ZeroAlloc.Mapping" ExcludeAssets="analyzers" />
+        <!-- Authorization: the policies and the plan types the plan generator reads, and the edge and GraphQL types the hosts name. -->
+        <PackageReference Include="ZeroAlloc.Authorization" ExcludeAssets="analyzers" />
+        <ProjectReference Include="..\..\src\ZeroAlloc.Authorization\Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization.csproj" />
+        <ProjectReference Include="..\..\src\ZeroAlloc.AspNetCore\Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore.csproj" />
+        <ProjectReference Include="..\..\src\ZeroAlloc.HotChocolate\Rocket.Surgery.LaunchPad.ZeroAlloc.HotChocolate.csproj" />
         <ProjectReference Include="..\..\src\Analyzers\Rocket.Surgery.LaunchPad.Analyzers.csproj" />
     </ItemGroup>
 </Project>

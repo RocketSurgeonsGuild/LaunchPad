@@ -51,26 +51,60 @@ type Query {
 type Mutation {
   "Create a launch record"
   createLaunchRecord(request: CreateLaunchRecordRequest!): CreateLaunchRecordResponse!
+    @authorize(
+      policy: "launchpad:Sample.Core.Operations.LaunchRecords.CreateLaunchRecord+Request"
+    )
+    @requiresScopes(scopes: [["launch-records:write"]])
     @cost(weight: "10")
   "The launch record update request"
   editLaunchRecord(request: EditLaunchRecordRequest!): LaunchRecordModel!
+    @authorize(
+      policy: "launchpad:Sample.Core.Operations.LaunchRecords.EditLaunchRecord+Request"
+    )
+    @requiresScopes(scopes: [["launch-records:write"]])
     @cost(weight: "10")
   "The patch request"
   patchLaunchRecord(request: EditLaunchRecordPatchRequestInput!): LaunchRecordModel!
+    @authorize(
+      policy: "launchpad:Sample.Core.Operations.LaunchRecords.EditLaunchRecord+PatchRequest"
+    )
+    @requiresScopes(scopes: [["launch-records:write"]])
     @cost(weight: "10")
   "The request to delete a launch record"
   deleteLaunchRecord(request: DeleteLaunchRecordRequest!): Boolean!
+    @authorize(
+      policy: "launchpad:Sample.Core.Operations.LaunchRecords.DeleteLaunchRecord+Request"
+    )
+    @requiresScopes(scopes: [["launch-records:write"]])
     @cost(weight: "10")
   "The operation to create a new rocket record"
   createRocket(request: CreateRocketRequest!): CreateRocketResponse!
+    @authorize(
+      policy: "launchpad:Sample.Core.Operations.Rockets.CreateRocket+Request"
+    )
+    @requiresScopes(scopes: [["rockets:write"]])
     @cost(weight: "10")
   "The edit operation to update a rocket"
-  editRocket(request: EditRocketRequest!): RocketModel! @cost(weight: "10")
+  editRocket(request: EditRocketRequest!): RocketModel!
+    @authorize(
+      policy: "launchpad:Sample.Core.Operations.Rockets.EditRocket+Request"
+    )
+    @requiresScopes(scopes: [["rockets:write"]])
+    @cost(weight: "10")
   "The changes to apply to a rocket. They are applied to the rocket's current values, and the resulting Request is validated and sent through the mediator."
   patchRocket(request: EditRocketPatchRequestInput!): RocketModel!
+    @authorize(
+      policy: "launchpad:Sample.Core.Operations.Rockets.EditRocket+PatchRequest"
+    )
+    @requiresScopes(scopes: [["rockets:write"]])
     @cost(weight: "10")
   "The request to remove a rocket from the system"
-  deleteRocket(request: DeleteRocketRequest!): Boolean! @cost(weight: "10")
+  deleteRocket(request: DeleteRocketRequest!): Boolean!
+    @authorize(
+      policy: "launchpad:Sample.Core.Operations.Rockets.DeleteRocket+Request"
+    )
+    @requiresScopes(scopes: [["rockets:write"]])
+    @cost(weight: "10")
 }
 
 "The launch record creation response"
@@ -601,6 +635,30 @@ input StringOperationFilterInput {
   nendsWith: String @cost(weight: "20")
 }
 
+input StronglyTypedIdFilterOfUuidTypeFilterInput {
+  eq: UUID @cost(weight: "10")
+  neq: UUID @cost(weight: "10")
+  in: [UUID] @cost(weight: "10")
+  nin: [UUID] @cost(weight: "10")
+}
+
+input StronglyTypedIdOperationFilterInput {
+  eq: UUID @cost(weight: "10")
+  neq: UUID @cost(weight: "10")
+  in: [UUID] @cost(weight: "10")
+  nin: [UUID] @cost(weight: "10")
+}
+
+"Defines when a policy shall be executed."
+enum ApplyPolicy {
+  "Before the resolver was executed."
+  BEFORE_RESOLVER
+  "After the resolver was executed."
+  AFTER_RESOLVER
+  "The policy is applied in the validation step before the execution."
+  VALIDATION
+}
+
 enum GeoJSONGeometryType {
   Point
   MultiPoint
@@ -661,6 +719,25 @@ scalar Long
 "A position is an array of numbers. There MUST be two or more elements. The first two elements are longitude and latitude, or easting and northing, precisely in that order and using decimal numbers. Altitude or elevation MAY be included as an optional third element."
 scalar Position
 
+"The `UUID` scalar type represents a Universally Unique Identifier (UUID) as defined by RFC 9562."
+scalar UUID
+  @specifiedBy(url: "https://scalars.graphql.org/chillicream/uuid.html")
+
+directive @allowAnonymous repeatable on FIELD_DEFINITION
+
+"The caller must be authenticated."
+directive @authenticated on OBJECT | FIELD_DEFINITION | INTERFACE
+
+"The authorize directive."
+directive @authorize(
+  "The name of the authorization policy that determines access to the annotated resource."
+  policy: String
+  "Roles that are allowed to access the annotated resource."
+  roles: [String!]
+  "Defines when the authorize directive shall be applied. By default the authorize directive is applied before the resolver is executed."
+  apply: ApplyPolicy! = BEFORE_RESOLVER
+) repeatable on OBJECT | FIELD_DEFINITION
+
 "The purpose of the `cost` directive is to define a `weight` for GraphQL types, fields, and arguments. Static analysis can use these weights when calculating the overall cost of a query or response."
 directive @cost(
   "The `weight` argument defines what value to add to the overall cost for every appearance, or possible appearance, of a type, field, argument, etc."
@@ -686,6 +763,12 @@ directive @listSize(
   "The `requireOneSlicingArgument` argument can be used to inform the static analysis that it should expect that exactly one of the defined slicing arguments is present in a query. If that is not the case (i.e., if none or multiple slicing arguments are present), the static analysis may throw an error."
   requireOneSlicingArgument: Boolean = true
 ) on FIELD_DEFINITION
+
+"The scopes a caller needs: every scope of any one of the lists."
+directive @requiresScopes(
+  "The alternatives: the outer list is OR, each inner list is AND."
+  scopes: [[String!]!]!
+) on OBJECT | FIELD_DEFINITION | INTERFACE
 
 """
 The @tag directive is used to apply arbitrary string

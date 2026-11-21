@@ -1,0 +1,143 @@
+using Rocket.Surgery.LaunchPad.Authorization;
+using Rocket.Surgery.LaunchPad.Foundation;
+using ZeroAlloc.Mediator;
+using ZeroAlloc.Results;
+
+namespace ZeroAlloc.Authorization.Tests;
+
+[Policy("Rockets.Read"), RequiresScopes("rockets:read")]
+public sealed class RocketsRead(PolicyCalls calls) : IAuthorizationPolicy
+{
+    public ValueTask<UnitResult<AuthorizationFailure>> EvaluateAsync(ISecurityContext ctx, CancellationToken ct = default)
+    {
+        calls.Record("Rockets.Read");
+        return new(UnitResult<AuthorizationFailure>.Success());
+    }
+}
+
+[Policy("Rockets.Write"), RequiresScopes("rockets:write")]
+public sealed class RocketsWrite(PolicyCalls calls) : IAuthorizationPolicy
+{
+    public ValueTask<UnitResult<AuthorizationFailure>> EvaluateAsync(ISecurityContext ctx, CancellationToken ct = default)
+    {
+        calls.Record("Rockets.Write");
+        return new(UnitResult<AuthorizationFailure>.Success());
+    }
+}
+
+[Policy("Admin")]
+public sealed class Admin(PolicyCalls calls) : IAuthorizationPolicy
+{
+    public ValueTask<UnitResult<AuthorizationFailure>> EvaluateAsync(ISecurityContext ctx, CancellationToken ct = default)
+    {
+        calls.Record("Admin");
+        return new(
+            ctx.Roles.Contains("admin")
+                ? UnitResult<AuthorizationFailure>.Success()
+                : UnitResult<AuthorizationFailure>.Failure(new("role.missing", "Only an administrator may do this."))
+        );
+    }
+}
+
+[Policy("MinimumClearance")]
+public sealed class MinimumClearance : IAuthorizationPolicy<int>
+{
+    public ValueTask<UnitResult<AuthorizationFailure>> EvaluateAsync(ISecurityContext ctx, int level, CancellationToken ct = default) =>
+        new(
+            ctx.Claims.TryGetValue("clearance", out var value) && int.Parse(value, System.Globalization.CultureInfo.InvariantCulture) >= level
+                ? UnitResult<AuthorizationFailure>.Success()
+                : UnitResult<AuthorizationFailure>.Failure(new("clearance.low", $"Clearance {level} is required."))
+        );
+}
+
+[Policy("Owner")]
+public sealed class Owner(PolicyCalls calls) : IAuthorizationPolicy
+{
+    public ValueTask<UnitResult<AuthorizationFailure>> EvaluateAsync(ISecurityContext ctx, CancellationToken ct = default)
+    {
+        calls.Record("Owner");
+        return new(
+            ctx is IResourceSecurityContext<RenameRocket> { Resource.Owner: var owner } && owner == ctx.Id
+                ? UnitResult<AuthorizationFailure>.Success()
+                : UnitResult<AuthorizationFailure>.Failure(new("owner.other", "Only the owner may rename a rocket."))
+        );
+    }
+}
+
+/// <summary>What ran, so a test can tell a policy ran once.</summary>
+public sealed class PolicyCalls
+{
+    private readonly List<string> _calls = [];
+
+    public IReadOnlyList<string> Calls
+    {
+        get
+        {
+            lock (_calls) return [.. _calls];
+        }
+    }
+
+    public void Record(string policy)
+    {
+        lock (_calls) _calls.Add(policy);
+    }
+}
+
+public sealed record RocketModel(string Name);
+
+public union RocketResult(RocketModel, NotFound, Unauthorized, Forbidden);
+
+public union AnyResult(RocketModel, Problem);
+
+public readonly record struct Ping : IRequest<RocketModel>;
+
+[RequirePolicy("Rockets.Read")]
+public readonly record struct GetRocket(string Name) : IRequest<RocketResult>;
+
+[RequirePolicy("Rockets.Write")]
+[RequirePolicy("Admin")]
+public readonly record struct DeleteRocket(string Name) : IRequest<AnyResult>;
+
+[RequireAnyPolicy("Rockets.Write", "Admin")]
+public readonly record struct LaunchRocket(string Name) : IRequest<RocketResult>;
+
+[RequirePolicy("MinimumClearance", 3)]
+public readonly record struct InspectRocket(string Name) : IRequest<RocketResult>;
+
+[RequirePolicy("Rockets.Write")]
+[RequirePolicy("Owner")]
+public readonly record struct RenameRocket(string Name, string Owner) : IRequest<RocketResult>;
+
+[RequirePolicy("Rockets.Read")]
+public readonly record struct ListRockets : IStreamRequest<RocketModel>;
+
+public class Handlers
+    : IRequestHandler<Ping, RocketModel>,
+      IRequestHandler<GetRocket, RocketResult>,
+      IRequestHandler<DeleteRocket, AnyResult>,
+      IRequestHandler<LaunchRocket, RocketResult>,
+      IRequestHandler<InspectRocket, RocketResult>,
+      IRequestHandler<RenameRocket, RocketResult>,
+      IStreamRequestHandler<ListRockets, RocketModel>
+{
+    public ValueTask<RocketModel> Handle(Ping request, CancellationToken ct) => new(new RocketModel("ping"));
+    public ValueTask<RocketResult> Handle(GetRocket request, CancellationToken ct) => new(new RocketModel(request.Name));
+    public ValueTask<AnyResult> Handle(DeleteRocket request, CancellationToken ct) => new(new RocketModel(request.Name));
+    public ValueTask<RocketResult> Handle(LaunchRocket request, CancellationToken ct) => new(new RocketModel(request.Name));
+    public ValueTask<RocketResult> Handle(InspectRocket request, CancellationToken ct) => new(new RocketModel(request.Name));
+    public ValueTask<RocketResult> Handle(RenameRocket request, CancellationToken ct) => new(new RocketModel(request.Name));
+
+    public async IAsyncEnumerable<RocketModel> Handle(ListRockets request, [System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken ct)
+    {
+        await Task.Yield();
+        yield return new("Falcon");
+    }
+}
+
+public sealed class Caller(string id, string? scope = null, params string[] roles) : ISecurityContext
+{
+    public string Id { get; } = id;
+    public IReadOnlySet<string> Roles { get; } = new HashSet<string>(roles, StringComparer.Ordinal);
+    public Dictionary<string, string> Values { get; } = scope is null ? [] : new() { ["scope"] = scope };
+    public IReadOnlyDictionary<string, string> Claims => Values;
+}

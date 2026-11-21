@@ -1,6 +1,8 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 
+using Rocket.Surgery.LaunchPad.Analyzers.Authorization;
+
 namespace Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
 
 /// <summary>
@@ -108,6 +110,15 @@ internal static class HostReader
         var args = Named(entry);
         var apiOperation = Named(request.GetAttributes().FirstOrDefault(a => a.AttributeClass.Is(KnownNames.ApiOperationAttribute)));
         var name = Naming.OperationName(request.Name, request.ContainingType?.Name);
+
+        // The request's own policies (docs/design/authorization.md): named at the edge where the server has LaunchPad's edge, which a GraphQL
+        // field reaches through HotChocolate's authorization.
+        var requestPolicies = PolicyReader.Read(request, compilation);
+        var requestPolicy = !requestPolicies.IsEmpty
+         && compilation.GetTypeByMetadataName(PolicyReader.EdgeType) is { }
+         && ( hostKind is not ( HostKind.GraphQLMutation or HostKind.GraphQLQuery ) || compilation.GetTypeByMetadataName(PolicyReader.GraphQLAuthorizeAttribute) is { } )
+                ? PolicyReader.PolicyPrefix + RequestPoliciesModel.PlanId(request)
+                : null;
 
         // Response and request kind, from the profile.
         var explicitResponse = Type(apiOperation, "Response");
@@ -295,7 +306,7 @@ internal static class HostReader
             String(args, "Description") ?? String(apiOperation, "Description") ?? Documentation.Read(request, "remarks", documentation),
             String(args, "Name") ?? String(apiOperation, "Name") ?? name,
             ( Strings(args, "Tags") ?? Strings(apiOperation, "Tags") ?? [] ).ToEquatableArray(),
-            ( Strings(args, "Policy") ?? [] ).ToEquatableArray(),
+            ( requestPolicy is { } ? [.. Strings(args, "Policy") ?? [], requestPolicy] : Strings(args, "Policy") ?? [] ).ToEquatableArray(),
             ( Strings(args, "Roles") ?? [] ).ToEquatableArray(),
             ( Strings(args, "AuthenticationSchemes") ?? [] ).ToEquatableArray(),
             Bool(args, "AllowAnonymous") ?? false,
@@ -323,7 +334,10 @@ internal static class HostReader
             responseNotNull is INamedTypeSymbol describedResponse && requestKind != RequestKind.Void && !isUnit ? Documentation.Summary(describedResponse, documentation) : null,
             responseNotNull is INamedTypeSymbol documentedResponse && requestKind != RequestKind.Void && !isUnit
                 ? ResponseDescriptions(documentedResponse, documentation)
-                : EquatableArray<DescriptionModel>.Empty
+                : EquatableArray<DescriptionModel>.Empty,
+            RequestPolicy: requestPolicy,
+            ScopeAlternatives: requestPolicies.IsEmpty ? default : requestPolicies.Alternatives(out _),
+            GraphQLScopes: !requestPolicies.IsEmpty && compilation.GetTypeByMetadataName(PolicyReader.GraphQLScopesAttribute) is { }
         );
     }
 

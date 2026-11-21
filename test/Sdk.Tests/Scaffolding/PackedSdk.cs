@@ -77,6 +77,7 @@ internal sealed record PackedSdk(
         Path.Combine("src", "HotChocolate", "Rocket.Surgery.LaunchPad.HotChocolate.csproj"),
         Path.Combine("src", "Grpc", "Rocket.Surgery.LaunchPad.Grpc.csproj"),
         Path.Combine("src", "ZeroAlloc.AspNetCore", "Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore.csproj"),
+        Path.Combine("src", "ZeroAlloc.Authorization", "Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization.csproj"),
         Path.Combine("src", "ZeroAlloc.Blazor", "Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor.csproj"),
         Path.Combine("src", "ZeroAlloc.Grpc", "Rocket.Surgery.LaunchPad.ZeroAlloc.Grpc.csproj"),
         Path.Combine("src", "ZeroAlloc.HotChocolate", "Rocket.Surgery.LaunchPad.ZeroAlloc.HotChocolate.csproj"),

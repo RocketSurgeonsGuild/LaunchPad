@@ -37,6 +37,8 @@ public abstract class HandleTestHostBase(LogEventLevel logLevel) : ContainerTest
                 .EnableSensitiveDataLogging()
                 .UseSqlite(_connection)
         );
+        // the caller the policies of the operations see: a handler test has no transport to authenticate one
+        services.AddScoped<ZeroAlloc.Authorization.ISecurityContext>(_ => Rocket.Surgery.LaunchPad.Testing.Authorization.TestCaller.Default);
         await services.ApplyService(context, TestContext.CancellationToken);
         Populate(services);
         await using var scope = ServiceProvider.CreateAsyncScope();

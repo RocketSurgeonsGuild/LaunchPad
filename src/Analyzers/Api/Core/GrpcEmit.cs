@@ -192,4 +192,13 @@ internal static class GrpcEmit
             ]
         );
     }
+
+    /// <summary>
+    ///     The method with the edge policy of its request, when the request has policies: ASP.NET Core authorizes a gRPC method from the
+    ///     attributes of the method that implements it.
+    /// </summary>
+    public static MethodDeclarationSyntax Authorize(this MethodDeclarationSyntax method, OperationModel operation) =>
+        operation.RequestPolicy is { } policy
+            ? method.AddAttributeLists(Attribute("global::Microsoft.AspNetCore.Authorization.Authorize", Arg("Policy", Literal(policy))))
+            : method;
 }

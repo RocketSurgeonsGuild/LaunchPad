@@ -1,0 +1,54 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD1053,
+      Title: [RequiresScopes] is not valid here,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (37,20)-(37,30),
+      MessageFormat: {0} declares [RequiresScopes], but {1},
+      Message: NotAPolicy declares [RequiresScopes], but it is not a [Policy], so nothing requires them,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: LPAD1053,
+      Title: [RequiresScopes] is not valid here,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (40,20)-(40,25),
+      MessageFormat: {0} declares [RequiresScopes], but {1},
+      Message: Blank declares [RequiresScopes], but a scope is missing, blank or has a space in it,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: LPAD1053,
+      Title: [RequiresScopes] is not valid here,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (46,20)-(46,26),
+      MessageFormat: {0} declares [RequiresScopes], but {1},
+      Message: Spaced declares [RequiresScopes], but a scope is missing, blank or has a space in it,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: LPAD1054,
+      Title: Request with a policy cannot be given a plan,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (54,35)-(54,42),
+      MessageFormat: {0} has a policy, but {1}, so its policies would never be checked,
+      Message: Request has a policy, but it is private or protected, where generated code cannot name it, so its policies would never be checked,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: LPAD1054,
+      Title: Request with a policy cannot be given a plan,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (58,30)-(58,37),
+      MessageFormat: {0} has a policy, but {1}, so its policies would never be checked,
+      Message: Generic<T> has a policy, but a generic request has no single plan, so its policies would never be checked,
+      Category: LaunchPad.Api
+    }
+  ]
+}

@@ -11,6 +11,9 @@
   <ItemGroup>
     <PackageReference Include="Grpc.AspNetCore" />
     <PackageReference Include="Joinery.Dovetail.Hosting" />
+    <Compile Include="../Shared/SampleAuthentication.cs" Link="SampleAuthentication.cs" />
+    <!-- validates the access tokens of the samples' identity provider (Sample.AppHost runs Keycloak) -->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,6 +21,8 @@
     <ProjectReference Include="..\..\src\Grpc\Rocket.Surgery.LaunchPad.Grpc.csproj" />
     <!-- turns the ZeroAlloc validation failures into InvalidArgument -->
     <ProjectReference Include="..\..\src\ZeroAlloc.Grpc\Rocket.Surgery.LaunchPad.ZeroAlloc.Grpc.csproj" />
+    <!-- knows the caller policies see from the access token, and checks a request's policies before it is bound -->
+    <ProjectReference Include="..\..\src\ZeroAlloc.AspNetCore\Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
     <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
     <!-- a direct reference, so the Primitives joints (the strong IDs in Entity Framework and OpenAPI, and the domain primitive metrics) are written into the application -->

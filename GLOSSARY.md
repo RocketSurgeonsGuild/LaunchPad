@@ -84,6 +84,22 @@ _Avoid_: Built-in union, portable union (the `[Union] partial struct` form Launc
 One of LaunchPad's standard error cases (not found, invalid, unprocessable, unauthorized, forbidden, conflict), which carries the details every transport writes into its error shape.
 _Avoid_: Error result, failure, problem details (that is the HTTP shape of a problem)
 
+**Policy**:
+A named rule that decides whether a caller may run an operation, declared on the operation's request. It declares the scopes it requires and may add logic of its own.
+_Avoid_: Permission, requirement, role (one thing a policy may check), authorization rule
+
+**Scope**:
+A named grant in the caller's token that a policy requires. An operation's scopes are published in each transport's contract.
+_Avoid_: Permission, claim (a scope is one kind), role
+
+**Security context**:
+Who is calling, as policies see them: an identity with its roles and claims, the same on every transport.
+_Avoid_: User, principal (that is ASP.NET Core's shape of it), identity
+
+**Edge**:
+Where a transport receives a call, before the request is bound and dispatched. Policies are checked there and in the mediator pipeline, and run once.
+_Avoid_: Middleware, gateway, front door
+
 **JSON context**:
 The JSON metadata an application or package hands to LaunchPad, prepared at build time, so its types are read and written without reflection. LaunchPad uses only the JSON contexts it is given.
 _Avoid_: Serializer context, type resolver, JSON options

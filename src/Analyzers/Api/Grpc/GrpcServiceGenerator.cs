@@ -174,6 +174,7 @@ public sealed class GrpcServiceGenerator : IIncrementalGenerator
             }
 
             return Method(Modifiers(SyntaxKind.PublicKeyword, SyntaxKind.AsyncKeyword), returnType, operation.Name, parameters, body)
+               .Authorize(operation)
                .Summary($"Sends <see cref=\"{Cref(operation.RequestType)}\" /> through the mediator.");
         }
 
@@ -201,6 +202,7 @@ public sealed class GrpcServiceGenerator : IIncrementalGenerator
         }
 
         return Method(isAsync ? Modifiers(SyntaxKind.PublicKeyword, SyntaxKind.AsyncKeyword) : Modifiers(SyntaxKind.PublicKeyword), returnType, operation.Name, parameters, body)
+                        .Authorize(operation)
                         .Summary($"Sends <see cref=\"{Cref(operation.RequestType)}\" /> through the mediator.");
     }
 

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
-        <PackageDescription>ZeroAlloc.Mediator validation for LaunchPad gRPC services: a rejected request answers InvalidArgument with the failures in the status detail and the trailers.</PackageDescription>
+        <PackageDescription>ZeroAlloc.Mediator validation for LaunchPad gRPC services: a rejected request answers InvalidArgument with the failures in the status detail and the trailers, and a stream request its policies deny answers Unauthenticated or PermissionDenied.</PackageDescription>
         <PackageTags>$(PackageTags);dovetail;zeroalloc;zeroalloc-mediator;validation;grpc;interceptor</PackageTags>
         <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
         <!--
@@ -18,6 +18,8 @@
         <ProjectReference Include="..\Grpc\Rocket.Surgery.LaunchPad.Grpc.csproj" />
         <PackageReference Include="Grpc.AspNetCore" />
         <PackageReference Include="ZeroAlloc.Mediator.Validation" />
+        <!-- The denial of a stream request, which the mediator pipeline throws, answers as its status. -->
+        <ProjectReference Include="..\ZeroAlloc.Authorization\Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization.csproj" />
         <InternalsVisibleTo Include="ZeroAlloc.Grpc.Tests" />
     </ItemGroup>
 </Project>

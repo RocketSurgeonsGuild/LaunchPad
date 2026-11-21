@@ -8,6 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
+builder.Services.AddSampleSignIn(builder.Configuration);
+builder.Services.AddCascadingAuthenticationState();
+// A component dispatches its operations from the circuit, where there is no HTTP request: the caller is the circuit's signed-in user.
+builder.Services.AddScoped<ZeroAlloc.Authorization.ISecurityContext, CircuitSecurityContext>();
 
 var app = await builder.ConfigureDovetail();
 
@@ -28,6 +32,9 @@ app.UseStaticFiles();
 app.UseLaunchPadRequestLogging();
 
 app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapSampleSignIn();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");

@@ -1,0 +1,133 @@
+{
+  "realm": "launchpad",
+  "displayName": "LaunchPad samples",
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "clientScopes": [
+    {
+      "name": "profile",
+      "protocol": "openid-connect",
+      "attributes": { "include.in.token.scope": "true" },
+      "protocolMappers": [
+        {
+          "name": "username",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "username",
+            "claim.name": "preferred_username",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "basic",
+      "protocol": "openid-connect",
+      "attributes": { "include.in.token.scope": "false" },
+      "protocolMappers": [
+        {
+          "name": "sub",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-sub-mapper",
+          "config": { "access.token.claim": "true", "introspection.token.claim": "true" }
+        }
+      ]
+    },
+    {
+      "name": "sample-api",
+      "description": "Names the samples' APIs as the audience of an access token",
+      "protocol": "openid-connect",
+      "attributes": { "include.in.token.scope": "false" },
+      "protocolMappers": [
+        {
+          "name": "sample-api-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": { "included.custom.audience": "sample-api", "access.token.claim": "true", "id.token.claim": "false" }
+        }
+      ]
+    },
+    {
+      "name": "rockets:read",
+      "description": "Read rockets",
+      "protocol": "openid-connect",
+      "attributes": { "include.in.token.scope": "true", "display.on.consent.screen": "true", "consent.screen.text": "Read rockets" }
+    },
+    {
+      "name": "rockets:write",
+      "description": "Create, change and remove rockets",
+      "protocol": "openid-connect",
+      "attributes": { "include.in.token.scope": "true", "display.on.consent.screen": "true", "consent.screen.text": "Create, change and remove rockets" }
+    },
+    {
+      "name": "launch-records:read",
+      "description": "Read launch records",
+      "protocol": "openid-connect",
+      "attributes": { "include.in.token.scope": "true", "display.on.consent.screen": "true", "consent.screen.text": "Read launch records" }
+    },
+    {
+      "name": "launch-records:write",
+      "description": "Create, change and remove launch records",
+      "protocol": "openid-connect",
+      "attributes": { "include.in.token.scope": "true", "display.on.consent.screen": "true", "consent.screen.text": "Create, change and remove launch records" }
+    }
+  ],
+  "defaultDefaultClientScopes": ["basic", "profile", "sample-api"],
+  "defaultOptionalClientScopes": ["rockets:read", "rockets:write", "launch-records:read", "launch-records:write"],
+  "clients": [
+    {
+      "clientId": "sample-web",
+      "name": "The samples' browser applications and API explorers",
+      "description": "A public client: authorization code with PKCE. A caller signs in and asks for the scopes of the operations it calls.",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": ["http://localhost:*", "https://localhost:*", "http://*.localhost:*", "https://*.localhost:*"],
+      "webOrigins": ["+"],
+      "attributes": { "pkce.code.challenge.method": "S256", "post.logout.redirect.uris": "+" },
+      "defaultClientScopes": ["basic", "profile", "sample-api"],
+      "optionalClientScopes": ["rockets:read", "rockets:write", "launch-records:read", "launch-records:write"]
+    },
+    {
+      "clientId": "sample-service",
+      "name": "The samples' services that call an API without a user",
+      "description": "A confidential client: client credentials. Its secret is for this local realm only.",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "sample-service-local-secret",
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "defaultClientScopes": ["basic", "sample-api", "rockets:read", "launch-records:read"],
+      "optionalClientScopes": ["rockets:write", "launch-records:write"]
+    }
+  ],
+  "users": [
+    {
+      "username": "alice",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "alice@launchpad.test",
+      "firstName": "Alice",
+      "lastName": "Armstrong",
+      "credentials": [{ "type": "password", "value": "alice", "temporary": false }]
+    },
+    {
+      "username": "bob",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "bob@launchpad.test",
+      "firstName": "Bob",
+      "lastName": "Bean",
+      "credentials": [{ "type": "password", "value": "bob", "temporary": false }]
+    }
+  ]
+}

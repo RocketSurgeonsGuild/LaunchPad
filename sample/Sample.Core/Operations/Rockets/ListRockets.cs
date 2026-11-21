@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Riok.Mapperly.Abstractions;
+using Sample.Core.Authorization;
 using Sample.Core.Domain;
 using Sample.Core.Models;
+using ZeroAlloc.Authorization;
 using ZeroAlloc.Mediator;
 using NodaTimeMapper = Sample.Core.Models.NodaTimeMapper;
 
@@ -17,6 +19,7 @@ public static partial class ListRockets
     ///     The request to search for different rockets
     /// </summary>
     /// <param name="RocketType">The type of the rocket</param>
+    [RequirePolicy(Policies.RocketsRead)]
     public record Request(RocketType? RocketType) : IStreamRequest<RocketModel>;
 
     internal class ListRocketsHandler(RocketDbContext dbContext) : IStreamRequestHandler<Request, RocketModel>

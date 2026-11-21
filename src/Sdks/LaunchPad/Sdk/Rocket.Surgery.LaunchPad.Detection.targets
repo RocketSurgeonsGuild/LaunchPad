@@ -86,12 +86,21 @@
             Include="NetTopologySuite"
             Condition="'$(LaunchPadEnableNetTopologySuite)' != 'false' and @(PackageReference->AnyHaveMetadataValue('Identity', 'NetTopologySuite')) == 'true'"
         />
-        <!-- ZeroAlloc.Validation, or ZeroAlloc.Mediator.Validation, which validates the mediator's requests with it -->
+        <!--
+            ZeroAlloc.Validation, or ZeroAlloc.Mediator.Validation, which validates the mediator's requests with it, or
+            ZeroAlloc.Authorization, whose policies LaunchPad checks for them
+        -->
         <_LaunchPadTechnology
             Include="ZeroAlloc"
             Condition="'$(LaunchPadEnableZeroAlloc)' != 'false'
                    and (@(PackageReference->AnyHaveMetadataValue('Identity', 'ZeroAlloc.Validation')) == 'true'
-                     or @(PackageReference->AnyHaveMetadataValue('Identity', 'ZeroAlloc.Mediator.Validation')) == 'true')"
+                     or @(PackageReference->AnyHaveMetadataValue('Identity', 'ZeroAlloc.Mediator.Validation')) == 'true'
+                     or @(PackageReference->AnyHaveMetadataValue('Identity', 'ZeroAlloc.Authorization')) == 'true')"
+        />
+        <!-- ZeroAlloc.Authorization: request policies, checked in the mediator pipeline (docs/design/authorization.md) -->
+        <_LaunchPadTechnology
+            Include="ZeroAllocAuthorization"
+            Condition="'$(LaunchPadEnableZeroAlloc)' != 'false' and @(PackageReference->AnyHaveMetadataValue('Identity', 'ZeroAlloc.Authorization')) == 'true'"
         />
         <!-- a gRPC server: LaunchPad's package is the interceptors of an ASP.NET Core gRPC service -->
         <_LaunchPadTechnology

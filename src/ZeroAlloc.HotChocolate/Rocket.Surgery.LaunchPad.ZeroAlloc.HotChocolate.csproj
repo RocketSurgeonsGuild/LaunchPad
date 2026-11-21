@@ -13,6 +13,8 @@
     <ItemGroup>
         <ProjectReference Include="..\HotChocolate\Rocket.Surgery.LaunchPad.HotChocolate.csproj" />
         <PackageReference Include="HotChocolate" />
+        <!-- A field whose request has policies is authorized through ASP.NET Core authorization, where LaunchPad checks them. -->
+        <PackageReference Include="HotChocolate.AspNetCore.Authorization" />
         <PackageReference Include="ZeroAlloc.Mediator.Validation" />
         <InternalsVisibleTo Include="ZeroAlloc.HotChocolate.Tests" />
     </ItemGroup>
