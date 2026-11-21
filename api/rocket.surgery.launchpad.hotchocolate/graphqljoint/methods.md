@@ -13,7 +13,7 @@ The graph ql Joint
 ## Register(IDovetailContext, IServiceCollection)
 
 - Name: `Register(IDovetailContext, IServiceCollection)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.d5743b8445e2048c34f1a4b585f3eb4d862008a8/src/HotChocolate/Joints/GraphqlJoint.cs#L20-L23)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.dfbe8776933590a8ca1efba66f9af5c4929d4975/src/HotChocolate/Joints/GraphqlJoint.cs#L20-L23)
 
 Register the Service part.
 

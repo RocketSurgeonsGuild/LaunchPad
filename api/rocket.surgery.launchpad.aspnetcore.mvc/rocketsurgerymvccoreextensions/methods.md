@@ -15,7 +15,7 @@ Helper methods for getting an mvc builder if you're not sure that mvc has been a
 - Name: `WithMvc(IServiceCollection)`
 - Modifiers: `extension`
 - Returns: `IMvcBuilder`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.d5743b8445e2048c34f1a4b585f3eb4d862008a8/src/AspNetCore.Mvc/RocketSurgeryMvcCoreExtensions.cs#L20-L21)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.dfbe8776933590a8ca1efba66f9af5c4929d4975/src/AspNetCore.Mvc/RocketSurgeryMvcCoreExtensions.cs#L20-L21)
 
 Gets an `DependencyInjection.IMvcBuilder` with no side-effects
 
@@ -46,7 +46,7 @@ Adds MVC with `AddMvc` when it hasn't been added, which requires unreferenced co
 - Name: `WithMvcCore(IServiceCollection)`
 - Modifiers: `extension`
 - Returns: `IMvcCoreBuilder`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.d5743b8445e2048c34f1a4b585f3eb4d862008a8/src/AspNetCore.Mvc/RocketSurgeryMvcCoreExtensions.cs#L31-L32)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.dfbe8776933590a8ca1efba66f9af5c4929d4975/src/AspNetCore.Mvc/RocketSurgeryMvcCoreExtensions.cs#L31-L32)
 
 Gets an `DependencyInjection.IMvcCoreBuilder` with no side-effects
 

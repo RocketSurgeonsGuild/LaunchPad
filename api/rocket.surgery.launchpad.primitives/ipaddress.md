@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-beta.432`
+- Version: `2.0.1-beta.434`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.d5743b8445e2048c34f1a4b585f3eb4d862008a8/src/Primitives/StrongTypes/IpAddress.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.dfbe8776933590a8ca1efba66f9af5c4929d4975/src/Primitives/StrongTypes/IpAddress.cs)
 - Implements: `IStrongType<IpAddress, string>`, `IComparable<IpAddress>`, `IConvertible`, `IEquatable<IpAddress>`, `IParsable<IpAddress>`, `ISpanParsable<IpAddress>`, `IEqualityOperators<IpAddress, IpAddress, bool>`
 
 An IPv4 or IPv6 address, valid under [IpAddressRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/ipaddressrules.md).
