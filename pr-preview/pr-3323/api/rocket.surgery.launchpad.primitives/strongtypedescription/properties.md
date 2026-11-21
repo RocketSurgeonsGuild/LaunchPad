@@ -14,7 +14,7 @@ What an integration needs to know about one strong type: its value type, the for
 - Name: `AllowedValues`
 - Modifiers: `nullable` `get`
 - Returns: `IReadOnlyList<string>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.848d7df41fb82a23ce0738e64978a35c934d7558/src/Primitives/Descriptions/StrongTypeDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.1d02f463b63b8124a62d0eac5a4ec79986d3ddfb/src/Primitives/Descriptions/StrongTypeDescription.cs)
 
 The only values allowed, written in the invariant culture, when the rules list them.
 
@@ -29,7 +29,7 @@ public IReadOnlyList<string>? AllowedValues { get; }
 - Name: `Format`
 - Modifiers: `nullable` `get`
 - Returns: `string?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.848d7df41fb82a23ce0738e64978a35c934d7558/src/Primitives/Descriptions/StrongTypeDescription.cs#L92)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.1d02f463b63b8124a62d0eac5a4ec79986d3ddfb/src/Primitives/Descriptions/StrongTypeDescription.cs#L92)
 
 The format of the value (an OpenAPI / JSON Schema format such as `email` or `uri`), when the strong type or its rules declare one with [StrongTypeFormatAttribute](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchpad.primitives/strongtypeformatattribute.md).
 
@@ -44,7 +44,7 @@ public string? Format { get; }
 - Name: `Maximum`
 - Modifiers: `nullable` `get`
 - Returns: `string?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.848d7df41fb82a23ce0738e64978a35c934d7558/src/Primitives/Descriptions/StrongTypeDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.1d02f463b63b8124a62d0eac5a4ec79986d3ddfb/src/Primitives/Descriptions/StrongTypeDescription.cs)
 
 The most a number may be, written in the invariant culture.
 
@@ -59,7 +59,7 @@ public string? Maximum { get; }
 - Name: `MaximumIsExclusive`
 - Modifiers: `get`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.848d7df41fb82a23ce0738e64978a35c934d7558/src/Primitives/Descriptions/StrongTypeDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.1d02f463b63b8124a62d0eac5a4ec79986d3ddfb/src/Primitives/Descriptions/StrongTypeDescription.cs)
 
 Whether [StrongTypeDescription.Maximum](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchpad.primitives/strongtypedescription/properties.md#maximum) itself is excluded.
 
@@ -74,7 +74,7 @@ public bool MaximumIsExclusive { get; }
 - Name: `MaxLength`
 - Modifiers: `nullable` `get`
 - Returns: `int?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.848d7df41fb82a23ce0738e64978a35c934d7558/src/Primitives/Descriptions/StrongTypeDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.1d02f463b63b8124a62d0eac5a4ec79986d3ddfb/src/Primitives/Descriptions/StrongTypeDescription.cs)
 
 The longest a text value may be.
 
@@ -89,7 +89,7 @@ public int? MaxLength { get; }
 - Name: `Minimum`
 - Modifiers: `nullable` `get`
 - Returns: `string?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.848d7df41fb82a23ce0738e64978a35c934d7558/src/Primitives/Descriptions/StrongTypeDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.1d02f463b63b8124a62d0eac5a4ec79986d3ddfb/src/Primitives/Descriptions/StrongTypeDescription.cs)
 
 The least a number may be, written in the invariant culture.
 
@@ -104,7 +104,7 @@ public string? Minimum { get; }
 - Name: `MinimumIsExclusive`
 - Modifiers: `get`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.848d7df41fb82a23ce0738e64978a35c934d7558/src/Primitives/Descriptions/StrongTypeDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.1d02f463b63b8124a62d0eac5a4ec79986d3ddfb/src/Primitives/Descriptions/StrongTypeDescription.cs)
 
 Whether [StrongTypeDescription.Minimum](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchpad.primitives/strongtypedescription/properties.md#minimum) itself is excluded.
 
@@ -119,7 +119,7 @@ public bool MinimumIsExclusive { get; }
 - Name: `MinLength`
 - Modifiers: `nullable` `get`
 - Returns: `int?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.848d7df41fb82a23ce0738e64978a35c934d7558/src/Primitives/Descriptions/StrongTypeDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.1d02f463b63b8124a62d0eac5a4ec79986d3ddfb/src/Primitives/Descriptions/StrongTypeDescription.cs)
 
 The shortest a text value may be.
 
@@ -134,7 +134,7 @@ public int? MinLength { get; }
 - Name: `Patterns`
 - Modifiers: `get`
 - Returns: `IReadOnlyList<string>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.848d7df41fb82a23ce0738e64978a35c934d7558/src/Primitives/Descriptions/StrongTypeDescription.cs#L107)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.1d02f463b63b8124a62d0eac5a4ec79986d3ddfb/src/Primitives/Descriptions/StrongTypeDescription.cs#L107)
 
 The regular expressions a text value must match, every one of them.
 

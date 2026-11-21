@@ -12,7 +12,7 @@ General purpose Duration Serializer
 ## DurationSerializer
 
 - Name: `Constructor`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.848d7df41fb82a23ce0738e64978a35c934d7558/src/NodaTime.StrawberryShake/DurationSerializer.cs#L22-L24)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.1d02f463b63b8124a62d0eac5a4ec79986d3ddfb/src/NodaTime.StrawberryShake/DurationSerializer.cs#L22-L24)
 
 Create a new DurationSerializer
 

@@ -581,17 +581,17 @@ included, reads as unassigned; `ApplyChanges` leaves the patch as it is, and `Re
 
 ## Mutable view models
 
-A form edits its model a field at a time, which a readonly request can't be. `[Mutable]` writes a mutable view model next to the type, a
-class named `{Prefix}{Name}{Suffix}` (`RequestViewModel` by default) with a settable property for each of the type's properties, a
-`From(value)` that copies a value into it and a `ToImmutable()` that makes the value from it, through the type's constructor and its `init`
-or `set` members, and an implicit conversion each way that does the same. The type can be a class, a record, a record struct or a
-readonly record struct; the types that contain it must be `partial` (LPAD0001).
+A form edits its model a field at a time, which a readonly request can't be. Mark a `partial` class with `[Mutable<T>]` (or
+`[Mutable(typeof(T))]`) and the generator makes it a mutable view model of `T`, the way `[InheritFrom]` copies a type onto the class it
+marks: a settable property for each of `T`'s properties, a `From(value)` that copies a value into it and a `ToImmutable()` that makes the
+value from it, through `T`'s constructor and its `init` or `set` members, and an implicit conversion each way that does the same. `T` can be
+a class, a record, a record struct or a readonly record struct, in the same assembly or another one. The view model and the types that
+contain it must be `partial` (LPAD0001); its name, namespace and accessibility are yours.
 
 ```csharp
 public static partial class CreateRocket
 {
     [Validate]
-    [Mutable]
     public readonly record struct Request : IRequest<Result>
     {
         [NotEmpty, MinLength(10), MaxLength(30)]
@@ -600,14 +600,22 @@ public static partial class CreateRocket
         [IsInEnum]
         public RocketType Type { get; init; }
     }
+
+    [Mutable<Request>]
+    public partial class RequestViewModel;
 }
 ```
 
 A Blazor `EditForm` binds to `CreateRocket.RequestViewModel`, assigned from a request (`Model = request;`), and sends
-`Model.ToImmutable()`; a generic method such as `Send` infers the view model's type and doesn't convert it. The view model implements `IMutable<T>`,
-and `ZeroAllocValidator` (`Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor`) validates an `IMutable` model as the value it makes: the request's
-own rules apply, and the failures go to the view model's properties of the same name. `[Mutable("Editable", "Form")]` names it
-`EditableRequestForm`, and each attribute writes one view model.
+`Model.ToImmutable()`; a generic method such as `Send` infers the view model's type and doesn't convert it. In a project that references
+ZeroAlloc.Validation, the generator also writes `RequestViewModel.Validator`, a `ValidatorFor<RequestViewModel>` that validates the value the
+view model makes with the request's validator, which it takes from the services, and registers it as the view model's validator: Foundation
+writes a Dovetail joint, `LaunchPadMutableValidatorsJoint`, into each project that references ZeroAlloc.Validation, and it calls the
+`AddLaunchPadMutableValidators()` extension the generator writes. `ZeroAllocValidator` (`Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor`) requires a
+registered `ValidatorFor<T>` for the form's model, so it finds the view model's. The request's own rules then apply to the form, and the failures go to the view model's properties of the same name. A view model that
+declares its own `Validator` gets none. A property the view model declares itself isn't
+generated, and `From` and `ToImmutable()` use it, so it can set a default or add attributes for the form. A class is the view model of one
+type; for another view model of the same type, declare another class.
 
 ## Native AOT
 

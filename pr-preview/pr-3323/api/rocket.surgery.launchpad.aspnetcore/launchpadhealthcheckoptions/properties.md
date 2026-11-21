@@ -14,7 +14,7 @@ Where LaunchPad maps the health check endpoints ( `MapLaunchPadHealthChecks`), a
 - Name: `LivePath`
 - Modifiers: `get; set`
 - Returns: `string`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.848d7df41fb82a23ce0738e64978a35c934d7558/src/AspNetCore/HealthChecks/LaunchPadHealthCheckOptions.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.1d02f463b63b8124a62d0eac5a4ec79986d3ddfb/src/AspNetCore/HealthChecks/LaunchPadHealthCheckOptions.cs)
 
 The liveness path, under [LaunchPadHealthCheckOptions.Path](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchpad.aspnetcore/launchpadhealthcheckoptions/properties.md#path). The default is `live`.
 
@@ -28,13 +28,13 @@ public string LivePath { get; set; }
 
 - Name: `Path`
 - Modifiers: `get; set`
-- Returns: `PathString`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.848d7df41fb82a23ce0738e64978a35c934d7558/src/AspNetCore/HealthChecks/LaunchPadHealthCheckOptions.cs)
+- Returns: `string`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.1d02f463b63b8124a62d0eac5a4ec79986d3ddfb/src/AspNetCore/HealthChecks/LaunchPadHealthCheckOptions.cs)
 
 The path of the health report, which the liveness and readiness paths sit under. The default is `/health`.
 
 ```csharp
-public PathString Path { get; set; }
+public string Path { get; set; }
 ```
 
 <a id="port"></a>
@@ -44,7 +44,7 @@ public PathString Path { get; set; }
 - Name: `Port`
 - Modifiers: `nullable` `get; set`
 - Returns: `int?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.848d7df41fb82a23ce0738e64978a35c934d7558/src/AspNetCore/HealthChecks/LaunchPadHealthCheckOptions.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.1d02f463b63b8124a62d0eac5a4ec79986d3ddfb/src/AspNetCore/HealthChecks/LaunchPadHealthCheckOptions.cs)
 
 The port the health check endpoints are served on, alone. When it is `null` (the default) they are served on the application's own addresses.
 
@@ -63,7 +63,7 @@ When a port is set, Kestrel also listens on `http://*:{Port}`, next to the appli
 - Name: `ReadyPath`
 - Modifiers: `get; set`
 - Returns: `string`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.848d7df41fb82a23ce0738e64978a35c934d7558/src/AspNetCore/HealthChecks/LaunchPadHealthCheckOptions.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.1d02f463b63b8124a62d0eac5a4ec79986d3ddfb/src/AspNetCore/HealthChecks/LaunchPadHealthCheckOptions.cs)
 
 The readiness path, under [LaunchPadHealthCheckOptions.Path](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchpad.aspnetcore/launchpadhealthcheckoptions/properties.md#path). The default is `ready`.
 
@@ -78,7 +78,7 @@ public string ReadyPath { get; set; }
 - Name: `ResultStatusCodes`
 - Modifiers: `get`
 - Returns: `IDictionary<HealthStatus, int>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.848d7df41fb82a23ce0738e64978a35c934d7558/src/AspNetCore/HealthChecks/LaunchPadHealthCheckOptions.cs#L44)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.1d02f463b63b8124a62d0eac5a4ec79986d3ddfb/src/AspNetCore/HealthChecks/LaunchPadHealthCheckOptions.cs#L52)
 
 The status code each endpoint answers for each `HealthChecks.HealthStatus`. The defaults are 200 for `HealthStatus.Healthy` and `HealthStatus.Degraded`, and 503 for `HealthStatus.Unhealthy`.
 

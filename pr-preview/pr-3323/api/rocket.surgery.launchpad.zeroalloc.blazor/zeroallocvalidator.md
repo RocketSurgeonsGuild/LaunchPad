@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchpad.zeroalloc.blazor.md)
-- Version: `2.0.1-pr.1275`
+- Version: `2.0.1-pr.1278`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.Blazor`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.848d7df41fb82a23ce0738e64978a35c934d7558/src/ZeroAlloc.Blazor/ZeroAllocValidator.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.1d02f463b63b8124a62d0eac5a4ec79986d3ddfb/src/ZeroAlloc.Blazor/ZeroAllocValidator.cs)
 - Inherits: `ComponentBase`
 - Implements: `IDisposable`
 
@@ -26,7 +26,7 @@ public sealed class ZeroAllocValidator
 
 ## Remarks
 
-The validator is resolved as `Validation.ValidatorFor`1` of the model's runtime type, which needs that closed generic type at run time. ZeroAlloc.Validation registers a validator for each `[Validate]` type, so a trimmed application keeps the types it validates. A model that is an `Foundation.IMutable`, such as the view model `Foundation.MutableAttribute` generates for a request, is validated as the value it makes, and the failures go to its properties of the same name: the form binds to the view model and the request's rules apply.
+The validator is resolved as `Validation.ValidatorFor`1` of the model's runtime type, which needs that closed generic type at run time. ZeroAlloc.Validation registers a validator for each `[Validate]` type, so a trimmed application keeps the types it validates. A model without a registered validator is an error. A view model `[Mutable]` fills in has one: Foundation's `LaunchPadMutableValidatorsJoint` registers the `Validator` the generator nests in it, which validates the value the view model makes, and the failures go to its properties of the same name, so the form binds to the view model and the request's rules apply.
 
 ## Constructors
 

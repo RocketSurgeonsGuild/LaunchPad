@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.AspNetCore](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchpad.aspnetcore.md)
-- Version: `2.0.1-pr.1275`
+- Version: `2.0.1-pr.1278`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.HealthChecks`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.848d7df41fb82a23ce0738e64978a35c934d7558/src/AspNetCore/HealthChecks/LaunchPadHealthCheckOptions.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.1d02f463b63b8124a62d0eac5a4ec79986d3ddfb/src/AspNetCore/HealthChecks/LaunchPadHealthCheckOptions.cs)
 
 Where LaunchPad maps the health check endpoints ( `MapLaunchPadHealthChecks`), and on which port.
 
@@ -22,7 +22,7 @@ public sealed class LaunchPadHealthCheckOptions
 
 ## Remarks
 
-The [HealthChecksJoint](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchpad.aspnetcore/healthchecksjoint.md) binds these options from the [LaunchPadHealthCheckOptions.SectionName](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchpad.aspnetcore/launchpadhealthcheckoptions/fields.md#sectionname) configuration section, for example `LaunchPad__HealthChecks__Port=8081`. Code can change them with `services.Configure<LaunchPadHealthCheckOptions>`.
+Optionary binds these options from the [LaunchPadHealthCheckOptions.SectionName](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchpad.aspnetcore/launchpadhealthcheckoptions/fields.md#sectionname) configuration section without reflection, for example `LaunchPad__HealthChecks__Port=8081`, and describes them in the application's `appsettings.schema.json`. The [HealthChecksJoint](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchpad.aspnetcore/healthchecksjoint.md) registers them, and checks them when the host starts. Code can change them with `services.Configure<LaunchPadHealthCheckOptions>`.
 
 ## Constructors
 
@@ -31,7 +31,7 @@ The [HealthChecksJoint](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchp
 ## Properties
 
 - [LivePath](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchpad.aspnetcore/launchpadhealthcheckoptions/properties.md#livepath) : `string` `get; set` -- The liveness path, under [LaunchPadHealthCheckOptions.Path](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchpad.aspnetcore/launchpadhealthcheckoptions/properties.md#path). The default is `live`.
-- [Path](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchpad.aspnetcore/launchpadhealthcheckoptions/properties.md#path) : `PathString` `get; set` -- The path of the health report, which the liveness and readiness paths sit under. The default is `/health`.
+- [Path](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchpad.aspnetcore/launchpadhealthcheckoptions/properties.md#path) : `string` `get; set` -- The path of the health report, which the liveness and readiness paths sit under. The default is `/health`.
 - [Port](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchpad.aspnetcore/launchpadhealthcheckoptions/properties.md#port) : `int?` `get; set` -- The port the health check endpoints are served on, alone. When it is `null` (the default) they are served on the application's own addresses.
 - [ReadyPath](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchpad.aspnetcore/launchpadhealthcheckoptions/properties.md#readypath) : `string` `get; set` -- The readiness path, under [LaunchPadHealthCheckOptions.Path](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchpad.aspnetcore/launchpadhealthcheckoptions/properties.md#path). The default is `ready`.
 - [ResultStatusCodes](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchpad.aspnetcore/launchpadhealthcheckoptions/properties.md#resultstatuscodes) : `IDictionary<HealthStatus, int>` `get` -- The status code each endpoint answers for each `HealthChecks.HealthStatus`. The defaults are 200 for `HealthStatus.Healthy` and `HealthStatus.Degraded`, and 503 for `HealthStatus.Unhealthy`.
