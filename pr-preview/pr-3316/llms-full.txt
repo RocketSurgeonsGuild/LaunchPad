@@ -334,6 +334,22 @@ A file-based app uses the directive form, `#:sdk Rocket.Surgery.LaunchPad.Sdk@1.
 
 LaunchPad requires .NET 11 or later. A project that applies the SDK and targets an older .NET or .NET Framework stops before restore with `LPADSDK0001`, which names the minimum (`net11.0`), instead of NuGet reporting every LaunchPad package as incompatible. The check compares versions, so later frameworks pass, and it runs per framework, so a project that targets several fails on the old one. A .NET Standard library is left alone: the SDK adds it nothing.
 
+## HTTP clients from OpenAPI
+
+[Section titled “HTTP clients from OpenAPI”](#http-clients-from-openapi)
+
+Every LaunchPad SDK chains [Chirograph](https://rocketsurgeonsguild.github.io/Chirograph/), the MSBuild SDK that generates a typed Kiota or Refitter client from each `OpenApiClient` item of the project. With Dovetail, each client also gets a joint, so a host built with `ConfigureDovetail()` resolves it without a registration call:
+
+```xml
+<Project Sdk="Rocket.Surgery.LaunchPad.Sdk/1.0.0">
+  <ItemGroup>
+    <OpenApiClient Include="openapi/rockets.json" Generator="Kiota" ClientName="RocketsClient" />
+  </ItemGroup>
+</Project>
+```
+
+A project without an `OpenApiClient` item gets nothing from Chirograph. Chirograph is chained at the version the SDK was built with; set `LaunchPadChirographVersion` to choose another, or `LaunchPadEnableChirograph` to `false` to leave it out. A project that applies Chirograph itself (`<Sdk Name="Chirograph" />`) keeps its own version: the SDK doesn’t import it a second time.
+
 ## The console SDK
 
 [Section titled “The console SDK”](#the-console-sdk)
@@ -613,10 +629,11 @@ A **template** is source shipped inside a package, as a `*.cs.template` file, an
 | `LaunchPadProcessInstrumentationJoint`        | `OpenTelemetry.Instrumentation.Process`                              | generic host, ASP.NET Core                     |
 | `LaunchPadAspNetCoreInstrumentationJoint`     | `OpenTelemetry.Instrumentation.AspNetCore`                           | ASP.NET Core                                   |
 | `LaunchPadHotChocolateInstrumentationJoint`   | `HotChocolate.Diagnostics`                                           | generic host, ASP.NET Core                     |
+| `LaunchPadOtlpExporterJoint`                  | `OpenTelemetry.Exporter.OpenTelemetryProtocol`                       | generic host, ASP.NET Core                     |
 
 The Serilog Joints need `Joinery.Dovetail.Serilog` and the OpenTelemetry Joints need `Joinery.Dovetail.OpenTelemetry`, which Dovetail’s SDK adds when the project references Serilog or OpenTelemetry. So choosing a sink or an instrumentation is a matter of referencing its package: the Joint that turns it on comes with it.
 
-`LaunchPadSerilogOpenTelemetryJoint` exports only when `OTEL_EXPORTER_OTLP_ENDPOINT` is set, as Aspire sets it for the applications it runs, so an application started on its own doesn’t send its logs to an endpoint nothing listens on.
+`LaunchPadSerilogOpenTelemetryJoint` (logs) and `LaunchPadOtlpExporterJoint` (traces and metrics) export only when `OTEL_EXPORTER_OTLP_ENDPOINT` is set, as Aspire sets it for the applications it runs, so an application started on its own doesn’t send to an endpoint nothing listens on.
 
 ## The Primitives templates
 
@@ -1159,18 +1176,17 @@ The generators don’t write clients. Each server describes itself in a standard
 
 Write the spec at build or in CI, for example from a small console app or test that starts the server with `TestServer` and saves `/openapi/v1.json`, `/graphql?sdl` and `GetProto()`, then point the client generator at the files. LaunchPad’s own functional tests do that (`test/Api/Functional/Clients`): a Kiota client (through [Chirograph](https://rocketsurgeonsguild.github.io/Chirograph/)), Grpc.Tools and StrawberryShake clients, generated from the specs on every build. The sample tests generate Refitter clients through Chirograph straight from the sample servers’ projects.
 
-For an OpenAPI client, [Chirograph](https://rocketsurgeonsguild.github.io/Chirograph/) is an MSBuild SDK that generates a Kiota or Refitter client at build, from a document file, a URL or a server project in the same build, with an `Add<ClientName>()` registration:
+For an OpenAPI client, [Chirograph](https://rocketsurgeonsguild.github.io/Chirograph/) is an MSBuild SDK that generates a Kiota or Refitter client at build, from a document file, a URL or a server project in the same build, with an `Add<ClientName>()` registration and a joint that calls it, so a host built with `ConfigureDovetail()` resolves the client. Every [LaunchPad SDK](../../concepts/launchpad-sdk/#http-clients-from-openapi) chains it, so a LaunchPad application only declares the client:
 
 ```xml
-<Project Sdk="Microsoft.NET.Sdk">
-  <Sdk Name="Chirograph" />
+<Project Sdk="Rocket.Surgery.LaunchPad.Sdk">
   <ItemGroup>
     <OpenApiClient Include="../Rockets.Api/Rockets.Api.csproj" Generator="Refitter" ClientName="RocketsClient" />
   </ItemGroup>
 </Project>
 ```
 
-Pin its version under `msbuild-sdks` in `global.json`.
+A project without a LaunchPad SDK applies Chirograph itself, with `<Sdk Name="Chirograph" />` and its version pinned under `msbuild-sdks` in `global.json`, as LaunchPad’s own tests do.
 
 Things to know:
 

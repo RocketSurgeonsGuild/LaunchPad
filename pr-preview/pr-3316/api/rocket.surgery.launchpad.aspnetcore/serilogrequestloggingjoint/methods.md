@@ -13,7 +13,7 @@ Wires Serilog's request logging into ASP.NET Core: the `IDiagnosticContext` that
 ## Register(IDovetailContext, IServiceCollection)
 
 - Name: `Register(IDovetailContext, IServiceCollection)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3316-merge.Sha.f83bcc6e745e879bd6e50371d172391bf28154ae/src/AspNetCore/Joints/SerilogRequestLoggingJoint.cs#L34-L36)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3316-merge.Sha.4725c0a09120ecd23f44a0d7d9544708e7a3dca8/src/AspNetCore/Joints/SerilogRequestLoggingJoint.cs#L34-L36)
 
 Registers the specified context.
 
