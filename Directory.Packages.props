@@ -54,22 +54,22 @@
         <PackageVersion Include="Grpc.AspNetCore" Version="2.85.0" />
         <PackageVersion Include="Humanizer.Core" Version="3.0.10" />
         <PackageVersion Include="Joinery.Dovetail.Serilog" Version="0.8.0" />
-        <PackageVersion Include="HotChocolate" Version="16.7.6" />
+        <PackageVersion Include="HotChocolate" Version="16.7.7" />
 
-        <PackageVersion Include="HotChocolate.AspNetCore" Version="16.7.6" />
-        <PackageVersion Include="HotChocolate.Data" Version="16.7.6" />
-        <PackageVersion Include="HotChocolate.Diagnostics" Version="16.7.6" />
-        <PackageVersion Include="HotChocolate.Execution.Abstractions" Version="16.7.6" />
+        <PackageVersion Include="HotChocolate.AspNetCore" Version="16.7.7" />
+        <PackageVersion Include="HotChocolate.Data" Version="16.7.7" />
+        <PackageVersion Include="HotChocolate.Diagnostics" Version="16.7.7" />
+        <PackageVersion Include="HotChocolate.Execution.Abstractions" Version="16.7.7" />
 
-        <PackageVersion Include="HotChocolate.Data.Spatial" Version="16.7.6" />
-        <PackageVersion Include="HotChocolate.Types.Analyzers" Version="16.7.6" />
-        <PackageVersion Include="HotChocolate.Types.CursorPagination" Version="16.7.6" />
-        <PackageVersion Include="HotChocolate.Types.OffsetPagination" Version="16.7.6" />
-        <PackageVersion Include="HotChocolate.Types.NodaTime" Version="16.7.6" />
-        <PackageVersion Include="HotChocolate.Types.Spatial" Version="16.7.6" />
-        <PackageVersion Include="StrawberryShake.Transport.Http" Version="16.7.6" />
+        <PackageVersion Include="HotChocolate.Data.Spatial" Version="16.7.7" />
+        <PackageVersion Include="HotChocolate.Types.Analyzers" Version="16.7.7" />
+        <PackageVersion Include="HotChocolate.Types.CursorPagination" Version="16.7.7" />
+        <PackageVersion Include="HotChocolate.Types.OffsetPagination" Version="16.7.7" />
+        <PackageVersion Include="HotChocolate.Types.NodaTime" Version="16.7.7" />
+        <PackageVersion Include="HotChocolate.Types.Spatial" Version="16.7.7" />
+        <PackageVersion Include="StrawberryShake.Transport.Http" Version="16.7.7" />
 
-        <PackageVersion Include="StrawberryShake.Core" Version="16.7.6" />
+        <PackageVersion Include="StrawberryShake.Core" Version="16.7.7" />
         <PackageVersion Include="StrawberryShake.Server" Version="16.7.6" />
         <!-- StrawberryShake.Transport.Http 16.7.6 depends on Microsoft.AspNetCore.WebUtilities 11.0.0-rc.1, which has a known vulnerability (NU1903, GHSA-x33c-w48q-qrgc): the client lifts it to the release. -->
         <PackageVersion Include="Microsoft.AspNetCore.WebUtilities" Version="11.0.0" />
