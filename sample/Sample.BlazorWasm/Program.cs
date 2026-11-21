@@ -18,8 +18,6 @@ namespace Sample.BlazorWasm
     public static partial class TestHandler
     {
         [Validate]
-        // the form binds to the generated RequestViewModel: a readonly request can't be edited a field at a time
-        [Mutable]
         public readonly record struct Request : IRequest<Response>
         {
             [NotEmpty]
@@ -30,6 +28,12 @@ namespace Sample.BlazorWasm
             [MaxLength(50)]
             public string LastName { get; init; }
         }
+
+        /// <summary>
+        ///     The <see cref="Request" /> a Blazor form binds to: a readonly request can't be edited a field at a time.
+        /// </summary>
+        [Mutable<Request>]
+        public partial class RequestViewModel;
 
         [Validate]
         public record Response([property: NotEmpty] string FullName);

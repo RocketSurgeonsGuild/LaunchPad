@@ -12,7 +12,7 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
         <PackageReference Include="ZeroAlloc.Validation" />
-        <!-- IMutable: a view model is validated as the value it makes -->
+        <!-- ValidatedByAttribute: a model without a registered validator is validated by the one it names -->
         <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
     </ItemGroup>
     <ItemGroup>

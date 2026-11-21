@@ -12,7 +12,7 @@ using ZeroAlloc.Validation;
 
 namespace ZeroAlloc.Blazor.Tests;
 
-public class ZeroAllocValidatorTests
+public partial class ZeroAllocValidatorTests
 {
     [Test]
     public async Task Adds_The_Messages_Of_The_Registered_Validator_When_The_Form_Is_Validated()
@@ -81,6 +81,15 @@ public class ZeroAllocValidatorTests
         await editContext.GetValidationMessages().Should().BeEmpty();
     }
 
+    [Test]
+    public async Task Leaves_A_View_Model_Valid_When_The_Value_It_Makes_Has_No_Validator()
+    {
+        var editContext = new EditContext(new PersonRequestViewModel { Name = "", Nickname = "" });
+        await using var renderer = await Render(editContext);
+
+        await ( await editContext.ValidateAsync() ).Should().BeTrue();
+    }
+
     private static async Task<HtmlRenderer> Render(EditContext editContext, Action<IServiceCollection>? configure = null)
     {
         var services = new ServiceCollection().AddLogging();
@@ -113,16 +122,9 @@ public class ZeroAllocValidatorTests
 
     public readonly record struct PersonRequest(string Name, string Nickname);
 
-    // Stands in for the view model [Mutable] generates for PersonRequest.
-    public sealed class PersonRequestViewModel : IMutable<PersonRequest>
-    {
-        public string Name { get; set; } = "";
-        public string Nickname { get; set; } = "";
-
-        public PersonRequest ToImmutable() => new(Name, Nickname);
-
-        object IMutable.ToImmutable() => ToImmutable();
-    }
+    // The form binds to it; the generator writes its Validator and names it with [ValidatedBy].
+    [Mutable<PersonRequest>]
+    public sealed partial class PersonRequestViewModel;
 
     private sealed class PersonRequestValidator : ValidatorFor<PersonRequest>
     {

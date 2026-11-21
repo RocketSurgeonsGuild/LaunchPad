@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using System.Text;
 
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 using Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
@@ -9,13 +10,19 @@ using Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
 namespace Rocket.Surgery.LaunchPad.Analyzers;
 
 /// <summary>
-///     Writes the mutable view model of each type marked <c>[Mutable]</c>: a class next to the type with a settable property for each of its
-///     properties, <c>From(value)</c>, <c>ToImmutable()</c> and an implicit conversion each way. The type can be a class, a record, a record struct or a readonly record struct.
+///     Fills in each partial class marked <c>[Mutable(typeof(T))]</c> or <c>[Mutable&lt;T&gt;]</c> as the mutable view model of <c>T</c>: a
+///     settable property for each of <c>T</c>'s properties the class doesn't declare itself, <c>From(value)</c>, <c>ToImmutable()</c> and an
+///     implicit conversion each way. <c>T</c> can be a class, a record, a record struct or a readonly record struct. In a project that
+///     references ZeroAlloc.Validation it also writes a nested <c>Validator</c> that validates the value the view model makes with <c>T</c>'s
+///     validator, and names it on the view model with <c>[ValidatedBy]</c>.
 /// </summary>
 [Generator]
 public class MutableGenerator : IIncrementalGenerator
 {
     private const string MutableAttribute = "Rocket.Surgery.LaunchPad.Foundation.MutableAttribute";
+    private const string GenericMutableAttribute = "Rocket.Surgery.LaunchPad.Foundation.MutableAttribute`1";
+    private const string ValidatorFor = "ZeroAlloc.Validation.ValidatorFor`1";
+    private const string ValidatedByAttribute = "Rocket.Surgery.LaunchPad.Foundation.ValidatedByAttribute";
 
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
@@ -24,50 +31,72 @@ public class MutableGenerator : IIncrementalGenerator
                     .SyntaxProvider
                     .ForAttributeWithMetadataName(
                          MutableAttribute,
-                         static (node, _) => node is TypeDeclarationSyntax,
+                         static (node, _) => IsClass(node),
                          static (syntaxContext, cancellationToken) => Read(syntaxContext, cancellationToken)
                      )
                     .WithTrackingName("Mutable");
+        var genericModels = context
+                           .SyntaxProvider
+                           .ForAttributeWithMetadataName(
+                                GenericMutableAttribute,
+                                static (node, _) => IsClass(node),
+                                static (syntaxContext, cancellationToken) => Read(syntaxContext, cancellationToken)
+                            )
+                           .WithTrackingName("MutableGeneric");
 
-        context.RegisterSourceOutput(models, static (output, models) => Emit(output, models));
+        context.RegisterSourceOutput(models, static (output, model) => Emit(output, model));
+        context.RegisterSourceOutput(genericModels, static (output, model) => Emit(output, model));
     }
 
-    private static EquatableArray<MutableModel> Read(GeneratorAttributeSyntaxContext context, CancellationToken cancellationToken)
+    // A class or a record class: the view model is a reference type a form can bind to.
+    private static bool IsClass(SyntaxNode node) =>
+        node is ClassDeclarationSyntax or RecordDeclarationSyntax { ClassOrStructKeyword.RawKind: not (int)SyntaxKind.StructKeyword };
+
+    private static MutableModel? Read(GeneratorAttributeSyntaxContext context, CancellationToken cancellationToken)
     {
-        if (context.TargetSymbol is not INamedTypeSymbol type)
+        if (context.TargetSymbol is not INamedTypeSymbol viewModel || context.Attributes is not [var attribute, ..])
         {
-            return EquatableArray<MutableModel>.Empty;
+            return null;
         }
+        if (attribute switch
+        {
+            { AttributeClass.TypeArguments: [INamedTypeSymbol argument] } => argument,
+            { ConstructorArguments: [{ Kind: TypedConstantKind.Type, Value: INamedTypeSymbol argument }] } => argument,
+            _ => null,
+        } is not { } type)
+        {
+            return null;
+        }
+
         var compilation = context.SemanticModel.Compilation;
-        var nonPartial = FirstNonPartialContainer(type);
+        var nonPartial = IsPartial(viewModel) ? FirstNonPartialContainer(viewModel) : viewModel;
         var properties = Properties(type, compilation);
         var constructor = Constructor(type, properties, compilation);
         var arguments = ConstructorArguments(constructor, properties);
-        var members = Members(properties, arguments, compilation, cancellationToken);
+        var members = Members(viewModel, properties, arguments, compilation, cancellationToken);
 
-        var models = ImmutableArray.CreateBuilder<MutableModel>();
-        foreach (var attribute in context.Attributes)
-        {
-            var prefix = attribute.ConstructorArguments.Length > 0 ? attribute.ConstructorArguments[0].Value as string ?? "" : "";
-            var suffix = attribute.ConstructorArguments.Length > 1 ? attribute.ConstructorArguments[1].Value as string ?? "ViewModel" : "ViewModel";
-            models.Add(
-                new(
-                    type.ContainingNamespace is { IsGlobalNamespace: false } ns ? ns.ToDisplayString() : null,
-                    Containers(type),
-                    Accessibility(type.DeclaredAccessibility),
-                    prefix + type.Name + suffix,
-                    type.FullyQualified(),
-                    Hint(type),
-                    members,
-                    arguments,
-                    nonPartial?.Name,
-                    nonPartial is { } ? LocationInfo.From(nonPartial) : null
-                )
-            );
-        }
-
-        return new(models.ToImmutable());
+        return new(
+            viewModel.ContainingNamespace is { IsGlobalNamespace: false } ns ? ns.ToDisplayString() : null,
+            Containers(viewModel),
+            Declaration(viewModel),
+            viewModel.Name,
+            type.FullyQualified(),
+            Hint(viewModel),
+            members,
+            arguments,
+            nonPartial?.Name,
+            nonPartial is { } ? LocationInfo.From(nonPartial) : null,
+            WritesValidator(viewModel, compilation)
+        );
     }
+
+    // A validator is written where ZeroAlloc.Validation and [ValidatedBy] are referenced, for a view model that isn't generic: an attribute
+    // can't name a validator nested in an open generic type that could be created.
+    private static bool WritesValidator(INamedTypeSymbol viewModel, Compilation compilation) =>
+        !viewModel.IsGenericType
+     && viewModel.GetMembers("Validator").Length == 0
+     && compilation.GetTypeByMetadataName(ValidatorFor) is { }
+     && compilation.GetTypeByMetadataName(ValidatedByAttribute) is { };
 
     // The properties the constructor's parameters set, in its order.
     private static EquatableArray<string> ConstructorArguments(IMethodSymbol? constructor, List<IPropertySymbol> properties)
@@ -87,8 +116,9 @@ public class MutableGenerator : IIncrementalGenerator
     }
 
     // The view model's properties: each property the type can be made with, through its constructor or a setter it can reach. Another one
-    // (no constructor parameter, no setter) couldn't come back from the view model.
+    // (no constructor parameter, no setter) couldn't come back from the view model. One the view model declares itself is used, not written.
     private static EquatableArray<MutableProperty> Members(
+        INamedTypeSymbol viewModel,
         List<IPropertySymbol> properties,
         EquatableArray<string> arguments,
         Compilation compilation,
@@ -103,7 +133,7 @@ public class MutableGenerator : IIncrementalGenerator
             var settable = property.SetMethod is { } setter && compilation.IsSymbolAccessibleWithin(setter, compilation.Assembly);
             if (inConstructor || settable)
             {
-                members.Add(new(property.Name, property.Type.FullyQualifiedNullable(), inConstructor));
+                members.Add(new(property.Name, property.Type.FullyQualifiedNullable(), inConstructor, viewModel.GetMembers(property.Name).Length > 0));
             }
         }
 
@@ -118,7 +148,7 @@ public class MutableGenerator : IIncrementalGenerator
         {
             foreach (var member in current.GetMembers())
             {
-                if (member is not IPropertySymbol { IsStatic: false, IsIndexer: false, DeclaredAccessibility: Microsoft.CodeAnalysis.Accessibility.Public, GetMethod: { } } property)
+                if (member is not IPropertySymbol { IsStatic: false, IsIndexer: false, DeclaredAccessibility: Accessibility.Public, GetMethod: { } } property)
                 {
                     continue;
                 }
@@ -279,30 +309,19 @@ public class MutableGenerator : IIncrementalGenerator
         return name.ToString();
     }
 
-    private static string Accessibility(Accessibility accessibility) => accessibility switch
+    private static void Emit(SourceProductionContext output, MutableModel? model)
     {
-        Microsoft.CodeAnalysis.Accessibility.Public => "public",
-        Microsoft.CodeAnalysis.Accessibility.Protected => "protected",
-        Microsoft.CodeAnalysis.Accessibility.ProtectedOrInternal => "protected internal",
-        Microsoft.CodeAnalysis.Accessibility.ProtectedAndInternal => "private protected",
-        Microsoft.CodeAnalysis.Accessibility.Private => "private",
-        Microsoft.CodeAnalysis.Accessibility.NotApplicable => throw new NotImplementedException(),
-        Microsoft.CodeAnalysis.Accessibility.Internal => throw new NotImplementedException(),
-        _ => "internal",
-    };
-
-    private static void Emit(SourceProductionContext output, EquatableArray<MutableModel> models)
-    {
-        foreach (var model in models)
+        if (model is null)
         {
-            if (model.NonPartialContainer is { } container)
-            {
-                output.ReportDiagnostic(Diagnostic.Create(GeneratorDiagnostics.MustBePartial, model.NonPartialLocation?.ToLocation() ?? Location.None, container));
-                continue;
-            }
-
-            output.AddSource(model.Hint + "." + model.Name + ".Mutable.g.cs", Write(model));
+            return;
         }
+        if (model.NonPartialType is { } nonPartial)
+        {
+            output.ReportDiagnostic(Diagnostic.Create(GeneratorDiagnostics.MustBePartial, model.NonPartialLocation?.ToLocation() ?? Location.None, nonPartial));
+            return;
+        }
+
+        output.AddSource(model.Hint + ".Mutable.g.cs", Write(model));
     }
 
     private static string Write(MutableModel model)
@@ -338,13 +357,11 @@ public class MutableGenerator : IIncrementalGenerator
           .Append("\", \"")
           .Append(AssemblyInfo.Attributes.FileVersion)
           .AppendLine("\")]");
-        sb.Append(indent)
-          .Append(model.Accessibility)
-          .Append(" partial class ")
-          .Append(model.Name)
-          .Append(" : global::Rocket.Surgery.LaunchPad.Foundation.IMutable<")
-          .Append(target)
-          .AppendLine(">");
+        if (model.WritesValidator)
+        {
+            sb.Append(indent).Append("[global::").Append(ValidatedByAttribute).Append("(typeof(").Append(model.Name).AppendLine(".Validator))]");
+        }
+        sb.Append(indent).AppendLine(model.Declaration);
         sb.Append(indent).AppendLine("{");
         WriteMembers(sb, model, indent, cref);
         sb.Append(indent).AppendLine("}");
@@ -363,6 +380,10 @@ public class MutableGenerator : IIncrementalGenerator
         var target = model.Target;
         foreach (var property in model.Properties)
         {
+            if (property.Declared)
+            {
+                continue;
+            }
             sb.Append(indent).Append("    /// <inheritdoc cref=\"").Append(cref).Append('.').Append(property.Name).AppendLine("\" />");
             sb.Append(indent).Append("    public ").Append(property.Type).Append(' ').Append(property.Name).AppendLine(" { get; set; }");
             sb.AppendLine();
@@ -384,9 +405,51 @@ public class MutableGenerator : IIncrementalGenerator
         sb.AppendLine();
         WriteToImmutable(sb, model, indent, cref);
         sb.AppendLine();
-        sb.Append(indent).AppendLine("    object global::Rocket.Surgery.LaunchPad.Foundation.IMutable.ToImmutable() => ToImmutable();");
-        sb.AppendLine();
         WriteConversions(sb, model, indent, cref);
+        if (model.WritesValidator)
+        {
+            sb.AppendLine();
+            WriteValidator(sb, model, indent, cref);
+        }
+    }
+
+    // The view model's validator: the value it makes is validated with the validator of that type, and the failures name the properties the
+    // view model shares with it. Without that validator the view model is valid.
+    private static void WriteValidator(StringBuilder sb, MutableModel model, string indent, string cref)
+    {
+        var target = model.Target;
+        const string result = "global::ZeroAlloc.Validation.ValidationResult";
+        sb.Append(indent).AppendLine("    /// <summary>");
+        sb.Append(indent).Append("    ///     Validates the view model as the <see cref=\"").Append(cref).AppendLine("\" /> it makes, with that type's validator.");
+        sb.Append(indent).AppendLine("    /// </summary>");
+        sb.Append(indent).Append("    /// <param name=\"validator\">The validator of <see cref=\"").Append(cref).AppendLine("\" />; without one the view model is valid.</param>");
+        sb.Append(indent)
+          .Append("    public sealed class Validator(global::ZeroAlloc.Validation.ValidatorFor<")
+          .Append(target)
+          .Append(">? validator = null) : global::ZeroAlloc.Validation.ValidatorFor<")
+          .Append(model.Name)
+          .AppendLine(">");
+        sb.Append(indent).AppendLine("    {");
+        sb.Append(indent).AppendLine("        /// <inheritdoc />");
+        sb.Append(indent)
+          .Append("        public override ")
+          .Append(result)
+          .Append(" Validate(")
+          .Append(model.Name)
+          .Append(" instance) => validator?.Validate(instance.ToImmutable()) ?? new ")
+          .Append(result)
+          .AppendLine("([]);");
+        sb.AppendLine();
+        sb.Append(indent).AppendLine("        /// <inheritdoc />");
+        sb.Append(indent)
+          .Append("        public override global::System.Threading.Tasks.ValueTask<")
+          .Append(result)
+          .Append("> ValidateAsync(")
+          .Append(model.Name)
+          .Append(" instance, global::System.Threading.CancellationToken cancellationToken = default) => validator?.ValidateAsync(instance.ToImmutable(), cancellationToken) ?? new(new ")
+          .Append(result)
+          .AppendLine("([]));");
+        sb.Append(indent).AppendLine("    }");
     }
 
     // The implicit conversions both ways: From and ToImmutable.
@@ -446,17 +509,18 @@ public class MutableGenerator : IIncrementalGenerator
     }
 }
 
-internal sealed record MutableProperty(string Name, string Type, bool InConstructor);
+internal sealed record MutableProperty(string Name, string Type, bool InConstructor, bool Declared);
 
 internal sealed record MutableModel(
     string? Namespace,
     EquatableArray<string> Containers,
-    string Accessibility,
+    string Declaration,
     string Name,
     string Target,
     string Hint,
     EquatableArray<MutableProperty> Properties,
     EquatableArray<string> ConstructorArguments,
-    string? NonPartialContainer,
-    LocationInfo? NonPartialLocation
+    string? NonPartialType,
+    LocationInfo? NonPartialLocation,
+    bool WritesValidator
 );
