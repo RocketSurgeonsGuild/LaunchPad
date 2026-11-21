@@ -7,8 +7,11 @@ using Microsoft.Build.Utilities.ProjectCreation;
 
 using Sdk.Tests.Scaffolding;
 
-// as in Hosting.Tests: the public test classes expose nothing for other languages to consume
-[assembly: CLSCompliant(false)]
+// as in Hosting.Tests: the public test classes expose nothing for other languages to consume. Qualified, because Codacy compiles the file
+// on its own, without the implicit usings.
+#pragma warning disable IDE0001
+[assembly: System.CLSCompliant(false)]
+#pragma warning restore IDE0001
 
 namespace Sdk.Tests;
 
