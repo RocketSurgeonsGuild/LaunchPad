@@ -40,7 +40,8 @@ package it is part of:
 </PropertyGroup>
 ```
 
-`LaunchPadEnableHosting` and `LaunchPadEnableAspNetCore` turn off the packages that come with the host model. Dovetail's own
+`LaunchPadEnableHosting`, `LaunchPadEnableAspNetCore` and `LaunchPadEnableOpenTelemetry` turn off the packages that come with the
+host model; `LaunchPadEnableOtlpExporter` turns off the OTLP exporter alone. Dovetail's own
 packages have properties of their own, such as `DovetailEnableSerilog` and `DovetailEnableOpenTelemetry`.
 
 ## Logging and telemetry sinks

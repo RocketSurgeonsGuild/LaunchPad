@@ -14,7 +14,7 @@ The rules of a quarter of the year.
 - Name: `Define`
 - Modifiers: `static`
 - Returns: `StrongTypeDefinition<int>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6aecd30ca14bc14267856dbc142a55a566b9ae42/src/Primitives/StrongTypes/Quarter.cs#L14)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.42409360cf41d0e5a89b31252cf8cea56b207c47/src/Primitives/StrongTypes/Quarter.cs#L14)
 
 ```csharp
 public sealed class QuarterRules

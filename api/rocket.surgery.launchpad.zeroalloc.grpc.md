@@ -1,9 +1,9 @@
 # Rocket.Surgery.LaunchPad.ZeroAlloc.Grpc
 
 - Package: `Rocket.Surgery.LaunchPad.ZeroAlloc.Grpc`
-- Version: `2.0.1-beta.435`
+- Version: `2.0.1-beta.437`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.main.Sha.6aecd30ca14bc14267856dbc142a55a566b9ae42/src/ZeroAlloc.Grpc/Joints)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.main.Sha.42409360cf41d0e5a89b31252cf8cea56b207c47/src/ZeroAlloc.Grpc/Joints)
 - NuGet: [Rocket.Surgery.LaunchPad.ZeroAlloc.Grpc](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.ZeroAlloc.Grpc)
 
 ## Namespaces

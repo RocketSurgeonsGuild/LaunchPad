@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Hosting](/LaunchPad/api/rocket.surgery.launchpad.hosting.md)
-- Version: `2.0.1-beta.435`
+- Version: `2.0.1-beta.437`
 - Namespace: `Rocket.Surgery.LaunchPad.Hosting`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6aecd30ca14bc14267856dbc142a55a566b9ae42/src/Hosting/LaunchPadLoggingOptions.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.42409360cf41d0e5a89b31252cf8cea56b207c47/src/Hosting/LaunchPadLoggingOptions.cs)
 
 RocketSerilogOptions.
 
