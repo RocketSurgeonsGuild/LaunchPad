@@ -11,8 +11,8 @@ namespace Rocket.Surgery.LaunchPad.Foundation;
 /// <remarks>
 ///     A Blazor <c>EditForm</c> binds to the view model, which an immutable request can't be bound to. In a project that references
 ///     ZeroAlloc.Validation the generator also writes a nested <c>Validator</c>, a <c>ValidatorFor</c> of the view model that validates the
-///     value it makes with that type's validator; registered as the view model's <c>ValidatorFor</c>, it lets LaunchPad's
-///     <c>ZeroAllocValidator</c> apply the copied type's rules to the form. A property the class declares itself is not generated, and
+///     value it makes with that type's validator, and a Dovetail joint registers it as the view model's <c>ValidatorFor</c>, so LaunchPad's
+///     <c>ZeroAllocValidator</c> applies the copied type's rules to the form. A property the class declares itself is not generated, and
 ///     <c>From</c> and <c>ToImmutable()</c> use it.
 /// </remarks>
 /// <param name="type">The type the class is a mutable view model of.</param>
@@ -36,8 +36,8 @@ public sealed class MutableAttribute(Type type) : Attribute
 /// <remarks>
 ///     A Blazor <c>EditForm</c> binds to the view model, which an immutable request can't be bound to. In a project that references
 ///     ZeroAlloc.Validation the generator also writes a nested <c>Validator</c>, a <c>ValidatorFor</c> of the view model that validates the
-///     value it makes with that type's validator; registered as the view model's <c>ValidatorFor</c>, it lets LaunchPad's
-///     <c>ZeroAllocValidator</c> apply the copied type's rules to the form. A property the class declares itself is not generated, and
+///     value it makes with that type's validator, and a Dovetail joint registers it as the view model's <c>ValidatorFor</c>, so LaunchPad's
+///     <c>ZeroAllocValidator</c> applies the copied type's rules to the form. A property the class declares itself is not generated, and
 ///     <c>From</c> and <c>ToImmutable()</c> use it.
 /// </remarks>
 /// <typeparam name="T">The type the class is a mutable view model of.</typeparam>

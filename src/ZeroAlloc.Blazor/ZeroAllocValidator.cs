@@ -16,9 +16,10 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Blazor;
 /// <remarks>
 ///     The validator is resolved as <see cref="ValidatorFor{T}" /> of the model's runtime type, which needs that closed generic type at run time.
 ///     ZeroAlloc.Validation registers a validator for each <c>[Validate]</c> type, so a trimmed application keeps the types it validates.
-///     A model without a registered validator is an error. For a view model <c>[Mutable]</c> fills in, register the <c>Validator</c> the
-///     generator nests in it: it validates the value the view model makes, and the failures go to its properties of the same name, so the
-///     form binds to the view model and the request's rules apply.
+///     A model without a registered validator is an error. A view model <c>[Mutable]</c> fills in has one: Foundation's
+///     <c>LaunchPadMutableValidatorsJoint</c> registers the <c>Validator</c> the generator nests in it, which validates the value the view
+///     model makes, and the failures go to its properties of the same name, so the form binds to the view model and the request's rules
+///     apply.
 /// </remarks>
 [PublicAPI]
 public sealed class ZeroAllocValidator : ComponentBase, IDisposable

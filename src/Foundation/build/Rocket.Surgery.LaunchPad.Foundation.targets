@@ -6,4 +6,9 @@
     <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Operations.targets" />
     <!-- The application's JSON context (docs/adr/0007-no-json-reflection.md). -->
     <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Foundation.JsonContext.targets" />
+    <!-- The joints that use what Foundation doesn't depend on, as templates. -->
+    <Import
+        Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Foundation.Templates.targets"
+        Condition="'$(_LaunchPadFoundationTemplatesImported)' != 'true'"
+    />
 </Project>

@@ -612,15 +612,10 @@ public static partial class CreateRocket
 A Blazor `EditForm` binds to `CreateRocket.RequestViewModel`, assigned from a request (`Model = request;`), and sends
 `Model.ToImmutable()`; a generic method such as `Send` infers the view model's type and doesn't convert it. In a project that references
 ZeroAlloc.Validation, the generator also writes `RequestViewModel.Validator`, a `ValidatorFor<RequestViewModel>` that validates the value the
-view model makes with the request's validator, which it takes from the services. `ZeroAllocValidator` (`Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor`)
-requires a registered `ValidatorFor<T>` for the form's model, and ZeroAlloc.Validation registers only those of `[Validate]` types, so register the
-view model's:
-
-```csharp
-services.TryAddSingleton<ValidatorFor<CreateRocket.RequestViewModel>, CreateRocket.RequestViewModel.Validator>();
-```
-
-The request's own rules then apply to the form, and the failures go to the view model's properties of the same name. A view model that
+view model makes with the request's validator, which it takes from the services, and registers it as the view model's validator: Foundation
+writes a Dovetail joint, `LaunchPadMutableValidatorsJoint`, into each project that references ZeroAlloc.Validation, and it calls the
+`AddLaunchPadMutableValidators()` extension the generator writes. `ZeroAllocValidator` (`Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor`) requires a
+registered `ValidatorFor<T>` for the form's model, so it finds the view model's. The request's own rules then apply to the form, and the failures go to the view model's properties of the same name. A view model that
 declares its own `Validator` gets none. A property the view model declares itself isn't
 generated, and `From` and `ToImmutable()` use it, so it can set a default or add attributes for the form. A class is the view model of one
 type; for another view model of the same type, declare another class.

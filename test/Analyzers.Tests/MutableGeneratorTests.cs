@@ -1,3 +1,7 @@
+using Microsoft.CodeAnalysis;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+
 using Rocket.Surgery.LaunchPad.Analyzers;
 using Rocket.Surgery.LaunchPad.Foundation;
 
@@ -195,6 +199,76 @@ public class MutableGeneratorTests() : GeneratorTest()
         var validator = (IModelValidator)Activator.CreateInstance(validatorType, [requestValidator])!;
         var failures = ( await validator.ValidateAsync(viewModel, TestContext.CancellationToken) ).Failures.ToArray();
         await failures.Select(failure => failure.PropertyName).Should().BeEquivalentTo(["SerialNumber"], CollectionOrdering.Matching);
+
+        await Verify(result);
+    }
+
+    /// <summary>
+    ///     Where Foundation's LaunchPadMutableValidatorsJoint template is in the project, AddLaunchPadMutableValidators registers the validator
+    ///     of each view model it can name, and none of a generic or private one; without the template there is no registration.
+    /// </summary>
+    [Test]
+    public async Task Should_Register_The_Validators_Where_The_Joint_Template_Is()
+    {
+        var result = await Builder
+                          .AddReferences(typeof(ValidatorFor<>), typeof(IServiceCollection), typeof(ServiceCollection), typeof(ServiceCollectionDescriptorExtensions))
+                          .AddSources(
+                               """
+                               using Microsoft.Extensions.DependencyInjection;
+                               using ZeroAlloc.Validation;
+
+                               namespace Microsoft.CodeAnalysis
+                               {
+                                   internal sealed class EmbeddedAttribute : Attribute;
+                               }
+
+                               // stands in for the joint Foundation's template writes
+                               namespace Rocket.Surgery.LaunchPad.Foundation.Generated
+                               {
+                                   public static class LaunchPadMutableValidatorsJoint
+                                   {
+                                       public static IServiceCollection Register(IServiceCollection services) => services.AddLaunchPadMutableValidators();
+                                   }
+                               }
+
+                               namespace Sample.Core.Operations.Rockets
+                               {
+                                   public readonly record struct Rocket(string SerialNumber);
+
+                                   public static partial class CreateRocket
+                                   {
+                                       public readonly record struct Request(string SerialNumber);
+
+                                       [Mutable<Request>]
+                                       public partial class RequestViewModel;
+
+                                       [Mutable<Request>]
+                                       private partial class HiddenViewModel;
+                                   }
+
+                                   [Mutable<Rocket>]
+                                   internal partial class RocketViewModel;
+
+                                   [Mutable<Rocket>]
+                                   public partial class GenericViewModel<T>;
+                               }
+                               """
+                           )
+                          .Build()
+                          .GenerateAsync(TestContext.CancellationToken);
+        await result.TryGetResult<MutableGenerator>(out var output).Should().BeTrue();
+        await output!.Diagnostics.Should().BeEmpty();
+        await result.FinalDiagnostics.Where(diagnostic => diagnostic.Severity == DiagnosticSeverity.Error).Select(diagnostic => diagnostic.ToString()).Should().BeEmpty();
+
+        var joint = result.Assembly!.GetType("Rocket.Surgery.LaunchPad.Foundation.Generated.LaunchPadMutableValidatorsJoint")!;
+        var services = (IServiceCollection)joint.GetMethod("Register")!.Invoke(null, [new ServiceCollection()])!;
+        await services.Select(descriptor => descriptor.ImplementationType!.FullName).Should().BeEquivalentTo(
+            [
+                "Sample.Core.Operations.Rockets.CreateRocket+RequestViewModel+Validator",
+                "Sample.Core.Operations.Rockets.RocketViewModel+Validator",
+            ],
+            CollectionOrdering.Any
+        );
 
         await Verify(result);
     }

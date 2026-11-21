@@ -37,6 +37,14 @@
         Condition="'$(_LaunchPadPrimitivesTemplatesImported)' != 'true'"
     />
     <!--
+        The templates of LaunchPad.Foundation, for the same reason: written into a project that references Foundation and meets the template's
+        other gates (src/Foundation/build/Rocket.Surgery.LaunchPad.Foundation.Templates.targets).
+    -->
+    <Import
+        Project="$(MSBuildThisFileDirectory)src/Foundation/build/Rocket.Surgery.LaunchPad.Foundation.Templates.targets"
+        Condition="'$(_LaunchPadFoundationTemplatesImported)' != 'true'"
+    />
+    <!--
         The same for LaunchPad.Foundation, whose targets write an executable's JSON context with the task of src/Foundation.Tasks. Here the task
         comes from that project's output instead of the package's tasks folder; every project that writes a context builds it first.
     -->
