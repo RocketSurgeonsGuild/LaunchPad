@@ -1,5 +1,6 @@
 using System.Net;
 
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 
 using Rocket.Surgery.LaunchPad.AspNetCore.HealthChecks;
@@ -49,6 +50,24 @@ public class HealthCheckPortTests
         );
 
         await AssertIsolatedAsync(host.Client, appPort, healthPort);
+    }
+
+    // A Listen in code overrides urls, so the health port is configured but never bound: the health checks stay on the application's port.
+    [Test]
+    public async Task Should_Serve_The_Health_Checks_On_The_Application_Port_When_The_Health_Port_Is_Not_Bound()
+    {
+        var (appPort, healthPort) = (HealthCheckHost.FreePort(), HealthCheckHost.FreePort());
+        await using var host = await HealthCheckHost.StartAsync(
+            new Dictionary<string, string?> { ["LaunchPad:HealthChecks:Port"] = $"{healthPort}" },
+            builder => builder.WebHost.ConfigureKestrel(kestrel => kestrel.Listen(IPAddress.Loopback, appPort)),
+            kestrel: true
+        );
+
+        await ( await HealthCheckHost.StatusAsync(host.Client, appPort, "/health") ).Should().BeEqualTo(HttpStatusCode.OK);
+        await ( await HealthCheckHost.StatusAsync(host.Client, appPort, "/health/live") ).Should().BeEqualTo(HttpStatusCode.OK);
+        await ( await HealthCheckHost.StatusAsync(host.Client, appPort, "/health/ready") ).Should().BeEqualTo(HttpStatusCode.OK);
+        await ( await HealthCheckHost.StatusAsync(host.Client, appPort, "/ping") ).Should().BeEqualTo(HttpStatusCode.OK);
+        await Assert.That(() => HealthCheckHost.StatusAsync(host.Client, healthPort, "/health/live")).Throws<HttpRequestException>();
     }
 
     [Test]

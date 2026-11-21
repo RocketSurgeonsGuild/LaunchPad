@@ -16,7 +16,7 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 /// <remarks>
 ///     When <see cref="LaunchPadHealthCheckOptions.Port" /> is set, Kestrel also listens on that port, next to the application's own addresses,
 ///     and the port serves the health check endpoints alone: anything else on it gets a 404, and so do the health check endpoints on any other
-///     port.
+///     port. When the server doesn't listen on the port after all, the health check endpoints answer on the application's own addresses.
 /// </remarks>
 /// <seealso cref="IServiceJoint" />
 [PublicAPI]

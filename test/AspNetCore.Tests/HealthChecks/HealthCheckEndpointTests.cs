@@ -104,7 +104,7 @@ public class HealthCheckEndpointTests
         await ready.StatusCode.Should().BeEqualTo(HttpStatusCode.OK);
     }
 
-    // The in-memory test server has no ports, so an application with a health port can still be tested with WebApplicationFactory.
+    // The in-memory test server binds no port, so an application with a health port answers everything there, and WebApplicationFactory tests keep working.
     [Test]
     public async Task Should_Serve_Everything_On_The_Test_Server_When_A_Port_Is_Set()
     {
