@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-
 using Rocket.Surgery.LaunchPad.AspNetCore;
 
 using Sample.Restful;
@@ -23,19 +21,7 @@ app
    .UseReDoc();
 
 app.UseAuthorization();
-app.MapHealthChecks(
-    "/health",
-    new()
-    {
-        ResponseWriter = LaunchPadHelpers.DefaultResponseWriter,
-        ResultStatusCodes = new Dictionary<HealthStatus, int>
-        {
-            { HealthStatus.Healthy, StatusCodes.Status200OK },
-            { HealthStatus.Degraded, StatusCodes.Status500InternalServerError },
-            { HealthStatus.Unhealthy, StatusCodes.Status503ServiceUnavailable },
-        },
-    }
-);
+app.MapLaunchPadHealthChecks();
 
 app.MapControllers();
 
