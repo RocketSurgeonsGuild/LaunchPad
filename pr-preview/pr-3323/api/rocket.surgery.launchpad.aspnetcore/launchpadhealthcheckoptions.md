@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.AspNetCore](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchpad.aspnetcore.md)
-- Version: `2.0.1-pr.1278`
+- Version: `2.0.1-pr.1283`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.HealthChecks`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.1d02f463b63b8124a62d0eac5a4ec79986d3ddfb/src/AspNetCore/HealthChecks/LaunchPadHealthCheckOptions.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.d852442c68f31f012f495e373ebac8fda5751397/src/AspNetCore/HealthChecks/LaunchPadHealthCheckOptions.cs)
 
 Where LaunchPad maps the health check endpoints ( `MapLaunchPadHealthChecks`), and on which port.
 
@@ -22,7 +22,7 @@ public sealed class LaunchPadHealthCheckOptions
 
 ## Remarks
 
-Optionary binds these options from the [LaunchPadHealthCheckOptions.SectionName](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchpad.aspnetcore/launchpadhealthcheckoptions/fields.md#sectionname) configuration section without reflection, for example `LaunchPad__HealthChecks__Port=8081`, and describes them in the application's `appsettings.schema.json`. The [HealthChecksJoint](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchpad.aspnetcore/healthchecksjoint.md) registers them, and checks them when the host starts. Code can change them with `services.Configure<LaunchPadHealthCheckOptions>`.
+Optionary binds these options from the [LaunchPadHealthCheckOptions.SectionName](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchpad.aspnetcore/launchpadhealthcheckoptions/fields.md#sectionname) configuration section without reflection, for example `LaunchPad__HealthChecks__Port=8081`, and describes them in the application's `appsettings.schema.json`. The [HealthChecksJoint](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchpad.aspnetcore/healthchecksjoint.md) registers them, and ZeroAlloc.Validation validates them when the host starts. Code can change them with `services.Configure<LaunchPadHealthCheckOptions>`.
 
 ## Constructors
 

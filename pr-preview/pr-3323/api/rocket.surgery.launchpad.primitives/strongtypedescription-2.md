@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-pr.1278`
+- Version: `2.0.1-pr.1283`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.1d02f463b63b8124a62d0eac5a4ec79986d3ddfb/src/Primitives/Descriptions/StrongTypeDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.d852442c68f31f012f495e373ebac8fda5751397/src/Primitives/Descriptions/StrongTypeDescription.cs)
 - Inherits: [StrongTypeDescription](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchpad.primitives/strongtypedescription.md)
 
 The description of one strong type, which knows the strong type and its value as generic arguments.
