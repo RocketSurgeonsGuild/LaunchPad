@@ -1,9 +1,9 @@
-using System.ComponentModel.DataAnnotations;
-
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 using Optionary;
+
+using ZeroAlloc.Validation;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.HealthChecks;
 
@@ -13,11 +13,12 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.HealthChecks;
 /// <remarks>
 ///     Optionary binds these options from the <see cref="SectionName" /> configuration section without reflection, for example
 ///     <c>LaunchPad__HealthChecks__Port=8081</c>, and describes them in the application's <c>appsettings.schema.json</c>. The
-///     <see cref="Joints.HealthChecksJoint" /> registers them, and checks them when the host starts. Code can change them with
+///     <see cref="Joints.HealthChecksJoint" /> registers them, and ZeroAlloc.Validation validates them when the host starts. Code can change them with
 ///     <c>services.Configure&lt;LaunchPadHealthCheckOptions&gt;</c>.
 /// </remarks>
 [PublicAPI]
 [Optionary(SectionName, ValidateOnStart = true)]
+[Validate]
 public sealed class LaunchPadHealthCheckOptions
 {
     /// <summary>The configuration section the options are bound from.</summary>
@@ -33,7 +34,7 @@ public sealed class LaunchPadHealthCheckOptions
     ///     the server doesn't listen on the port after all (a <c>Listen</c> in code, IIS, HTTP.sys or the in-memory test server), the health
     ///     check endpoints answer on the application's own addresses, as they do with no port.
     /// </remarks>
-    [Range(1, 65535)]
+    [InclusiveBetween(1, 65535)]
     public int? Port { get; set; }
 
     /// <summary>The path of the health report, which the liveness and readiness paths sit under. The default is <c>/health</c>.</summary>

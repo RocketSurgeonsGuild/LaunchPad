@@ -51,6 +51,7 @@
         <PackageVersion Include="ZeroAlloc.Mapping" Version="1.7.1" />
         <PackageVersion Include="ZeroAlloc.Validation" Version="2.6.1" />
         <PackageVersion Include="ZeroAlloc.Validation.Inject" Version="2.6.1" />
+        <PackageVersion Include="ZeroAlloc.Validation.Options" Version="2.6.1" />
         <PackageVersion Include="Grpc.AspNetCore" Version="2.85.0" />
         <PackageVersion Include="Humanizer.Core" Version="3.0.10" />
         <PackageVersion Include="Joinery.Dovetail.Serilog" Version="0.8.0" />

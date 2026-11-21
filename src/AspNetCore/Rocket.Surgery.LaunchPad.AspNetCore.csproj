@@ -5,6 +5,8 @@
         <PackageDescription>Dovetail joints for ASP.NET Core: MVC with application parts found by Specular, OpenAPI documents with LaunchPad's transformers, problem details, Serilog request logging, health check endpoints on a port of their own and the application's System.Text.Json options.</PackageDescription>
         <PackageTags>$(PackageTags);dovetail;aspnetcore;web-api;openapi;problem-details;serilog;request-logging;health-checks;opentelemetry;system-text-json</PackageTags>
         <OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
+        <!-- The validator ZeroAlloc.Validation generates for LaunchPadHealthCheckOptions is an implementation detail, not public API. -->
+        <ZeroAllocGeneratedAccessibility>Internal</ZeroAllocGeneratedAccessibility>
     </PropertyGroup>
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
@@ -24,6 +26,12 @@
             and turns into more string literals than a program may hold (CS8103).
         -->
         <PackageReference Include="Optionary" PrivateAssets="analyzers;build;buildMultiTargeting;buildTransitive" />
+        <!--
+            LaunchPadHealthCheckOptions is validated by the validator ZeroAlloc.Validation generates here. With ZeroAlloc.Validation.Options
+            referenced, Optionary registers it as the options' IValidateOptions. Consumers need only the runtime libraries.
+        -->
+        <PackageReference Include="ZeroAlloc.Validation" PrivateAssets="analyzers;build;buildMultiTargeting;buildTransitive" />
+        <PackageReference Include="ZeroAlloc.Validation.Options" PrivateAssets="analyzers;build;buildMultiTargeting;buildTransitive" />
         <PackageReference Include="Rocket.Surgery.Build.Information" />
         <PackageReference Include="Specular" />
         <PackageReference Include="Serilog.AspNetCore" />

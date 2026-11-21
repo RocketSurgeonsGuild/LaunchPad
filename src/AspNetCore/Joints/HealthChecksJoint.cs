@@ -30,7 +30,6 @@ public class HealthChecksJoint : IServiceJoint
         services.AddHealthChecks();
         // Optionary binds LaunchPadHealthCheckOptions from its section without reflection, and describes it in appsettings.schema.json.
         services.AddOptionaryConfigurationOptions();
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IValidateOptions<LaunchPadHealthCheckOptions>, HealthCheckOptionsValidator>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigureOptions<KestrelServerOptions>, HealthCheckKestrelSetup>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IStartupFilter, HealthCheckPortStartupFilter>());
     }

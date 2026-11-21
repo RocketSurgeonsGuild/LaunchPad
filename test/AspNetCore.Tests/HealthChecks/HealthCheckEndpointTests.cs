@@ -124,14 +124,25 @@ public class HealthCheckEndpointTests
         await host.Services.GetRequiredService<IOptions<LaunchPadHealthCheckOptions>>().Value.Port.Should().BeEqualTo(8081);
     }
 
+    // ZeroAlloc.Validation validates the options when the host starts, so a bad port stops the application instead of the first request.
     [Test]
-    [Arguments("health")]
     [Arguments("0")]
     [Arguments("70000")]
-    public async Task Should_Not_Start_With_A_Port_That_Is_Not_A_Port_Number(string port)
+    public async Task Should_Not_Start_With_A_Port_Out_Of_Range(string port)
     {
-        // Optionary validates the options when the host starts, so a bad port stops the application instead of the first request.
-        var exception = await Assert.ThrowsAsync<Exception>(async () => await HealthCheckHost.StartAsync(new Dictionary<string, string?> { ["LaunchPad:HealthChecks:Port"] = port }));
+        var exception = await Assert.ThrowsAsync<OptionsValidationException>(
+            async () => await HealthCheckHost.StartAsync(new Dictionary<string, string?> { ["LaunchPad:HealthChecks:Port"] = port })
+        );
+        await exception!.OptionsType.Should().BeEqualTo(typeof(LaunchPadHealthCheckOptions));
+        await exception.Failures.Should().Contain("Port: Port must be between 1 and 65535.");
+    }
+
+    [Test]
+    public async Task Should_Not_Start_With_A_Port_That_Is_Not_A_Number()
+    {
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+            async () => await HealthCheckHost.StartAsync(new Dictionary<string, string?> { ["LaunchPad:HealthChecks:Port"] = "health" })
+        );
         await exception!.Message.Should().Contain("LaunchPad:HealthChecks:Port");
     }
 }
