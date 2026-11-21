@@ -25,8 +25,6 @@ public static partial class CreateRocket
     ///     The operation to create a new rocket record
     /// </summary>
     [Validate]
-    // the Blazor form binds to the generated RequestViewModel: a readonly request can't be edited a field at a time
-    [Mutable]
     public readonly record struct Request : IRequest<Result>
     {
         /// <summary>
@@ -35,14 +33,20 @@ public static partial class CreateRocket
         [NotEmpty]
         [MinLength(10)]
         [MaxLength(30)]
-        public string SerialNumber { get; init; } // TODO: Make generator that can be used to create a writable view model
+        public string SerialNumber { get; init; }
 
         /// <summary>
         ///     The type of rocket
         /// </summary>
         [IsInEnum]
-        public RocketType Type { get; init; } // TODO: Make generator that can be used to create a writable view model
+        public RocketType Type { get; init; }
     }
+
+    /// <summary>
+    ///     The <see cref="Request" /> a Blazor form binds to: a readonly request can't be edited a field at a time.
+    /// </summary>
+    [Mutable<Request>]
+    public partial class RequestViewModel;
 
     /// <summary>
     ///     The identifier of the rocket that was created

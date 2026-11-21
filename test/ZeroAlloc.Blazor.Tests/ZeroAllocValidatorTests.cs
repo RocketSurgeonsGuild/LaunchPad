@@ -12,7 +12,7 @@ using ZeroAlloc.Validation;
 
 namespace ZeroAlloc.Blazor.Tests;
 
-public class ZeroAllocValidatorTests
+public partial class ZeroAllocValidatorTests
 {
     [Test]
     public async Task Adds_The_Messages_Of_The_Registered_Validator_When_The_Form_Is_Validated()
@@ -55,12 +55,12 @@ public class ZeroAllocValidatorTests
     }
 
     [Test]
-    public async Task Leaves_The_Form_Valid_When_No_Validator_Is_Registered()
+    public async Task Requires_A_Registered_Validator()
     {
         var editContext = new EditContext(new Person { Name = "" });
         await using var renderer = await Render(editContext);
 
-        await ( await editContext.ValidateAsync() ).Should().BeTrue();
+        await Assert.That(async () => await editContext.ValidateAsync()).Throws<InvalidOperationException>();
     }
 
     [Test]
@@ -69,7 +69,12 @@ public class ZeroAllocValidatorTests
         // the form binds to the mutable view model; the rules are the immutable request's
         var model = new PersonRequestViewModel { Name = "", Nickname = "Countess" };
         var editContext = new EditContext(model);
-        await using var renderer = await Render(editContext, services => services.AddSingleton<ValidatorFor<PersonRequest>, PersonRequestValidator>());
+        await using var renderer = await Render(
+            editContext,
+            services => services
+                       .AddSingleton<ValidatorFor<PersonRequest>, PersonRequestValidator>()
+                       .AddSingleton<ValidatorFor<PersonRequestViewModel>, PersonRequestViewModel.Validator>()
+        );
 
         await ( await editContext.ValidateAsync() ).Should().BeFalse();
         await editContext.GetValidationMessages(editContext.Field(nameof(PersonRequestViewModel.Name))).Should().BeEquivalentTo(["Name is required"], CollectionOrdering.Matching);
@@ -113,16 +118,9 @@ public class ZeroAllocValidatorTests
 
     public readonly record struct PersonRequest(string Name, string Nickname);
 
-    // Stands in for the view model [Mutable] generates for PersonRequest.
-    public sealed class PersonRequestViewModel : IMutable<PersonRequest>
-    {
-        public string Name { get; set; } = "";
-        public string Nickname { get; set; } = "";
-
-        public PersonRequest ToImmutable() => new(Name, Nickname);
-
-        object IMutable.ToImmutable() => ToImmutable();
-    }
+    // The form binds to it; the generator writes its Validator, which validates the PersonRequest it makes.
+    [Mutable<PersonRequest>]
+    public sealed partial class PersonRequestViewModel;
 
     private sealed class PersonRequestValidator : ValidatorFor<PersonRequest>
     {

@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Components.Forms;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using Rocket.Surgery.LaunchPad.Foundation;
-
 using ZeroAlloc.Validation;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Blazor;
@@ -18,9 +16,10 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Blazor;
 /// <remarks>
 ///     The validator is resolved as <see cref="ValidatorFor{T}" /> of the model's runtime type, which needs that closed generic type at run time.
 ///     ZeroAlloc.Validation registers a validator for each <c>[Validate]</c> type, so a trimmed application keeps the types it validates.
-///     A model that is an <see cref="IMutable" />, such as the view model <see cref="MutableAttribute" /> generates for a request, is validated
-///     as the value it makes, and the failures go to its properties of the same name: the form binds to the view model and the request's
-///     rules apply.
+///     A model without a registered validator is an error. A view model <c>[Mutable]</c> fills in has one: Foundation's
+///     <c>LaunchPadMutableValidatorsJoint</c> registers the <c>Validator</c> the generator nests in it, which validates the value the view
+///     model makes, and the failures go to its properties of the same name, so the form binds to the view model and the request's rules
+///     apply.
 /// </remarks>
 [PublicAPI]
 public sealed class ZeroAllocValidator : ComponentBase, IDisposable
@@ -28,7 +27,7 @@ public sealed class ZeroAllocValidator : ComponentBase, IDisposable
     private static readonly MethodInfo ValidateMethod = typeof(ZeroAllocValidator).GetMethod(nameof(Validate), BindingFlags.NonPublic | BindingFlags.Static)!;
 
     private static ValidationFailure[] Validate<TModel>(IServiceProvider services, TModel model) =>
-        services.GetService<ValidatorFor<TModel>>()?.Validate(model).Failures.ToArray() ?? [];
+        services.GetRequiredService<ValidatorFor<TModel>>().Validate(model).Failures.ToArray();
 
     private EditContext? _editContext;
     private ValidationMessageStore? _messages;
@@ -63,11 +62,7 @@ public sealed class ZeroAllocValidator : ComponentBase, IDisposable
 
     [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "ValidatorFor<T> is registered for each validated model type, so its instantiation exists.")]
     [UnconditionalSuppressMessage("Trimming", "IL2060", Justification = "Validate<TModel> has no trimming requirements on TModel.")]
-    private ValidationFailure[] ValidateModel(object model)
-    {
-        var value = model is IMutable mutable ? mutable.ToImmutable() : model;
-        return (ValidationFailure[])ValidateMethod.MakeGenericMethod(value.GetType()).Invoke(null, [Services, value])!;
-    }
+    private ValidationFailure[] ValidateModel(object model) => (ValidationFailure[])ValidateMethod.MakeGenericMethod(model.GetType()).Invoke(null, BindingFlags.DoNotWrapExceptions, null, [Services, model], null)!;
 
     private void OnValidationRequested(object? sender, ValidationRequestedEventArgs e)
     {

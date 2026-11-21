@@ -3,32 +3,45 @@ using System.Diagnostics;
 namespace Rocket.Surgery.LaunchPad.Foundation;
 
 /// <summary>
-///     Generates a mutable view model of the type, a class next to it named <c>{Prefix}{Name}{Suffix}</c> (<c>RequestViewModel</c> by default):
-///     a settable property for each of the type's properties, <c>From(value)</c> to copy a value into it and <c>ToImmutable()</c> to make the
-///     value from it (<see cref="IMutable{T}" />). The type can be a class, a record, a record struct or a readonly record struct, and the types
-///     that contain it must be partial.
+///     Makes the partial class it marks a mutable view model of another type: the generator gives the class a settable property for each of
+///     that type's properties, <c>From(value)</c> to copy a value into it, <c>ToImmutable()</c> to make the value from it and an implicit
+///     conversion each way. The copied type can be a class, a record, a record struct or a readonly record struct, in this assembly or another
+///     one. The class and the types that contain it must be partial.
 /// </summary>
 /// <remarks>
-///     A Blazor <c>EditForm</c> binds to the view model, which an immutable request can't be bound to. LaunchPad's <c>ZeroAllocValidator</c>
-///     validates the view model with the validator of the type it makes.
+///     A Blazor <c>EditForm</c> binds to the view model, which an immutable request can't be bound to. In a project that references
+///     ZeroAlloc.Validation the generator also writes a nested <c>Validator</c>, a <c>ValidatorFor</c> of the view model that validates the
+///     value it makes with that type's validator, and a Dovetail joint registers it as the view model's <c>ValidatorFor</c>, so LaunchPad's
+///     <c>ZeroAllocValidator</c> applies the copied type's rules to the form. A property the class declares itself is not generated, and
+///     <c>From</c> and <c>ToImmutable()</c> use it.
 /// </remarks>
-/// <remarks>
-///     Generate a mutable view model of the type.
-/// </remarks>
-/// <param name="prefix">What goes before the type's name in the view model's name.</param>
-/// <param name="suffix">What goes after the type's name in the view model's name.</param>
-[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, Inherited = false, AllowMultiple = true)]
+/// <param name="type">The type the class is a mutable view model of.</param>
+[AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
+[PublicAPI]
 [Conditional("CodeGeneration")]
-public sealed class MutableAttribute(string prefix = "", string suffix = "ViewModel") : Attribute
+public sealed class MutableAttribute(Type type) : Attribute
 {
-
     /// <summary>
-    ///     What goes before the type's name in the view model's name.
+    ///     The type the class is a mutable view model of.
     /// </summary>
-    public string Prefix { get; } = prefix;
-
-    /// <summary>
-    ///     What goes after the type's name in the view model's name.
-    /// </summary>
-    public string Suffix { get; } = suffix;
+    public Type Type { get; } = type;
 }
+
+/// <summary>
+///     Makes the partial class it marks a mutable view model of <typeparamref name="T" />: the generator gives the class a settable property for
+///     each of its properties, <c>From(value)</c> to copy a value into it, <c>ToImmutable()</c> to make the value from it and an implicit
+///     conversion each way. <typeparamref name="T" /> can be a class, a record, a record struct or a readonly record struct, in this assembly or
+///     another one. The class and the types that contain it must be partial.
+/// </summary>
+/// <remarks>
+///     A Blazor <c>EditForm</c> binds to the view model, which an immutable request can't be bound to. In a project that references
+///     ZeroAlloc.Validation the generator also writes a nested <c>Validator</c>, a <c>ValidatorFor</c> of the view model that validates the
+///     value it makes with that type's validator, and a Dovetail joint registers it as the view model's <c>ValidatorFor</c>, so LaunchPad's
+///     <c>ZeroAllocValidator</c> applies the copied type's rules to the form. A property the class declares itself is not generated, and
+///     <c>From</c> and <c>ToImmutable()</c> use it.
+/// </remarks>
+/// <typeparam name="T">The type the class is a mutable view model of.</typeparam>
+[AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
+[PublicAPI]
+[Conditional("CodeGeneration")]
+public sealed class MutableAttribute<T> : Attribute where T : notnull;

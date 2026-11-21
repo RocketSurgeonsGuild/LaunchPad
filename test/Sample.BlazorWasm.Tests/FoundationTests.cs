@@ -26,4 +26,14 @@ public class FoundationTests : HandleTestHostBase
 
         await result.Failures.ToArray().Select(z => z.PropertyName).Distinct().Should().BeEquivalentTo([nameof(TestHandler.Request.FirstName), nameof(TestHandler.Request.LastName)], CollectionOrdering.Matching);
     }
+
+    [Test]
+    public async Task Should_Register_The_Validator_Of_The_View_Model()
+    {
+        var result = await ServiceProvider
+                          .GetRequiredService<ValidatorFor<TestHandler.RequestViewModel>>()
+                          .ValidateAsync(new TestHandler.RequestViewModel { FirstName = "", LastName = "Lovelace" }, TestContext.CancellationToken);
+
+        await result.Failures.ToArray().Select(z => z.PropertyName).Distinct().Should().BeEquivalentTo([nameof(TestHandler.RequestViewModel.FirstName)], CollectionOrdering.Matching);
+    }
 }

@@ -1,5 +1,11 @@
+using Microsoft.CodeAnalysis;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+
 using Rocket.Surgery.LaunchPad.Analyzers;
 using Rocket.Surgery.LaunchPad.Foundation;
+
+using ZeroAlloc.Validation;
 
 namespace Analyzers.Tests;
 
@@ -25,8 +31,10 @@ public class MutableGeneratorTests() : GeneratorTest()
                                {
                                    public static partial class CreateRocket
                                    {
-                                       [Mutable]
                                        {{declaration}}
+
+                                       [Mutable(typeof(Request))]
+                                       public partial class RequestViewModel;
                                    }
                                }
                                """
@@ -50,11 +58,11 @@ public class MutableGeneratorTests() : GeneratorTest()
         requestType.GetProperty("SerialNumber")!.GetSetMethod(true)?.Invoke(request, ["SN-1"]);
         requestType.GetProperty("Type")!.GetSetMethod(true)!.Invoke(request, [3]);
 
-        var viewModel = (IMutable)viewModelType.GetMethod("From")!.Invoke(null, [request])!;
+        var viewModel = viewModelType.GetMethod("From")!.Invoke(null, [request])!;
         await viewModelType.GetProperty("SerialNumber")!.GetValue(viewModel).Should().BeEqualTo("SN-1");
         viewModelType.GetProperty("Type")!.SetValue(viewModel, 7);
 
-        var made = viewModel.ToImmutable();
+        var made = viewModelType.GetMethod("ToImmutable")!.Invoke(viewModel, [])!;
         await made.GetType().Should().BeEqualTo(requestType);
         await requestType.GetProperty("Id")!.GetValue(made).Should().BeEqualTo(id);
         await requestType.GetProperty("SerialNumber")!.GetValue(made).Should().BeEqualTo("SN-1");
@@ -75,19 +83,24 @@ public class MutableGeneratorTests() : GeneratorTest()
     }
 
     /// <summary>
-    ///     The prefix and suffix name the view model, and each attribute writes one.
+    ///     The generic attribute does the same as the one that takes a type, and the view model can live anywhere: its name, namespace and
+    ///     accessibility are its own.
     /// </summary>
     [Test]
-    public async Task Should_Name_The_View_Model_With_The_Prefix_And_Suffix()
+    public async Task Should_Generate_A_View_Model_From_The_Generic_Attribute()
     {
         var result = await Builder
                           .AddSources(
                                """
                                namespace Sample.Core.Operations.Rockets
                                {
-                                   [Mutable]
-                                   [Mutable("Editable", "Form")]
                                    public readonly record struct Rocket(Guid Id, string SerialNumber);
+                               }
+
+                               namespace Sample.BlazorWasm.Forms
+                               {
+                                   [Mutable<Sample.Core.Operations.Rockets.Rocket>]
+                                   internal sealed partial class RocketForm;
                                }
                                """
                            )
@@ -95,28 +108,186 @@ public class MutableGeneratorTests() : GeneratorTest()
                           .GenerateAsync(TestContext.CancellationToken);
         await result.TryGetResult<MutableGenerator>(out var output).Should().BeTrue();
         await output!.Diagnostics.Should().BeEmpty();
-        await result.Assembly!.GetType("Sample.Core.Operations.Rockets.RocketViewModel").Should().NotBeNull();
-        await result.Assembly.GetType("Sample.Core.Operations.Rockets.EditableRocketForm").Should().NotBeNull();
+        var viewModelType = result.Assembly!.GetType("Sample.BlazorWasm.Forms.RocketForm")!;
+        await viewModelType.Should().NotBeNull();
+        await viewModelType.IsPublic.Should().BeFalse();
+        await viewModelType.GetProperty("SerialNumber").Should().NotBeNull();
 
         await Verify(result);
     }
 
     /// <summary>
-    ///     The view model is written next to the type, so the types that contain it must be partial.
+    ///     A property the view model declares itself isn't written again, and From and ToImmutable use it.
     /// </summary>
     [Test]
-    public async Task Should_Require_Partial_Containing_Types()
+    public async Task Should_Use_A_Property_The_View_Model_Declares()
     {
         var result = await Builder
                           .AddSources(
                                """
                                namespace Sample.Core.Operations.Rockets
                                {
-                                   public static class CreateRocket
+                                   public record Rocket(Guid Id, string SerialNumber);
+
+                                   [Mutable<Rocket>]
+                                   public partial class RocketViewModel
                                    {
-                                       [Mutable]
-                                       public readonly record struct Request(Guid Id);
+                                       public string SerialNumber { get; set; } = "unset";
                                    }
+                               }
+                               """
+                           )
+                          .Build()
+                          .GenerateAsync(TestContext.CancellationToken);
+        await result.TryGetResult<MutableGenerator>(out var output).Should().BeTrue();
+        await output!.Diagnostics.Should().BeEmpty();
+
+        var rocketType = result.Assembly!.GetType("Sample.Core.Operations.Rockets.Rocket")!;
+        var viewModelType = result.Assembly.GetType("Sample.Core.Operations.Rockets.RocketViewModel")!;
+        var rocket = Activator.CreateInstance(rocketType, [Guid.NewGuid(), "SN-1"])!;
+        var viewModel = viewModelType.GetMethod("From")!.Invoke(null, [rocket])!;
+        await viewModelType.GetProperty("SerialNumber")!.GetValue(viewModel).Should().BeEqualTo("SN-1");
+        var made = viewModelType.GetMethod("ToImmutable")!.Invoke(viewModel, [])!;
+        await rocketType.GetProperty("SerialNumber")!.GetValue(made).Should().BeEqualTo("SN-1");
+
+        await Verify(result);
+    }
+
+    /// <summary>
+    ///     Where ZeroAlloc.Validation is referenced, the view model gets a validator that validates the value it makes with that type's
+    ///     validator, which it requires.
+    /// </summary>
+    [Test]
+    public async Task Should_Generate_A_Validator_Where_ZeroAlloc_Validation_Is_Referenced()
+    {
+        var result = await Builder
+                          .AddReferences(typeof(ValidatorFor<>))
+                          .AddSources(
+                               """
+                               using ZeroAlloc.Validation;
+
+                               namespace Sample.Core.Operations.Rockets
+                               {
+                                   public readonly record struct Rocket(string SerialNumber);
+
+                                   public sealed class RocketValidator : ValidatorFor<Rocket>
+                                   {
+                                       public override ValidationResult Validate(Rocket instance) => instance.SerialNumber.Length == 0
+                                           ? new([new ValidationFailure { PropertyName = nameof(Rocket.SerialNumber), ErrorMessage = "required" }])
+                                           : new([]);
+                                   }
+
+                                   [Mutable<Rocket>]
+                                   public partial class RocketViewModel;
+                               }
+                               """
+                           )
+                          .Build()
+                          .GenerateAsync(TestContext.CancellationToken);
+        await result.TryGetResult<MutableGenerator>(out var output).Should().BeTrue();
+        await output!.Diagnostics.Should().BeEmpty();
+
+        var viewModelType = result.Assembly!.GetType("Sample.Core.Operations.Rockets.RocketViewModel")!;
+        var validatorType = viewModelType.GetNestedType("Validator")!;
+        var constructor = await validatorType.GetConstructors().Should().HaveSingleItem();
+        var parameter = await constructor.GetParameters().Should().HaveSingleItem();
+        await parameter.HasDefaultValue.Should().BeFalse();
+
+        var viewModel = Activator.CreateInstance(viewModelType)!;
+        viewModelType.GetProperty("SerialNumber")!.SetValue(viewModel, "");
+        var requestValidator = Activator.CreateInstance(result.Assembly.GetType("Sample.Core.Operations.Rockets.RocketValidator")!)!;
+        var validator = (IModelValidator)Activator.CreateInstance(validatorType, [requestValidator])!;
+        var failures = ( await validator.ValidateAsync(viewModel, TestContext.CancellationToken) ).Failures.ToArray();
+        await failures.Select(failure => failure.PropertyName).Should().BeEquivalentTo(["SerialNumber"], CollectionOrdering.Matching);
+
+        await Verify(result);
+    }
+
+    /// <summary>
+    ///     Where Foundation's LaunchPadMutableValidatorsJoint template is in the project, AddLaunchPadMutableValidators registers the validator
+    ///     of each view model it can name, and none of a generic or private one; without the template there is no registration.
+    /// </summary>
+    [Test]
+    public async Task Should_Register_The_Validators_Where_The_Joint_Template_Is()
+    {
+        var result = await Builder
+                          .AddReferences(typeof(ValidatorFor<>), typeof(IServiceCollection), typeof(ServiceCollection), typeof(ServiceCollectionDescriptorExtensions))
+                          .AddSources(
+                               """
+                               using Microsoft.Extensions.DependencyInjection;
+                               using ZeroAlloc.Validation;
+
+                               namespace Microsoft.CodeAnalysis
+                               {
+                                   internal sealed class EmbeddedAttribute : Attribute;
+                               }
+
+                               // stands in for the joint Foundation's template writes
+                               namespace Rocket.Surgery.LaunchPad.Foundation.Generated
+                               {
+                                   public static class LaunchPadMutableValidatorsJoint
+                                   {
+                                       public static IServiceCollection Register(IServiceCollection services) => services.AddLaunchPadMutableValidators();
+                                   }
+                               }
+
+                               namespace Sample.Core.Operations.Rockets
+                               {
+                                   public readonly record struct Rocket(string SerialNumber);
+
+                                   public static partial class CreateRocket
+                                   {
+                                       public readonly record struct Request(string SerialNumber);
+
+                                       [Mutable<Request>]
+                                       public partial class RequestViewModel;
+
+                                       [Mutable<Request>]
+                                       private partial class HiddenViewModel;
+                                   }
+
+                                   [Mutable<Rocket>]
+                                   internal partial class RocketViewModel;
+
+                                   [Mutable<Rocket>]
+                                   public partial class GenericViewModel<T>;
+                               }
+                               """
+                           )
+                          .Build()
+                          .GenerateAsync(TestContext.CancellationToken);
+        await result.TryGetResult<MutableGenerator>(out var output).Should().BeTrue();
+        await output!.Diagnostics.Should().BeEmpty();
+        await result.FinalDiagnostics.Where(diagnostic => diagnostic.Severity == DiagnosticSeverity.Error).Select(diagnostic => diagnostic.ToString()).Should().BeEmpty();
+
+        var joint = result.Assembly!.GetType("Rocket.Surgery.LaunchPad.Foundation.Generated.LaunchPadMutableValidatorsJoint")!;
+        var services = (IServiceCollection)joint.GetMethod("Register")!.Invoke(null, [new ServiceCollection()])!;
+        await services.Select(descriptor => descriptor.ImplementationType!.FullName).Should().BeEquivalentTo(
+            [
+                "Sample.Core.Operations.Rockets.CreateRocket+RequestViewModel+Validator",
+                "Sample.Core.Operations.Rockets.RocketViewModel+Validator",
+            ],
+            CollectionOrdering.Any
+        );
+
+        await Verify(result);
+    }
+
+    /// <summary>
+    ///     The generator fills in the view model, so it must be partial.
+    /// </summary>
+    [Test]
+    public async Task Should_Require_A_Partial_View_Model()
+    {
+        var result = await Builder
+                          .AddSources(
+                               """
+                               namespace Sample.Core.Operations.Rockets
+                               {
+                                   public readonly record struct Request(Guid Id);
+
+                                   [Mutable<Request>]
+                                   public class RequestViewModel;
                                }
                                """
                            )
@@ -125,7 +296,7 @@ public class MutableGeneratorTests() : GeneratorTest()
         await result.TryGetResult<MutableGenerator>(out var output).Should().BeTrue();
         var diagnostic = await output!.Diagnostics.Should().HaveSingleItem();
         await diagnostic.Id.Should().BeEqualTo("LPAD0001");
-        await diagnostic.ToString().Should().Contain("Type CreateRocket must be made partial.");
+        await diagnostic.ToString().Should().Contain("Type RequestViewModel must be made partial.");
     }
 
     public override async Task InitializeAsync()
