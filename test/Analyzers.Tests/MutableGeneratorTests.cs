@@ -150,8 +150,8 @@ public class MutableGeneratorTests() : GeneratorTest()
     }
 
     /// <summary>
-    ///     Where ZeroAlloc.Validation is referenced, the view model gets a validator, named by [ValidatedBy], that validates the value it makes
-    ///     with that type's validator, and is valid without one.
+    ///     Where ZeroAlloc.Validation is referenced, the view model gets a validator that validates the value it makes with that type's
+    ///     validator, which it requires.
     /// </summary>
     [Test]
     public async Task Should_Generate_A_Validator_Where_ZeroAlloc_Validation_Is_Referenced()
@@ -184,18 +184,17 @@ public class MutableGeneratorTests() : GeneratorTest()
         await output!.Diagnostics.Should().BeEmpty();
 
         var viewModelType = result.Assembly!.GetType("Sample.Core.Operations.Rockets.RocketViewModel")!;
-        var validatedBy = viewModelType.GetCustomAttributes(typeof(ValidatedByAttribute), false).Cast<ValidatedByAttribute>().Single();
-        await validatedBy.ValidatorType.Should().BeEqualTo(viewModelType.GetNestedType("Validator"));
+        var validatorType = viewModelType.GetNestedType("Validator")!;
+        var constructor = await validatorType.GetConstructors().Should().HaveSingleItem();
+        var parameter = await constructor.GetParameters().Should().HaveSingleItem();
+        await parameter.HasDefaultValue.Should().BeFalse();
 
         var viewModel = Activator.CreateInstance(viewModelType)!;
         viewModelType.GetProperty("SerialNumber")!.SetValue(viewModel, "");
         var requestValidator = Activator.CreateInstance(result.Assembly.GetType("Sample.Core.Operations.Rockets.RocketValidator")!)!;
-        var validator = (IModelValidator)Activator.CreateInstance(validatedBy.ValidatorType, [requestValidator])!;
+        var validator = (IModelValidator)Activator.CreateInstance(validatorType, [requestValidator])!;
         var failures = ( await validator.ValidateAsync(viewModel, TestContext.CancellationToken) ).Failures.ToArray();
         await failures.Select(failure => failure.PropertyName).Should().BeEquivalentTo(["SerialNumber"], CollectionOrdering.Matching);
-
-        var withoutValidator = (IModelValidator)Activator.CreateInstance(validatedBy.ValidatorType, [null])!;
-        await ( await withoutValidator.ValidateAsync(viewModel, TestContext.CancellationToken) ).IsValid.Should().BeTrue();
 
         await Verify(result);
     }

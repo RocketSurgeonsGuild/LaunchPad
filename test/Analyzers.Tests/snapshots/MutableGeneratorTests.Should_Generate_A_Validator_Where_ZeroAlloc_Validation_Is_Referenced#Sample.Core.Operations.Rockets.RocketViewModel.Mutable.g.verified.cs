@@ -8,7 +8,6 @@ namespace Sample.Core.Operations.Rockets;
 ///     A mutable copy of <see cref="Sample.Core.Operations.Rockets.Rocket" />, for a form to bind to.
 /// </summary>
 [global::System.CodeDom.Compiler.GeneratedCode("Rocket.Surgery.LaunchPad.Analyzers", "version")]
-[global::Rocket.Surgery.LaunchPad.Foundation.ValidatedByAttribute(typeof(RocketViewModel.Validator))]
 partial class RocketViewModel
 {
     /// <inheritdoc cref="Sample.Core.Operations.Rockets.Rocket.SerialNumber" />
@@ -45,13 +44,13 @@ partial class RocketViewModel
     /// <summary>
     ///     Validates the view model as the <see cref="Sample.Core.Operations.Rockets.Rocket" /> it makes, with that type's validator.
     /// </summary>
-    /// <param name="validator">The validator of <see cref="Sample.Core.Operations.Rockets.Rocket" />; without one the view model is valid.</param>
-    public sealed class Validator(global::ZeroAlloc.Validation.ValidatorFor<global::Sample.Core.Operations.Rockets.Rocket>? validator = null) : global::ZeroAlloc.Validation.ValidatorFor<RocketViewModel>
+    /// <param name="validator">The validator of <see cref="Sample.Core.Operations.Rockets.Rocket" />.</param>
+    public sealed class Validator(global::ZeroAlloc.Validation.ValidatorFor<global::Sample.Core.Operations.Rockets.Rocket> validator) : global::ZeroAlloc.Validation.ValidatorFor<RocketViewModel>
     {
         /// <inheritdoc />
-        public override global::ZeroAlloc.Validation.ValidationResult Validate(RocketViewModel instance) => validator?.Validate(instance.ToImmutable()) ?? new global::ZeroAlloc.Validation.ValidationResult([]);
+        public override global::ZeroAlloc.Validation.ValidationResult Validate(RocketViewModel instance) => validator.Validate(instance.ToImmutable());
 
         /// <inheritdoc />
-        public override global::System.Threading.Tasks.ValueTask<global::ZeroAlloc.Validation.ValidationResult> ValidateAsync(RocketViewModel instance, global::System.Threading.CancellationToken cancellationToken = default) => validator?.ValidateAsync(instance.ToImmutable(), cancellationToken) ?? new(new global::ZeroAlloc.Validation.ValidationResult([]));
+        public override global::System.Threading.Tasks.ValueTask<global::ZeroAlloc.Validation.ValidationResult> ValidateAsync(RocketViewModel instance, global::System.Threading.CancellationToken cancellationToken = default) => validator.ValidateAsync(instance.ToImmutable(), cancellationToken);
     }
 }

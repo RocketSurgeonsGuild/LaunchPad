@@ -12,8 +12,6 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
         <PackageReference Include="ZeroAlloc.Validation" />
-        <!-- ValidatedByAttribute: a model without a registered validator is validated by the one it names -->
-        <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
     </ItemGroup>
     <ItemGroup>
         <!-- A component library: no joints, so none of Dovetail's namespaces. -->

@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Components.Forms;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using Rocket.Surgery.LaunchPad.Foundation;
-
 using ZeroAlloc.Validation;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Blazor;
@@ -18,9 +16,9 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Blazor;
 /// <remarks>
 ///     The validator is resolved as <see cref="ValidatorFor{T}" /> of the model's runtime type, which needs that closed generic type at run time.
 ///     ZeroAlloc.Validation registers a validator for each <c>[Validate]</c> type, so a trimmed application keeps the types it validates.
-///     Without a registered validator, the one the model's <see cref="ValidatedByAttribute" /> names is created from the services. A view
-///     model <see cref="MutableAttribute" /> fills in is marked that way: its validator validates the value it makes, and the failures go to its
-///     properties of the same name, so the form binds to the view model and the request's rules apply.
+///     A model without a registered validator is an error. For a view model <c>[Mutable]</c> fills in, register the <c>Validator</c> the
+///     generator nests in it: it validates the value the view model makes, and the failures go to its properties of the same name, so the
+///     form binds to the view model and the request's rules apply.
 /// </remarks>
 [PublicAPI]
 public sealed class ZeroAllocValidator : ComponentBase, IDisposable
@@ -28,14 +26,7 @@ public sealed class ZeroAllocValidator : ComponentBase, IDisposable
     private static readonly MethodInfo ValidateMethod = typeof(ZeroAllocValidator).GetMethod(nameof(Validate), BindingFlags.NonPublic | BindingFlags.Static)!;
 
     private static ValidationFailure[] Validate<TModel>(IServiceProvider services, TModel model) =>
-        Validator<TModel>(services)?.Validate(model).Failures.ToArray() ?? [];
-
-    // The registered validator of the model, or else the one its [ValidatedBy] names.
-    private static ValidatorFor<TModel>? Validator<TModel>(IServiceProvider services) =>
-        services.GetService<ValidatorFor<TModel>>()
-     ?? ( typeof(TModel).GetCustomAttribute<ValidatedByAttribute>() is { } validatedBy
-            ? (ValidatorFor<TModel>)ActivatorUtilities.CreateInstance(services, validatedBy.ValidatorType)
-            : null );
+        services.GetRequiredService<ValidatorFor<TModel>>().Validate(model).Failures.ToArray();
 
     private EditContext? _editContext;
     private ValidationMessageStore? _messages;
@@ -70,7 +61,7 @@ public sealed class ZeroAllocValidator : ComponentBase, IDisposable
 
     [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "ValidatorFor<T> is registered for each validated model type, so its instantiation exists.")]
     [UnconditionalSuppressMessage("Trimming", "IL2060", Justification = "Validate<TModel> has no trimming requirements on TModel.")]
-    private ValidationFailure[] ValidateModel(object model) => (ValidationFailure[])ValidateMethod.MakeGenericMethod(model.GetType()).Invoke(null, [Services, model])!;
+    private ValidationFailure[] ValidateModel(object model) => (ValidationFailure[])ValidateMethod.MakeGenericMethod(model.GetType()).Invoke(null, BindingFlags.DoNotWrapExceptions, null, [Services, model], null)!;
 
     private void OnValidationRequested(object? sender, ValidationRequestedEventArgs e)
     {

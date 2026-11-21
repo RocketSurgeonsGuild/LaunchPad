@@ -55,12 +55,12 @@ public partial class ZeroAllocValidatorTests
     }
 
     [Test]
-    public async Task Leaves_The_Form_Valid_When_No_Validator_Is_Registered()
+    public async Task Requires_A_Registered_Validator()
     {
         var editContext = new EditContext(new Person { Name = "" });
         await using var renderer = await Render(editContext);
 
-        await ( await editContext.ValidateAsync() ).Should().BeTrue();
+        await Assert.That(editContext.Validate).Throws<InvalidOperationException>();
     }
 
     [Test]
@@ -69,7 +69,12 @@ public partial class ZeroAllocValidatorTests
         // the form binds to the mutable view model; the rules are the immutable request's
         var model = new PersonRequestViewModel { Name = "", Nickname = "Countess" };
         var editContext = new EditContext(model);
-        await using var renderer = await Render(editContext, services => services.AddSingleton<ValidatorFor<PersonRequest>, PersonRequestValidator>());
+        await using var renderer = await Render(
+            editContext,
+            services => services
+                       .AddSingleton<ValidatorFor<PersonRequest>, PersonRequestValidator>()
+                       .AddSingleton<ValidatorFor<PersonRequestViewModel>, PersonRequestViewModel.Validator>()
+        );
 
         await ( await editContext.ValidateAsync() ).Should().BeFalse();
         await editContext.GetValidationMessages(editContext.Field(nameof(PersonRequestViewModel.Name))).Should().BeEquivalentTo(["Name is required"], CollectionOrdering.Matching);
@@ -79,15 +84,6 @@ public partial class ZeroAllocValidatorTests
         editContext.NotifyFieldChanged(editContext.Field(nameof(PersonRequestViewModel.Name)));
 
         await editContext.GetValidationMessages().Should().BeEmpty();
-    }
-
-    [Test]
-    public async Task Leaves_A_View_Model_Valid_When_The_Value_It_Makes_Has_No_Validator()
-    {
-        var editContext = new EditContext(new PersonRequestViewModel { Name = "", Nickname = "" });
-        await using var renderer = await Render(editContext);
-
-        await ( await editContext.ValidateAsync() ).Should().BeTrue();
     }
 
     private static async Task<HtmlRenderer> Render(EditContext editContext, Action<IServiceCollection>? configure = null)
@@ -122,7 +118,7 @@ public partial class ZeroAllocValidatorTests
 
     public readonly record struct PersonRequest(string Name, string Nickname);
 
-    // The form binds to it; the generator writes its Validator and names it with [ValidatedBy].
+    // The form binds to it; the generator writes its Validator, which validates the PersonRequest it makes.
     [Mutable<PersonRequest>]
     public sealed partial class PersonRequestViewModel;
 

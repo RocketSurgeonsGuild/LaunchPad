@@ -14,7 +14,7 @@ namespace Rocket.Surgery.LaunchPad.Analyzers;
 ///     settable property for each of <c>T</c>'s properties the class doesn't declare itself, <c>From(value)</c>, <c>ToImmutable()</c> and an
 ///     implicit conversion each way. <c>T</c> can be a class, a record, a record struct or a readonly record struct. In a project that
 ///     references ZeroAlloc.Validation it also writes a nested <c>Validator</c> that validates the value the view model makes with <c>T</c>'s
-///     validator, and names it on the view model with <c>[ValidatedBy]</c>.
+///     validator.
 /// </summary>
 [Generator]
 public class MutableGenerator : IIncrementalGenerator
@@ -22,7 +22,6 @@ public class MutableGenerator : IIncrementalGenerator
     private const string MutableAttribute = "Rocket.Surgery.LaunchPad.Foundation.MutableAttribute";
     private const string GenericMutableAttribute = "Rocket.Surgery.LaunchPad.Foundation.MutableAttribute`1";
     private const string ValidatorFor = "ZeroAlloc.Validation.ValidatorFor`1";
-    private const string ValidatedByAttribute = "Rocket.Surgery.LaunchPad.Foundation.ValidatedByAttribute";
 
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
@@ -90,13 +89,9 @@ public class MutableGenerator : IIncrementalGenerator
         );
     }
 
-    // A validator is written where ZeroAlloc.Validation and [ValidatedBy] are referenced, for a view model that isn't generic: an attribute
-    // can't name a validator nested in an open generic type that could be created.
+    // A validator is written where ZeroAlloc.Validation is referenced, unless the view model declares its own.
     private static bool WritesValidator(INamedTypeSymbol viewModel, Compilation compilation) =>
-        !viewModel.IsGenericType
-     && viewModel.GetMembers("Validator").Length == 0
-     && compilation.GetTypeByMetadataName(ValidatorFor) is { }
-     && compilation.GetTypeByMetadataName(ValidatedByAttribute) is { };
+        viewModel.GetMembers("Validator").Length == 0 && compilation.GetTypeByMetadataName(ValidatorFor) is { };
 
     // The properties the constructor's parameters set, in its order.
     private static EquatableArray<string> ConstructorArguments(IMethodSymbol? constructor, List<IPropertySymbol> properties)
@@ -357,10 +352,6 @@ public class MutableGenerator : IIncrementalGenerator
           .Append("\", \"")
           .Append(AssemblyInfo.Attributes.FileVersion)
           .AppendLine("\")]");
-        if (model.WritesValidator)
-        {
-            sb.Append(indent).Append("[global::").Append(ValidatedByAttribute).Append("(typeof(").Append(model.Name).AppendLine(".Validator))]");
-        }
         sb.Append(indent).AppendLine(model.Declaration);
         sb.Append(indent).AppendLine("{");
         WriteMembers(sb, model, indent, cref);
@@ -414,7 +405,7 @@ public class MutableGenerator : IIncrementalGenerator
     }
 
     // The view model's validator: the value it makes is validated with the validator of that type, and the failures name the properties the
-    // view model shares with it. Without that validator the view model is valid.
+    // view model shares with it.
     private static void WriteValidator(StringBuilder sb, MutableModel model, string indent, string cref)
     {
         var target = model.Target;
@@ -422,11 +413,11 @@ public class MutableGenerator : IIncrementalGenerator
         sb.Append(indent).AppendLine("    /// <summary>");
         sb.Append(indent).Append("    ///     Validates the view model as the <see cref=\"").Append(cref).AppendLine("\" /> it makes, with that type's validator.");
         sb.Append(indent).AppendLine("    /// </summary>");
-        sb.Append(indent).Append("    /// <param name=\"validator\">The validator of <see cref=\"").Append(cref).AppendLine("\" />; without one the view model is valid.</param>");
+        sb.Append(indent).Append("    /// <param name=\"validator\">The validator of <see cref=\"").Append(cref).AppendLine("\" />.</param>");
         sb.Append(indent)
           .Append("    public sealed class Validator(global::ZeroAlloc.Validation.ValidatorFor<")
           .Append(target)
-          .Append(">? validator = null) : global::ZeroAlloc.Validation.ValidatorFor<")
+          .Append("> validator) : global::ZeroAlloc.Validation.ValidatorFor<")
           .Append(model.Name)
           .AppendLine(">");
         sb.Append(indent).AppendLine("    {");
@@ -436,9 +427,7 @@ public class MutableGenerator : IIncrementalGenerator
           .Append(result)
           .Append(" Validate(")
           .Append(model.Name)
-          .Append(" instance) => validator?.Validate(instance.ToImmutable()) ?? new ")
-          .Append(result)
-          .AppendLine("([]);");
+          .AppendLine(" instance) => validator.Validate(instance.ToImmutable());");
         sb.AppendLine();
         sb.Append(indent).AppendLine("        /// <inheritdoc />");
         sb.Append(indent)
@@ -446,9 +435,7 @@ public class MutableGenerator : IIncrementalGenerator
           .Append(result)
           .Append("> ValidateAsync(")
           .Append(model.Name)
-          .Append(" instance, global::System.Threading.CancellationToken cancellationToken = default) => validator?.ValidateAsync(instance.ToImmutable(), cancellationToken) ?? new(new ")
-          .Append(result)
-          .AppendLine("([]));");
+          .AppendLine(" instance, global::System.Threading.CancellationToken cancellationToken = default) => validator.ValidateAsync(instance.ToImmutable(), cancellationToken);");
         sb.Append(indent).AppendLine("    }");
     }
 
