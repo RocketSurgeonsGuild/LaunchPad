@@ -374,14 +374,13 @@ public class InheritFromGenerator : IIncrementalGenerator
 
     private static IEnumerable<SyntaxToken> AccessibilityModifiers(Accessibility accessibility) => accessibility switch
     {
-        // public is the property's accessibility, so a public accessor has no modifier
         Accessibility.Protected => [Token(SyntaxKind.ProtectedKeyword),],
         Accessibility.Internal => [Token(SyntaxKind.InternalKeyword),],
         Accessibility.Private => [Token(SyntaxKind.PrivateKeyword),],
         Accessibility.ProtectedOrInternal => [Token(SyntaxKind.ProtectedKeyword), Token(SyntaxKind.InternalKeyword),],
         Accessibility.ProtectedAndInternal => [Token(SyntaxKind.PrivateKeyword), Token(SyntaxKind.ProtectedKeyword),],
-        Accessibility.NotApplicable => throw new NotImplementedException(),
-        Accessibility.Public => throw new NotImplementedException(),
+        // public is the property's accessibility, so a public accessor has no modifier
+        Accessibility.Public or Accessibility.NotApplicable => [],
         _ => [],
     };
 
