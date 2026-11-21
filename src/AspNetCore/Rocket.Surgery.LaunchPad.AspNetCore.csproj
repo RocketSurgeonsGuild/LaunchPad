@@ -20,18 +20,12 @@
         <ProjectReference Include="..\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
         <PackageReference Include="Joinery.Dovetail" />
         <!--
-            LaunchPadHealthCheckOptions declares its section with [Optionary]: the binder and the schema metadata are generated into this
-            assembly, so consumers need only Optionary's runtime library. Its build targets stay private: they hand every referenced
-            package's XML documentation to the compiler as additional files, which ASP.NET Core's OpenAPI XML comment generator reads too
-            and turns into more string literals than a program may hold (CS8103, RocketSurgeonsGuild/Optionary#78).
+            LaunchPadHealthCheckOptions declares its section with [Optionary] and is validated with ZeroAlloc.Validation: with
+            ZeroAlloc.Validation.Options referenced, Optionary registers the generated validator as the options' IValidateOptions.
         -->
-        <PackageReference Include="Optionary" PrivateAssets="analyzers;build;buildMultiTargeting;buildTransitive" />
-        <!--
-            LaunchPadHealthCheckOptions is validated by the validator ZeroAlloc.Validation generates here. With ZeroAlloc.Validation.Options
-            referenced, Optionary registers it as the options' IValidateOptions. Consumers need only the runtime libraries.
-        -->
-        <PackageReference Include="ZeroAlloc.Validation" PrivateAssets="analyzers;build;buildMultiTargeting;buildTransitive" />
-        <PackageReference Include="ZeroAlloc.Validation.Options" PrivateAssets="analyzers;build;buildMultiTargeting;buildTransitive" />
+        <PackageReference Include="Optionary" />
+        <PackageReference Include="ZeroAlloc.Validation" />
+        <PackageReference Include="ZeroAlloc.Validation.Options" />
         <PackageReference Include="Rocket.Surgery.Build.Information" />
         <PackageReference Include="Specular" />
         <PackageReference Include="Serilog.AspNetCore" />

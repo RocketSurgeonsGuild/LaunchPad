@@ -1,2 +1,11 @@
-﻿<Project>
+<Project>
+  <!--
+      LaunchPad.AspNetCore brings Optionary, whose targets hand every referenced package's XML documentation to the compiler as additional
+      files, for the descriptions in appsettings.schema.json. ASP.NET Core's OpenAPI XML comment generator reads those files too, and in an
+      application with OpenAPI and many references it writes more string literals than a program may hold (CS8103,
+      RocketSurgeonsGuild/Optionary#78). The compiler's data section string literals lift that limit.
+  -->
+  <PropertyGroup>
+    <Features>$(Features);experimental-data-section-string-literals</Features>
+  </PropertyGroup>
 </Project>
