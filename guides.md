@@ -54,13 +54,15 @@ also gets `Rocket.Surgery.LaunchPad.AspNetCore`:
 ```
 
 ```csharp
+using Rocket.Surgery.LaunchPad.AspNetCore;
+
 var app = await WebApplication.CreateBuilder(args).ConfigureDovetail();
-app.MapHealthChecks("/health");
+app.MapLaunchPadHealthChecks();
 await app.RunAsync();
 ```
 
-ASP.NET Core has the health checks in its shared framework, so `LaunchPadHealthChecksJoint` registers them without another
-reference.
+ASP.NET Core has the health checks in its shared framework, so they need no other reference. `MapLaunchPadHealthChecks()` maps
+`/health`, `/health/live` and `/health/ready`, which can move to a port of their own: [Health checks](./health-checks/).
 
 ## Every project in a repository
 
@@ -107,6 +109,7 @@ otherwise take it from the file name.
 
 - [Choosing integration packages](./choosing-packages/): what the SDK adds for each technology, and how to turn one off.
 - [Writing a Joint](./writing-a-joint/): add wiring of your own.
+- [Health checks](./health-checks/): the health report, liveness and readiness endpoints, and the health port.
 - [Console applications](./console-apps/): commands on ConsoleAppFramework with `Rocket.Surgery.LaunchPad.Sdk.Console`.
 - The [samples](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/main/sample/Sample.Sdk) consume LaunchPad only through the
   SDK, the way an application outside the repository does.
