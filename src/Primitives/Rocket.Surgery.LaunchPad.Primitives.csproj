@@ -15,8 +15,6 @@
             .editorconfig severity does not reach generated code for CS1591.
         -->
         <NoWarn>$(NoWarn);CS1591</NoWarn>
-        <!-- The strong type registry generator lives in Analyzers/ and builds on its own. -->
-        <DefaultItemExcludes>$(DefaultItemExcludes);Analyzers/**</DefaultItemExcludes>
     </PropertyGroup>
     <ItemGroup>
         <None Include="build/*.*" Pack="true" PackagePath="build" />
@@ -33,7 +31,7 @@
     <ItemGroup>
         <!-- The strong type registry generator, which Primitives' templates read, flows to every project that references Primitives. -->
         <ProjectReference
-            Include="Analyzers\Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj"
+            Include="..\Primitives.Analyzers\Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj"
             IncludeAssets="analyzers"
             ExcludeAssets="compile;runtime;native"
             PrivateAssets="contentfiles;build;buildMultitargeting;buildTransitive"

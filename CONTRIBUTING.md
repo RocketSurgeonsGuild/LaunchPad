@@ -14,7 +14,7 @@ LaunchPad targets .NET 11 and later. The frameworks are declared once, in [`Dire
 | `LaunchPadLatestTargetFramework`   | the newest of them                           | the projects that build for one framework: `test/Sdk.Tests` (its host) and `test/Api/Aot`                              |
 
 No project file names a framework itself, except the generators, analyzers, MSBuild task and SDK packages
-(`src/Analyzers`, `src/Primitives/Analyzers`, `src/Foundation.Tasks`, the SDKs under `src/Sdks`), which stay on `netstandard2.0`
+(`src/Analyzers`, `src/Primitives.Analyzers`, `src/Foundation.Tasks`, the SDKs under `src/Sdks`), which stay on `netstandard2.0`
 because the compiler and MSBuild load them, and `sample/Sample.Sdk`, which stands for an application outside the repository.
 
 Code never assumes exactly one framework:
