@@ -13,7 +13,7 @@ A range of times of day from [TimeRange.Start](/LaunchPad/api/rocket.surgery.lau
 ## TimeRange(TimeOnly, TimeOnly)
 
 - Name: `Constructor(TimeOnly, TimeOnly)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.2090de1a33eb8450724d310f26ce70b5d8dc8c4c/src/Primitives/StrongTypes/TimeRange.cs#L19-L24)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.d5743b8445e2048c34f1a4b585f3eb4d862008a8/src/Primitives/StrongTypes/TimeRange.cs#L19-L24)
 
 Creates a range from `start` to `end`.
 

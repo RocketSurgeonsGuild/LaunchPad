@@ -13,7 +13,7 @@ The joint every LaunchPad application starts from. Implements the `Joints.IServi
 ## Register(IDovetailContext, IServiceCollection)
 
 - Name: `Register(IDovetailContext, IServiceCollection)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.2090de1a33eb8450724d310f26ce70b5d8dc8c4c/src/Foundation/Joints/DefaultJoint.cs#L32-L40)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.d5743b8445e2048c34f1a4b585f3eb4d862008a8/src/Foundation/Joints/DefaultJoint.cs#L32-L40)
 
 Registers the specified context.
 

@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.HotChocolate](/LaunchPad/api/rocket.surgery.launchpad.hotchocolate.md)
-- Version: `2.0.1-beta.431`
+- Version: `2.0.1-beta.432`
 - Namespace: `Rocket.Surgery.LaunchPad.HotChocolate.Joints`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.2090de1a33eb8450724d310f26ce70b5d8dc8c4c/src/HotChocolate/Joints/HotChocolateJoint.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.d5743b8445e2048c34f1a4b585f3eb4d862008a8/src/HotChocolate/Joints/HotChocolateJoint.cs)
 - Implements: `IDovetailJoint`, `IServiceJoint`
 
 Hot Chocolate Joint
