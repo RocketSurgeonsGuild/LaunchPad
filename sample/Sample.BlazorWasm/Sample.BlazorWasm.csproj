@@ -1,6 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
     <PropertyGroup>
         <TargetFrameworks>$(LaunchPadBrowserTargetFrameworks)</TargetFrameworks>
+        <!--
+            Sample.AppHost's Blazor integration builds this project and reads its static web assets without naming a framework, which a project
+            with TargetFrameworks can't answer, so the AppHost names the one it runs on in this environment variable.
+        -->
+        <TargetFramework Condition="'$(LaunchPadSampleBrowserTargetFramework)' != ''">$(LaunchPadSampleBrowserTargetFramework)</TargetFramework>
+        <TargetFrameworks Condition="'$(LaunchPadSampleBrowserTargetFramework)' != ''" />
         <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
     </PropertyGroup>
 

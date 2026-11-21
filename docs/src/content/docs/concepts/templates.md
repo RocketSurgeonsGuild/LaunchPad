@@ -44,6 +44,9 @@ The Serilog Joints need `Joinery.Dovetail.Serilog` and the OpenTelemetry Joints 
 Dovetail's SDK adds when the project references Serilog or OpenTelemetry. So choosing a sink or an instrumentation is a matter of
 referencing its package: the Joint that turns it on comes with it.
 
+`LaunchPadSerilogOpenTelemetryJoint` exports only when `OTEL_EXPORTER_OTLP_ENDPOINT` is set, as Aspire sets it for the applications it
+runs, so an application started on its own doesn't send its logs to an endpoint nothing listens on.
+
 ## The Primitives templates
 
 | Joint                                      | Written when the project references | Host models                                    |

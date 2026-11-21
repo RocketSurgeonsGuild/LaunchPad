@@ -15,9 +15,11 @@ using Serilog;
 namespace Rocket.Surgery.LaunchPad.Hosting.Generated;
 
 /// <summary>
-///     Exports the events over OTLP. The sink reads the standard OpenTelemetry settings (<c>OTEL_EXPORTER_OTLP_ENDPOINT</c>,
-///     <c>OTEL_EXPORTER_OTLP_PROTOCOL</c>, <c>OTEL_EXPORTER_OTLP_HEADERS</c>, <c>OTEL_RESOURCE_ATTRIBUTES</c>, <c>OTEL_SERVICE_NAME</c>) from
-///     the application's configuration, which holds the environment variables. A live joint: a unit test host exports nothing.
+///     Exports the events over OTLP once the application is told where to: only when <c>OTEL_EXPORTER_OTLP_ENDPOINT</c> is set, as an
+///     orchestrator such as Aspire sets it, so an application run on its own doesn't send to an endpoint nothing listens on. The sink reads
+///     the standard OpenTelemetry settings (<c>OTEL_EXPORTER_OTLP_ENDPOINT</c>, <c>OTEL_EXPORTER_OTLP_PROTOCOL</c>,
+///     <c>OTEL_EXPORTER_OTLP_HEADERS</c>, <c>OTEL_RESOURCE_ATTRIBUTES</c>, <c>OTEL_SERVICE_NAME</c>) from the application's configuration,
+///     which holds the environment variables. A live joint: a unit test host exports nothing.
 /// </summary>
 [global::System.CodeDom.Compiler.GeneratedCode("LaunchPad", "generated"), global::Microsoft.CodeAnalysis.EmbeddedAttribute, global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 [global::Joinery.Dovetail.Attributes.DovetailExport, global::Joinery.Dovetail.Attributes.DovetailCategory(global::Joinery.Dovetail.DovetailCategory.Core), global::Joinery.Dovetail.Attributes.LiveJoint]
@@ -26,6 +28,11 @@ internal sealed class LaunchPadSerilogOpenTelemetryJoint : ISerilogJoint
     public void Register(IDovetailContext context, IServiceCollection services, LoggerConfiguration loggerConfiguration)
     {
         var configuration = context.Get<IConfiguration>();
-        loggerConfiguration.WriteTo.OpenTelemetry(_ => { }, name => configuration?[name]);
+        if (configuration is null || string.IsNullOrWhiteSpace(configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]))
+        {
+            return;
+        }
+
+        loggerConfiguration.WriteTo.OpenTelemetry(_ => { }, name => configuration[name]);
     }
 }
