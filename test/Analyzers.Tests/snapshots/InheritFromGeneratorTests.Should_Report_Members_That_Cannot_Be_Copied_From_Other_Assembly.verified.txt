@@ -1,0 +1,168 @@
+﻿{
+  FinalDiagnostics: [
+    {
+      Id: LPAD0002,
+      Title: Member of a type from another assembly cannot be copied,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (6,5)-(6,40),
+      MessageFormat: {0} of {1} is not copied to {2}: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+      Message: MaximumStages of Sample.Contracts.RocketContract is not copied to Sample.Core.Operations.Rockets.Request: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+      Category: LaunchPad
+    },
+    {
+      Id: LPAD0002,
+      Title: Member of a type from another assembly cannot be copied,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (6,5)-(6,40),
+      MessageFormat: {0} of {1} is not copied to {2}: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+      Message: Version of Sample.Contracts.RocketContract is not copied to Sample.Core.Operations.Rockets.Request: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+      Category: LaunchPad
+    },
+    {
+      Id: LPAD0002,
+      Title: Member of a type from another assembly cannot be copied,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (6,5)-(6,40),
+      MessageFormat: {0} of {1} is not copied to {2}: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+      Message: Describe of Sample.Contracts.RocketContract is not copied to Sample.Core.Operations.Rockets.Request: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+      Category: LaunchPad
+    },
+    {
+      Id: LPAD0002,
+      Title: Member of a type from another assembly cannot be copied,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (6,5)-(6,40),
+      MessageFormat: {0} of {1} is not copied to {2}: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+      Message: ToString of Sample.Contracts.RocketContract is not copied to Sample.Core.Operations.Rockets.Request: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+      Category: LaunchPad
+    },
+    {
+      Id: LPAD0002,
+      Title: Member of a type from another assembly cannot be copied,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (6,5)-(6,40),
+      MessageFormat: {0} of {1} is not copied to {2}: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+      Message: Empty of Sample.Contracts.RocketContract is not copied to Sample.Core.Operations.Rockets.Request: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+      Category: LaunchPad
+    },
+    {
+      Id: LPAD0002,
+      Title: Member of a type from another assembly cannot be copied,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (6,5)-(6,40),
+      MessageFormat: {0} of {1} is not copied to {2}: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+      Message: Name of Sample.Contracts.RocketContract is not copied to Sample.Core.Operations.Rockets.Request: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+      Category: LaunchPad
+    },
+    {
+      Id: LPAD0002,
+      Title: Member of a type from another assembly cannot be copied,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (6,5)-(6,40),
+      MessageFormat: {0} of {1} is not copied to {2}: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+      Message: Display of Sample.Contracts.RocketContract is not copied to Sample.Core.Operations.Rockets.Request: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+      Category: LaunchPad
+    },
+    {
+      Id: LPAD0002,
+      Title: Member of a type from another assembly cannot be copied,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: Input1.cs: (6,5)-(6,40),
+      MessageFormat: {0} of {1} is not copied to {2}: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+      Message: Launched of Sample.Contracts.RocketContract is not copied to Sample.Core.Operations.Rockets.Request: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+      Category: LaunchPad
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Analyzers.InheritFromGenerator: [
+      {
+        Id: LPAD0002,
+        Title: Member of a type from another assembly cannot be copied,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (6,5)-(6,40),
+        MessageFormat: {0} of {1} is not copied to {2}: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+        Message: MaximumStages of Sample.Contracts.RocketContract is not copied to Sample.Core.Operations.Rockets.Request: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+        Category: LaunchPad
+      },
+      {
+        Id: LPAD0002,
+        Title: Member of a type from another assembly cannot be copied,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (6,5)-(6,40),
+        MessageFormat: {0} of {1} is not copied to {2}: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+        Message: Version of Sample.Contracts.RocketContract is not copied to Sample.Core.Operations.Rockets.Request: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+        Category: LaunchPad
+      },
+      {
+        Id: LPAD0002,
+        Title: Member of a type from another assembly cannot be copied,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (6,5)-(6,40),
+        MessageFormat: {0} of {1} is not copied to {2}: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+        Message: Describe of Sample.Contracts.RocketContract is not copied to Sample.Core.Operations.Rockets.Request: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+        Category: LaunchPad
+      },
+      {
+        Id: LPAD0002,
+        Title: Member of a type from another assembly cannot be copied,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (6,5)-(6,40),
+        MessageFormat: {0} of {1} is not copied to {2}: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+        Message: ToString of Sample.Contracts.RocketContract is not copied to Sample.Core.Operations.Rockets.Request: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+        Category: LaunchPad
+      },
+      {
+        Id: LPAD0002,
+        Title: Member of a type from another assembly cannot be copied,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (6,5)-(6,40),
+        MessageFormat: {0} of {1} is not copied to {2}: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+        Message: Empty of Sample.Contracts.RocketContract is not copied to Sample.Core.Operations.Rockets.Request: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+        Category: LaunchPad
+      },
+      {
+        Id: LPAD0002,
+        Title: Member of a type from another assembly cannot be copied,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (6,5)-(6,40),
+        MessageFormat: {0} of {1} is not copied to {2}: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+        Message: Name of Sample.Contracts.RocketContract is not copied to Sample.Core.Operations.Rockets.Request: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+        Category: LaunchPad
+      },
+      {
+        Id: LPAD0002,
+        Title: Member of a type from another assembly cannot be copied,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (6,5)-(6,40),
+        MessageFormat: {0} of {1} is not copied to {2}: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+        Message: Display of Sample.Contracts.RocketContract is not copied to Sample.Core.Operations.Rockets.Request: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+        Category: LaunchPad
+      },
+      {
+        Id: LPAD0002,
+        Title: Member of a type from another assembly cannot be copied,
+        Severity: Warning,
+        WarningLevel: 1,
+        Location: Input1.cs: (6,5)-(6,40),
+        MessageFormat: {0} of {1} is not copied to {2}: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+        Message: Launched of Sample.Contracts.RocketContract is not copied to Sample.Core.Operations.Rockets.Request: from a type in another assembly InheritFrom copies only public properties with a set or init accessor and public fields that are not read only,
+        Category: LaunchPad
+      }
+    ]
+  }
+}

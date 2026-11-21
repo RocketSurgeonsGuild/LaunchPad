@@ -1,4 +1,6 @@
 using System.Collections.Immutable;
+using Microsoft.CodeAnalysis;
+using Rocket.Surgery.Extensions.Testing.SourceGenerators;
 using Rocket.Surgery.LaunchPad.Analyzers;
 using Rocket.Surgery.LaunchPad.Foundation;
 using ZeroAlloc.Mediator;
@@ -370,6 +372,216 @@ namespace Sample.Core.Operations.Rockets
 
         await Verify(result);
     }
+
+    [Test]
+    public async Task Should_Generate_With_Method_For_Record_From_Other_Assembly()
+    {
+        var contracts = await CompileContracts(
+            @"
+using System.Collections.Immutable;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using Rocket.Surgery.LaunchPad.Foundation;
+
+namespace Sample.Contracts
+{
+    public interface IHaveSerialNumber
+    {
+        string SerialNumber { get; }
+    }
+
+    public enum RocketKind { Falcon, Atlas }
+
+    public record RocketContract : IHaveSerialNumber
+    {
+        [Description(""The serial number"")]
+        [StringLength(30, MinimumLength = 10)]
+        public required string SerialNumber { get; set; }
+        public string? Nickname { get; init; }
+        [DefaultValue(RocketKind.Atlas)]
+        public RocketKind Kind { get; set; } = RocketKind.Atlas;
+        public int? Stages { get; set; }
+        public ImmutableArray<string> Payloads { get; set; }
+        public string Excluded { get; set; } = """";
+        [ExcludeFromGeneration]
+        public string ExcludedByAttribute { get; set; } = """";
+    }
+}
+"
+        );
+        var result = await Builder
+                          .AddReferences(
+                               typeof(ImmutableArray<>),
+                               typeof(System.ComponentModel.DescriptionAttribute),
+                               typeof(System.ComponentModel.DataAnnotations.StringLengthAttribute)
+                           )
+                          .AddCompilationReferences(contracts)
+                          .AddSources(
+                               @"
+using Rocket.Surgery.LaunchPad.Foundation;
+using Sample.Contracts;
+
+namespace Sample.Core.Operations.Rockets
+{
+    public static partial class CreateRocket
+    {
+        [InheritFrom(typeof(RocketContract), Exclude = new[] { nameof(RocketContract.Excluded) })]
+        public partial record Request : IRequest<RocketModel>
+        {
+            public Guid Id { get; init; }
+        }
+    }
+}
+"
+                           )
+                          .Build()
+                          .GenerateAsync(TestContext.CancellationToken);
+
+        await Verify(result);
+    }
+
+    [Test]
+    public async Task Should_Generate_With_Method_For_Class_From_Other_Assembly()
+    {
+        var contracts = await CompileContracts(
+            @"
+namespace Sample.Contracts
+{
+    public class RocketContract
+    {
+        public string SerialNumber { get; set; } = """";
+        public DateTimeOffset? LaunchedAt { get; init; }
+        public int Attempts;
+        public string? @class { get; set; }
+    }
+}
+"
+        );
+        var result = await Builder
+                          .AddCompilationReferences(contracts)
+                          .AddSources(
+                               @"
+using Rocket.Surgery.LaunchPad.Foundation;
+
+namespace Sample.Core.Operations.Rockets
+{
+    [InheritFrom(typeof(Sample.Contracts.RocketContract))]
+    public partial class Request : IRequest<RocketModel>
+    {
+        public Guid Id { get; init; }
+    }
+}
+"
+                           )
+                          .Build()
+                          .GenerateAsync(TestContext.CancellationToken);
+
+        await Verify(result);
+    }
+
+#if !ROSLYN4_0
+    [Test]
+    public async Task Should_Inherit_From_Same_And_Other_Assembly()
+    {
+        var contracts = await CompileContracts(
+            @"
+namespace Sample.Contracts
+{
+    public record LaunchContract(string Site, DateTimeOffset Window);
+}
+"
+        );
+        var result = await Builder
+                          .AddCompilationReferences(contracts)
+                          .AddSources(
+                               @"
+using Rocket.Surgery.LaunchPad.Foundation;
+using Sample.Contracts;
+
+namespace Sample.Core.Operations.Rockets
+{
+    public static partial class CreateRocket
+    {
+        public partial record Model
+        {
+            public string SerialNumber { get; set; }
+        }
+
+        [InheritFrom<Model>]
+        [InheritFrom<LaunchContract>(Exclude = new[] { nameof(LaunchContract.Window) })]
+        public partial record Request : IRequest<RocketModel>
+        {
+            public Guid Id { get; init; }
+        }
+    }
+}
+"
+                           )
+                          .Build()
+                          .GenerateAsync(TestContext.CancellationToken);
+
+        await Verify(result);
+    }
+#endif
+
+    [Test]
+    public async Task Should_Report_Members_That_Cannot_Be_Copied_From_Other_Assembly()
+    {
+        var contracts = await CompileContracts(
+            @"
+namespace Sample.Contracts
+{
+    public record RocketContract
+    {
+        public const int MaximumStages = 3;
+        public static RocketContract Empty { get; } = new();
+        public readonly int Version;
+        public string SerialNumber { get; set; } = """";
+        public string Name { get; private set; } = """";
+        public string Display => SerialNumber;
+        public event EventHandler? Launched;
+        public string Describe() => SerialNumber;
+        public override string ToString() => SerialNumber;
+    }
+}
+"
+        );
+        var result = await Builder
+                          .AddCompilationReferences(contracts)
+                          .WithDiagnosticSeverity(DiagnosticSeverity.Warning)
+                          .AddSources(
+                               @"
+using Rocket.Surgery.LaunchPad.Foundation;
+using Sample.Contracts;
+
+namespace Sample.Core.Operations.Rockets
+{
+    [InheritFrom(typeof(RocketContract))]
+    public partial record Request : IRequest<RocketModel>
+    {
+        public Guid Id { get; init; }
+    }
+}
+"
+                           )
+                          .Build()
+                          .GenerateAsync(TestContext.CancellationToken);
+
+        await Verify(result);
+    }
+
+    private Task<GeneratorTestResults> CompileContracts(string source) =>
+        CompileReferencedAssembly(
+            "Sample.Contracts",
+            [
+                typeof(InheritFromAttribute),
+                typeof(ImmutableArray<>),
+                typeof(System.ComponentModel.DescriptionAttribute),
+                typeof(System.ComponentModel.DataAnnotations.StringLengthAttribute),
+            ],
+            "global using System;\n" + source,
+            TestContext.CancellationToken
+        );
 
     public override async Task InitializeAsync()
     {
