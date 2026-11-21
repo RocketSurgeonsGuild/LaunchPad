@@ -1,0 +1,8 @@
+﻿{
+  HostType: UnitTest,
+  Endpoint: true,
+  Templates: [
+    LaunchPadOtlpExporterJoint
+  ],
+  Output: Exported:nothing
+}

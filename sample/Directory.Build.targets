@@ -17,9 +17,9 @@
         The LaunchPad SDK adds these packages to an application (RocketSurgeonsGuild/LaunchPad#3075); the samples name them until it does.
 
         They also turn on OpenTelemetry: Joinery.Dovetail.OpenTelemetry with OpenTelemetry.Extensions.Hosting adds it to the services, and the
-        instrumentation packages turn on LaunchPad.Hosting's instrumentation joints. Nothing is exported unless OTEL_EXPORTER_OTLP_ENDPOINT is
-        set, as Sample.AppHost sets it: the OpenTelemetry sink's joint only writes to it then, and SampleOtlpExporterJoint (Shared/) only adds
-        the OTLP exporter then. The AppHost itself is an Exe too, and gets none of this.
+        instrumentation and OTLP exporter packages turn on LaunchPad.Hosting's OpenTelemetry joints. Nothing is exported unless
+        OTEL_EXPORTER_OTLP_ENDPOINT is set, as Sample.AppHost sets it: the OpenTelemetry sink's joint and the OTLP exporter's joint only write
+        to it then. The AppHost itself is an Exe too, and gets none of this.
     -->
     <ItemGroup Condition="'$(_SampleProject)' == 'true' and '$(OutputType)' == 'Exe' and '$(UsingMicrosoftNETSdkBlazorWebAssembly)' != 'true' and '$(IsAspireHost)' != 'true'">
         <PackageReference Include="Joinery.Dovetail.Serilog" />
@@ -42,7 +42,6 @@
         <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
         <PackageReference Include="OpenTelemetry.Instrumentation.Process" />
         <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
-        <Compile Include="$(MSBuildThisFileDirectory)Shared/SampleOtlpExporterJoint.cs" Link="SampleOtlpExporterJoint.cs" />
     </ItemGroup>
     <ItemGroup Condition="'$(_SampleProject)' == 'true' and '$(UsingMicrosoftNETSdkWeb)' == 'true'">
         <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />

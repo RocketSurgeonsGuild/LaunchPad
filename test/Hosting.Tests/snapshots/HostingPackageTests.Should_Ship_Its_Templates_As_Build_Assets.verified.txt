@@ -5,6 +5,7 @@
   build/LaunchPadHealthChecksJoint.cs.template,
   build/LaunchPadHotChocolateInstrumentationJoint.cs.template,
   build/LaunchPadInstrumentationJoint.cs.template,
+  build/LaunchPadOtlpExporterJoint.cs.template,
   build/LaunchPadProcessInstrumentationJoint.cs.template,
   build/LaunchPadRuntimeInstrumentationJoint.cs.template,
   build/LaunchPadSerilogApplicationStateJoint.cs.template,

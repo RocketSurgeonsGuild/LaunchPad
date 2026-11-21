@@ -1,0 +1,8 @@
+﻿{
+  HostType: Live,
+  Endpoint: true,
+  Templates: [
+    LaunchPadOtlpExporterJoint
+  ],
+  Output: Exported:/v1/metrics,/v1/traces
+}

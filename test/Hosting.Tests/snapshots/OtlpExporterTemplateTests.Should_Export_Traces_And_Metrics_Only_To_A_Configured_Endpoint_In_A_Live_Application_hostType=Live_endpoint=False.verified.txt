@@ -1,0 +1,8 @@
+﻿{
+  HostType: Live,
+  Endpoint: false,
+  Templates: [
+    LaunchPadOtlpExporterJoint
+  ],
+  Output: Exported:nothing
+}

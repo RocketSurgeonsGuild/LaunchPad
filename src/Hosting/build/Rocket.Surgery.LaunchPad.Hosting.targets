@@ -106,6 +106,12 @@
             References="Joinery.Dovetail.OpenTelemetry;HotChocolate.Diagnostics"
             Hosts="HostApplication;WebApplication"
         />
+        <!-- The OTLP exporter of the traces and metrics, added only when OTEL_EXPORTER_OTLP_ENDPOINT is set (as Aspire sets it). -->
+        <_LaunchPadHostingTemplate
+            Include="LaunchPadOtlpExporterJoint"
+            References="Joinery.Dovetail.OpenTelemetry;OpenTelemetry.Exporter.OpenTelemetryProtocol"
+            Hosts="HostApplication;WebApplication"
+        />
     </ItemGroup>
     <ItemGroup>
         <DovetailTemplate
