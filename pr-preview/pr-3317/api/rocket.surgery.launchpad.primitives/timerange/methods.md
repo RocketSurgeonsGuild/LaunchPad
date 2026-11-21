@@ -92,7 +92,7 @@ public record TimeRange
 - Name: `From(TimeOnly, TimeOnly)`
 - Modifiers: `static`
 - Returns: [TimeRange](/LaunchPad/pr-preview/pr-3317/api/rocket.surgery.launchpad.primitives/timerange.md)
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3317-merge.Sha.1621484e9867a9384634a5b693a135763b433b4a/src/Primitives/StrongTypes/TimeRange.cs#L28)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3317-merge.Sha.125c9fda2ca8a5e1aa1ca7ddbbdcadbcdb967166/src/Primitives/StrongTypes/TimeRange.cs#L28)
 
 Creates a range from `start` to `end`.
 
@@ -225,7 +225,7 @@ public record TimeRange
 - Name: `TryFrom(TimeOnly, TimeOnly, TimeRange?)`
 - Modifiers: `static`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3317-merge.Sha.1621484e9867a9384634a5b693a135763b433b4a/src/Primitives/StrongTypes/TimeRange.cs#L33-L34)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3317-merge.Sha.125c9fda2ca8a5e1aa1ca7ddbbdcadbcdb967166/src/Primitives/StrongTypes/TimeRange.cs#L33-L34)
 
 Creates a range from `start` to `end`, or returns `false` if it is invalid.
 

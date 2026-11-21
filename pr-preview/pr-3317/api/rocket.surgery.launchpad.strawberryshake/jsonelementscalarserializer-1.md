@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.StrawberryShake](/LaunchPad/pr-preview/pr-3317/api/rocket.surgery.launchpad.strawberryshake.md)
-- Version: `2.0.1-pr.1270`
+- Version: `2.0.1-pr.1271`
 - Namespace: `Rocket.Surgery.LaunchPad.StrawberryShake`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3317-merge.Sha.1621484e9867a9384634a5b693a135763b433b4a/src/StrawberryShake/JsonElementScalarSerializer.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3317-merge.Sha.125c9fda2ca8a5e1aa1ca7ddbbdcadbcdb967166/src/StrawberryShake/JsonElementScalarSerializer.cs)
 - Inherits: `ScalarSerializer<JsonElement, TRuntime>`
 
 Base class for JsonElement Scalar Serializers

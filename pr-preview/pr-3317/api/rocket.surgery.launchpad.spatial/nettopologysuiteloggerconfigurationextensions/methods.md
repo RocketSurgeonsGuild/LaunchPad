@@ -15,7 +15,7 @@ Adds the Destructure.NetTopologySuiteTypes() extension to `LoggerConfiguration`.
 - Name: `NetTopologySuiteTypes(LoggerDestructuringConfiguration)`
 - Modifiers: `extension`
 - Returns: `LoggerConfiguration`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3317-merge.Sha.1621484e9867a9384634a5b693a135763b433b4a/src/Spatial/NetTopologySuiteLoggerConfigurationExtensions.cs#L16)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3317-merge.Sha.125c9fda2ca8a5e1aa1ca7ddbbdcadbcdb967166/src/Spatial/NetTopologySuiteLoggerConfigurationExtensions.cs#L16)
 
 Enable destructuring of the NetTopologySuite geometries, features and attribute tables.
 
