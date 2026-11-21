@@ -60,7 +60,7 @@ public partial class ZeroAllocValidatorTests
         var editContext = new EditContext(new Person { Name = "" });
         await using var renderer = await Render(editContext);
 
-        await Assert.That(editContext.Validate).Throws<InvalidOperationException>();
+        await Assert.That(async () => await editContext.ValidateAsync()).Throws<InvalidOperationException>();
     }
 
     [Test]
