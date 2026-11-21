@@ -53,7 +53,7 @@ public class SdkChirographTests(string targetFramework)
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
         tree.AddProject("app", HostModel.GenericHost, KiotaClientProject().Sdk("Chirograph", OtherChirographVersion));
 
-        var evaluation = await EvaluateChirograph(tree.Directory, "app");
+        var evaluation = await EvaluateChirograph(tree.Directory);
 
         await evaluation.Version.Should().BeEqualTo(OtherChirographVersion);
         await evaluation.Clients.Should().BeEqualTo(1);
@@ -68,7 +68,7 @@ public class SdkChirographTests(string targetFramework)
         using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
         tree.AddProject("app", HostModel.GenericHost, KiotaClientProject().Property("LaunchPadEnableChirograph", "false"));
 
-        var evaluation = await EvaluateChirograph(tree.Directory, "app");
+        var evaluation = await EvaluateChirograph(tree.Directory);
 
         await evaluation.Version.Should().BeEqualTo("");
         await evaluation.Clients.Should().BeEqualTo(0);
@@ -107,12 +107,12 @@ public class SdkChirographTests(string targetFramework)
             );
 
     /// <summary>
-    ///     The version of Chirograph a project evaluates with (empty when nothing imported it) and how many clients it declares to generate.
+    ///     The version of Chirograph the tree's app project evaluates with (empty when nothing imported it) and how many clients it declares to generate.
     /// </summary>
-    private static async Task<(string Version, int Clients)> EvaluateChirograph(string treeDirectory, string name)
+    private static async Task<(string Version, int Clients)> EvaluateChirograph(string treeDirectory)
     {
         var output = await DotnetCli.Run(
-            $"msbuild \"{Path.Combine(treeDirectory, name, $"{name}.csproj")}\" -nologo -getProperty:ChirographVersion -getItem:_ChirographOpenApiClient",
+            $"msbuild \"{treeDirectory}/app/app.csproj\" -nologo -getProperty:ChirographVersion -getItem:_ChirographOpenApiClient",
             treeDirectory,
             cancellationToken: Cancellation
         );
