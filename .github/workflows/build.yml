@@ -196,7 +196,9 @@ jobs:
             # The samples serve HTTPS and validate Keycloak's tokens over it, with the development certificate.
             - name: 🔐 Trust the development certificate
               if: matrix.project == 'Sample.AppHost.Tests'
-              run: mise exec -- dotnet dev-certs https --trust
+              # On Linux the command answers 4 when it trusted the certificate for .NET and OpenSSL but found no browser store, which is
+              # all these tests need.
+              run: mise exec -- dotnet dev-certs https --trust || [ "$?" -eq 4 ]
               env:
                   MISE_EXEC_AUTO_INSTALL: 'false'
             # Built first and tested with --no-build, as the pipeline does, so a build failure shows as one.

@@ -153,8 +153,11 @@ public class AuthorizationBehaviorTests
 
         await edge.IsAllowed.Should().BeTrue();
         await ( result.Value is RocketModel ).Should().BeTrue();
-        // Owner reads the request: the edge tried it, left it undecided, and the pipeline ran it with the request.
-        await call.Calls.Should().BeEquivalentTo(["Rockets.Write", "Owner", "Owner"], CollectionOrdering.Matching);
+        // The scope policy ran at the edge and was not run again. Owner reads the request, so the pipeline ran it; whether the edge
+        // tried it first depends on whether an earlier call already found that it reads the request.
+        await call.Calls.Count(c => c == "Rockets.Write").Should().BeEqualTo(1);
+        await ( call.Calls.Count(c => c == "Owner") is 1 or 2 ).Should().BeTrue();
+        await call.Calls[^1].Should().BeEqualTo("Owner");
     }
 
     [Test]
