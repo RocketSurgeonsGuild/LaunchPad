@@ -4,5 +4,7 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\src\ZeroAlloc.Blazor\Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor.csproj" />
+        <!-- [Mutable], for the view model the tests validate -->
+        <ProjectReference Include="..\..\src\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
     </ItemGroup>
 </Project>

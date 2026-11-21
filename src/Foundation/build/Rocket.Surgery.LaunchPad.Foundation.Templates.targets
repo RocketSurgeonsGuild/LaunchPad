@@ -1,0 +1,54 @@
+<Project>
+    <!--
+        Rocket.Surgery.LaunchPad.Foundation.Templates.targets
+        The joints of LaunchPad.Foundation that use what Foundation doesn't depend on, shipped as C# templates (*.cs.template next to this file)
+        that Joinery.Dovetail writes into the project and compiles there (Joinery.Dovetail.Templates.targets, the DovetailTemplate item). A
+        template is only written into a project that
+          - references this package, directly or through another one: a library that declares [Mutable] view models gets the joint too,
+          - references every assembly in the template's References,
+          - runs the Dovetail source generator, which is what finds the joints the templates declare, and
+          - runs LaunchPad's analyzer (Rocket.Surgery.LaunchPad.Analyzers), which writes what the templates call: a project that turned it off
+            gets no templates (_LaunchPadFoundationTemplatesRequireAnalyzer below).
+
+        LaunchPadMutableValidatorsJoint registers the validators of the project's [Mutable] view models: the template declares the joint, and
+        the Mutable generator of Foundation's analyzer writes the AddLaunchPadMutableValidators extension it calls, only where the joint is.
+
+        Rocket.Surgery.LaunchPad.Foundation.targets imports this file into every project that gets the package. The repository's
+        Directory.Build.targets imports it into every project in the repository instead, since a ProjectReference imports no package assets.
+        The guard keeps the templates from being declared twice in a project that gets both.
+    -->
+    <PropertyGroup>
+        <_LaunchPadFoundationTemplatesImported>true</_LaunchPadFoundationTemplatesImported>
+    </PropertyGroup>
+    <ItemGroup>
+        <_LaunchPadFoundationTemplate
+            Include="LaunchPadMutableValidatorsJoint"
+            References="ZeroAlloc.Validation;Microsoft.Extensions.DependencyInjection.Abstractions"
+        />
+    </ItemGroup>
+    <ItemGroup>
+        <DovetailTemplate
+            Include="@(_LaunchPadFoundationTemplate)"
+            File="$(MSBuildThisFileDirectory)%(Identity).cs.template"
+            Package="Rocket.Surgery.LaunchPad.Foundation"
+            OutputPrefix="LaunchPadFoundation"
+        />
+    </ItemGroup>
+    <!--
+        A decision the DovetailTemplate metadata can't express. It is made on the declarations, before Joinery.Dovetail.Templates.targets
+        resolves them (the analyzers are known once the references are): removing the last of the resolved templates would leave its writing
+        target an empty batch, since that target's condition is evaluated before the targets that run ahead of it.
+    -->
+    <Target
+        Name="_LaunchPadFoundationTemplatesRequireAnalyzer"
+        AfterTargets="ResolveAssemblyReferences"
+        BeforeTargets="DovetailResolveTemplates"
+    >
+        <PropertyGroup>
+            <_LaunchPadFoundationAnalyzer>@(Analyzer->AnyHaveMetadataValue('Filename', 'Rocket.Surgery.LaunchPad.Analyzers'))</_LaunchPadFoundationAnalyzer>
+        </PropertyGroup>
+        <ItemGroup Condition="'$(_LaunchPadFoundationAnalyzer)' != 'true'">
+            <DovetailTemplate Remove="@(_LaunchPadFoundationTemplate)" />
+        </ItemGroup>
+    </Target>
+</Project>

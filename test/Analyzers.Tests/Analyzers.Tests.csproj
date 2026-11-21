@@ -22,6 +22,8 @@
         <PackageReference Include="ChannelMediator" />
         <PackageReference Include="Foundatio.Mediator.Abstractions" />
         <PackageReference Include="Immediate.Handlers" IncludeAssets="compile;runtime" />
+        <!-- ValidatorFor<T>, for the validator the Mutable generator writes; its generator doesn't run here -->
+        <PackageReference Include="ZeroAlloc.Validation" IncludeAssets="compile;runtime" />
         <ProjectReference
             Include="..\..\src\HotChocolate\Rocket.Surgery.LaunchPad.HotChocolate.csproj" />
     </ItemGroup>
