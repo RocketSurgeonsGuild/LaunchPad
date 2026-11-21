@@ -13,11 +13,18 @@ builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new(builder.HostE
 
 var host = await builder.ConfigureDovetail();
 // in the browser console, and in the Aspire dashboard when Sample.AppHost serves the client
-host.Services.GetRequiredService<ILogger<Program>>().LogInformation("Sample.BlazorWasm started at {BaseAddress}", builder.HostEnvironment.BaseAddress);
+var logger = host.Services.GetRequiredService<ILogger<Program>>();
+StartupLog.Started(logger, builder.HostEnvironment.BaseAddress);
 await host.RunAsync();
 
 namespace Sample.BlazorWasm
 {
+    internal static partial class StartupLog
+    {
+        [LoggerMessage(Level = LogLevel.Information, Message = "Sample.BlazorWasm started at {BaseAddress}")]
+        public static partial void Started(ILogger logger, string baseAddress);
+    }
+
     public static partial class TestHandler
     {
         [Validate]
