@@ -13,7 +13,7 @@ Hot Chocolate Joint
 ## Register(IDovetailContext, IServiceCollection)
 
 - Name: `Register(IDovetailContext, IServiceCollection)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.42409360cf41d0e5a89b31252cf8cea56b207c47/src/HotChocolate/Joints/HotChocolateJoint.cs#L21-L26)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6c40644535fda9fb8f01149b7373b18e83589412/src/HotChocolate/Joints/HotChocolateJoint.cs#L21-L26)
 
 Register the Service part.
 
