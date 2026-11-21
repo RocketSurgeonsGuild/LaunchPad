@@ -14,7 +14,7 @@ The base of LaunchPad's standard error cases: what a handler returns, as a case 
 - Name: `Detail`
 - Modifiers: `nullable` `get; init`
 - Returns: `string?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.45fabcb1eb2968ce041767000387c82329263a76/src/Foundation/Problems.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.848d7df41fb82a23ce0738e64978a35c934d7558/src/Foundation/Problems.cs)
 
 A human-readable explanation specific to this occurrence of the problem.
 
@@ -29,7 +29,7 @@ public string? Detail { get; init; }
 - Name: `Instance`
 - Modifiers: `nullable` `get; init`
 - Returns: `string?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.45fabcb1eb2968ce041767000387c82329263a76/src/Foundation/Problems.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.848d7df41fb82a23ce0738e64978a35c934d7558/src/Foundation/Problems.cs)
 
 The instance for the request
 
@@ -44,7 +44,7 @@ public string? Instance { get; init; }
 - Name: `Link`
 - Modifiers: `nullable` `get; init`
 - Returns: `string?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.45fabcb1eb2968ce041767000387c82329263a76/src/Foundation/Problems.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.848d7df41fb82a23ce0738e64978a35c934d7558/src/Foundation/Problems.cs)
 
 Request Type
 
@@ -59,7 +59,7 @@ public string? Link { get; init; }
 - Name: `Properties`
 - Modifiers: `get; init`
 - Returns: `IDictionary<string, object?>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.45fabcb1eb2968ce041767000387c82329263a76/src/Foundation/Problems.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.848d7df41fb82a23ce0738e64978a35c934d7558/src/Foundation/Problems.cs)
 
 Additional properties
 
@@ -74,7 +74,7 @@ public IDictionary<string, object?> Properties { get; init; }
 - Name: `Title`
 - Modifiers: `nullable` `get; init`
 - Returns: `string?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.45fabcb1eb2968ce041767000387c82329263a76/src/Foundation/Problems.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.848d7df41fb82a23ce0738e64978a35c934d7558/src/Foundation/Problems.cs)
 
 Request title
 

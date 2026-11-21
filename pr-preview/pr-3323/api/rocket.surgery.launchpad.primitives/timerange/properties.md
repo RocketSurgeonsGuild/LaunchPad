@@ -14,7 +14,7 @@ A range of times of day from [TimeRange.Start](/LaunchPad/pr-preview/pr-3323/api
 - Name: `Duration`
 - Modifiers: `get`
 - Returns: `TimeSpan`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.45fabcb1eb2968ce041767000387c82329263a76/src/Primitives/StrongTypes/TimeRange.cs#L45)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.848d7df41fb82a23ce0738e64978a35c934d7558/src/Primitives/StrongTypes/TimeRange.cs#L45)
 
 How long the range is.
 
@@ -29,7 +29,7 @@ public TimeSpan Duration { get; }
 - Name: `End`
 - Modifiers: `get`
 - Returns: `TimeOnly`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.45fabcb1eb2968ce041767000387c82329263a76/src/Primitives/StrongTypes/TimeRange.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.848d7df41fb82a23ce0738e64978a35c934d7558/src/Primitives/StrongTypes/TimeRange.cs)
 
 The time the range ends at.
 
@@ -44,7 +44,7 @@ public TimeOnly End { get; }
 - Name: `Start`
 - Modifiers: `get`
 - Returns: `TimeOnly`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.45fabcb1eb2968ce041767000387c82329263a76/src/Primitives/StrongTypes/TimeRange.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.848d7df41fb82a23ce0738e64978a35c934d7558/src/Primitives/StrongTypes/TimeRange.cs)
 
 The time the range starts at.
 

@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.AspNetCore.Mvc](/LaunchPad/pr-preview/pr-3323/api/rocket.surgery.launchpad.aspnetcore.mvc.md)
-- Version: `2.0.1-pr.1273`
+- Version: `2.0.1-pr.1275`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.Mvc.Joints`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.45fabcb1eb2968ce041767000387c82329263a76/src/AspNetCore.Mvc/Joints/MvcJoint.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3323-merge.Sha.848d7df41fb82a23ce0738e64978a35c934d7558/src/AspNetCore.Mvc/Joints/MvcJoint.cs)
 - Implements: `IDovetailJoint`, `IServiceJoint`
 
 Registers MVC Core, the MVC API explorer and the application parts for every assembly that depends on Rocket.Surgery.LaunchPad.AspNetCore. MVC is not native AOT compatible, which is why this joint lives in Rocket.Surgery.LaunchPad.AspNetCore.Mvc. Implements the `Joints.IServiceJoint`

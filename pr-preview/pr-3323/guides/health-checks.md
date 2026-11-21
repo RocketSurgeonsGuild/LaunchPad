@@ -84,8 +84,12 @@ or `LaunchPad__HealthChecks__Port=8081` in the environment. Then:
 - The health port serves the health check endpoints alone: anything else on it gets a 404, and so do the health check endpoints on any
   other port. This runs before any of the application's middleware.
 
-The health port is plain HTTP. The in-memory test server has no ports, so an application with a health port answers everything there,
-and `WebApplicationFactory` tests keep working.
+The health port is plain HTTP.
+
+The endpoints are kept apart only when the server really listens on the health port, which LaunchPad reads from the server's bound
+addresses once it has started. When it doesn't, the health check endpoints answer on the application's own addresses, as they do with no
+port. That happens when a `Listen` in code (`ConfigureKestrel`) overrides `urls`, under IIS or HTTP.sys, and on the in-memory test server,
+so `WebApplicationFactory` tests of an application with a health port keep working.
 
 ## The options
 
