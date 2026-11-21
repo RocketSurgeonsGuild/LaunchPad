@@ -12,7 +12,7 @@ Options for launchpad and aspnet core.
 ## AspNetCoreMvcOptions
 
 - Name: `Constructor`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.d4b5f5c52aac2c2cd0e8fd565d77879e394d9792/src/AspNetCore.Mvc/AspNetCoreMvcOptions.cs#L13)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.8612b29a5547634d1193be03a6ccda9f9049de68/src/AspNetCore.Mvc/AspNetCoreMvcOptions.cs#L13)
 
 ```csharp
 public class AspNetCoreMvcOptions
