@@ -11,7 +11,10 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("app");
 builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new(builder.HostEnvironment.BaseAddress) });
 
-await ( await builder.ConfigureDovetail() ).RunAsync();
+var host = await builder.ConfigureDovetail();
+// in the browser console, and in the Aspire dashboard when Sample.AppHost serves the client
+host.Services.GetRequiredService<ILogger<Program>>().LogInformation("Sample.BlazorWasm started at {BaseAddress}", builder.HostEnvironment.BaseAddress);
+await host.RunAsync();
 
 namespace Sample.BlazorWasm
 {

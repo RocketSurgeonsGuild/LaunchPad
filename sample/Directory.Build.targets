@@ -14,12 +14,13 @@
     <!--
         The server applications log through Serilog: Joinery.Dovetail.Serilog creates the logger, and the packages of the enrichers and sinks
         turn on the Serilog joints LaunchPad.Hosting writes into an application (src/Hosting/build/Rocket.Surgery.LaunchPad.Hosting.targets).
-        The LaunchPad SDK adds these packages to an application (RocketSurgeonsGuild/LaunchPad#3075); the samples name them until it does.
+        The LaunchPad SDK adds the OpenTelemetry packages to an application (src/Sdks/LaunchPad/Sdk/Rocket.Surgery.LaunchPad.Detection.OpenTelemetry.targets),
+        and will add the Serilog ones (RocketSurgeonsGuild/LaunchPad#3075); the samples, which reference LaunchPad through projects, name them.
 
         They also turn on OpenTelemetry: Joinery.Dovetail.OpenTelemetry with OpenTelemetry.Extensions.Hosting adds it to the services, and the
         instrumentation and OTLP exporter packages turn on LaunchPad.Hosting's OpenTelemetry joints. Nothing is exported unless
         OTEL_EXPORTER_OTLP_ENDPOINT is set, as Sample.AppHost sets it: the OpenTelemetry sink's joint and the OTLP exporter's joint only write
-        to it then. The AppHost itself is an Exe too, and gets none of this.
+        to it then. The AppHost itself is an Exe too, and gets none of this. Sample.BlazorWasm names its own browser telemetry packages.
     -->
     <ItemGroup Condition="'$(_SampleProject)' == 'true' and '$(OutputType)' == 'Exe' and '$(UsingMicrosoftNETSdkBlazorWebAssembly)' != 'true' and '$(IsAspireHost)' != 'true'">
         <PackageReference Include="Joinery.Dovetail.Serilog" />

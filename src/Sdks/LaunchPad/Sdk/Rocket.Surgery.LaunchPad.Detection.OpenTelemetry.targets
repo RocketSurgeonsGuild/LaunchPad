@@ -1,0 +1,89 @@
+<Project>
+    <!--
+        OpenTelemetry, imported by Rocket.Surgery.LaunchPad.Detection.targets. Unlike the other technologies it follows the host model rather
+        than a reference: every application LaunchPad.Hosting is added to (the HostApplication, WebApplication or WebAssembly host model,
+        LaunchPadEnableHosting not false) gets its traces, metrics and logs, with the packages that turn on LaunchPad.Hosting's OpenTelemetry
+        joints (src/Hosting/build/Rocket.Surgery.LaunchPad.Hosting.targets):
+          - every host: Joinery.Dovetail.OpenTelemetry, which turns OpenTelemetry on, and OpenTelemetry.Instrumentation.Http (the HTTP
+            client traces and metrics);
+          - the generic host and ASP.NET Core: OpenTelemetry.Extensions.Hosting, whose hosted service starts the providers, and the runtime
+            and process metrics (OpenTelemetry.Instrumentation.Runtime and OpenTelemetry.Instrumentation.Process). Blazor WebAssembly gets
+            neither: Dovetail starts its providers itself, and a browser has no process to measure;
+          - ASP.NET Core: OpenTelemetry.Instrumentation.AspNetCore (the request traces and metrics). Blazor's component traces and metrics
+            need no package of their own: ASP.NET Core and Blazor WebAssembly reference Components already;
+          - every host, unless LaunchPadEnableOtlpExporter is false: the OTLP exporter (OpenTelemetry.Exporter.OpenTelemetryProtocol), and
+            on the generic host and ASP.NET Core Serilog's OpenTelemetry sink (Serilog.Sinks.OpenTelemetry) for an application that logs
+            through Serilog (it references Serilog, which gives it Joinery.Dovetail.Serilog). Blazor WebAssembly exports its logs through
+            OpenTelemetry instead: the sink overflows the browser's stack. The joints export only when OTEL_EXPORTER_OTLP_ENDPOINT is set,
+            as Aspire sets it, so an application run on its own sends nothing.
+        LaunchPadEnableOpenTelemetry set to false opts out of all of it, and so does DovetailEnableOpenTelemetry set to false, Dovetail's own
+        switch. A package the project references itself keeps its own reference (and version): Dovetail's SDK only adds the ones it doesn't.
+
+        The versions are the ones the repository pinned when the SDK was packed (Packages.props), except OpenTelemetry.Extensions.Hosting and
+        Joinery.Dovetail.OpenTelemetry, which take the versions Dovetail's SDK gives a file-based app. An application can set any of the
+        version properties itself to choose another.
+    -->
+    <PropertyGroup>
+        <LaunchPadEnableOpenTelemetry Condition="'$(LaunchPadEnableOpenTelemetry)' == '' and '$(DovetailEnableOpenTelemetry)' == 'false'">false</LaunchPadEnableOpenTelemetry>
+        <LaunchPadEnableOpenTelemetry Condition="'$(LaunchPadEnableOpenTelemetry)' == ''">true</LaunchPadEnableOpenTelemetry>
+        <LaunchPadEnableOtlpExporter Condition="'$(LaunchPadEnableOtlpExporter)' == ''">true</LaunchPadEnableOtlpExporter>
+    </PropertyGroup>
+
+    <!--
+        The host models LaunchPad.Hosting has OpenTelemetry joints for, when the application gets LaunchPad.Hosting and OpenTelemetry. The
+        gates are items: MSBuild evaluates every property before any item.
+    -->
+    <ItemGroup Condition="'$(LaunchPadEnableOpenTelemetry)' != 'false' and '$(LaunchPadEnableHosting)' != 'false'">
+        <_LaunchPadTelemetryServer Include="@(DovetailHost->WithMetadataValue('Identity', 'HostApplication'));@(DovetailHost->WithMetadataValue('Identity', 'WebApplication'))" />
+        <_LaunchPadTelemetryWeb Include="@(DovetailHost->WithMetadataValue('Identity', 'WebApplication'))" />
+        <_LaunchPadTelemetryHost Include="@(_LaunchPadTelemetryServer);@(DovetailHost->WithMetadataValue('Identity', 'WebAssembly'))" />
+        <!-- Serilog, as Dovetail's SDK decides it: Joinery.Dovetail.Serilog is added for a direct reference to Serilog -->
+        <_LaunchPadTelemetrySerilog
+            Include="Serilog"
+            Condition="'$(DovetailEnableSerilog)' != 'false'
+                   and (@(PackageReference->AnyHaveMetadataValue('Identity', 'Serilog')) == 'true'
+                     or @(PackageReference->AnyHaveMetadataValue('Identity', 'Joinery.Dovetail.Serilog')) == 'true'
+                     or @(DovetailSdkImplicitPackageReference->AnyHaveMetadataValue('Identity', 'Joinery.Dovetail.Serilog')) == 'true')"
+        />
+    </ItemGroup>
+
+    <ItemGroup Condition="'@(_LaunchPadTelemetryHost)' != ''">
+        <!-- Dovetail's SDK may have added these two already (it does for a file-based app, or an application that references OpenTelemetry) -->
+        <DovetailSdkImplicitPackageReference
+            Include="Joinery.Dovetail.OpenTelemetry"
+            Version="$(DovetailVersion)"
+            Condition="@(DovetailSdkImplicitPackageReference->AnyHaveMetadataValue('Identity', 'Joinery.Dovetail.OpenTelemetry')) != 'true'"
+        />
+        <DovetailSdkImplicitPackageReference
+            Include="OpenTelemetry.Extensions.Hosting"
+            Version="$(DovetailOpenTelemetryExtensionsHostingVersion)"
+            Condition="'@(_LaunchPadTelemetryServer)' != '' and @(DovetailSdkImplicitPackageReference->AnyHaveMetadataValue('Identity', 'OpenTelemetry.Extensions.Hosting')) != 'true'"
+        />
+        <DovetailSdkImplicitPackageReference Include="OpenTelemetry.Instrumentation.Http" Version="$(LaunchPadOpenTelemetryHttpInstrumentationVersion)" />
+        <DovetailSdkImplicitPackageReference
+            Include="OpenTelemetry.Instrumentation.Runtime"
+            Version="$(LaunchPadOpenTelemetryRuntimeInstrumentationVersion)"
+            Condition="'@(_LaunchPadTelemetryServer)' != ''"
+        />
+        <DovetailSdkImplicitPackageReference
+            Include="OpenTelemetry.Instrumentation.Process"
+            Version="$(LaunchPadOpenTelemetryProcessInstrumentationVersion)"
+            Condition="'@(_LaunchPadTelemetryServer)' != ''"
+        />
+        <DovetailSdkImplicitPackageReference
+            Include="OpenTelemetry.Instrumentation.AspNetCore"
+            Version="$(LaunchPadOpenTelemetryAspNetCoreInstrumentationVersion)"
+            Condition="'@(_LaunchPadTelemetryWeb)' != ''"
+        />
+        <DovetailSdkImplicitPackageReference
+            Include="OpenTelemetry.Exporter.OpenTelemetryProtocol"
+            Version="$(LaunchPadOpenTelemetryExporterVersion)"
+            Condition="'$(LaunchPadEnableOtlpExporter)' != 'false'"
+        />
+        <DovetailSdkImplicitPackageReference
+            Include="Serilog.Sinks.OpenTelemetry"
+            Version="$(LaunchPadSerilogOpenTelemetryVersion)"
+            Condition="'$(LaunchPadEnableOtlpExporter)' != 'false' and '@(_LaunchPadTelemetrySerilog)' != '' and '@(_LaunchPadTelemetryServer)' != ''"
+        />
+    </ItemGroup>
+</Project>

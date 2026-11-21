@@ -106,11 +106,26 @@
             References="Joinery.Dovetail.OpenTelemetry;HotChocolate.Diagnostics"
             Hosts="HostApplication;WebApplication"
         />
-        <!-- The OTLP exporter of the traces and metrics, added only when OTEL_EXPORTER_OTLP_ENDPOINT is set (as Aspire sets it). -->
+        <!-- Blazor's component traces and metrics: a Blazor Server or Blazor WebAssembly application, which the shared framework gives Components. -->
+        <_LaunchPadHostingTemplate
+            Include="LaunchPadComponentsInstrumentationJoint"
+            References="Joinery.Dovetail.OpenTelemetry;Microsoft.AspNetCore.Components"
+            Hosts="WebApplication;WebAssembly"
+        />
+        <!--
+            The OTLP exporters, which export only when OTEL_EXPORTER_OTLP_ENDPOINT is set (as Aspire sets it). The LaunchPad SDK adds the
+            exporter to every application (LaunchPadEnableOtlpExporter). Blazor WebAssembly has its own: the browser exports HTTP/protobuf
+            to a path of its own origin (Aspire's Blazor gateway), and its logs as well, as Serilog's OpenTelemetry sink doesn't run there.
+        -->
         <_LaunchPadHostingTemplate
             Include="LaunchPadOtlpExporterJoint"
             References="Joinery.Dovetail.OpenTelemetry;OpenTelemetry.Exporter.OpenTelemetryProtocol"
             Hosts="HostApplication;WebApplication"
+        />
+        <_LaunchPadHostingTemplate
+            Include="LaunchPadWebAssemblyOtlpExporterJoint"
+            References="Joinery.Dovetail.OpenTelemetry;OpenTelemetry.Exporter.OpenTelemetryProtocol;Microsoft.AspNetCore.Components.WebAssembly"
+            Hosts="WebAssembly"
         />
     </ItemGroup>
     <ItemGroup>

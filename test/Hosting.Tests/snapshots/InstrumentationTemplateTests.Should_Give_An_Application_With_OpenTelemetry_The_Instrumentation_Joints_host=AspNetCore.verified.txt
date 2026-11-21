@@ -2,6 +2,7 @@
   Host: AspNetCore,
   Templates: [
     LaunchPadAspNetCoreInstrumentationJoint,
+    LaunchPadComponentsInstrumentationJoint,
     LaunchPadHealthChecksJoint,
     LaunchPadHotChocolateInstrumentationJoint,
     LaunchPadInstrumentationJoint,
@@ -11,10 +12,12 @@
   Output:
 Traces System.Net.Http:True
 Traces HotChocolate.Diagnostics:True
+Traces Microsoft.AspNetCore.Components:True
 Metrics System.Net.Http:True
 Metrics System.Runtime:True
 Metrics OpenTelemetry.Instrumentation.Process:True
 Metrics Microsoft.AspNetCore.Hosting:True
+Metrics Microsoft.AspNetCore.Components:True
 RecordException HttpClient:True
 RecordException AspNetCore:True
 }

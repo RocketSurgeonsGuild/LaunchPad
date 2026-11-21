@@ -16,6 +16,7 @@ public class InstrumentationTemplateTests
     private const string ProcessInstrumentationJoint = "LaunchPadProcessInstrumentationJoint";
     private const string AspNetCoreInstrumentationJoint = "LaunchPadAspNetCoreInstrumentationJoint";
     private const string HotChocolateInstrumentationJoint = "LaunchPadHotChocolateInstrumentationJoint";
+    private const string ComponentsInstrumentationJoint = "LaunchPadComponentsInstrumentationJoint";
 
     private static readonly string[] InstrumentationPackages =
     [
@@ -29,7 +30,7 @@ public class InstrumentationTemplateTests
 
     /// <summary>
     ///     The HTTP client traces (recording exceptions) and metrics, the runtime and process metrics, and GraphQL's traces on both hosts;
-    ///     the ASP.NET Core traces (recording exceptions) and metrics on ASP.NET Core only.
+    ///     the ASP.NET Core traces (recording exceptions) and metrics, and Blazor's component traces and metrics, on ASP.NET Core only.
     /// </summary>
     [Test]
     [Arguments(HostModel.GenericHost)]
@@ -47,8 +48,8 @@ public class InstrumentationTemplateTests
     }
 
     /// <summary>
-    ///     Blazor WebAssembly gets the HTTP client instrumentation, and not the runtime and process metrics, even when the application
-    ///     references them.
+    ///     Blazor WebAssembly gets the HTTP client instrumentation and Blazor's component traces and metrics, and not the runtime and process
+    ///     metrics, even when the application references them.
     /// </summary>
     [Test]
     public async Task Should_Not_Give_WebAssembly_The_Runtime_And_Process_Instrumentation()
@@ -81,7 +82,8 @@ public class InstrumentationTemplateTests
     }
 
     /// <summary>
-    ///     An application turns OpenTelemetry on but references none of the instrumentation: it gets none of the joints.
+    ///     An application turns OpenTelemetry on but references none of the instrumentation: it gets none of the joints of an instrumentation
+    ///     package, only Blazor's, whose instrumentation is part of ASP.NET Core.
     /// </summary>
     [Test]
     public async Task Should_Not_Give_An_Application_Without_The_Instrumentation_Packages_The_Instrumentation_Joints()
@@ -124,6 +126,7 @@ public class InstrumentationTemplateTests
     [Arguments(ProcessInstrumentationJoint)]
     [Arguments(AspNetCoreInstrumentationJoint)]
     [Arguments(HotChocolateInstrumentationJoint)]
+    [Arguments(ComponentsInstrumentationJoint)]
     public async Task Should_Write_The_Instrumentation_Joint_As_An_Internal_Embedded_OpenTelemetry_Joint(string joint)
     {
         var package = await PackedHosting.Pack();
@@ -182,13 +185,13 @@ public class InstrumentationTemplateTests
           _ = host.Services.GetService<TracerProvider>();
           _ = host.Services.GetService<MeterProvider>();
 
-          foreach (var name in new[] { "System.Net.Http", "HotChocolate.Diagnostics" })
+          foreach (var name in new[] { "System.Net.Http", "HotChocolate.Diagnostics", "Microsoft.AspNetCore.Components" })
           {
               using var source = new ActivitySource(name);
               Console.WriteLine($"Traces {name}:{source.HasListeners()}");
           }
 
-          foreach (var name in new[] { "System.Net.Http", "System.Runtime", "OpenTelemetry.Instrumentation.Process", "Microsoft.AspNetCore.Hosting" })
+          foreach (var name in new[] { "System.Net.Http", "System.Runtime", "OpenTelemetry.Instrumentation.Process", "Microsoft.AspNetCore.Hosting", "Microsoft.AspNetCore.Components" })
           {
               using var meter = new Meter(name);
               Console.WriteLine($"Metrics {name}:{meter.CreateCounter<long>("probe").Enabled}");

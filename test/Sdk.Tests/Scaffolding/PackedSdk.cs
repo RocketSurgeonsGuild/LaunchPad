@@ -110,7 +110,54 @@ internal sealed record PackedSdk(
     /// </summary>
     /// <param name="text">The text.</param>
     /// <returns>The text with placeholders.</returns>
-    public string Scrub(string text) => text.Replace(Version, "{LaunchPadVersion}", StringComparison.Ordinal).Replace(DovetailVersion, "{DovetailVersion}", StringComparison.Ordinal);
+    /// <remarks>
+    ///     The version of each third-party package the SDK adds (<see cref="ThirdPartyPackages" />), in the Packages.props it generates, is the
+    ///     one the repository pins, which a dependency update changes too: it becomes <c>{Pinned}</c>.
+    /// </remarks>
+    public string Scrub(string text)
+    {
+        foreach (var (packageId, property) in ThirdPartyPackages)
+        {
+            text = text.Replace($">{Repository.PackageVersion(packageId, "net11.0")}</{property}>", $">{{Pinned}}</{property}>", StringComparison.Ordinal);
+        }
+
+        return text.Replace(Version, "{LaunchPadVersion}", StringComparison.Ordinal).Replace(DovetailVersion, "{DovetailVersion}", StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    ///     A package the SDK added to an application, as a snapshot holds it: <c>Id Version (SDK)</c>, with the version of a third-party
+    ///     package that is the one the repository pins as <c>{Pinned}</c>.
+    /// </summary>
+    /// <param name="packageId">The package.</param>
+    /// <param name="version">The version the SDK gave it.</param>
+    /// <returns>The package and its version.</returns>
+    public string ScrubPackage(string packageId, string? version) =>
+        IsThirdPartyPackage(packageId) && version == Repository.PackageVersion(packageId, "net11.0")
+            ? $"{packageId} {{Pinned}} (SDK)"
+            : Scrub($"{packageId} {version} (SDK)");
+
+    /// <summary>
+    ///     Whether the SDK adds <paramref name="packageId" /> with a version of its own: a third-party package, or
+    ///     <c>OpenTelemetry.Extensions.Hosting</c>, which takes the version Dovetail's SDK gives a file-based app.
+    /// </summary>
+    /// <param name="packageId">The package.</param>
+    /// <returns><see langword="true" /> for a third-party package the SDK adds.</returns>
+    public static bool IsThirdPartyPackage(string packageId) =>
+        packageId == "OpenTelemetry.Extensions.Hosting" || ThirdPartyPackages.Any(z => z.PackageId == packageId);
+
+    /// <summary>
+    ///     The third-party packages the SDK adds (src/Sdks/LaunchPad/Sdk/Rocket.Surgery.LaunchPad.Detection.OpenTelemetry.targets), each with
+    ///     the property of its version in the Packages.props the SDK generates when it is packed (src/Sdks/Directory.Build.targets).
+    /// </summary>
+    public static readonly (string PackageId, string Property)[] ThirdPartyPackages =
+    [
+        ("OpenTelemetry.Exporter.OpenTelemetryProtocol", "LaunchPadOpenTelemetryExporterVersion"),
+        ("OpenTelemetry.Instrumentation.Http", "LaunchPadOpenTelemetryHttpInstrumentationVersion"),
+        ("OpenTelemetry.Instrumentation.Runtime", "LaunchPadOpenTelemetryRuntimeInstrumentationVersion"),
+        ("OpenTelemetry.Instrumentation.Process", "LaunchPadOpenTelemetryProcessInstrumentationVersion"),
+        ("OpenTelemetry.Instrumentation.AspNetCore", "LaunchPadOpenTelemetryAspNetCoreInstrumentationVersion"),
+        ("Serilog.Sinks.OpenTelemetry", "LaunchPadSerilogOpenTelemetryVersion"),
+    ];
 
     /// <summary>
     ///     The version of Dovetail the repository pins, which the SDK chains.

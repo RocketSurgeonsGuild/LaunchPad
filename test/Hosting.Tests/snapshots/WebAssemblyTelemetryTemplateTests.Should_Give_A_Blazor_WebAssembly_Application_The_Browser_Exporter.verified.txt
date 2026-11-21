@@ -1,0 +1,9 @@
+﻿{
+  Host: WebAssembly,
+  Templates: [
+    LaunchPadComponentsInstrumentationJoint,
+    LaunchPadInstrumentationJoint,
+    LaunchPadWebAssemblyEnvironmentLoggingJoint,
+    LaunchPadWebAssemblyOtlpExporterJoint
+  ]
+}

@@ -3,5 +3,11 @@
 <PropertyGroup>
 <LaunchPadDovetailSdkVersion Condition="'$(LaunchPadDovetailSdkVersion)' == ''">{DovetailVersion}</LaunchPadDovetailSdkVersion>
 <LaunchPadVersion Condition="'$(LaunchPadVersion)' == ''">{LaunchPadVersion}</LaunchPadVersion>
+<LaunchPadOpenTelemetryExporterVersion Condition="'$(LaunchPadOpenTelemetryExporterVersion)' == ''">{Pinned}</LaunchPadOpenTelemetryExporterVersion>
+<LaunchPadOpenTelemetryHttpInstrumentationVersion Condition="'$(LaunchPadOpenTelemetryHttpInstrumentationVersion)' == ''">{Pinned}</LaunchPadOpenTelemetryHttpInstrumentationVersion>
+<LaunchPadOpenTelemetryRuntimeInstrumentationVersion Condition="'$(LaunchPadOpenTelemetryRuntimeInstrumentationVersion)' == ''">{Pinned}</LaunchPadOpenTelemetryRuntimeInstrumentationVersion>
+<LaunchPadOpenTelemetryProcessInstrumentationVersion Condition="'$(LaunchPadOpenTelemetryProcessInstrumentationVersion)' == ''">{Pinned}</LaunchPadOpenTelemetryProcessInstrumentationVersion>
+<LaunchPadOpenTelemetryAspNetCoreInstrumentationVersion Condition="'$(LaunchPadOpenTelemetryAspNetCoreInstrumentationVersion)' == ''">{Pinned}</LaunchPadOpenTelemetryAspNetCoreInstrumentationVersion>
+<LaunchPadSerilogOpenTelemetryVersion Condition="'$(LaunchPadSerilogOpenTelemetryVersion)' == ''">{Pinned}</LaunchPadSerilogOpenTelemetryVersion>
 </PropertyGroup>
 </Project>
