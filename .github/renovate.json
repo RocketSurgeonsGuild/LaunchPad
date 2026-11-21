@@ -30,6 +30,42 @@
       "matchCategories": ["js"],
       "automerge": true,
       "labels": [":truck: private-dependencies"]
+    },
+    {
+      "description": "Shipped: the src/Sdks LaunchPad SDKs chain Joinery.Dovetail.Sdk and pin it into their Packages.props; src/AspNetCore, Foundation and AspNetCore.Mvc use Specular. The org preset marks them private; this repository ships them",
+      "matchDepNames": ["Joinery.Dovetail.Sdk", "Joinery.Dovetail.Sdk.*", "Specular"],
+      "labels": [":package: dependencies"]
+    },
+    {
+      "description": "Only the tests and samples use these (System.Reflection.Metadata only in the non-packable Foundation.Tasks): consumers of this repository's packages never get them",
+      "matchDepNames": [
+        "Alba",
+        "Asp.Versioning.Http",
+        "Asp.Versioning.Mvc",
+        "ChannelMediator",
+        "Foundatio.Mediator",
+        "Foundatio.Mediator.Abstractions",
+        "Immediate.Handlers",
+        "Mediator.Abstractions",
+        "Mediator.SourceGenerator",
+        "Microsoft.Kiota.Bundle",
+        "protobuf-net.Grpc.AspNetCore",
+        "protobuf-net.Grpc.Reflection",
+        "Refit.HttpClientFactory",
+        "Refit.Reflection",
+        "ZeroAlloc.Mapping",
+        "Optionary",
+        "Chirograph",
+        "Riok.Mapperly",
+        "StronglyTypedId",
+        "StronglyTypedId.Templates",
+        "Swashbuckle.AspNetCore",
+        "Swashbuckle.AspNetCore.*",
+        "ConsoleAppFramework",
+        "Microsoft.Bcl.AsyncInterfaces",
+        "System.Reflection.Metadata"
+      ],
+      "labels": [":truck: private-dependencies"]
     }
   ]
 }
