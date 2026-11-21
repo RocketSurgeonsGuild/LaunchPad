@@ -15,7 +15,7 @@ Helpers for during application startup and in middleware
 - Name: `DefaultResponseWriter(HttpContext, HealthReport)`
 - Modifiers: `static`
 - Returns: `Task`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.995615a80088961c58f34711f6cedc47cee2f39e/src/AspNetCore/LaunchPadHelpers.cs#L30-L102)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.2090de1a33eb8450724d310f26ce70b5d8dc8c4c/src/AspNetCore/LaunchPadHelpers.cs#L30-L102)
 
 The default response writer for health checks
 

@@ -14,7 +14,7 @@ The rules of a language code: a BCP 47 language tag that .NET knows as a culture
 - Name: `Define`
 - Modifiers: `static`
 - Returns: `StrongTypeDefinition<string>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.995615a80088961c58f34711f6cedc47cee2f39e/src/Primitives/StrongTypes/LanguageCode.cs#L31-L33)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.2090de1a33eb8450724d310f26ce70b5d8dc8c4c/src/Primitives/StrongTypes/LanguageCode.cs#L31-L33)
 
 ```csharp
 public sealed class LanguageCodeRules
