@@ -15,7 +15,7 @@
     -->
 
     <!--
-        The versions of the packages the SDK adds and of the Dovetail SDK it chains, generated when the SDK is packed. The version of the
+        The versions of the packages the SDK adds and of the Dovetail and Chirograph SDKs it chains, generated when the SDK is packed. The version of the
         import wins over a Joinery.Dovetail.Sdk.BlazorWebAssembly entry in global.json. It is read before the Microsoft SDK imports the Directory.Build.props, so to
         chain another version set LaunchPadDovetailSdkVersion as a global property or an environment variable
         (dotnet build -p:LaunchPadDovetailSdkVersion=1.2.3). Sdk.targets imports the same version, whatever the project sets in between.

@@ -137,6 +137,13 @@
         <PackageVersion Include="Joinery.Dovetail.Sdk.BlazorWebAssembly" Version="0.8.0" />
         <PackageVersion Include="Joinery.Dovetail.Sdk.WebAssembly" Version="0.8.0" />
         <PackageVersion Include="Joinery.Dovetail.Sdk.WindowsDesktop" Version="0.8.0" />
+        <!--
+            No project references it as a package either: every LaunchPad SDK chains the Chirograph SDK at this version
+            (src/Sdks/LaunchPad/Sdk/Rocket.Surgery.LaunchPad.Chirograph.targets), which src/Sdks/Directory.Build.targets writes into its
+            Sdk/Packages.props as LaunchPadChirographVersion. The test projects that apply <Sdk Name="Chirograph" /> themselves resolve it
+            from msbuild-sdks in global.json, which pins the same version (test/Sdk.Tests checks they agree).
+        -->
+        <PackageVersion Include="Chirograph" Version="0.1.2" />
         <!-- the command line of sample/Sample.Command, the version Joinery.Dovetail.Sdk.Console adds to a console application -->
         <PackageVersion Include="ConsoleAppFramework" Version="5.8.1" />
 

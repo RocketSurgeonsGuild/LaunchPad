@@ -1,0 +1,23 @@
+<Project>
+    <!--
+        Chirograph, the MSBuild SDK that generates typed HTTP clients from OpenAPI documents (the OpenApiClient item,
+        https://rocketsurgeonsguild.github.io/Chirograph/), chained by every LaunchPad SDK at LaunchPadChirographVersion, the version
+        Sdk/Packages.props pins. With Dovetail, each client also gets a joint, so a host built with ConfigureDovetail() resolves it. A project
+        without an OpenApiClient item gets nothing from it.
+
+        Rocket.Surgery.LaunchPad.Sdk.props puts this file in CustomAfterMicrosoftCommonTargets, so it is imported after the whole project,
+        however the LaunchPad SDK is applied: Chirograph's Sdk.targets has to see the project's OpenApiClient items, and a LaunchPad SDK
+        applied in a Directory.Build.props has its Sdk.targets imported before the project's own body. Chirograph's Sdk.props only sets
+        the versions of its tools and packages, each when the project has not set it, so both are imported here.
+
+        A project that applies Chirograph itself (<Sdk Name="Chirograph" />, in any order next to the LaunchPad SDK) has imported its
+        Sdk.props by now, which set ChirographVersion: Chirograph is not imported a second time, and the project's version wins.
+        LaunchPadEnableChirograph=false leaves it out.
+    -->
+    <PropertyGroup>
+        <_LaunchPadChainsChirograph>false</_LaunchPadChainsChirograph>
+        <_LaunchPadChainsChirograph Condition="'$(LaunchPadEnableChirograph)' != 'false' and '$(ChirographVersion)' == ''">true</_LaunchPadChainsChirograph>
+    </PropertyGroup>
+    <Import Project="Sdk.props" Sdk="Chirograph" Version="$(LaunchPadChirographVersion)" Condition="'$(_LaunchPadChainsChirograph)' == 'true'" />
+    <Import Project="Sdk.targets" Sdk="Chirograph" Version="$(LaunchPadChirographVersion)" Condition="'$(_LaunchPadChainsChirograph)' == 'true'" />
+</Project>

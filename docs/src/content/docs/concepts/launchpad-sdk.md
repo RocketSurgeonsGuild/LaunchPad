@@ -163,6 +163,24 @@ restore with `LPADSDK0001`, which names the minimum (`net11.0`), instead of NuGe
 incompatible. The check compares versions, so later frameworks pass, and it runs per framework, so a project that targets several
 fails on the old one. A .NET Standard library is left alone: the SDK adds it nothing.
 
+## HTTP clients from OpenAPI
+
+Every LaunchPad SDK chains [Chirograph](https://rocketsurgeonsguild.github.io/Chirograph/), the MSBuild SDK that generates a typed
+Kiota or Refitter client from each `OpenApiClient` item of the project. With Dovetail, each client also gets a joint, so a host built
+with `ConfigureDovetail()` resolves it without a registration call:
+
+```xml
+<Project Sdk="Rocket.Surgery.LaunchPad.Sdk/1.0.0">
+  <ItemGroup>
+    <OpenApiClient Include="openapi/rockets.json" Generator="Kiota" ClientName="RocketsClient" />
+  </ItemGroup>
+</Project>
+```
+
+A project without an `OpenApiClient` item gets nothing from Chirograph. Chirograph is chained at the version the SDK was built with;
+set `LaunchPadChirographVersion` to choose another, or `LaunchPadEnableChirograph` to `false` to leave it out. A project that applies
+Chirograph itself (`<Sdk Name="Chirograph" />`) keeps its own version: the SDK doesn't import it a second time.
+
 ## The console SDK
 
 `Rocket.Surgery.LaunchPad.Sdk.Console` is the same SDK for command line applications: it adds the same LaunchPad packages and

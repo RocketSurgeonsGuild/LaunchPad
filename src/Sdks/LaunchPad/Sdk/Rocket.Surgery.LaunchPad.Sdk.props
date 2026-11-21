@@ -4,7 +4,7 @@
         Sdk/Sdk.props of Rocket.Surgery.LaunchPad.Sdk.Console imports it and then Joinery.Dovetail.Sdk.Console, and each mirror of a Microsoft
         SDK (Rocket.Surgery.LaunchPad.Sdk.Web, ...) imports it after Dovetail's mirror (Rocket.Surgery.LaunchPad.Mirror.props). Every LaunchPad
         SDK package ships this file and the detection files, packed from src/Sdks/LaunchPad/Sdk. Each SDK imports its Packages.props (the
-        versions of the packages the SDK adds and of the Dovetail SDK it chains) itself, before this file.
+        versions of the packages the SDK adds and of the Dovetail and Chirograph SDKs it chains) itself, before this file.
     -->
 
     <!--
@@ -24,6 +24,14 @@
     -->
     <PropertyGroup>
         <CustomAfterMicrosoftCommonTargets>$(CustomAfterMicrosoftCommonTargets);$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Detection.targets</CustomAfterMicrosoftCommonTargets>
+    </PropertyGroup>
+
+    <!--
+        Chirograph, which generates the HTTP clients of the project's OpenApiClient items, chained after the whole project has been evaluated
+        (Rocket.Surgery.LaunchPad.Chirograph.targets).
+    -->
+    <PropertyGroup>
+        <CustomAfterMicrosoftCommonTargets>$(CustomAfterMicrosoftCommonTargets);$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Chirograph.targets</CustomAfterMicrosoftCommonTargets>
     </PropertyGroup>
 
     <!-- The minimum target framework: an older .NET stops with a clear error (Rocket.Surgery.LaunchPad.TargetFramework.targets). -->

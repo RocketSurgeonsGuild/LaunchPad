@@ -473,18 +473,20 @@ from the specs on every build. The sample tests generate Refitter clients throug
 [chirograph]: https://rocketsurgeonsguild.github.io/Chirograph/
 
 For an OpenAPI client, [Chirograph](https://rocketsurgeonsguild.github.io/Chirograph/) is an MSBuild SDK that generates a Kiota or
-Refitter client at build, from a document file, a URL or a server project in the same build, with an `Add<ClientName>()` registration:
+Refitter client at build, from a document file, a URL or a server project in the same build, with an `Add<ClientName>()` registration
+and a joint that calls it, so a host built with `ConfigureDovetail()` resolves the client. Every
+[LaunchPad SDK](../../concepts/launchpad-sdk/#http-clients-from-openapi) chains it, so a LaunchPad application only declares the client:
 
 ```xml
-<Project Sdk="Microsoft.NET.Sdk">
-  <Sdk Name="Chirograph" />
+<Project Sdk="Rocket.Surgery.LaunchPad.Sdk">
   <ItemGroup>
     <OpenApiClient Include="../Rockets.Api/Rockets.Api.csproj" Generator="Refitter" ClientName="RocketsClient" />
   </ItemGroup>
 </Project>
 ```
 
-Pin its version under `msbuild-sdks` in `global.json`.
+A project without a LaunchPad SDK applies Chirograph itself, with `<Sdk Name="Chirograph" />` and its version pinned under
+`msbuild-sdks` in `global.json`, as LaunchPad's own tests do.
 
 Things to know:
 
