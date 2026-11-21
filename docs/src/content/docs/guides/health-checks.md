@@ -96,8 +96,10 @@ so `WebApplicationFactory` tests of an application with a health port keep worki
 
 ## The options
 
-`LaunchPadHealthCheckOptions` is bound from the `LaunchPad:HealthChecks` section. Code can change it with
-`services.Configure<LaunchPadHealthCheckOptions>(...)`.
+`LaunchPadHealthCheckOptions` is bound from the `LaunchPad:HealthChecks` section by [Optionary](https://rocketsurgeonsguild.github.io/Optionary/),
+without reflection. An application that references Optionary gets the section in its `appsettings.schema.json`, for completion and
+validation in the editor. The options are checked when the host starts, so a port that is not a port number stops the application. Code
+can change them with `services.Configure<LaunchPadHealthCheckOptions>(...)`.
 
 | Option              | Default                                        | Meaning                                                                |
 | ------------------- | ---------------------------------------------- | ---------------------------------------------------------------------- |

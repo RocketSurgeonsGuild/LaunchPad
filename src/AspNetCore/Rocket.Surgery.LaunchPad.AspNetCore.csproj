@@ -17,6 +17,13 @@
         <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
         <ProjectReference Include="..\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
         <PackageReference Include="Joinery.Dovetail" />
+        <!--
+            LaunchPadHealthCheckOptions declares its section with [Optionary]: the binder and the schema metadata are generated into this
+            assembly, so consumers need only Optionary's runtime library. Its build targets stay private: they hand every referenced
+            package's XML documentation to the compiler as additional files, which ASP.NET Core's OpenAPI XML comment generator reads too
+            and turns into more string literals than a program may hold (CS8103).
+        -->
+        <PackageReference Include="Optionary" PrivateAssets="analyzers;build;buildMultiTargeting;buildTransitive" />
         <PackageReference Include="Rocket.Surgery.Build.Information" />
         <PackageReference Include="Specular" />
         <PackageReference Include="Serilog.AspNetCore" />

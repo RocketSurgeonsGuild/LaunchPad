@@ -3,7 +3,6 @@ using System.Text.Json;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
@@ -129,16 +128,10 @@ public class HealthCheckEndpointTests
     [Arguments("health")]
     [Arguments("0")]
     [Arguments("70000")]
-    public async Task Should_Reject_A_Port_That_Is_Not_A_Port_Number(string port)
+    public async Task Should_Not_Start_With_A_Port_That_Is_Not_A_Port_Number(string port)
     {
-        var services = new ServiceCollection();
-        var configuration = new ConfigurationBuilder()
-                           .AddInMemoryCollection(new Dictionary<string, string?> { ["LaunchPad:HealthChecks:Port"] = port })
-                           .Build();
-        services.AddSingleton<IConfiguration>(configuration);
-        services.AddSingleton<IConfigureOptions<LaunchPadHealthCheckOptions>, HealthCheckOptionsSetup>();
-        await using var provider = services.AddOptions().BuildServiceProvider();
-
-        await Assert.That(() => provider.GetRequiredService<IOptions<LaunchPadHealthCheckOptions>>().Value).Throws<InvalidOperationException>();
+        // Optionary validates the options when the host starts, so a bad port stops the application instead of the first request.
+        var exception = await Assert.ThrowsAsync<Exception>(async () => await HealthCheckHost.StartAsync(new Dictionary<string, string?> { ["LaunchPad:HealthChecks:Port"] = port }));
+        await exception!.Message.Should().Contain("LaunchPad:HealthChecks:Port");
     }
 }

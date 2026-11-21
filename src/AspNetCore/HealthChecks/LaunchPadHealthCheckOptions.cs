@@ -1,5 +1,9 @@
+using System.ComponentModel.DataAnnotations;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+
+using Optionary;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.HealthChecks;
 
@@ -7,10 +11,13 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.HealthChecks;
 ///     Where LaunchPad maps the health check endpoints (<c>MapLaunchPadHealthChecks</c>), and on which port.
 /// </summary>
 /// <remarks>
-///     The <see cref="Joints.HealthChecksJoint" /> binds these options from the <see cref="SectionName" /> configuration section, for example
-///     <c>LaunchPad__HealthChecks__Port=8081</c>. Code can change them with <c>services.Configure&lt;LaunchPadHealthCheckOptions&gt;</c>.
+///     Optionary binds these options from the <see cref="SectionName" /> configuration section without reflection, for example
+///     <c>LaunchPad__HealthChecks__Port=8081</c>, and describes them in the application's <c>appsettings.schema.json</c>. The
+///     <see cref="Joints.HealthChecksJoint" /> registers them, and checks them when the host starts. Code can change them with
+///     <c>services.Configure&lt;LaunchPadHealthCheckOptions&gt;</c>.
 /// </remarks>
 [PublicAPI]
+[Optionary(SectionName, ValidateOnStart = true)]
 public sealed class LaunchPadHealthCheckOptions
 {
     /// <summary>The configuration section the options are bound from.</summary>
@@ -26,10 +33,11 @@ public sealed class LaunchPadHealthCheckOptions
     ///     the server doesn't listen on the port after all (a <c>Listen</c> in code, IIS, HTTP.sys or the in-memory test server), the health
     ///     check endpoints answer on the application's own addresses, as they do with no port.
     /// </remarks>
+    [Range(1, 65535)]
     public int? Port { get; set; }
 
     /// <summary>The path of the health report, which the liveness and readiness paths sit under. The default is <c>/health</c>.</summary>
-    public PathString Path { get; set; } = "/health";
+    public string Path { get; set; } = "/health";
 
     /// <summary>The liveness path, under <see cref="Path" />. The default is <c>live</c>.</summary>
     public string LivePath { get; set; } = "live";
