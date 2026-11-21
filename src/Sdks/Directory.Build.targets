@@ -45,8 +45,9 @@
 
     <!--
         Writes Sdk/Packages.props into each package: LaunchPadVersion, the version of the SDK, which every LaunchPad package it adds to an
-        application shares, and LaunchPadDovetailSdkVersion, the version of the Dovetail SDK that Sdk/Sdk.props chains (LaunchPadChainedSdk),
-        which is the one Directory.Packages.props pins. An application can set either first to choose another. As in Joinery.Dovetail.Sdk, the
+        application shares, LaunchPadDovetailSdkVersion, the version of the Dovetail SDK that Sdk/Sdk.props chains (LaunchPadChainedSdk), and
+        LaunchPadChirographVersion, the version of the Chirograph SDK every LaunchPad SDK chains (Rocket.Surgery.LaunchPad.Chirograph.targets),
+        each the one Directory.Packages.props pins. An application can set any of them first to choose another. As in Joinery.Dovetail.Sdk, the
         versions are only known when the SDK is packed, so the file is generated then rather than kept in the repository.
 
         LaunchPad/Sdk/Rocket.Surgery.LaunchPad.Detection.targets, and the files it imports, decide which packages an application gets. A package
@@ -56,13 +57,16 @@
     <Target Name="_LaunchPadGeneratePackagesProps" BeforeTargets="_GetPackageFiles;Pack">
         <ItemGroup>
             <_LaunchPadDovetailSdk Include="@(PackageVersion)" Condition="'%(Identity)' == '$(LaunchPadChainedSdk)'" />
+            <_LaunchPadChirographSdk Include="@(PackageVersion)" Condition="'%(Identity)' == 'Chirograph'" />
         </ItemGroup>
         <PropertyGroup>
             <_LaunchPadDovetailSdkVersion>@(_LaunchPadDovetailSdk->'%(Version)')</_LaunchPadDovetailSdkVersion>
+            <_LaunchPadChirographVersion>@(_LaunchPadChirographSdk->'%(Version)')</_LaunchPadChirographVersion>
             <_LaunchPadPackagesProps>$(IntermediateOutputPath)Packages.props</_LaunchPadPackagesProps>
         </PropertyGroup>
         <Error Condition="'$(LaunchPadChainedSdk)' == ''" Text="$(MSBuildProjectName) sets no LaunchPadChainedSdk, the Dovetail SDK it chains." />
         <Error Condition="'$(_LaunchPadDovetailSdkVersion)' == ''" Text="Directory.Packages.props pins no version of $(LaunchPadChainedSdk), which $(PackageId) chains." />
+        <Error Condition="'$(_LaunchPadChirographVersion)' == ''" Text="Directory.Packages.props pins no version of Chirograph, which $(PackageId) chains." />
         <ItemGroup>
             <!-- %24 is $ and %27 is ': the file reads the consumer's properties, which must not be expanded here -->
             <_LaunchPadPackagesPropsLine Include="&lt;Project&gt;" />
@@ -70,6 +74,9 @@
             <_LaunchPadPackagesPropsLine Include="&lt;PropertyGroup&gt;" />
             <_LaunchPadPackagesPropsLine
                 Include="&lt;LaunchPadDovetailSdkVersion Condition=&quot;%27%24(LaunchPadDovetailSdkVersion)%27 == %27%27&quot;&gt;$(_LaunchPadDovetailSdkVersion)&lt;/LaunchPadDovetailSdkVersion&gt;"
+            />
+            <_LaunchPadPackagesPropsLine
+                Include="&lt;LaunchPadChirographVersion Condition=&quot;%27%24(LaunchPadChirographVersion)%27 == %27%27&quot;&gt;$(_LaunchPadChirographVersion)&lt;/LaunchPadChirographVersion&gt;"
             />
             <_LaunchPadPackagesPropsLine
                 Include="&lt;LaunchPadVersion Condition=&quot;%27%24(LaunchPadVersion)%27 == %27%27&quot;&gt;$(PackageVersion)&lt;/LaunchPadVersion&gt;"

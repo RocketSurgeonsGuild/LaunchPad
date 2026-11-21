@@ -8,10 +8,10 @@
         Rocket.Surgery.LaunchPad.Sdk.Web and the other mirrors of the Microsoft SDKs (src/Sdks) take the Microsoft SDK's place.
     -->
 
-    <!-- The versions of the packages the SDK adds and of the Dovetail SDK it chains, generated when the SDK is packed. -->
+    <!-- The versions of the packages the SDK adds and of the Dovetail and Chirograph SDKs it chains, generated when the SDK is packed. -->
     <Import Project="$(MSBuildThisFileDirectory)Packages.props" />
 
-    <!-- Serilog and LaunchPad's package detection, shared with every LaunchPad SDK. -->
+    <!-- Serilog, LaunchPad's package detection and Chirograph, shared with every LaunchPad SDK. -->
     <Import Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Sdk.props" />
 
     <!--
