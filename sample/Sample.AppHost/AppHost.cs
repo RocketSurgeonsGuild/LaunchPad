@@ -20,7 +20,13 @@ var keycloak = builder.AddKeycloak("keycloak").WithRealmImport("./Realms");
 var authority = ReferenceExpression.Create($"{keycloak.GetEndpoint("http")}/realms/launchpad");
 
 // ASP.NET Core with controllers, Swashbuckle's UI at /swagger
-var restful = builder.AddSample("restful", "Sample.Restful").WithIdentity(keycloak, authority).WithHttpHealthCheck("/health");
+// Sample.Restful serves its health checks on a port of their own (LaunchPad:HealthChecks:Port in its appsettings.json), where the
+// application's addresses answer 404 for them. Aspire chooses that port here, and probes it.
+var restful = builder
+             .AddSample("restful", "Sample.Restful")
+             .WithIdentity(keycloak, authority)
+             .WithHttpEndpoint(name: "health", env: "LaunchPad__HealthChecks__Port")
+             .WithHttpHealthCheck("/health", endpointName: "health");
 restful.WithUrl($"{restful.GetEndpoint("https")}/swagger", "Swagger UI");
 
 var classicRestful = builder.AddSample("classic-restful", "Sample.Classic.Restful").WithIdentity(keycloak, authority);

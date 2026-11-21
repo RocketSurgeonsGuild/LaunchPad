@@ -32,7 +32,8 @@ public sealed class LaunchPadHealthCheckOptions
     /// </summary>
     /// <remarks>
     ///     When a port is set, Kestrel also listens on <c>http://*:{Port}</c>, next to the application's own addresses. A request on that port
-    ///     for anything but the health check endpoints gets a 404, and so does a request for the health check endpoints on any other port. When
+    ///     for anything but the health check endpoints gets a 404, and so does a request for the health check endpoints on any other port. The
+    ///     health checks of the port are answered before the application's middleware, so HTTPS redirection doesn't redirect a probe. When
     ///     the server doesn't listen on the port after all (a <c>Listen</c> in code, IIS, HTTP.sys or the in-memory test server), the health
     ///     check endpoints answer on the application's own addresses, as they do with no port.
     /// </remarks>

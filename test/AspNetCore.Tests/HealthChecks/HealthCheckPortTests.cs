@@ -1,5 +1,6 @@
 using System.Net;
 
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 
@@ -50,6 +51,30 @@ public class HealthCheckPortTests
         );
 
         await AssertIsolatedAsync(host.Client, appPort, healthPort);
+    }
+
+    // A probe speaks plain HTTP to the health port: HTTPS redirection, and whatever else the application puts in front of its endpoints,
+    // must not turn it away.
+    [Test]
+    public async Task Should_Answer_A_Probe_Before_The_Middleware_Of_The_Application()
+    {
+        var (appPort, healthPort) = (HealthCheckHost.FreePort(), HealthCheckHost.FreePort());
+        await using var host = await HealthCheckHost.StartAsync(
+            new Dictionary<string, string?>
+            {
+                ["urls"] = $"http://127.0.0.1:{appPort}", ["LaunchPad:HealthChecks:Port"] = $"{healthPort}", ["https_port"] = "443",
+            },
+            kestrel: true,
+            middleware: app => app.UseHttpsRedirection()
+        );
+        using var client = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false });
+
+        await ( await HealthCheckHost.StatusAsync(client, healthPort, "/health") ).Should().BeEqualTo(HttpStatusCode.OK);
+        await ( await HealthCheckHost.StatusAsync(client, healthPort, "/health/live") ).Should().BeEqualTo(HttpStatusCode.OK);
+        await ( await HealthCheckHost.StatusAsync(client, healthPort, "/health/ready") ).Should().BeEqualTo(HttpStatusCode.OK);
+        await ( await HealthCheckHost.StatusAsync(client, healthPort, "/health/other") ).Should().BeEqualTo(HttpStatusCode.NotFound);
+        await ( await HealthCheckHost.StatusAsync(client, healthPort, "/ping") ).Should().BeEqualTo(HttpStatusCode.NotFound);
+        await ( await HealthCheckHost.StatusAsync(client, appPort, "/ping") ).Should().BeEqualTo(HttpStatusCode.TemporaryRedirect);
     }
 
     // A Listen in code overrides urls, so the health port is configured but never bound: the health checks stay on the application's port.

@@ -46,6 +46,11 @@ public static class LaunchPadHealthCheckExtensions
     ///         returned builder applies its conventions to all three, so <c>RequireAuthorization</c> on it secures them all. The health check
     ///         services must be registered (<c>AddHealthChecks</c>), which LaunchPad's <c>HealthChecksJoint</c> does.
     ///     </para>
+    ///     <para>
+    ///         On a port of their own (<see cref="LaunchPadHealthCheckOptions.Port" />) the three are answered before the application's
+    ///         middleware and endpoints, so nothing of the application, such as HTTPS redirection, turns a probe away. The conventions of
+    ///         the returned builder do not apply there: the port is what keeps them apart.
+    ///     </para>
     /// </remarks>
     /// <param name="endpoints">The endpoints to map them on.</param>
     /// <returns>A builder for the three endpoints.</returns>
@@ -56,12 +61,19 @@ public static class LaunchPadHealthCheckExtensions
         var options = endpoints.ServiceProvider.GetService<IOptions<LaunchPadHealthCheckOptions>>()?.Value ?? new LaunchPadHealthCheckOptions();
         var group = endpoints.MapGroup(options.Path);
 
-        group.MapHealthChecks("", Create(options, LaunchPadHealthCheckResponseWriter.WriteAsync));
-        group.MapHealthChecks(options.LivePath, Create(options, predicate: static _ => false));
-        group.MapHealthChecks(options.ReadyPath, Create(options));
+        group.MapHealthChecks("", Report(options));
+        group.MapHealthChecks(options.LivePath, Live(options));
+        group.MapHealthChecks(options.ReadyPath, Ready(options));
 
         return group.AllowAnonymous();
     }
+
+    // What each endpoint answers, wherever it is served: mapped here, or on the health check port (HealthCheckPortStartupFilter).
+    internal static HealthCheckOptions Report(LaunchPadHealthCheckOptions options) => Create(options, LaunchPadHealthCheckResponseWriter.WriteAsync);
+
+    internal static HealthCheckOptions Live(LaunchPadHealthCheckOptions options) => Create(options, predicate: static _ => false);
+
+    internal static HealthCheckOptions Ready(LaunchPadHealthCheckOptions options) => Create(options);
 
     private static HealthCheckOptions Create(
         LaunchPadHealthCheckOptions options,
