@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-beta.434`
+- Version: `2.0.1-beta.435`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.dfbe8776933590a8ca1efba66f9af5c4929d4975/src/Primitives/StrongTypes/ExpirationDate.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6aecd30ca14bc14267856dbc142a55a566b9ae42/src/Primitives/StrongTypes/ExpirationDate.cs)
 - Implements: `IStrongType<ExpirationDate, DateOnly>`, `IComparable<ExpirationDate>`, `IEquatable<ExpirationDate>`, `IFormattable`, `IParsable<ExpirationDate>`, `ISpanFormattable`, `ISpanParsable<ExpirationDate>`, `IUtf8SpanFormattable`, `IEqualityOperators<ExpirationDate, ExpirationDate, bool>`
 
 The last day something is valid, valid under [ExpirationDateRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/expirationdaterules.md).

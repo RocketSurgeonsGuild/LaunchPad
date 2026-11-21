@@ -14,7 +14,7 @@ The rules of a percentage.
 - Name: `Define`
 - Modifiers: `static`
 - Returns: `StrongTypeDefinition<decimal>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.dfbe8776933590a8ca1efba66f9af5c4929d4975/src/Primitives/StrongTypes/Percentage.cs#L14)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6aecd30ca14bc14267856dbc142a55a566b9ae42/src/Primitives/StrongTypes/Percentage.cs#L14)
 
 ```csharp
 public sealed class PercentageRules

@@ -2,10 +2,10 @@
 
 - Kind: `record`
 - Package: [Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore](/LaunchPad/api/rocket.surgery.launchpad.zeroalloc.aspnetcore.md)
-- Version: `2.0.1-beta.434`
+- Version: `2.0.1-beta.435`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.Validation`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.dfbe8776933590a8ca1efba66f9af5c4929d4975/src/ZeroAlloc.AspNetCore/Validation/ValidationFailureProblemDetails.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6aecd30ca14bc14267856dbc142a55a566b9ae42/src/ZeroAlloc.AspNetCore/Validation/ValidationFailureProblemDetails.cs)
 - Implements: `IEquatable<ValidationFailureDetail>`
 
 A single validation failure.

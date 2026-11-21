@@ -12,7 +12,7 @@ Serializes HotChocolate's `Coordinates` scalar, a list of positions of arbitrary
 ## CoordinatesSerializer
 
 - Name: `Constructor`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.dfbe8776933590a8ca1efba66f9af5c4929d4975/src/StrawberryShake.Spatial/CoordinatesSerializer.cs#L15)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6aecd30ca14bc14267856dbc142a55a566b9ae42/src/StrawberryShake.Spatial/CoordinatesSerializer.cs#L15)
 
 Serializes HotChocolate's `Coordinates` scalar, a list of positions of arbitrary depth (the coordinates of a `GeoJSONMultiPolygonType`, for example)
 

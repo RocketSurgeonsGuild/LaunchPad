@@ -14,7 +14,7 @@ RocketSerilogOptions.
 - Name: `ConsoleMessageTemplate`
 - Modifiers: `get; set`
 - Returns: `string`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.dfbe8776933590a8ca1efba66f9af5c4929d4975/src/Hosting/LaunchPadLoggingOptions.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6aecd30ca14bc14267856dbc142a55a566b9ae42/src/Hosting/LaunchPadLoggingOptions.cs)
 
 The default console message template
 
@@ -29,7 +29,7 @@ public string ConsoleMessageTemplate { get; set; }
 - Name: `DebugMessageTemplate`
 - Modifiers: `get; set`
 - Returns: `string`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.dfbe8776933590a8ca1efba66f9af5c4929d4975/src/Hosting/LaunchPadLoggingOptions.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6aecd30ca14bc14267856dbc142a55a566b9ae42/src/Hosting/LaunchPadLoggingOptions.cs)
 
 The default debug message template
 
@@ -44,7 +44,7 @@ public string DebugMessageTemplate { get; set; }
 - Name: `EnableConsoleLogging`
 - Modifiers: `get; set`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.dfbe8776933590a8ca1efba66f9af5c4929d4975/src/Hosting/LaunchPadLoggingOptions.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6aecd30ca14bc14267856dbc142a55a566b9ae42/src/Hosting/LaunchPadLoggingOptions.cs)
 
 Enable or disable console logging, defaults to enabled
 
@@ -59,7 +59,7 @@ public bool EnableConsoleLogging { get; set; }
 - Name: `EnableDebugLogging`
 - Modifiers: `get; set`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.dfbe8776933590a8ca1efba66f9af5c4929d4975/src/Hosting/LaunchPadLoggingOptions.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6aecd30ca14bc14267856dbc142a55a566b9ae42/src/Hosting/LaunchPadLoggingOptions.cs)
 
 Enable or disable debug logging, defaults to enabled
 
@@ -74,7 +74,7 @@ public bool EnableDebugLogging { get; set; }
 - Name: `EnableTraceLogging`
 - Modifiers: `get; set`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.dfbe8776933590a8ca1efba66f9af5c4929d4975/src/Hosting/LaunchPadLoggingOptions.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6aecd30ca14bc14267856dbc142a55a566b9ae42/src/Hosting/LaunchPadLoggingOptions.cs)
 
 Enable or disable debug logging, defaults to enabled
 
@@ -89,7 +89,7 @@ public bool EnableTraceLogging { get; set; }
 - Name: `TraceMessageTemplate`
 - Modifiers: `get; set`
 - Returns: `string`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.dfbe8776933590a8ca1efba66f9af5c4929d4975/src/Hosting/LaunchPadLoggingOptions.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6aecd30ca14bc14267856dbc142a55a566b9ae42/src/Hosting/LaunchPadLoggingOptions.cs)
 
 The default debug message template
 
