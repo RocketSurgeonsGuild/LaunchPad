@@ -52,9 +52,9 @@ public static class AuthorizationProblems
     {
         if (decision.RequiredScopes.Count == 0) return existing;
         var scope = string.Create(CultureInfo.InvariantCulture, $"scope=\"{string.Join(' ', decision.RequiredScopes)}\"");
-        return  decision.Problem is Forbidden forbidden 
-            ?  forbidden.Properties.ContainsKey(AuthorizationDecision.MissingScopesProperty) ? $"Bearer error=\"insufficient_scope\", {scope}" : existing 
-            :  string.IsNullOrWhiteSpace(existing)
+        return decision.Problem is Forbidden forbidden
+            ? forbidden.Properties.ContainsKey(AuthorizationDecision.MissingScopesProperty) ? $"Bearer error=\"insufficient_scope\", {scope}" : existing
+            : string.IsNullOrWhiteSpace(existing)
             ? "Bearer " + scope
             : !existing.StartsWith("Bearer", StringComparison.OrdinalIgnoreCase) || existing.Contains("scope=", StringComparison.OrdinalIgnoreCase)
             ? existing
