@@ -83,14 +83,14 @@ public sealed class AuthorizationBehavior : IPipelineBehavior
     )
     {
         var decision = await services.GetRequiredService<RequestAuthorizer>().AuthorizeAsync(plan, request, ct).ConfigureAwait(false);
-        return  decision.Problem is not { } problem 
-            ?  await next(request, ct).ConfigureAwait(false) 
-            :  (problem, services.GetService<AuthorizationResponse<TResponse>>()) switch
-        {
-            (Unauthorized unauthorized, { } response) => response.Unauthorized(unauthorized),
-            (Forbidden forbidden, { } response) => response.Forbidden(forbidden),
-            _ => throw new AuthorizationDeniedException(problem),
-        };
+        return decision.Problem is not { } problem
+            ? await next(request, ct).ConfigureAwait(false)
+            : (problem, services.GetService<AuthorizationResponse<TResponse>>()) switch
+            {
+                (Unauthorized unauthorized, { } response) => response.Unauthorized(unauthorized),
+                (Forbidden forbidden, { } response) => response.Forbidden(forbidden),
+                _ => throw new AuthorizationDeniedException(problem),
+            };
     }
 
     // The plan of the request, from the services of the call; null for a request without policies. A request with a policy attribute is
