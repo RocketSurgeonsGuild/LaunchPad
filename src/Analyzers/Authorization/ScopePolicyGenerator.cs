@@ -78,9 +78,9 @@ public sealed class ScopePolicyGenerator : IIncrementalGenerator
 
         var containers = new List<INamedTypeSymbol>();
         for (var current = type; current is { }; current = current.ContainingType) containers.Insert(0, current);
-        return  type.IsGenericType || containers.Any(c => c.IsGenericType) || containers.Any(c => !IsPartial(c, cancellationToken)) 
-            ?  Invalid("it, or a type it is nested in, is generic or not partial, so its EvaluateAsync cannot be generated into it") 
-            :   new(
+        return type.IsGenericType || containers.Any(c => c.IsGenericType) || containers.Any(c => !IsPartial(c, cancellationToken))
+            ? Invalid("it, or a type it is nested in, is generic or not partial, so its EvaluateAsync cannot be generated into it")
+            : new(
             hintName,
             type.ContainingNamespace is { IsGlobalNamespace: false } ns ? ns.ToDisplayString() : null,
             containers.Select(Declaration).ToEquatableArray(),
