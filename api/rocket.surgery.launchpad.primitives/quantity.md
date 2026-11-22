@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-beta.447`
+- Version: `2.0.1-beta.448`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.afac89ac2f84551e9433e9fb435d06d6d3ff37f0/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Quantity.g.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.974bfd9a73f64517e8a81d86b29393f3cce75778/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Quantity.g.cs)
 - Implements: `IStrongType<Quantity, int>`, `IComparable<Quantity>`, `IConvertible`, `IEquatable<Quantity>`, `IFormattable`, `IParsable<Quantity>`, `ISpanFormattable`, `ISpanParsable<Quantity>`, `IUtf8SpanFormattable`, `IUtf8SpanParsable<Quantity>`, `IComparisonOperators<Quantity, Quantity, bool>`, `IEqualityOperators<Quantity, Quantity, bool>`
 
 A non-negative count of items, valid under [QuantityRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/quantityrules.md).

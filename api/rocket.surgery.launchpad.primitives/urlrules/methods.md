@@ -14,7 +14,7 @@ The rules of a URL: an absolute `http` or `https` URI (RFC 3986 §4.3) with a ho
 - Name: `Define`
 - Modifiers: `static`
 - Returns: `StrongTypeDefinition<string>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.afac89ac2f84551e9433e9fb435d06d6d3ff37f0/src/Primitives/StrongTypes/Url.cs#L28-L32)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.974bfd9a73f64517e8a81d86b29393f3cce75778/src/Primitives/StrongTypes/Url.cs#L28-L32)
 
 ```csharp
 public sealed class UrlRules

@@ -15,7 +15,7 @@ A JSON converter for types which can be represented by a single string value, pa
 - Name: `Read(Utf8JsonReader, Type, JsonSerializerOptions)`
 - Modifiers: `override`
 - Returns: `T`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.afac89ac2f84551e9433e9fb435d06d6d3ff37f0/src/NodaTime/SystemTextJsonCompositeNodaPatternConverter.cs#L34)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.974bfd9a73f64517e8a81d86b29393f3cce75778/src/NodaTime/SystemTextJsonCompositeNodaPatternConverter.cs#L34)
 
 Reads and converts the JSON to type `T`.
 
@@ -53,7 +53,7 @@ public sealed class SystemTextJsonCompositeNodaPatternConverter<T>
 - Name: `ReadAsPropertyName(Utf8JsonReader, Type, JsonSerializerOptions)`
 - Modifiers: `override`
 - Returns: `T`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.afac89ac2f84551e9433e9fb435d06d6d3ff37f0/src/NodaTime/SystemTextJsonCompositeNodaPatternConverter.cs#L37)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.974bfd9a73f64517e8a81d86b29393f3cce75778/src/NodaTime/SystemTextJsonCompositeNodaPatternConverter.cs#L37)
 
 Reads a dictionary key from a JSON property name.
 
@@ -90,7 +90,7 @@ public sealed class SystemTextJsonCompositeNodaPatternConverter<T>
 
 - Name: `Write(Utf8JsonWriter, T, JsonSerializerOptions)`
 - Modifiers: `override`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.afac89ac2f84551e9433e9fb435d06d6d3ff37f0/src/NodaTime/SystemTextJsonCompositeNodaPatternConverter.cs#L42-L44)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.974bfd9a73f64517e8a81d86b29393f3cce75778/src/NodaTime/SystemTextJsonCompositeNodaPatternConverter.cs#L42-L44)
 
 Writes a specified value as JSON.
 
@@ -123,7 +123,7 @@ public sealed class SystemTextJsonCompositeNodaPatternConverter<T>
 
 - Name: `WriteAsPropertyName(Utf8JsonWriter, T, JsonSerializerOptions)`
 - Modifiers: `override`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.afac89ac2f84551e9433e9fb435d06d6d3ff37f0/src/NodaTime/SystemTextJsonCompositeNodaPatternConverter.cs#L49-L51)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.974bfd9a73f64517e8a81d86b29393f3cce75778/src/NodaTime/SystemTextJsonCompositeNodaPatternConverter.cs#L49-L51)
 
 Writes a dictionary key as a JSON property name.
 

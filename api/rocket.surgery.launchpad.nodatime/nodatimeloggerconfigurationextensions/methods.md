@@ -15,7 +15,7 @@ Adds the Destructure.NodaTimeTypes() extension to `LoggerConfiguration`.
 - Name: `NodaTimeTypes(LoggerDestructuringConfiguration)`
 - Modifiers: `extension`
 - Returns: `LoggerConfiguration`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.afac89ac2f84551e9433e9fb435d06d6d3ff37f0/src/NodaTime/NodaTimeLoggerConfigurationExtensions.cs#L20-L25)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.974bfd9a73f64517e8a81d86b29393f3cce75778/src/NodaTime/NodaTimeLoggerConfigurationExtensions.cs#L20-L25)
 
 Enable destructuring of the NodaTime types as the text of their ISO patterns.
 

@@ -12,7 +12,7 @@ RocketSerilogOptions.
 ## LaunchPadLoggingOptions
 
 - Name: `Constructor`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.afac89ac2f84551e9433e9fb435d06d6d3ff37f0/src/Hosting/LaunchPadLoggingOptions.cs#L13-L40)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.974bfd9a73f64517e8a81d86b29393f3cce75778/src/Hosting/LaunchPadLoggingOptions.cs#L13-L40)
 
 ```csharp
 public class LaunchPadLoggingOptions
