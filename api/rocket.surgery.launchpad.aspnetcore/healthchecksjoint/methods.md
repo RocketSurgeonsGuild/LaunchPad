@@ -13,7 +13,7 @@ Registers the health check services and the options of LaunchPad's health check 
 ## Register(IDovetailContext, IServiceCollection)
 
 - Name: `Register(IDovetailContext, IServiceCollection)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5eb9940f30f7eb1f8bff840daf4429d170c460a1/src/AspNetCore/Joints/HealthChecksJoint.cs#L30-L35)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.58a05033e5e3d052ad687f1ec7ee0750304f817e/src/AspNetCore/Joints/HealthChecksJoint.cs#L30-L35)
 
 Register the Service part.
 

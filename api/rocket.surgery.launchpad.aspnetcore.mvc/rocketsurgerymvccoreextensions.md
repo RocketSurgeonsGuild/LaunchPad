@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.AspNetCore.Mvc](/LaunchPad/api/rocket.surgery.launchpad.aspnetcore.mvc.md)
-- Version: `2.0.1-beta.442`
+- Version: `2.0.1-beta.444`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.Mvc`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.5eb9940f30f7eb1f8bff840daf4429d170c460a1/src/AspNetCore.Mvc/RocketSurgeryMvcCoreExtensions.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.58a05033e5e3d052ad687f1ec7ee0750304f817e/src/AspNetCore.Mvc/RocketSurgeryMvcCoreExtensions.cs)
 
 Helper methods for getting an mvc builder if you're not sure that mvc has been added to the application yet.
 
