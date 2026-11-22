@@ -1,9 +1,9 @@
 # Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization
 
 - Package: `Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization`
-- Version: `2.0.1-pr.1294`
+- Version: `2.0.1-pr.1296`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/ZeroAlloc.Authorization)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/ZeroAlloc.Authorization)
 - NuGet: [Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization)
 
 ## Namespaces
@@ -25,7 +25,6 @@
 - [RequestAuthorizationPlan<TRequest>](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/requestauthorizationplan-1.md) -- `class` `sealed` -- The plan of `TRequest`.
 - [RequestAuthorizationPlans](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/requestauthorizationplans.md) -- `class` `sealed` -- The plans of the application, by request, and the policies they name, by the name an endpoint carries. One for the application.
 - [RequestAuthorizer](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/requestauthorizer.md) -- `class` `sealed` -- Decides a request's plan for the caller of a call, policy by policy, recording each outcome in the call's [AuthorizationOutcomes](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/authorizationoutcomes.md) and reusing the ones already there. One for each call: the mediator pipeline and the edge both decide through it, so a policy runs once. A policy sees the caller and nothing of the request: it is the same check wherever it runs.
-- [RequestPoliciesAttribute](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/requestpoliciesattribute.md) -- `class` `sealed` -- On an endpoint: the request it dispatches, whose plan states the scopes the endpoint requires. The generated HTTP servers put it on an operation whose request has policies; the policies themselves are on the endpoint by name.
 - [RequiresScopesAttribute](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/requiresscopesattribute.md) -- `class` `sealed` -- On a `[Policy]` class: the scopes the policy requires of the caller, all of them. LaunchPad checks them before the policy runs, and publishes them as the scopes of every operation whose request names the policy.
 
 ### Rocket.Surgery.LaunchPad.Authorization.Joints

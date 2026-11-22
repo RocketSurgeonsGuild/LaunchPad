@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.NodaTime.HotChocolate](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.nodatime.hotchocolate.md)
-- Version: `2.0.1-pr.1294`
+- Version: `2.0.1-pr.1296`
 - Namespace: `Rocket.Surgery.LaunchPad.NodaTime.HotChocolate.Joints`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/NodaTime.HotChocolate/Joints/NodaTimeHotChocolateJoint.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/NodaTime.HotChocolate/Joints/NodaTimeHotChocolateJoint.cs)
 - Implements: `IDovetailJoint`, `IServiceJoint`
 
 Adds the NodaTime types to the HotChocolate schema

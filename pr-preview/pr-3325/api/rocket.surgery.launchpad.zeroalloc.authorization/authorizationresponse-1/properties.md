@@ -14,7 +14,7 @@ How a denial becomes a response: the conversions of `AuthorizationResponse`1.Una
 - Name: `Forbidden`
 - Modifiers: `get`
 - Returns: `Func<Forbidden, TResponse>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/ZeroAlloc.Authorization/RequestAuthorizationPlan.cs#L145)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/ZeroAlloc.Authorization/RequestAuthorizationPlan.cs#L132)
 
 Converts `Foundation.Forbidden` to the response.
 
@@ -29,7 +29,7 @@ public Func<Forbidden, TResponse> Forbidden { get; }
 - Name: `Unauthorized`
 - Modifiers: `get`
 - Returns: `Func<Unauthorized, TResponse>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/ZeroAlloc.Authorization/RequestAuthorizationPlan.cs#L142)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/ZeroAlloc.Authorization/RequestAuthorizationPlan.cs#L129)
 
 Converts `Foundation.Unauthorized` to the response.
 

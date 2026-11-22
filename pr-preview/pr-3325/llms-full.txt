@@ -1410,6 +1410,8 @@ The [LaunchPad SDK](../concepts/launchpad-sdk/) adds the LaunchPad packages to a
 
 LaunchPad writes a [Joint](../concepts/joints/) into each of those projects that registers the authorization plans of its requests, so an application that calls `ConfigureDovetail()` has nothing to register. An application without Dovetail calls `services.AddLaunchPadRequestAuthorization()` (in `Rocket.Surgery.LaunchPad.Authorization.Generated`) from each project that declares requests with policies. A request with a policy and no registered plan is refused with an exception, never let through.
 
+Dispatch requests through `IMediator`, resolved from the scope of the call. ZeroAlloc.Mediator’s static `Mediator` class dispatches without services, so no policy could be checked: LaunchPad bans it (RS0030, an error) in a project that references the package.
+
 ## Declare a policy
 
 [Section titled “Declare a policy”](#declare-a-policy)

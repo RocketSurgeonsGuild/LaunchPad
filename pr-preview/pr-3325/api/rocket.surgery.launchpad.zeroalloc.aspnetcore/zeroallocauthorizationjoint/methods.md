@@ -13,7 +13,7 @@ Checks the policies of a request at the edge of an ASP.NET Core application, bef
 ## Register(IDovetailContext, IServiceCollection)
 
 - Name: `Register(IDovetailContext, IServiceCollection)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/ZeroAlloc.AspNetCore/Joints/ZeroAllocAuthorizationJoint.cs#L43-L73)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/ZeroAlloc.AspNetCore/Joints/ZeroAllocAuthorizationJoint.cs#L43-L72)
 
 Register the Service part.
 

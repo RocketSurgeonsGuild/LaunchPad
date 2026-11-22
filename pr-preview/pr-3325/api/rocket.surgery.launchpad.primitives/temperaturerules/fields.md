@@ -14,7 +14,7 @@ The rules of a temperature, in degrees Celsius.
 - Name: `AbsoluteZero`
 - Modifiers: `static` `const`
 - Returns: `double`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/Primitives/StrongTypes/Temperature.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/Primitives/StrongTypes/Temperature.cs)
 
 Absolute zero in degrees Celsius, the lowest temperature.
 

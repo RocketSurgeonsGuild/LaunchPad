@@ -13,7 +13,7 @@ One policy a request names: its name and arguments, the scopes it declares and h
 ## PolicyRequirement(string, string, Type, string[], PolicyEvaluator)
 
 - Name: `Constructor(string, string, Type, string[], PolicyEvaluator)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/ZeroAlloc.Authorization/RequestAuthorizationPlan.cs#L24-L40)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/ZeroAlloc.Authorization/RequestAuthorizationPlan.cs#L24-L40)
 
 One policy a request names: its name and arguments, the scopes it declares and how to run it.
 

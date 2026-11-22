@@ -13,7 +13,7 @@ The plans of the application, by request, and the policies they name, by the nam
 ## RequestAuthorizationPlans(IEnumerable<RequestAuthorizationPlan>)
 
 - Name: `Constructor(IEnumerable<RequestAuthorizationPlan>)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/ZeroAlloc.Authorization/RequestAuthorizationPlan.cs#L151-L153)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/ZeroAlloc.Authorization/RequestAuthorizationPlan.cs#L138-L140)
 
 The plans of the application, by request, and the policies they name, by the name an endpoint carries. One for the application.
 

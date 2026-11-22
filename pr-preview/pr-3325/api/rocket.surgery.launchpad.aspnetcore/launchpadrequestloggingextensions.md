@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.AspNetCore](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.aspnetcore.md)
-- Version: `2.0.1-pr.1294`
+- Version: `2.0.1-pr.1296`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/AspNetCore/LaunchPadRequestLoggingExtensions.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/AspNetCore/LaunchPadRequestLoggingExtensions.cs)
 
 Adds Serilog's request logging with LaunchPad's defaults.
 

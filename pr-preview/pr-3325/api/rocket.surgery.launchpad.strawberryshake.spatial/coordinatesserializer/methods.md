@@ -15,7 +15,7 @@ Serializes HotChocolate's `Coordinates` scalar, a list of positions of arbitrary
 - Name: `Parse(JsonElement)`
 - Modifiers: `override`
 - Returns: `JsonElement`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/StrawberryShake.Spatial/CoordinatesSerializer.cs#L18)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/StrawberryShake.Spatial/CoordinatesSerializer.cs#L18)
 
 Parses the serialized value to the runtime representation.
 

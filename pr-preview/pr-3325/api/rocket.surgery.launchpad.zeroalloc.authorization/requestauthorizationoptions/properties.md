@@ -14,7 +14,7 @@ How LaunchPad reads what a caller was granted.
 - Name: `ScopeClaims`
 - Modifiers: `get`
 - Returns: `IList<string>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/ZeroAlloc.Authorization/RequestAuthorizationOptions.cs#L11)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/ZeroAlloc.Authorization/RequestAuthorizationOptions.cs#L11)
 
 The claims of the security context that hold the caller's scopes, each a space separated list. `scope` (OAuth 2.0) and `scp` (Microsoft Entra), under that name or the claim type ASP.NET Core maps it to, unless changed.
 
