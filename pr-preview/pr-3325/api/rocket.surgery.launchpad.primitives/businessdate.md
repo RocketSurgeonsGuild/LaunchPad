@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-pr.1286`
+- Version: `2.0.1-pr.1291`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b95ef48c1c24b4d5eac70fa83d50ac9f4aff0224/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_BusinessDate.g.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_BusinessDate.g.cs)
 - Implements: `IStrongType<BusinessDate, DateOnly>`, `IComparable<BusinessDate>`, `IEquatable<BusinessDate>`, `IFormattable`, `IParsable<BusinessDate>`, `ISpanFormattable`, `ISpanParsable<BusinessDate>`, `IUtf8SpanFormattable`, `IEqualityOperators<BusinessDate, BusinessDate, bool>`
 
 A weekday business is done on, valid under [BusinessDateRules](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.primitives/businessdaterules.md).

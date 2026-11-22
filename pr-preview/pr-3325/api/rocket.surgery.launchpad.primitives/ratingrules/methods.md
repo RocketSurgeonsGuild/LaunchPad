@@ -14,7 +14,7 @@ The rules of a rating, such as a number of stars in a review.
 - Name: `Define`
 - Modifiers: `static`
 - Returns: `StrongTypeDefinition<int>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b95ef48c1c24b4d5eac70fa83d50ac9f4aff0224/src/Primitives/StrongTypes/Rating.cs#L14)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/Primitives/StrongTypes/Rating.cs#L14)
 
 ```csharp
 public sealed class RatingRules

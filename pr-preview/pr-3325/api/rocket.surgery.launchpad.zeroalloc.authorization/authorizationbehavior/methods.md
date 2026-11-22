@@ -15,7 +15,7 @@ The ZeroAlloc.Mediator pipeline behavior that checks a request's policies before
 - Name: `CheckStream(TRequest, IServiceProvider?, CancellationToken)`
 - Modifiers: `static`
 - Returns: `ValueTask`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b95ef48c1c24b4d5eac70fa83d50ac9f4aff0224/src/ZeroAlloc.Authorization/AuthorizationBehavior.cs#L69-L72)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/ZeroAlloc.Authorization/AuthorizationBehavior.cs#L71-L75)
 
 Checks a stream request's policies before its handler runs; a denial throws [AuthorizationDeniedException](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/authorizationdeniedexception.md).
 
@@ -49,7 +49,7 @@ public sealed class AuthorizationBehavior
 - Name: `Handle(TRequest, CancellationToken, Func<TRequest, CancellationToken, ValueTask<TResponse>>)`
 - Modifiers: `static`
 - Returns: `ValueTask<TResponse>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b95ef48c1c24b4d5eac70fa83d50ac9f4aff0224/src/ZeroAlloc.Authorization/AuthorizationBehavior.cs#L35-L38)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/ZeroAlloc.Authorization/AuthorizationBehavior.cs#L43)
 
 Checks the request's policies with the services of the request being dispatched.
 
@@ -77,12 +77,12 @@ public sealed class AuthorizationBehavior
 
 <a id="handle-trequest-iserviceprovider-cancellationtoken-func-trequest-cancellationtoken-valuetask-tresponse"></a>
 
-## Handle(TRequest, IServiceProvider, CancellationToken, Func<TRequest, CancellationToken, ValueTask<TResponse>>)
+## Handle(TRequest, IServiceProvider?, CancellationToken, Func<TRequest, CancellationToken, ValueTask<TResponse>>)
 
-- Name: `Handle(TRequest, IServiceProvider, CancellationToken, Func<TRequest, CancellationToken, ValueTask<TResponse>>)`
+- Name: `Handle(TRequest, IServiceProvider?, CancellationToken, Func<TRequest, CancellationToken, ValueTask<TResponse>>)`
 - Modifiers: `static`
 - Returns: `ValueTask<TResponse>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b95ef48c1c24b4d5eac70fa83d50ac9f4aff0224/src/ZeroAlloc.Authorization/AuthorizationBehavior.cs#L56-L59)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/ZeroAlloc.Authorization/AuthorizationBehavior.cs#L60-L61)
 
 Checks the request's policies with the services of the request being dispatched.
 
@@ -91,7 +91,7 @@ public sealed class AuthorizationBehavior
 {
     public static ValueTask<TResponse> Handle<TRequest, TResponse>(
         TRequest request,
-        IServiceProvider services,
+        IServiceProvider? services,
         CancellationToken ct,
         Func<TRequest, CancellationToken, ValueTask<TResponse>> next)
     {
@@ -104,7 +104,7 @@ public sealed class AuthorizationBehavior
 
 - `request` (`TRequest`)
   The request.
-- `services` (`IServiceProvider`)
+- `services` (`IServiceProvider?`)
   The services of the request being dispatched.
 - `ct` (`CancellationToken`)
   The cancellation token of the request.

@@ -5,21 +5,21 @@
 - Kind: `Properties`
 - Members: `2`
 
-How a denial becomes a response: the conversions of `AuthorizationResponse`1.Unauthorized` and `AuthorizationResponse`1.Forbidden` to the response union, registered by generated code.
+How a denial becomes a response: the conversions of `AuthorizationResponse`1.Unauthorized` and `AuthorizationResponse`1.Forbidden` to the response union. LaunchPad's generator registers one for the response of every request with a policy ( [AuthorizationServiceCollectionExtensions.AddAuthorizationResponse(IServiceCollection, Func<Unauthorized, TResponse>, Func<Forbidden, TResponse>)](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/authorizationservicecollectionextensions/methods.md#addauthorizationresponse-iservicecollection-func-unauthorized-tresponse-func-forbidden-tresponse)).
 
 <a id="forbidden"></a>
 
 ## Forbidden
 
 - Name: `Forbidden`
-- Modifiers: `static` `nullable` `get`
+- Modifiers: `get`
 - Returns: `Func<Forbidden, TResponse>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b95ef48c1c24b4d5eac70fa83d50ac9f4aff0224/src/ZeroAlloc.Authorization/RequestAuthorizationPlan.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/ZeroAlloc.Authorization/RequestAuthorizationPlan.cs#L167)
 
-Converts `AuthorizationResponse`1.Forbidden` to the response.
+Converts `Foundation.Forbidden` to the response.
 
 ```csharp
-public static Func<Forbidden, TResponse>? Forbidden { get; }
+public Func<Forbidden, TResponse> Forbidden { get; }
 ```
 
 <a id="unauthorized"></a>
@@ -27,12 +27,12 @@ public static Func<Forbidden, TResponse>? Forbidden { get; }
 ## Unauthorized
 
 - Name: `Unauthorized`
-- Modifiers: `static` `nullable` `get`
+- Modifiers: `get`
 - Returns: `Func<Unauthorized, TResponse>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b95ef48c1c24b4d5eac70fa83d50ac9f4aff0224/src/ZeroAlloc.Authorization/RequestAuthorizationPlan.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/ZeroAlloc.Authorization/RequestAuthorizationPlan.cs#L164)
 
-Converts `AuthorizationResponse`1.Unauthorized` to the response.
+Converts `Foundation.Unauthorized` to the response.
 
 ```csharp
-public static Func<Unauthorized, TResponse>? Unauthorized { get; }
+public Func<Unauthorized, TResponse> Unauthorized { get; }
 ```

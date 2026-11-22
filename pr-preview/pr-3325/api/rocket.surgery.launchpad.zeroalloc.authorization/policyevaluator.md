@@ -2,10 +2,10 @@
 
 - Kind: `delegate`
 - Package: [Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization.md)
-- Version: `2.0.1-pr.1286`
+- Version: `2.0.1-pr.1291`
 - Namespace: `Rocket.Surgery.LaunchPad.Authorization`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b95ef48c1c24b4d5eac70fa83d50ac9f4aff0224/src/ZeroAlloc.Authorization/PolicyEvaluator.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/ZeroAlloc.Authorization/PolicyEvaluator.cs)
 - Inherits: `MulticastDelegate`
 
 Runs one policy for a caller, with the services of the call.
@@ -23,7 +23,7 @@ public sealed delegate System.Threading.Tasks.ValueTask<ZeroAlloc.Results.UnitRe
 
 ## Delegate Parameters
 
-- `services` (`IServiceProvider`) -- The services of the call, from which the policy is resolved.
+- `services` (`IServiceProvider`) -- The services of the call, from which the policy is resolved: the plan's registration registers it.
 - `context` (`ISecurityContext`) -- The caller.
 - `cancellationToken` (`CancellationToken`) -- The cancellation token of the call.
 

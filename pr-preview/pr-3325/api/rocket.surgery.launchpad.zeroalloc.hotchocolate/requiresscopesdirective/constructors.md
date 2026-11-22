@@ -13,7 +13,7 @@ The `@requiresScopes` directive of a field: the scopes a caller needs, as altern
 ## RequiresScopesDirective(IReadOnlyList<IReadOnlyList<string>>)
 
 - Name: `Constructor(IReadOnlyList<IReadOnlyList<string>>)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b95ef48c1c24b4d5eac70fa83d50ac9f4aff0224/src/ZeroAlloc.HotChocolate/Authorization/ScopeDirectives.cs#L14-L17)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/ZeroAlloc.HotChocolate/Authorization/ScopeDirectives.cs#L14-L17)
 
 The `@requiresScopes` directive of a field: the scopes a caller needs, as alternatives. The caller needs every scope of any one inner list. It has the name and shape of the composite schema directive, so gateways and tools that know that one read it.
 
