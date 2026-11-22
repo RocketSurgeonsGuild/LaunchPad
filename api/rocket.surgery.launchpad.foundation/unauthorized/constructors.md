@@ -13,7 +13,7 @@ The caller isn't authenticated. HTTP 401, gRPC `Unauthenticated`, GraphQL `UNAUT
 ## Unauthorized(string?)
 
 - Name: `Constructor(string?)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.1439b27645502c7f052b674cfbf301f1b8fcb921/src/Foundation/Problems.cs#L63)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.afac89ac2f84551e9433e9fb435d06d6d3ff37f0/src/Foundation/Problems.cs#L63)
 
 The caller isn't authenticated. HTTP 401, gRPC `Unauthenticated`, GraphQL `UNAUTHENTICATED`.
 

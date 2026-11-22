@@ -15,7 +15,7 @@ Extensions for noda time
 - Name: `ConfigureNodaTimeForLaunchPad(JsonSerializerOptions, IDateTimeZoneProvider)`
 - Modifiers: `extension`
 - Returns: `JsonSerializerOptions`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.1439b27645502c7f052b674cfbf301f1b8fcb921/src/NodaTime/NodaTimeSystemTextJsonSerializationExtensions.cs#L37-L124)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.afac89ac2f84551e9433e9fb435d06d6d3ff37f0/src/NodaTime/NodaTimeSystemTextJsonSerializationExtensions.cs#L37-L124)
 
 Configure System.Text.Json with defaults for launchpad
 

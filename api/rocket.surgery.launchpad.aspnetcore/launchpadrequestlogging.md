@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.AspNetCore](/LaunchPad/api/rocket.surgery.launchpad.aspnetcore.md)
-- Version: `2.0.1-beta.446`
+- Version: `2.0.1-beta.447`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.1439b27645502c7f052b674cfbf301f1b8fcb921/src/AspNetCore/LaunchPadRequestLogging.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.afac89ac2f84551e9433e9fb435d06d6d3ff37f0/src/AspNetCore/LaunchPadRequestLogging.cs)
 
 The level and the properties LaunchPad gives the request log event that Serilog's request logging writes.
 

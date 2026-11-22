@@ -14,7 +14,7 @@ The rules of a phone number: an ITU-T E.164 number in its international form, `+
 - Name: `Define`
 - Modifiers: `static`
 - Returns: `StrongTypeDefinition<string>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.1439b27645502c7f052b674cfbf301f1b8fcb921/src/Primitives/StrongTypes/PhoneNumber.cs#L21)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.afac89ac2f84551e9433e9fb435d06d6d3ff37f0/src/Primitives/StrongTypes/PhoneNumber.cs#L21)
 
 ```csharp
 public sealed class PhoneNumberRules

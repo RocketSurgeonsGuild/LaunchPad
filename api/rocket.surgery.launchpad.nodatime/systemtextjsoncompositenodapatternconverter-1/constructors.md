@@ -13,7 +13,7 @@ A JSON converter for types which can be represented by a single string value, pa
 ## SystemTextJsonCompositeNodaPatternConverter(Action<T>, IPattern<T>)
 
 - Name: `Constructor(Action<T>, IPattern<T>)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.1439b27645502c7f052b674cfbf301f1b8fcb921/src/NodaTime/SystemTextJsonCompositeNodaPatternConverter.cs#L25-L78)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.afac89ac2f84551e9433e9fb435d06d6d3ff37f0/src/NodaTime/SystemTextJsonCompositeNodaPatternConverter.cs#L25-L78)
 
 A JSON converter for types which can be represented by a single string value, parsed or formatted from an `Text.IPattern`1`.
 
@@ -47,7 +47,7 @@ The first pattern formats; reading tries each pattern in turn. The value is also
 ## SystemTextJsonCompositeNodaPatternConverter(IPattern<T>)
 
 - Name: `Constructor(IPattern<T>)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.1439b27645502c7f052b674cfbf301f1b8fcb921/src/NodaTime/SystemTextJsonCompositeNodaPatternConverter.cs#L31)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.afac89ac2f84551e9433e9fb435d06d6d3ff37f0/src/NodaTime/SystemTextJsonCompositeNodaPatternConverter.cs#L31)
 
 Creates a new instance with a pattern and no validator.
 

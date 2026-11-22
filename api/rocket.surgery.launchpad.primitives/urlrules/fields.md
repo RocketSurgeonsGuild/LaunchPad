@@ -14,7 +14,7 @@ The rules of a URL: an absolute `http` or `https` URI (RFC 3986 §4.3) with a ho
 - Name: `MaxLength`
 - Modifiers: `static` `const`
 - Returns: `int`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.1439b27645502c7f052b674cfbf301f1b8fcb921/src/Primitives/StrongTypes/Url.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.afac89ac2f84551e9433e9fb435d06d6d3ff37f0/src/Primitives/StrongTypes/Url.cs)
 
 The longest URL allowed.
 
