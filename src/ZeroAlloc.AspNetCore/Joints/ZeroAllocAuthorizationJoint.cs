@@ -66,7 +66,6 @@ public class ZeroAllocAuthorizationJoint : IServiceJoint
         services.ConfigureAll<OpenApiOptions>(
             options =>
             {
-                options.AddOperationTransformer<RequestPoliciesOperationTransformer>();
                 options.AddDocumentTransformer<RequestPoliciesSecuritySchemeTransformer>();
             }
         );

@@ -26,6 +26,9 @@ an application that calls `ConfigureDovetail()` has nothing to register. An appl
 `services.AddLaunchPadRequestAuthorization()` (in `Rocket.Surgery.LaunchPad.Authorization.Generated`) from each project that
 declares requests with policies. A request with a policy and no registered plan is refused with an exception, never let through.
 
+Dispatch requests through `IMediator`, resolved from the scope of the call. ZeroAlloc.Mediator's static `Mediator` class dispatches
+without services, so no policy could be checked: LaunchPad bans it (RS0030, an error) in a project that references the package.
+
 ## Declare a policy
 
 A policy is a class with a name. `[RequiresScopes]` lists the scopes it requires of the caller, all of them:

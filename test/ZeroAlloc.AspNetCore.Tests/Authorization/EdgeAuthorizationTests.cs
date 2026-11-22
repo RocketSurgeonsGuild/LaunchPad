@@ -234,22 +234,29 @@ public class EdgeAuthorizationTests
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapOpenApi();
-        // what the generated servers put on an operation: each policy of the request by name, and the request, for its scopes
+        // what the generated servers put on an operation: each policy of the request by name, and a transformer that states its scopes
         app.MapGet("/launches/{id}", async (string id, IMediator mediator) => Answer(await mediator.Send(new GetLaunch(id), CancellationToken.None)))
            .RequireAuthorization("Launches.Read")
-           .WithMetadata(new RequestPoliciesAttribute(typeof(GetLaunch)));
+           .AddOpenApiOperationTransformer(Scopes<GetLaunch>);
         app.MapGet("/launches/{id}/cancel", async (string id, IMediator mediator) => Answer(await mediator.Send(new CancelLaunch(id), CancellationToken.None)))
            .RequireAuthorization("Launches.Read")
            .RequireAuthorization("Launches.Write")
-           .WithMetadata(new RequestPoliciesAttribute(typeof(CancelLaunch)));
+           .AddOpenApiOperationTransformer(Scopes<CancelLaunch>);
         // a group of alternatives is left to the pipeline: the endpoint only requires a caller
         app.MapPost("/launches/{id}/abort", async (string id, IMediator mediator) => Answer(await mediator.Send(new AbortLaunch(id), CancellationToken.None)))
            .RequireAuthorization()
-           .WithMetadata(new RequestPoliciesAttribute(typeof(AbortLaunch)));
-        app.MapPost("/launches/grpc", () => TypedResults.Ok()).RequireAuthorization("Launches.Read").WithMetadata(new RequestPoliciesAttribute(typeof(GetLaunch)));
+           .WithMetadata(new System.CodeDom.Compiler.GeneratedCodeAttribute("Rocket.Surgery.LaunchPad.Api", "test"))
+           .AddOpenApiOperationTransformer(Scopes<AbortLaunch>);
+        app.MapPost("/launches/grpc", () => TypedResults.Ok()).RequireAuthorization("Launches.Read").AddOpenApiOperationTransformer(Scopes<GetLaunch>);
         app.MapGet("/own", () => TypedResults.Ok()).RequireAuthorization("Own");
         await app.StartAsync();
         return app;
+    }
+
+    private static Task Scopes<TRequest>(Microsoft.OpenApi.OpenApiOperation operation, Microsoft.AspNetCore.OpenApi.OpenApiOperationTransformerContext context, CancellationToken _)
+    {
+        OpenApiAuthorization.RequireScopes<TRequest>(operation, context);
+        return Task.CompletedTask;
     }
 
     private static IResult Answer(LaunchResult result) => result.Value switch

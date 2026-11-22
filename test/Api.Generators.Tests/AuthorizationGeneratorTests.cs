@@ -209,7 +209,10 @@ public class AuthorizationGeneratorTests() : GeneratorTest()
                           .AddReferences(AuthorizationAssemblies)
                           .AddReferences(
                                typeof(Rocket.Surgery.LaunchPad.AspNetCore.Authorization.AuthorizationProblems).Assembly,
-                               typeof(Rocket.Surgery.LaunchPad.HotChocolate.Authorization.GraphQLRequiresScopesAttribute).Assembly
+                               typeof(Rocket.Surgery.LaunchPad.HotChocolate.Authorization.GraphQLRequiresScopesAttribute).Assembly,
+                               // with OpenAPI, the HTTP hosts' operation transformers state the scopes of each request
+                               typeof(Microsoft.AspNetCore.OpenApi.OpenApiOperationTransformerContext).Assembly,
+                               typeof(Microsoft.OpenApi.OpenApiOperation).Assembly
                            )
                           .AddSources(
                                $$"""
@@ -294,6 +297,7 @@ public class AuthorizationGeneratorTests() : GeneratorTest()
                           .GenerateAsync(TestContext.CancellationToken);
 
         AssertCompiles(result);
-        await result.Results.Values.SelectMany(r => r.SyntaxTrees).Should().BeEmpty();
+        // only the suppressions of the static Mediator ban for the types ZeroAlloc.Mediator generates
+        await result.Results.Values.SelectMany(r => r.SyntaxTrees).Select(t => Path.GetFileName(t.FilePath)).Should().BeEquivalentTo(["LaunchPadStaticMediatorBan.g.cs"]);
     }
 }

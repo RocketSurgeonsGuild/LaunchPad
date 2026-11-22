@@ -52,13 +52,11 @@
         Condition="'$(_LaunchPadFoundationTemplatesImported)' != 'true'"
     />
     <!--
-        The template of LaunchPad.ZeroAlloc.Authorization, for the same reason: written into a project that references it and meets the
-        template's other gates (src/ZeroAlloc.Authorization/build/Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization.Templates.targets).
+        The targets of LaunchPad.ZeroAlloc.Authorization, for the same reason: the template of the joint that registers a project's
+        authorization plans, written into a project that references the package and meets the template's other gates, and the banned
+        symbols list of ZeroAlloc.Mediator's static Mediator class (src/ZeroAlloc.Authorization/build).
     -->
-    <Import
-        Project="$(MSBuildThisFileDirectory)src/ZeroAlloc.Authorization/build/Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization.Templates.targets"
-        Condition="'$(_LaunchPadAuthorizationTemplatesImported)' != 'true'"
-    />
+    <Import Project="$(MSBuildThisFileDirectory)src/ZeroAlloc.Authorization/build/Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization.targets" />
     <!--
         The same for LaunchPad.Foundation, whose targets write an executable's JSON context with the task of src/Foundation.Tasks. Here the task
         comes from that project's output instead of the package's tasks folder; every project that writes a context builds it first.

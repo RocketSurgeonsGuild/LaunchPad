@@ -93,7 +93,6 @@ internal static class PolicyReader
     public const string Unauthorized = "Rocket.Surgery.LaunchPad.Foundation.Unauthorized";
     public const string Forbidden = "Rocket.Surgery.LaunchPad.Foundation.Forbidden";
 
-    public const string RequestPoliciesAttribute = "Rocket.Surgery.LaunchPad.Authorization.RequestPoliciesAttribute";
     public const string EdgeType = "Rocket.Surgery.LaunchPad.AspNetCore.Authorization.AuthorizationProblems";
     public const string GraphQLAuthorizeAttribute = "HotChocolate.Authorization.AuthorizeAttribute";
     public const string GraphQLScopesAttribute = "Rocket.Surgery.LaunchPad.HotChocolate.Authorization.GraphQLRequiresScopesAttribute";

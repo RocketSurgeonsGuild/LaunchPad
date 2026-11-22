@@ -14,9 +14,8 @@
         LaunchPadRequestAuthorizationJoint registers the plans: the template declares the joint, and the authorization plan generator of
         LaunchPad's analyzer writes the AddLaunchPadRequestAuthorization extension it calls, only where the joint is.
 
-        Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization.targets imports this file into every project that gets the package. The repository's
-        Directory.Build.targets imports it into every project in the repository instead, since a ProjectReference imports no package assets.
-        The guard keeps the template from being declared twice in a project that gets both.
+        Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization.targets imports this file. The guard keeps the template from being declared twice
+        in a project that gets those targets from the package and from the repository's Directory.Build.targets.
     -->
     <PropertyGroup>
         <_LaunchPadAuthorizationTemplatesImported>true</_LaunchPadAuthorizationTemplatesImported>

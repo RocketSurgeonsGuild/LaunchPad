@@ -70,7 +70,7 @@ public static class AuthorizationProblems
 ///     Answers what the authorization middleware rejected for a request's policies as the <see cref="Unauthorized" /> or
 ///     <see cref="Forbidden" /> case would be answered, after the authentication schemes challenged or forbade.
 /// </summary>
-internal sealed class RequestPoliciesResultHandler(RequestAuthorizationPlans plans) : IAuthorizationMiddlewareResultHandler
+internal sealed class RequestPoliciesResultHandler : IAuthorizationMiddlewareResultHandler
 {
     private readonly AuthorizationMiddlewareResultHandler _schemes = new();
 
@@ -96,11 +96,11 @@ internal sealed class RequestPoliciesResultHandler(RequestAuthorizationPlans pla
     }
 
     // What a policy of the endpoint denied. An endpoint whose request leaves a group of alternatives to the pipeline only requires a caller at
-    // the edge: when that is what challenged, the answer is still the request's, for the scopes of its plan.
-    private AuthorizationDecision? Decision(HttpContext context, PolicyAuthorizationResult result) =>
+    // the edge: when that is what challenged a generated endpoint, the answer is still the Unauthorized case, as the pipeline would give it.
+    private static AuthorizationDecision? Decision(HttpContext context, PolicyAuthorizationResult result) =>
         RequestPolicyHandler.Decision(context)
-     ?? ( result.Challenged && context.GetEndpoint() is { } endpoint && EndpointPlans.Of(endpoint.Metadata, plans).FirstOrDefault() is { } plan
-            ? new AuthorizationDecision(new Unauthorized("Authentication is required."), plan.ScopeAlternatives is [var scopes, ..] ? scopes : [])
+     ?? ( result.Challenged && context.GetEndpoint()?.Metadata.OfType<System.CodeDom.Compiler.GeneratedCodeAttribute>().Any(a => a.Tool == "Rocket.Surgery.LaunchPad.Api") is true
+            ? new AuthorizationDecision(new Unauthorized("Authentication is required."), [])
             : null );
 
     // A gRPC call that is rejected before it starts answers with its trailers as headers and no message: the status of the case, its name in

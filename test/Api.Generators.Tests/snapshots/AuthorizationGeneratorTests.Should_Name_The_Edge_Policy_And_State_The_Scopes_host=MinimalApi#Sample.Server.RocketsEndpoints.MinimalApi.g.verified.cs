@@ -11,6 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 using ApiAcceptsMetadata = global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiAcceptsMetadata;
 using ApiBinding = global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiBinding;
 using ApiEndpointMetadata = global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiEndpointMetadata;
+using ApiOpenApi = global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiOpenApi;
+using ApiOpenApiCase = global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiOpenApiCase;
+using ApiOpenApiMember = global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiOpenApiMember;
 using ApiParameterBindingMetadata = global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiParameterBindingMetadata;
 using ApiProblems = global::Rocket.Surgery.LaunchPad.Api.Generated.MinimalApi.ApiProblems;
 using ArgumentNullException = global::System.ArgumentNullException;
@@ -62,7 +65,8 @@ namespace Sample.Server
                 endpoint.WithMetadata(new ProducesResponseTypeMetadata(403, typeof(ProblemDetails), new string[] { "application/problem+json" }));
                 endpoint.WithName("InspectRocket");
                 endpoint.RequireAuthorization("Rockets.Read");
-                endpoint.WithMetadata(new global::Rocket.Surgery.LaunchPad.Authorization.RequestPoliciesAttribute(typeof(global::Sample.Contracts.InspectRocket.Request)));
+                endpoint.WithMetadata(new GeneratedCodeAttribute("Rocket.Surgery.LaunchPad.Api", "version"));
+                endpoint.AddOpenApiOperationTransformer(__InspectRocketOpenApi);
                 ConfigureInspectRocket(endpoint);
             }
 
@@ -82,7 +86,8 @@ namespace Sample.Server
                 endpoint.WithName("LaunchRocket");
                 endpoint.RequireAuthorization("Own");
                 endpoint.RequireAuthorization();
-                endpoint.WithMetadata(new global::Rocket.Surgery.LaunchPad.Authorization.RequestPoliciesAttribute(typeof(global::Sample.Contracts.LaunchRocket.Request)));
+                endpoint.WithMetadata(new GeneratedCodeAttribute("Rocket.Surgery.LaunchPad.Api", "version"));
+                endpoint.AddOpenApiOperationTransformer(__LaunchRocketOpenApi);
                 ConfigureLaunchRocket(endpoint);
             }
 
@@ -101,7 +106,8 @@ namespace Sample.Server
                 endpoint.WithName("DeleteRocket");
                 endpoint.RequireAuthorization("Rockets.Read");
                 endpoint.RequireAuthorization();
-                endpoint.WithMetadata(new global::Rocket.Surgery.LaunchPad.Authorization.RequestPoliciesAttribute(typeof(global::Sample.Contracts.DeleteRocket.Request)));
+                endpoint.WithMetadata(new GeneratedCodeAttribute("Rocket.Surgery.LaunchPad.Api", "version"));
+                endpoint.AddOpenApiOperationTransformer(__DeleteRocketOpenApi);
                 ConfigureDeleteRocket(endpoint);
             }
 
@@ -144,6 +150,15 @@ namespace Sample.Server
             await __result.ExecuteAsync(httpContext).ConfigureAwait(false);
         }
 
+        /// <summary>Describes <c>InspectRocket</c> in the OpenAPI document: what its endpoint metadata can't say.</summary>
+        private static async Task __InspectRocketOpenApi(global::Microsoft.OpenApi.OpenApiOperation operation, global::Microsoft.AspNetCore.OpenApi.OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
+        {
+            ApiOpenApi.Authenticate(operation);
+            global::Rocket.Surgery.LaunchPad.AspNetCore.Authorization.OpenApiAuthorization.RequireScopes<global::Sample.Contracts.InspectRocket.Request>(operation, context);
+            await ApiOpenApi.Cases(operation, context, 401, new ApiOpenApiCase[] { new ApiOpenApiCase("Unauthorized", "UnauthorizedProblem", null, new ApiOpenApiMember[] { }) }, cancellationToken).ConfigureAwait(false);
+            await ApiOpenApi.Cases(operation, context, 403, new ApiOpenApiCase[] { new ApiOpenApiCase("Forbidden", "ForbiddenProblem", null, new ApiOpenApiMember[] { }) }, cancellationToken).ConfigureAwait(false);
+        }
+
         /// <summary>Customises the generated <c>InspectRocket</c> endpoint. Implement it in your part of <see cref="RocketsEndpoints" />.</summary>
         static partial void ConfigureInspectRocket(IEndpointConventionBuilder endpoint);
         /// <summary>Handles <c>POST /api/rockets/launch-rocket</c>.</summary>
@@ -180,6 +195,15 @@ namespace Sample.Server
             var __sender = httpContext.RequestServices.GetRequiredService<IMediator>();
             var __result = await __LaunchRocket(__body, __sender, __cancellationToken).ConfigureAwait(false);
             await __result.ExecuteAsync(httpContext).ConfigureAwait(false);
+        }
+
+        /// <summary>Describes <c>LaunchRocket</c> in the OpenAPI document: what its endpoint metadata can't say.</summary>
+        private static async Task __LaunchRocketOpenApi(global::Microsoft.OpenApi.OpenApiOperation operation, global::Microsoft.AspNetCore.OpenApi.OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
+        {
+            ApiOpenApi.Authenticate(operation);
+            global::Rocket.Surgery.LaunchPad.AspNetCore.Authorization.OpenApiAuthorization.RequireScopes<global::Sample.Contracts.LaunchRocket.Request>(operation, context);
+            await ApiOpenApi.Cases(operation, context, 401, new ApiOpenApiCase[] { new ApiOpenApiCase("Unauthorized", "UnauthorizedProblem", null, new ApiOpenApiMember[] { }) }, cancellationToken).ConfigureAwait(false);
+            await ApiOpenApi.Cases(operation, context, 403, new ApiOpenApiCase[] { new ApiOpenApiCase("Forbidden", "ForbiddenProblem", null, new ApiOpenApiMember[] { }) }, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>Customises the generated <c>LaunchRocket</c> endpoint. Implement it in your part of <see cref="RocketsEndpoints" />.</summary>
@@ -223,6 +247,15 @@ namespace Sample.Server
             var __sender = httpContext.RequestServices.GetRequiredService<IMediator>();
             var __result = await __DeleteRocket(@id, __sender, __cancellationToken).ConfigureAwait(false);
             await __result.ExecuteAsync(httpContext).ConfigureAwait(false);
+        }
+
+        /// <summary>Describes <c>DeleteRocket</c> in the OpenAPI document: what its endpoint metadata can't say.</summary>
+        private static async Task __DeleteRocketOpenApi(global::Microsoft.OpenApi.OpenApiOperation operation, global::Microsoft.AspNetCore.OpenApi.OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
+        {
+            ApiOpenApi.Authenticate(operation);
+            global::Rocket.Surgery.LaunchPad.AspNetCore.Authorization.OpenApiAuthorization.RequireScopes<global::Sample.Contracts.DeleteRocket.Request>(operation, context);
+            await ApiOpenApi.Cases(operation, context, 401, new ApiOpenApiCase[] { new ApiOpenApiCase("Unauthorized", "UnauthorizedProblem", null, new ApiOpenApiMember[] { }) }, cancellationToken).ConfigureAwait(false);
+            await ApiOpenApi.Cases(operation, context, 403, new ApiOpenApiCase[] { new ApiOpenApiCase("Forbidden", "ForbiddenProblem", null, new ApiOpenApiMember[] { }) }, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>Customises the generated <c>DeleteRocket</c> endpoint. Implement it in your part of <see cref="RocketsEndpoints" />.</summary>

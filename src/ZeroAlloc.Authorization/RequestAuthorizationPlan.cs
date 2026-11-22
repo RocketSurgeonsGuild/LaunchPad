@@ -115,19 +115,6 @@ public abstract class RequestAuthorizationPlan
 public sealed class RequestAuthorizationPlan<TRequest>(params PolicyGroup[] groups) : RequestAuthorizationPlan(typeof(TRequest), groups);
 
 /// <summary>
-///     On an endpoint: the request it dispatches, whose plan states the scopes the endpoint requires. The generated HTTP servers put it on an
-///     operation whose request has policies; the policies themselves are on the endpoint by name.
-/// </summary>
-/// <param name="requestType">The request.</param>
-[PublicAPI]
-[AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = true)]
-public sealed class RequestPoliciesAttribute(Type requestType) : Attribute
-{
-    /// <summary>The request.</summary>
-    public Type RequestType { get; } = requestType;
-}
-
-/// <summary>
 ///     How a denial becomes a response: the conversions of <see cref="Unauthorized" /> and <see cref="Forbidden" /> to the response union.
 ///     LaunchPad's generator registers one for the response of every request with a policy
 ///     (<see cref="AuthorizationServiceCollectionExtensions.AddAuthorizationResponse{TResponse}" />).
@@ -153,6 +140,9 @@ public sealed class RequestAuthorizationPlans(IEnumerable<RequestAuthorizationPl
     private readonly Dictionary<Type, RequestAuthorizationPlan> _plans = plans.GroupBy(p => p.RequestType).ToDictionary(g => g.Key, g => g.First());
 
     private Dictionary<string, PolicyRequirement>? _policies;
+
+    /// <summary>Every plan of the application.</summary>
+    public IReadOnlyCollection<RequestAuthorizationPlan> All => _plans.Values;
 
     /// <summary>The plan of a request, if it has policies.</summary>
     /// <param name="requestType">The request.</param>

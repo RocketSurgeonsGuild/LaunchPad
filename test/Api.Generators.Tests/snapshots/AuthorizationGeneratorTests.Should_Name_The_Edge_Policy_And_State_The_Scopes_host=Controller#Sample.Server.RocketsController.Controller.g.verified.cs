@@ -6,7 +6,11 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using Rocket.Surgery.LaunchPad.Api.Generated.Mvc;
 using ApiControllerAttribute = global::Microsoft.AspNetCore.Mvc.ApiControllerAttribute;
+using ApiOpenApi = global::Rocket.Surgery.LaunchPad.Api.Generated.Mvc.ApiOpenApi;
+using ApiOpenApiCase = global::Rocket.Surgery.LaunchPad.Api.Generated.Mvc.ApiOpenApiCase;
+using ApiOpenApiMember = global::Rocket.Surgery.LaunchPad.Api.Generated.Mvc.ApiOpenApiMember;
 using ApiProblems = global::Rocket.Surgery.LaunchPad.Api.Generated.Mvc.ApiProblems;
 using AuthorizeAttribute = global::Microsoft.AspNetCore.Authorization.AuthorizeAttribute;
 using CancellationToken = global::System.Threading.CancellationToken;
@@ -17,6 +21,7 @@ using FromRouteAttribute = global::Microsoft.AspNetCore.Mvc.FromRouteAttribute;
 using GeneratedCodeAttribute = global::System.CodeDom.Compiler.GeneratedCodeAttribute;
 using HttpDeleteAttribute = global::Microsoft.AspNetCore.Mvc.HttpDeleteAttribute;
 using HttpPostAttribute = global::Microsoft.AspNetCore.Mvc.HttpPostAttribute;
+using IApiOpenApiTransformer = global::Rocket.Surgery.LaunchPad.Api.Generated.Mvc.IApiOpenApiTransformer;
 using IMediator = global::ZeroAlloc.Mediator.IMediator;
 using InvalidOperationException = global::System.InvalidOperationException;
 using OkObjectResult = global::Microsoft.AspNetCore.Mvc.OkObjectResult;
@@ -24,6 +29,7 @@ using ProblemDetails = global::Microsoft.AspNetCore.Mvc.ProblemDetails;
 using ProducesResponseTypeAttribute = global::Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute;
 using RouteAttribute = global::Microsoft.AspNetCore.Mvc.RouteAttribute;
 using TagsAttribute = global::Microsoft.AspNetCore.Http.TagsAttribute;
+using Task = global::System.Threading.Tasks.Task;
 using ValidationProblemDetails = global::Microsoft.AspNetCore.Mvc.ValidationProblemDetails;
 
 namespace Sample.Server
@@ -38,11 +44,12 @@ namespace Sample.Server
         [HttpPost("inspect-rocket")]
         [EndpointName("InspectRocket")]
         [Authorize(Policy = "Rockets.Read")]
-        [global::Rocket.Surgery.LaunchPad.Authorization.RequestPolicies(typeof(global::Sample.Contracts.InspectRocket.Request))]
         [ProducesResponseType(typeof(global::Sample.Contracts.RocketModel), 200, "application/json")]
         [ProducesResponseType(typeof(ValidationProblemDetails), 400, "application/problem+json")]
         [ProducesResponseType(typeof(ProblemDetails), 401, "application/problem+json")]
         [ProducesResponseType(typeof(ProblemDetails), 403, "application/problem+json")]
+        [GeneratedCode("Rocket.Surgery.LaunchPad.Api", "version")]
+        [ApiOpenApi<__InspectRocketOpenApi>]
         public async Task<ActionResult<global::Sample.Contracts.RocketModel>> InspectRocket([FromBody] global::Sample.Contracts.InspectRocket.Request __body, CancellationToken __cancellationToken)
         {
             var __wire = __body;
@@ -68,16 +75,29 @@ namespace Sample.Server
             throw new InvalidOperationException("Sample.Contracts.InspectRocket.Request returned a Sample.Contracts.RocketResult that holds none of its cases.");
         }
 
+        private sealed class __InspectRocketOpenApi : IApiOpenApiTransformer
+        {
+            /// <summary>Describes <c>InspectRocket</c> in the OpenAPI document: what its endpoint metadata can't say.</summary>
+            public static async Task TransformAsync(global::Microsoft.OpenApi.OpenApiOperation operation, global::Microsoft.AspNetCore.OpenApi.OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
+            {
+                ApiOpenApi.Authenticate(operation);
+                global::Rocket.Surgery.LaunchPad.AspNetCore.Authorization.OpenApiAuthorization.RequireScopes<global::Sample.Contracts.InspectRocket.Request>(operation, context);
+                await ApiOpenApi.Cases(operation, context, 401, new ApiOpenApiCase[] { new ApiOpenApiCase("Unauthorized", "UnauthorizedProblem", null, new ApiOpenApiMember[] { }) }, cancellationToken).ConfigureAwait(false);
+                await ApiOpenApi.Cases(operation, context, 403, new ApiOpenApiCase[] { new ApiOpenApiCase("Forbidden", "ForbiddenProblem", null, new ApiOpenApiMember[] { }) }, cancellationToken).ConfigureAwait(false);
+            }
+        }
+
         /// <summary>Handles <c>POST /api/rockets/launch-rocket</c> by sending <see cref="Sample.Contracts.LaunchRocket.Request" />.</summary>
         [HttpPost("launch-rocket")]
         [EndpointName("LaunchRocket")]
         [Authorize(Policy = "Own")]
         [Authorize]
-        [global::Rocket.Surgery.LaunchPad.Authorization.RequestPolicies(typeof(global::Sample.Contracts.LaunchRocket.Request))]
         [ProducesResponseType(typeof(global::Sample.Contracts.RocketModel), 200, "application/json")]
         [ProducesResponseType(typeof(ValidationProblemDetails), 400, "application/problem+json")]
         [ProducesResponseType(typeof(ProblemDetails), 401, "application/problem+json")]
         [ProducesResponseType(typeof(ProblemDetails), 403, "application/problem+json")]
+        [GeneratedCode("Rocket.Surgery.LaunchPad.Api", "version")]
+        [ApiOpenApi<__LaunchRocketOpenApi>]
         public async Task<ActionResult<global::Sample.Contracts.RocketModel>> LaunchRocket([FromBody] global::Sample.Contracts.LaunchRocket.Request __body, CancellationToken __cancellationToken)
         {
             var __wire = __body;
@@ -103,16 +123,29 @@ namespace Sample.Server
             throw new InvalidOperationException("Sample.Contracts.LaunchRocket.Request returned a Sample.Contracts.RocketResult that holds none of its cases.");
         }
 
+        private sealed class __LaunchRocketOpenApi : IApiOpenApiTransformer
+        {
+            /// <summary>Describes <c>LaunchRocket</c> in the OpenAPI document: what its endpoint metadata can't say.</summary>
+            public static async Task TransformAsync(global::Microsoft.OpenApi.OpenApiOperation operation, global::Microsoft.AspNetCore.OpenApi.OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
+            {
+                ApiOpenApi.Authenticate(operation);
+                global::Rocket.Surgery.LaunchPad.AspNetCore.Authorization.OpenApiAuthorization.RequireScopes<global::Sample.Contracts.LaunchRocket.Request>(operation, context);
+                await ApiOpenApi.Cases(operation, context, 401, new ApiOpenApiCase[] { new ApiOpenApiCase("Unauthorized", "UnauthorizedProblem", null, new ApiOpenApiMember[] { }) }, cancellationToken).ConfigureAwait(false);
+                await ApiOpenApi.Cases(operation, context, 403, new ApiOpenApiCase[] { new ApiOpenApiCase("Forbidden", "ForbiddenProblem", null, new ApiOpenApiMember[] { }) }, cancellationToken).ConfigureAwait(false);
+            }
+        }
+
         /// <summary>Handles <c>DELETE /api/rockets/{id}</c> by sending <see cref="Sample.Contracts.DeleteRocket.Request" />.</summary>
         [HttpDelete("{id}")]
         [EndpointName("DeleteRocket")]
         [Authorize(Policy = "Rockets.Read")]
         [Authorize]
-        [global::Rocket.Surgery.LaunchPad.Authorization.RequestPolicies(typeof(global::Sample.Contracts.DeleteRocket.Request))]
         [ProducesResponseType(typeof(global::Sample.Contracts.RocketModel), 200, "application/json")]
         [ProducesResponseType(typeof(ValidationProblemDetails), 400, "application/problem+json")]
         [ProducesResponseType(typeof(ProblemDetails), 401, "application/problem+json")]
         [ProducesResponseType(typeof(ProblemDetails), 403, "application/problem+json")]
+        [GeneratedCode("Rocket.Surgery.LaunchPad.Api", "version")]
+        [ApiOpenApi<__DeleteRocketOpenApi>]
         public async Task<ActionResult<global::Sample.Contracts.RocketModel>> DeleteRocket([FromRoute(Name = "id")] string @id, CancellationToken __cancellationToken)
         {
             var __wire = new global::Sample.Contracts.DeleteRocket.Request(@id);
@@ -136,6 +169,18 @@ namespace Sample.Server
             }
 
             throw new InvalidOperationException("Sample.Contracts.DeleteRocket.Request returned a Sample.Contracts.RocketResult that holds none of its cases.");
+        }
+
+        private sealed class __DeleteRocketOpenApi : IApiOpenApiTransformer
+        {
+            /// <summary>Describes <c>DeleteRocket</c> in the OpenAPI document: what its endpoint metadata can't say.</summary>
+            public static async Task TransformAsync(global::Microsoft.OpenApi.OpenApiOperation operation, global::Microsoft.AspNetCore.OpenApi.OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
+            {
+                ApiOpenApi.Authenticate(operation);
+                global::Rocket.Surgery.LaunchPad.AspNetCore.Authorization.OpenApiAuthorization.RequireScopes<global::Sample.Contracts.DeleteRocket.Request>(operation, context);
+                await ApiOpenApi.Cases(operation, context, 401, new ApiOpenApiCase[] { new ApiOpenApiCase("Unauthorized", "UnauthorizedProblem", null, new ApiOpenApiMember[] { }) }, cancellationToken).ConfigureAwait(false);
+                await ApiOpenApi.Cases(operation, context, 403, new ApiOpenApiCase[] { new ApiOpenApiCase("Forbidden", "ForbiddenProblem", null, new ApiOpenApiMember[] { }) }, cancellationToken).ConfigureAwait(false);
+            }
         }
     }
 }

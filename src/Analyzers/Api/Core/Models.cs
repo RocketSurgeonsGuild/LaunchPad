@@ -140,7 +140,7 @@ internal sealed record OperationModel(
     EquatableArray<DescriptionModel> ResponseDescriptions = default,
     RpcModel? Rpc = null,
     // Authorization (docs/design/authorization.md), where the server has LaunchPad's edge: the request, whose plan states the scopes of the
-    // endpoint; the policies of the request the endpoint names (they are in Policies too, for the transports that read those); whether a
+    // operation in the OpenAPI document; the policies of the request the endpoint names (they are in Policies too, for the transports that read those); whether a
     // group of alternatives leaves the endpoint requiring only a caller; the scopes as alternatives; whether the GraphQL schema states them.
     string? RequestPolicies = null,
     EquatableArray<string> RequestPolicyNames = default,

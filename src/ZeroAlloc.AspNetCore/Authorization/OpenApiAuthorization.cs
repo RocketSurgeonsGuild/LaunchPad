@@ -1,5 +1,5 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.OpenApi;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
 
@@ -28,56 +28,52 @@ public sealed class OpenApiAuthorizationOptions
     public IDictionary<string, string> ScopeDescriptions { get; } = new Dictionary<string, string>(StringComparer.Ordinal);
 }
 
-/// <summary>The plans of the requests an endpoint dispatches, from the <see cref="RequestPoliciesAttribute" /> the generated servers put on it.</summary>
-internal static class EndpointPlans
+/// <summary>What the generated servers' OpenAPI transformers call to describe the authorization of an operation.</summary>
+[PublicAPI]
+public static class OpenApiAuthorization
 {
-    public static IEnumerable<RequestAuthorizationPlan> Of(IEnumerable<object> metadata, RequestAuthorizationPlans plans) =>
-        metadata.OfType<IAllowAnonymous>().Any()
-            ? []
-            : metadata.OfType<RequestPoliciesAttribute>().Select(request => plans.Find(request.RequestType)).OfType<RequestAuthorizationPlan>();
-}
-
-/// <summary>
-///     States the scopes of an operation whose request has policies: a security requirement per alternative, any one of which is enough
-///     (docs/design/authorization.md, section 5).
-/// </summary>
-internal sealed class RequestPoliciesOperationTransformer(IOptions<OpenApiAuthorizationOptions> options, RequestAuthorizationPlans plans) : IOpenApiOperationTransformer
-{
-    public Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
+    /// <summary>
+    ///     States the scopes an operation requires, from the plan of the request it dispatches: a security requirement per alternative, any
+    ///     one of which is enough (docs/design/authorization.md, section 5). A request without a plan adds nothing.
+    /// </summary>
+    /// <typeparam name="TRequest">The request the operation dispatches.</typeparam>
+    /// <param name="operation">The operation.</param>
+    /// <param name="context">The context of the operation's transformer.</param>
+    public static void RequireScopes<TRequest>(OpenApiOperation operation, OpenApiOperationTransformerContext context)
     {
-        foreach (var plan in EndpointPlans.Of(context.Description.ActionDescriptor.EndpointMetadata, plans))
-        {
-            foreach (var alternative in plan.ScopeAlternatives)
-            {
-                operation.Security ??= [];
-                operation.Security.Add(new() { [new OpenApiSecuritySchemeReference(options.Value.SchemeName, context.Document)] = [.. alternative] });
-            }
-        }
+        ArgumentNullException.ThrowIfNull(operation);
+        ArgumentNullException.ThrowIfNull(context);
+        if (context.ApplicationServices.GetService<RequestAuthorizationPlan<TRequest>>() is not { } plan) return;
 
-        return Task.CompletedTask;
+        var scheme = context.ApplicationServices.GetRequiredService<IOptions<OpenApiAuthorizationOptions>>().Value.SchemeName;
+        foreach (var alternative in plan.ScopeAlternatives)
+        {
+            operation.Security ??= [];
+            operation.Security.Add(new() { [new OpenApiSecuritySchemeReference(scheme, context.Document)] = [.. alternative] });
+        }
     }
 }
 
 /// <summary>
 ///     Declares the security scheme the operations require their scopes of, unless the application declared one of that name: OAuth 2.0 with
-///     the authorization code flow and every scope when the application gave both endpoints, otherwise a bearer token. A requirement of a
+///     the authorization code flow and every scope the application's requests require when the application gave both endpoints, otherwise
+///     a bearer token. A requirement of a
 ///     scheme the document doesn't declare is written as <c>{}</c>, which reads as "no security", so the scheme is never left out.
 /// </summary>
-internal sealed class RequestPoliciesSecuritySchemeTransformer(IOptions<OpenApiAuthorizationOptions> options, RequestAuthorizationPlans registered) : IOpenApiDocumentTransformer
+internal sealed class RequestPoliciesSecuritySchemeTransformer(IOptions<OpenApiAuthorizationOptions> options, RequestAuthorizationPlans plans) : IOpenApiDocumentTransformer
 {
     public Task TransformAsync(OpenApiDocument document, OpenApiDocumentTransformerContext context, CancellationToken cancellationToken)
     {
         var settings = options.Value;
         if (document.Components?.SecuritySchemes?.ContainsKey(settings.SchemeName) is true) return Task.CompletedTask;
 
-        var plans = context.DescriptionGroups.SelectMany(g => g.Items).SelectMany(d => EndpointPlans.Of(d.ActionDescriptor.EndpointMetadata, registered)).ToArray();
-        if (plans.Length == 0) return Task.CompletedTask;
-
         var scopes = new SortedDictionary<string, string>(StringComparer.Ordinal);
-        foreach (var scope in plans.SelectMany(p => p.ScopeAlternatives).SelectMany(a => a))
+        foreach (var scope in plans.All.SelectMany(p => p.ScopeAlternatives).SelectMany(a => a))
         {
             scopes[scope] = settings.ScopeDescriptions.TryGetValue(scope, out var text) ? text : scope;
         }
+
+        if (plans.All.Count == 0) return Task.CompletedTask;
 
         document.Components ??= new();
         document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>(StringComparer.Ordinal);

@@ -116,7 +116,6 @@ internal static class HostReader
         var requestPolicies = PolicyReader.Read(request, compilation);
         var atTheEdge = !requestPolicies.IsEmpty
          && compilation.GetTypeByMetadataName(PolicyReader.EdgeType) is { }
-         && compilation.GetTypeByMetadataName(PolicyReader.RequestPoliciesAttribute) is { }
          && ( hostKind is not ( HostKind.GraphQLMutation or HostKind.GraphQLQuery ) || compilation.GetTypeByMetadataName(PolicyReader.GraphQLAuthorizeAttribute) is { } );
         var requestPolicyNames = atTheEdge ? requestPolicies.EdgePolicies.ToArray() : [];
 
