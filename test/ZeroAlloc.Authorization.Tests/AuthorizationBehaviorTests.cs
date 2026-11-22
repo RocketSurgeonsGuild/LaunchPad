@@ -24,7 +24,7 @@ public class AuthorizationBehaviorTests
     {
         await using var call = Call(null);
 
-        var result = await call.Mediator.Send(new GetRocket("Falcon"), CancellationToken.None);
+        var result = await call.Mediator.Send(new DeleteRocket("Falcon"), CancellationToken.None);
 
         await ( result.Value is Unauthorized ).Should().BeTrue();
         await call.Calls.Should().BeEmpty();
@@ -41,7 +41,7 @@ public class AuthorizationBehaviorTests
     }
 
     [Test]
-    public async Task A_Caller_Without_The_Declared_Scope_Is_Forbidden_Before_The_Policy_Runs()
+    public async Task A_Caller_Without_The_Scope_Is_Forbidden_By_The_Policy_Which_Names_The_Scope()
     {
         await using var call = Call(new Caller("alice", "rockets:write"));
 
@@ -50,30 +50,49 @@ public class AuthorizationBehaviorTests
         var forbidden = result.Value as Forbidden;
         await forbidden.Should().NotBeNull();
         await ( (string)forbidden!.Properties[AuthorizationDecision.MissingScopesProperty]! ).Should().BeEqualTo("rockets:read");
-        await call.Calls.Should().BeEmpty();
     }
 
     [Test]
-    public async Task A_Caller_With_The_Declared_Scope_Reaches_The_Handler()
+    public async Task A_Caller_With_The_Scope_Reaches_The_Handler()
     {
         await using var call = Call(new Caller("alice", "openid rockets:read"));
 
         var result = await call.Mediator.Send(new GetRocket("Falcon"), CancellationToken.None);
 
         await ( result.Value as RocketModel )!.Name.Should().BeEqualTo("Falcon");
-        await call.Calls.Should().BeEquivalentTo(["Rockets.Read"]);
     }
 
+    // Rockets.Launch: [RequireScope("rockets:read", "rockets:write")] and [RequireAnyScope("pads:east", "pads:west")]
     [Test]
-    public async Task The_Scope_Claim_Of_Entra_Is_Read_Too()
+    [Arguments("rockets:read rockets:write pads:east", null)]
+    [Arguments("rockets:read rockets:write pads:west", null)]
+    [Arguments("rockets:read rockets:write pads:east pads:west", null)]
+    [Arguments("rockets:read pads:east", "rockets:write")]
+    [Arguments("pads:east", "rockets:read rockets:write")]
+    [Arguments("rockets:read rockets:write", "pads:east pads:west")]
+    [Arguments("", "rockets:read rockets:write")]
+    public async Task A_Policy_Requires_All_Of_Its_Scopes_And_Any_Of_Its_Alternatives(string granted, string? missing)
     {
-        var caller = new Caller("alice");
-        caller.Values["scp"] = "rockets:read";
-        await using var call = Call(caller);
+        await using var call = Call(new Caller("alice", granted));
 
-        var result = await call.Mediator.Send(new GetRocket("Falcon"), CancellationToken.None);
+        var result = await call.Mediator.Send(new CountdownRocket("Falcon"), CancellationToken.None);
 
-        await ( result.Value is RocketModel ).Should().BeTrue();
+        await ( ( result.Value as Forbidden )?.Properties[AuthorizationDecision.MissingScopesProperty] as string ).Should().BeEqualTo(missing);
+        await ( result.Value is RocketModel ).Should().BeEqualTo(missing is null);
+    }
+
+    // A policy is checked wherever its request is dispatched: the check is the policy's own, not a transport's.
+    [Test]
+    public async Task A_Scope_Policy_Checks_The_Caller_Itself()
+    {
+        var policy = new RocketsWrite();
+
+        var allowed = await policy.EvaluateAsync(new Caller("alice", "rockets:write"));
+        var denied = await policy.EvaluateAsync(new Caller("alice", "rockets:read"));
+
+        await allowed.IsSuccess.Should().BeTrue();
+        await denied.Error.Code.Should().BeEqualTo(ScopeRequirements.MissingScopeCode);
+        await denied.Error.Reason.Should().BeEqualTo("rockets:write");
     }
 
     [Test]
@@ -84,7 +103,7 @@ public class AuthorizationBehaviorTests
         var result = await call.Mediator.Send(new DeleteRocket("Falcon"), CancellationToken.None);
 
         await ( result.Value as Forbidden )!.Detail.Should().BeEqualTo("Only an administrator may do this.");
-        await call.Calls.Should().BeEquivalentTo(["Rockets.Write", "Admin"], CollectionOrdering.Matching);
+        await call.Calls.Should().BeEquivalentTo(["Admin"]);
     }
 
     [Test]
@@ -136,13 +155,13 @@ public class AuthorizationBehaviorTests
     {
         await using var call = Call(new Caller("alice", "rockets:write", "admin"));
 
-        var edge = await call.AtTheEdge("Rockets.Write");
+        var edge = await call.AtTheEdge("Admin");
         var result = await call.Mediator.Send(new DeleteRocket("Falcon"), CancellationToken.None);
 
         await edge.IsAllowed.Should().BeTrue();
         await ( result.Value is RocketModel ).Should().BeTrue();
-        // Rockets.Write ran at the edge and was not run again; Admin, which the edge was not asked for, ran in the pipeline.
-        await call.Calls.Should().BeEquivalentTo(["Rockets.Write", "Admin"], CollectionOrdering.Matching);
+        // Admin ran at the edge, and the pipeline found its outcome
+        await call.Calls.Should().BeEquivalentTo(["Admin"]);
     }
 
     [Test]
@@ -168,6 +187,9 @@ public class AuthorizationBehaviorTests
         await plans.FindPolicy("MinimumClearance").Should().BeNull();
         await plans.FindPolicy("Own").Should().BeNull();
         await plans.Find(typeof(LaunchRocket))!.ScopeAlternatives.Select(a => string.Join(' ', a)).Should().BeEquivalentTo([""]);
+        // all of [RequireScope], with one of [RequireAnyScope]
+        await plans.Find(typeof(CountdownRocket))!.ScopeAlternatives.Select(a => string.Join(' ', a)).Should()
+                   .BeEquivalentTo(["pads:east rockets:read rockets:write", "pads:west rockets:read rockets:write"]);
         await plans.Find(typeof(Ping)).Should().BeNull();
     }
 
@@ -211,14 +233,14 @@ public class AuthorizationBehaviorTests
     }
 
     [Test]
-    public async Task The_Joint_Registers_The_Outcomes_Of_Each_Call()
+    public async Task A_Policy_Runs_Once_For_A_Call_However_Often_It_Is_Asked()
     {
-        await using var call = Call(new Caller("alice", "rockets:read"));
+        await using var call = Call(new Caller("alice", "rockets:write", "admin"));
 
-        await call.Mediator.Send(new GetRocket("Falcon"), CancellationToken.None);
-        await call.Mediator.Send(new GetRocket("Falcon"), CancellationToken.None);
+        await call.Mediator.Send(new DeleteRocket("Falcon"), CancellationToken.None);
+        await call.Mediator.Send(new DeleteRocket("Falcon"), CancellationToken.None);
 
-        await call.Calls.Should().BeEquivalentTo(["Rockets.Read"]);
+        await call.Calls.Should().BeEquivalentTo(["Admin"]);
     }
 
     private static TestCall Call(ISecurityContext? caller)

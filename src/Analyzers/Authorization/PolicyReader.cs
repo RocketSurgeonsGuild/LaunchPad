@@ -11,14 +11,17 @@ namespace Rocket.Surgery.LaunchPad.Analyzers.Authorization;
 /// <param name="Interface">The <c>IAuthorizationPolicy</c> the class implements, fully qualified, through which it is called.</param>
 /// <param name="Arguments">The arguments as C# expressions, each cast to the policy's parameter type.</param>
 /// <param name="ArgumentsKey">The arguments as text, which with the name keys an outcome.</param>
-/// <param name="Scopes">The scopes the class declares with <c>[RequiresScopes]</c>.</param>
+/// <param name="ScopeAlternatives">
+///     The scopes the class requires with <c>[RequireScope]</c> and <c>[RequireAnyScope]</c>, as alternatives: each a set of scopes that
+///     satisfies the policy. One empty set for a policy without scope attributes.
+/// </param>
 internal sealed record PolicyModel(
     string Name,
     string? Type,
     string? Interface,
     EquatableArray<string> Arguments,
     string ArgumentsKey,
-    EquatableArray<string> Scopes
+    EquatableArray<EquatableArray<string>> ScopeAlternatives
 );
 
 /// <summary>One requirement of a request: a policy, or several of which any one is enough.</summary>
@@ -67,14 +70,14 @@ internal sealed record RequestPoliciesModel(EquatableArray<PolicyGroupModel> Gro
         return alternatives.Select(a => a.ToEquatableArray()).ToEquatableArray();
     }
 
-    // Every alternative so far with each policy of the group, without duplicates or alternatives that contain another.
-    private static List<SortedSet<string>> Expand(List<SortedSet<string>> alternatives, PolicyGroupModel group)
-    {
-        var next = alternatives
-                  .SelectMany(_ => group.Policies, (alternative, policy) => new SortedSet<string>(alternative.Concat(policy.Scopes), StringComparer.Ordinal))
-                  .Aggregate(new List<SortedSet<string>>(), (list, set) => list.Any(set.SetEquals) ? list : [.. list, set]);
-        return [.. next.Where(a => !next.Any(b => !ReferenceEquals(a, b) && b.IsProperSubsetOf(a)))];
-    }
+    // Every alternative so far with each alternative of each policy of the group, without duplicates or alternatives that contain another.
+    private static List<SortedSet<string>> Expand(List<SortedSet<string>> alternatives, PolicyGroupModel group) =>
+        ScopeSets.Minimal(
+            alternatives.SelectMany(
+                _ => group.Policies.SelectMany(policy => policy.ScopeAlternatives),
+                (alternative, scopes) => new SortedSet<string>(alternative.Concat(scopes), StringComparer.Ordinal)
+            )
+        );
 }
 
 /// <summary>
@@ -88,7 +91,8 @@ internal static class PolicyReader
     public const string RequireAnyPolicyAttribute = "ZeroAlloc.Authorization.RequireAnyPolicyAttribute";
     public const string PolicyAttribute = "ZeroAlloc.Authorization.PolicyAttribute";
     public const string PolicyInterface = "ZeroAlloc.Authorization.IAuthorizationPolicy";
-    public const string RequiresScopesAttribute = "Rocket.Surgery.LaunchPad.Authorization.RequiresScopesAttribute";
+    public const string RequireScopeAttribute = "Rocket.Surgery.LaunchPad.Authorization.RequireScopeAttribute";
+    public const string RequireAnyScopeAttribute = "Rocket.Surgery.LaunchPad.Authorization.RequireAnyScopeAttribute";
     public const string PlanType = "Rocket.Surgery.LaunchPad.Authorization.RequestAuthorizationPlan";
     public const string Unauthorized = "Rocket.Surgery.LaunchPad.Foundation.Unauthorized";
     public const string Forbidden = "Rocket.Surgery.LaunchPad.Foundation.Forbidden";
@@ -135,14 +139,27 @@ internal static class PolicyReader
     private static bool UsesAuthorization(IAssemblySymbol assembly) =>
         assembly.Modules.Any(m => m.ReferencedAssemblies.Any(r => r.Name == AuthorizationAssembly));
 
-    /// <summary>The scopes a policy class declares.</summary>
-    public static EquatableArray<string> Scopes(INamedTypeSymbol policy) =>
+    /// <summary>The scope attributes of a policy class, in order: the scopes of each, and whether any one of them is enough.</summary>
+    public static EquatableArray<ScopeRequirementModel> ScopeRequirements(INamedTypeSymbol policy) =>
         policy
            .GetAttributes()
-           .Where(a => a.AttributeClass.Is(RequiresScopesAttribute))
-           .SelectMany(a => a.ConstructorArguments is [{ Kind: TypedConstantKind.Array, IsNull: false } scopes] ? scopes.Values.Select(v => v.Value).OfType<string>() : [])
-           .Where(s => !string.IsNullOrWhiteSpace(s))
-           .Distinct(StringComparer.Ordinal)
+           .Where(a => a.AttributeClass.Is(RequireScopeAttribute) || a.AttributeClass.Is(RequireAnyScopeAttribute))
+           .Select(
+                a => new ScopeRequirementModel(
+                    a.AttributeClass.Is(RequireAnyScopeAttribute),
+                    ( a.ConstructorArguments is [{ Kind: TypedConstantKind.Array, IsNull: false } scopes] ? scopes.Values.Select(v => v.Value as string ?? "") : [] ).ToEquatableArray()
+                )
+            )
+           .ToEquatableArray();
+
+    /// <summary>
+    ///     The scopes that satisfy a policy class, as alternatives: a <c>[RequireScope]</c> adds its scopes to every alternative, a
+    ///     <c>[RequireAnyScope]</c> multiplies them by its scopes.
+    /// </summary>
+    public static EquatableArray<EquatableArray<string>> ScopeAlternatives(INamedTypeSymbol policy) =>
+        ScopeRequirements(policy)
+           .Aggregate(new List<SortedSet<string>> { new(StringComparer.Ordinal) }, static (alternatives, requirement) => ScopeSets.Minimal(ScopeSets.With(alternatives, requirement)))
+           .Select(a => a.ToEquatableArray())
            .ToEquatableArray();
 
     /// <summary>The policy classes of the compilation and of the references that use ZeroAlloc.Authorization, by <c>[Policy]</c> name.</summary>
@@ -165,12 +182,12 @@ internal static class PolicyReader
     private static PolicyModel Policy(string name, TypedConstant[] arguments, IReadOnlyDictionary<string, INamedTypeSymbol> policies)
     {
         var key = string.Join(",", arguments.Select(a => a.ToCSharpString()));
-        if (!policies.TryGetValue(name, out var type)) return new(name, null, null, EquatableArray<string>.Empty, key, EquatableArray<string>.Empty);
+        if (!policies.TryGetValue(name, out var type)) return new(name, null, null, EquatableArray<string>.Empty, key, new[] { EquatableArray<string>.Empty }.ToEquatableArray());
         var contract = type.AllInterfaces.FirstOrDefault(i => i.OriginalDefinition.ContainingNamespace.ToDisplayString() + "." + i.Name == PolicyInterface && i.TypeArguments.Length == arguments.Length);
         var expressions = contract is null
             ? EquatableArray<string>.Empty
             : arguments.Select((a, index) => "(" + contract.TypeArguments[index].FullyQualified() + ")" + ( a.IsNull ? "null!" : a.ToCSharpString() )).ToEquatableArray();
-        return new(name, type.FullyQualified(), contract?.FullyQualified(), expressions, key, Scopes(type));
+        return new(name, type.FullyQualified(), contract?.FullyQualified(), expressions, key, ScopeAlternatives(type));
     }
 
     private static void Collect(INamespaceSymbol @namespace, Dictionary<string, INamedTypeSymbol> table)
@@ -190,5 +207,27 @@ internal static class PolicyReader
         }
 
         foreach (var nested in type.GetTypeMembers()) Collect(nested, table);
+    }
+}
+
+/// <summary>One scope attribute of a policy class.</summary>
+/// <param name="Any">Whether any one of the scopes is enough (<c>[RequireAnyScope]</c>); otherwise all are required (<c>[RequireScope]</c>).</param>
+/// <param name="Scopes">The scopes, as written: a blank one is reported, not dropped.</param>
+internal sealed record ScopeRequirementModel(bool Any, EquatableArray<string> Scopes);
+
+/// <summary>Sets of scopes as alternatives, any one of which is enough.</summary>
+internal static class ScopeSets
+{
+    /// <summary>The alternatives with a scope attribute applied: its scopes added to each, or each multiplied by its scopes.</summary>
+    public static IEnumerable<SortedSet<string>> With(IEnumerable<SortedSet<string>> alternatives, ScopeRequirementModel requirement) =>
+        requirement.Any
+            ? alternatives.SelectMany(_ => requirement.Scopes, (alternative, scope) => new SortedSet<string>(alternative, StringComparer.Ordinal) { scope })
+            : alternatives.Select(alternative => new SortedSet<string>(alternative.Concat(requirement.Scopes), StringComparer.Ordinal));
+
+    /// <summary>The alternatives without duplicates and without those that contain another.</summary>
+    public static List<SortedSet<string>> Minimal(IEnumerable<SortedSet<string>> alternatives)
+    {
+        var distinct = alternatives.Aggregate(new List<SortedSet<string>>(), (list, set) => list.Any(set.SetEquals) ? list : [.. list, set]);
+        return [.. distinct.Where(a => !distinct.Any(b => !ReferenceEquals(a, b) && b.IsProperSubsetOf(a)))];
     }
 }

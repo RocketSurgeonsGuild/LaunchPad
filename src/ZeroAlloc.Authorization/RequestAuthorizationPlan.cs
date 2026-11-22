@@ -13,28 +13,32 @@ public delegate ValueTask<UnitResult<AuthorizationFailure>> PolicyEvaluator(
     CancellationToken cancellationToken
 );
 
-/// <summary>One policy a request names: its name and arguments, the scopes it declares and how to run it.</summary>
-/// <remarks>Describes one policy a request names.</remarks>
+/// <summary>One policy a request names: its name and arguments, the scopes it requires and how to run it.</summary>
 /// <param name="name">The policy's <c>[Policy]</c> name.</param>
 /// <param name="arguments">The constant arguments the request passes it, as text; empty for none.</param>
 /// <param name="policyType">The policy class.</param>
-/// <param name="scopes">The scopes the policy declares with <see cref="RequiresScopesAttribute" />.</param>
+/// <param name="scopeAlternatives">
+///     The scopes the policy's scope attributes require, as alternatives: each a set of scopes that satisfies the policy. One empty set for a
+///     policy without scope attributes.
+/// </param>
 /// <param name="evaluate">Runs the policy.</param>
 [PublicAPI]
-public sealed class PolicyRequirement(string name, string arguments, Type policyType, string[] scopes, PolicyEvaluator evaluate)
+public sealed class PolicyRequirement(string name, string arguments, Type policyType, string[][] scopeAlternatives, PolicyEvaluator evaluate)
 {
-
     /// <summary>The policy's <c>[Policy]</c> name.</summary>
     public string Name { get; } = name;
 
-    /// <summary>The name with the arguments: what an outcome is recorded under.</summary>
+    /// <summary>The name with the arguments: what an endpoint names the policy by, and what an outcome is recorded under.</summary>
     public string Key { get; } = arguments.Length == 0 ? name : name + "(" + arguments + ")";
 
     /// <summary>The policy class.</summary>
     public Type PolicyType { get; } = policyType;
 
-    /// <summary>The scopes the policy declares.</summary>
-    public IReadOnlyList<string> Scopes { get; } = scopes;
+    /// <summary>The scopes that satisfy the policy, as alternatives: any one set is enough. For publishing: the policy itself checks them.</summary>
+    public IReadOnlyList<IReadOnlyList<string>> ScopeAlternatives { get; } = scopeAlternatives.Length == 0 ? [[]] : scopeAlternatives;
+
+    /// <summary>The scopes of the first alternative: what a challenge asks for.</summary>
+    public IReadOnlyList<string> Scopes => ScopeAlternatives[0];
 
     /// <summary>Runs the policy.</summary>
     public PolicyEvaluator Evaluate { get; } = evaluate;
@@ -50,6 +54,9 @@ public sealed class PolicyGroup(params PolicyRequirement[] policies)
 {
     /// <summary>The policies, any one of which is enough.</summary>
     public IReadOnlyList<PolicyRequirement> Policies { get; } = policies;
+
+    /// <summary>The scopes that satisfy the group, as alternatives: those of each of its policies.</summary>
+    public IReadOnlyList<IReadOnlyList<string>> ScopeAlternatives { get; } = [.. policies.SelectMany(policy => policy.ScopeAlternatives)];
 }
 
 /// <summary>
@@ -92,10 +99,10 @@ public abstract class RequestAuthorizationPlan
             var next = new List<SortedSet<string>>();
             foreach (var alternative in alternatives)
             {
-                foreach (var policy in group.Policies)
+                foreach (var scopes in group.ScopeAlternatives)
                 {
                     var set = new SortedSet<string>(alternative, StringComparer.Ordinal);
-                    set.UnionWith(policy.Scopes);
+                    set.UnionWith(scopes);
                     if (!next.Exists(set.SetEquals)) next.Add(set);
                 }
             }

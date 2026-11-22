@@ -23,12 +23,11 @@ Contents:
 A policy, once, beside its operations:
 
 ```csharp
-[Policy("Rockets.Write"), RequiresScopes("rockets:write")]
-public sealed class RocketsWrite : IAuthorizationPolicy
-{
-    public ValueTask<UnitResult<AuthorizationFailure>> EvaluateAsync(ISecurityContext ctx, CancellationToken ct = default) => new(UnitResult<AuthorizationFailure>.Success());
-}
+[Policy("Rockets.Write"), RequireScope("rockets:write")]
+public sealed partial class RocketsWrite : IAuthorizationPolicy;
 ```
+
+A policy with scope attributes is those scopes and nothing else: LaunchPad writes its `EvaluateAsync`. `[RequireScope("a", "b")]` requires every scope it lists, `[RequireAnyScope("a", "b")]` any one of them, and several attributes on a class must all be satisfied. A policy with a rule of its own is an ordinary ZeroAlloc policy, written by hand, without scope attributes.
 
 The policy on each request it guards, and the two cases in the response:
 
@@ -52,13 +51,13 @@ ZeroAlloc.Authorization 2.3 is host-neutral and AOT-safe. LaunchPad uses its:
 
 What it lacks, which LaunchPad adds:
 
-| Gap                                                                                          | LaunchPad                                                                              |
-| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| No scopes.                                                                                   | `[RequiresScopes]` on the policy class, enforced before the policy runs.               |
-| A failure is a free-form code: nothing tells an unauthenticated caller from a forbidden one. | An anonymous security context answers `Unauthorized`; every other denial, `Forbidden`. |
-| `AuthorizerFor<TRequest>` evaluates a request's policies as a whole.                         | A generated plan per request evaluates policy by policy, so outcomes can be recorded.  |
-| ZeroAlloc.Mediator.Authorization answers `Result<T, AuthorizationFailure>` or throws.        | LaunchPad's behavior answers the union's own case.                                     |
-| No ASP.NET Core integration.                                                                 | The security context from the caller's `ClaimsPrincipal`, and the edge (section 4).    |
+| Gap                                                                                          | LaunchPad                                                                                                           |
+| -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| No scopes.                                                                                   | `[RequireScope]` and `[RequireAnyScope]` on the policy class, and its generated `EvaluateAsync`, which checks them. |
+| A failure is a free-form code: nothing tells an unauthenticated caller from a forbidden one. | An anonymous security context answers `Unauthorized`; every other denial, `Forbidden`.                              |
+| `AuthorizerFor<TRequest>` evaluates a request's policies as a whole.                         | A generated plan per request evaluates policy by policy, so outcomes can be recorded.                               |
+| ZeroAlloc.Mediator.Authorization answers `Result<T, AuthorizationFailure>` or throws.        | LaunchPad's behavior answers the union's own case.                                                                  |
+| No ASP.NET Core integration.                                                                 | The security context from the caller's `ClaimsPrincipal`, and the edge (section 4).                                 |
 
 ## 3. Evaluation
 
@@ -78,16 +77,16 @@ What it lacks, which LaunchPad adds:
 
 1. The security context is resolved from the request's services. An anonymous one answers `Unauthorized`; no policy runs.
 2. Each policy is looked up in the request's **authorization outcomes** (scoped, keyed by policy name and arguments). An outcome that is there is reused.
-3. Otherwise the policy's declared scopes are checked against the caller's scopes, and only then its `EvaluateAsync` runs. The outcome is recorded.
+3. Otherwise its `EvaluateAsync` runs, and the outcome is recorded. A policy with scope attributes checks the caller's scopes there, and its failure names the scopes the caller lacks.
 4. A group that fails answers `Forbidden`, with the failure's reason as its detail, and the missing scopes when that was why.
 
 A request without a policy attribute passes straight through. One that has a policy attribute and no plan in the services is refused with an exception that names the missing registration, so a forgotten registration never lets a request through. A stream request is checked by the behavior's `CheckStream`, which the mediator calls before the stream handler; it has no item to answer with, so a denial throws `AuthorizationDeniedException` carrying the problem, and each transport writes it as that case.
 
 **Static dispatch is not supported.** ZeroAlloc.Mediator also generates a static `Mediator` class, which dispatches with no services, so nothing could check a request's policies. LaunchPad bans it: the package ships a banned symbols list (`build/BannedSymbols.Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization.txt`, RS0030 as an error; `LaunchPadAuthorizationBanStaticMediator=false` leaves it out). ZeroAlloc's own generated mediator uses the class, and no analyzer setting reaches one generated file, so LaunchPad's generator writes `SuppressMessage` attributes for the types ZeroAlloc generates. ZeroAlloc's generator calls a `Handle` overload without services on every behavior, so the behavior has one: it refuses a request with a policy and passes any other on.
 
-**The caller's scopes** are read from the security context's `scope` claim (space separated, OAuth and Keycloak) and `scp` (Entra), both by default; `RequestAuthorizationOptions.ScopeClaims` changes them.
+**The caller's scopes** are the security context's `scope` claim, separated by spaces. The check is the policy's own (`ScopeRequirements.Evaluate`, which the generated `EvaluateAsync` calls), so it runs wherever the policy does: behind a server, in a worker, in a function, or when the policy is called directly. A caller without a required scope is denied with the failure code `scope.missing`, whose reason is the scopes it lacks.
 
-**The security context** is whatever `ISecurityContext` the request's services resolve. `ZeroAlloc.AspNetCore` registers one built from `HttpContext.User`: the name identifier as `Id`, role claims as `Roles`, and the other claims by type, the values of a repeated claim joined by a space. Without an authenticated identity it is `AnonymousSecurityContext.Instance`. An application without ASP.NET Core registers its own.
+**The security context** is whatever `ISecurityContext` the request's services resolve. `ZeroAlloc.AspNetCore` registers one built from `HttpContext.User`: the name identifier as `Id`, role claims as `Roles`, and the other claims by type, the values of a repeated claim joined by a space. Entra's `scp` claim becomes `scope`, so a policy reads scopes one way whatever issued the token. Without an authenticated identity it is `AnonymousSecurityContext.Instance`. An application without ASP.NET Core registers its own.
 
 ## 4. The edge
 
@@ -104,7 +103,7 @@ A host's own `Policy`, `Roles` and `AuthenticationSchemes` on `[Operation<T>]` a
 
 ## 5. Publishing scopes
 
-The generators read a request's policy attributes, find each policy class by its `[Policy]` name in the compilation and its references, and take the scopes from `[RequiresScopes]`. The groups are expanded into **alternatives**, each a set of scopes, any one of which is enough:
+The generators read a request's policy attributes, find each policy class by its `[Policy]` name in the compilation and its references, and take the scopes from its scope attributes: a `[RequireScope]` adds its scopes to every alternative of the policy, a `[RequireAnyScope]` multiplies them by its scopes. The groups are expanded into **alternatives**, each a set of scopes, any one of which is enough:
 
 - AND entries add their scopes to every alternative;
 - an OR group multiplies the alternatives by its policies;
@@ -123,12 +122,12 @@ The generators read a request's policy attributes, find each policy class by its
 
 ## 6. Diagnostics
 
-| Id       | Severity | When                                                                                                                              |
-| -------- | -------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| LPAD1050 | Error    | A request with a policy has a response that is not a union, or whose union lacks `Unauthorized` (and isn't covered by `Problem`). |
-| LPAD1051 | Error    | A request with a policy has a response union that lacks `Forbidden` (and isn't covered by `Problem`).                             |
-| LPAD1052 | Warning  | A request's policies expand to more than 16 alternatives; the first 16 are published.                                             |
-| LPAD1053 | Error    | `[RequiresScopes]` on a type that is not a `[Policy]`, or with an empty or blank scope.                                           |
+| Id       | Severity | When                                                                                                                                                                                                       |
+| -------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| LPAD1050 | Error    | A request with a policy has a response that is not a union, or whose union lacks `Unauthorized` (and isn't covered by `Problem`).                                                                          |
+| LPAD1051 | Error    | A request with a policy has a response union that lacks `Forbidden` (and isn't covered by `Problem`).                                                                                                      |
+| LPAD1052 | Warning  | A request's policies expand to more than 16 alternatives; the first 16 are published.                                                                                                                      |
+| LPAD1053 | Error    | A class with a scope attribute that its `EvaluateAsync` cannot be written for: not a `[Policy]`, not partial, not listing `IAuthorizationPolicy`, declaring `EvaluateAsync` itself, or with a blank scope. |
 
 | LPAD1054 | Error | A request with a policy is generic, private or protected: no plan can be written for it, so its policies would never be checked. |
 
@@ -136,13 +135,13 @@ ZeroAlloc's own ZAUTH001 to ZAUTH009 still report an unknown policy name, a dupl
 
 ## 7. Packages
 
-| Package                                            | Gets                                                                                                                                                                                                        |
-| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization` | New, host-neutral: `[RequiresScopes]`, the plan types, `AuthorizationBehavior`, `RequestAuthorizer`, the authorization outcomes, its joint, and the template of the joint that registers a project's plans. |
-| `Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore`    | The security context from `HttpContext.User`, the bridge and its handler, the result handler (HTTP and gRPC), `OpenApiAuthorizationOptions` and the OpenAPI transformers.                                   |
-| `Rocket.Surgery.LaunchPad.ZeroAlloc.Grpc`          | The interceptor that answers a denial the pipeline threw (a stream request) as a status with its `case` trailer.                                                                                            |
-| `Rocket.Surgery.LaunchPad.ZeroAlloc.HotChocolate`  | `@requiresScopes` and `@authenticated`, HotChocolate's ASP.NET Core authorization, and the error filter for a rejected field.                                                                               |
-| `Rocket.Surgery.LaunchPad.Analyzers`               | The plan generator and its diagnostics, and what the API generators name at the edge and state in the GraphQL schema.                                                                                       |
+| Package                                            | Gets                                                                                                                                                                                                                                               |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization` | New, host-neutral: `[RequireScope]`, `[RequireAnyScope]` and the scope check, the plan types, `AuthorizationBehavior`, `RequestAuthorizer`, the authorization outcomes, its joint, and the template of the joint that registers a project's plans. |
+| `Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore`    | The security context from `HttpContext.User`, the bridge and its handler, the result handler (HTTP and gRPC), `OpenApiAuthorizationOptions` and the OpenAPI transformers.                                                                          |
+| `Rocket.Surgery.LaunchPad.ZeroAlloc.Grpc`          | The interceptor that answers a denial the pipeline threw (a stream request) as a status with its `case` trailer.                                                                                                                                   |
+| `Rocket.Surgery.LaunchPad.ZeroAlloc.HotChocolate`  | `@requiresScopes` and `@authenticated`, HotChocolate's ASP.NET Core authorization, and the error filter for a rejected field.                                                                                                                      |
+| `Rocket.Surgery.LaunchPad.Analyzers`               | The plan generator and its diagnostics, and what the API generators name at the edge and state in the GraphQL schema.                                                                                                                              |
 
 The LaunchPad SDK adds the new package to a project that references ZeroAlloc.Authorization directly, and the transport packages as it does today.
 
@@ -162,7 +161,7 @@ The LaunchPad SDK adds the new package to a project that references ZeroAlloc.Au
 Decided 2026-11-21, with the reasons in [ADR-0011](../adr/0011-request-policies-publish-scopes.md):
 
 1. Keep `Unauthorized` as the 401 case; `Forbidden` already existed.
-2. A policy declares its scopes, and LaunchPad enforces them.
+2. A policy declares its scopes with `[RequireScope]` and `[RequireAnyScope]`, and is those scopes and nothing else: LaunchPad writes the `EvaluateAsync` that checks them, so the check runs wherever the policy does (revised 2026-11-22; LaunchPad first checked them itself, ahead of the policy, which only held where LaunchPad dispatched the request).
 3. Enforced in the pipeline and at the edge, each policy once, through shared authorization outcomes.
 4. A request with a policy answers a union with `Unauthorized` and `Forbidden`.
 5. Use ZeroAlloc.Authorization, not ZeroAlloc.Mediator.Authorization.

@@ -5,25 +5,16 @@ using ZeroAlloc.Results;
 
 namespace ZeroAlloc.Authorization.Tests;
 
-[Policy("Rockets.Read"), RequiresScopes("rockets:read")]
-public sealed class RocketsRead(PolicyCalls calls) : IAuthorizationPolicy
-{
-    public ValueTask<UnitResult<AuthorizationFailure>> EvaluateAsync(ISecurityContext ctx, CancellationToken ct = default)
-    {
-        calls.Record("Rockets.Read");
-        return new(UnitResult<AuthorizationFailure>.Success());
-    }
-}
+// Policies that are the scopes they require: LaunchPad writes their EvaluateAsync.
+[Policy("Rockets.Read"), RequireScope("rockets:read")]
+public sealed partial class RocketsRead : IAuthorizationPolicy;
 
-[Policy("Rockets.Write"), RequiresScopes("rockets:write")]
-public sealed class RocketsWrite(PolicyCalls calls) : IAuthorizationPolicy
-{
-    public ValueTask<UnitResult<AuthorizationFailure>> EvaluateAsync(ISecurityContext ctx, CancellationToken ct = default)
-    {
-        calls.Record("Rockets.Write");
-        return new(UnitResult<AuthorizationFailure>.Success());
-    }
-}
+[Policy("Rockets.Write"), RequireScope("rockets:write")]
+public sealed partial class RocketsWrite : IAuthorizationPolicy;
+
+// every [RequireScope] and one of each [RequireAnyScope]
+[Policy("Rockets.Launch"), RequireScope("rockets:read", "rockets:write"), RequireAnyScope("pads:east", "pads:west")]
+public sealed partial class RocketsLaunch : IAuthorizationPolicy;
 
 [Policy("Admin")]
 public sealed class Admin(PolicyCalls calls) : IAuthorizationPolicy
@@ -93,12 +84,16 @@ public readonly record struct InspectRocket(string Name) : IRequest<RocketResult
 [RequirePolicy("Rockets.Read")]
 public readonly record struct ListRockets : IStreamRequest<RocketModel>;
 
+[RequirePolicy("Rockets.Launch")]
+public readonly record struct CountdownRocket(string Name) : IRequest<RocketResult>;
+
 public class Handlers
     : IRequestHandler<Ping, RocketModel>,
       IRequestHandler<GetRocket, RocketResult>,
       IRequestHandler<DeleteRocket, AnyResult>,
       IRequestHandler<LaunchRocket, RocketResult>,
       IRequestHandler<InspectRocket, RocketResult>,
+      IRequestHandler<CountdownRocket, RocketResult>,
       IStreamRequestHandler<ListRockets, RocketModel>
 {
     public ValueTask<RocketModel> Handle(Ping request, CancellationToken ct) => new(new RocketModel("ping"));
@@ -106,6 +101,7 @@ public class Handlers
     public ValueTask<AnyResult> Handle(DeleteRocket request, CancellationToken ct) => new(new RocketModel(request.Name));
     public ValueTask<RocketResult> Handle(LaunchRocket request, CancellationToken ct) => new(new RocketModel(request.Name));
     public ValueTask<RocketResult> Handle(InspectRocket request, CancellationToken ct) => new(new RocketModel(request.Name));
+    public ValueTask<RocketResult> Handle(CountdownRocket request, CancellationToken ct) => new(new RocketModel(request.Name));
 
     public async IAsyncEnumerable<RocketModel> Handle(ListRockets request, [System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken ct)
     {

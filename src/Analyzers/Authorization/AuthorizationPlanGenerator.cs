@@ -11,7 +11,7 @@ namespace Rocket.Surgery.LaunchPad.Analyzers.Authorization;
 ///     its groups of policies with their scopes and how to run each, and how <c>Unauthorized</c> and <c>Forbidden</c> become its response. They
 ///     are registered with the application's services by <c>AddLaunchPadRequestAuthorization</c>, written where the
 ///     <c>LaunchPadRequestAuthorizationJoint</c> template of Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization is, which calls it. Reports
-///     LPAD1050 to LPAD1054.
+///     LPAD1050 to LPAD1052 and LPAD1054.
 /// </summary>
 [Generator]
 public sealed class AuthorizationPlanGenerator : IIncrementalGenerator
@@ -27,7 +27,6 @@ public sealed class AuthorizationPlanGenerator : IIncrementalGenerator
     {
         var required = context.SyntaxProvider.ForAttributeWithMetadataName(PolicyReader.RequirePolicyAttribute, IsType, TypeName);
         var any = context.SyntaxProvider.ForAttributeWithMetadataName(PolicyReader.RequireAnyPolicyAttribute, IsType, TypeName);
-        var scoped = context.SyntaxProvider.ForAttributeWithMetadataName(PolicyReader.RequiresScopesAttribute, IsType, TypeName);
 
         var names = required
                    .Collect()
@@ -53,19 +52,6 @@ public sealed class AuthorizationPlanGenerator : IIncrementalGenerator
                     )
                    .WithTrackingName("Plans");
 
-        var scopes = scoped
-                    .Collect()
-                    .Select(static (types, _) => types.Distinct().OrderBy(n => n, StringComparer.Ordinal).ToEquatableArray())
-                    .Combine(context.CompilationProvider)
-                    .Select(
-                         static (pair, _) => pair
-                                            .Left.Select(name => pair.Right.GetTypeByMetadataName(name))
-                                            .OfType<INamedTypeSymbol>()
-                                            .Select(CheckScopes)
-                                            .OfType<DiagnosticInfo>()
-                                            .ToEquatableArray()
-                     );
-
         context.RegisterSourceOutput(
             plans,
             static (context, plans) =>
@@ -83,6 +69,7 @@ public sealed class AuthorizationPlanGenerator : IIncrementalGenerator
                 if (pair.Right) context.AddSource("LaunchPadRequestAuthorization.g.cs", Emit([.. pair.Left.Where(p => p.Emit)]));
             }
         );
+
         // ZeroAlloc.Mediator's static Mediator class is banned (the banned symbols list of Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization):
         // it dispatches without the services of a call. The mediator ZeroAlloc generates uses the class itself, and no analyzer setting
         // reaches one generated file, so the ban is suppressed for the types it generates, here, and only there.
@@ -92,14 +79,6 @@ public sealed class AuthorizationPlanGenerator : IIncrementalGenerator
             static (context, hasMediator) =>
             {
                 if (hasMediator) context.AddSource("LaunchPadStaticMediatorBan.g.cs", StaticMediatorSuppressions);
-            }
-        );
-
-        context.RegisterSourceOutput(
-            scopes,
-            static (context, diagnostics) =>
-            {
-                foreach (var diagnostic in diagnostics) context.ReportDiagnostic(diagnostic.ToDiagnostic());
             }
         );
     }
@@ -199,24 +178,6 @@ public sealed class AuthorizationPlanGenerator : IIncrementalGenerator
         return true;
     }
 
-    private static DiagnosticInfo? CheckScopes(INamedTypeSymbol type)
-    {
-        var display = type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
-        if (!type.GetAttributes().Any(a => a.AttributeClass.Is(PolicyReader.PolicyAttribute)))
-        {
-            return DiagnosticInfo.Create(ApiDiagnostics.RequiresScopesInvalid, LocationInfo.From(type), display, "it is not a [Policy], so nothing requires them");
-        }
-
-        var declared = type
-                      .GetAttributes()
-                      .Where(a => a.AttributeClass.Is(PolicyReader.RequiresScopesAttribute))
-                      .SelectMany(a => a.ConstructorArguments is [{ Kind: TypedConstantKind.Array, IsNull: false } scopes] ? scopes.Values.Select(v => v.Value as string) : [null])
-                      .ToArray();
-        return declared.Length == 0 || declared.Any(string.IsNullOrWhiteSpace) || declared.Any(s => s!.Any(char.IsWhiteSpace))
-            ? DiagnosticInfo.Create(ApiDiagnostics.RequiresScopesInvalid, LocationInfo.From(type), display, "a scope is missing, blank or has a space in it")
-            : null;
-    }
-
     // AddLaunchPadRequestAuthorization, which the LaunchPadRequestAuthorizationJoint template calls: [Embedded] like the joint, so an
     // assembly never sees the copy a referenced assembly wrote for itself. Written wherever the joint is, with no plans too.
     private static string Emit(IReadOnlyList<PlanModel> plans)
@@ -295,7 +256,7 @@ public sealed class AuthorizationPlanGenerator : IIncrementalGenerator
                   + Literal(policy.ArgumentsKey)
                   + ", typeof("
                   + policy.Type
-                  + "), new string[] { "
+                  + "), new string[][] { "
                   + Scopes(policy)
                   + " }, static (services, context, cancellationToken) => (("
                   + policy.Interface
@@ -310,7 +271,8 @@ public sealed class AuthorizationPlanGenerator : IIncrementalGenerator
 
     private static string Arguments(PolicyModel policy) => string.Concat(policy.Arguments.Select(a => ", " + a));
 
-    private static string Scopes(PolicyModel policy) => string.Join(", ", policy.Scopes.Select(Literal));
+    private static string Scopes(PolicyModel policy) =>
+        string.Join(", ", policy.ScopeAlternatives.Select(alternative => "new string[] { " + string.Join(", ", alternative.Select(Literal)) + " }"));
 
     private static string Literal(string value) => SymbolDisplay.FormatLiteral(value, true);
 

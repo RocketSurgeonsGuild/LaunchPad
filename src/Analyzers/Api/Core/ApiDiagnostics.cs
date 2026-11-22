@@ -216,10 +216,10 @@ internal static class ApiDiagnostics
         "The policies of {0} expand to more than {1} alternative sets of scopes; only the first {1} are published"
     );
 
-    public static DiagnosticDescriptor RequiresScopesInvalid { get; } = Error(
+    public static DiagnosticDescriptor ScopePolicyInvalid { get; } = Error(
         "LPAD1053",
-        "[RequiresScopes] is not valid here",
-        "{0} declares [RequiresScopes], but {1}"
+        "Scope attributes are not valid here",
+        "{0} has [RequireScope] or [RequireAnyScope], but {1}"
     );
 
     public static DiagnosticDescriptor PolicyRequestNotReachable { get; } = Error(
@@ -234,7 +234,7 @@ internal static class ApiDiagnostics
         MemberNotParsable, DuplicateRoute, DuplicateGraphQLField, HostMustBePartial, GrpcSerialization, StreamOnGraphQL, FeatureSkipped, HostTransportUnknown, WrongGraphQLHostKind, InputWithoutCreate, HostSettingNotApplicable, CreatedLocationInvalid, VersionNotMapped,
         PatchHandlerWithoutSender, PatchHandlerNotPartial, PatchHandlerNotAsync, UnionCaseWithoutStatus, PatchHandlerNotSupported,
         JsonMetadataMissing, RpcNotFound, MappingNotReferenced, RpcKindMismatch, MappingNotDeclared, MappingNotInPlace,
-        PolicyWithoutUnauthorized, PolicyWithoutForbidden, TooManyScopeAlternatives, RequiresScopesInvalid, PolicyRequestNotReachable,
+        PolicyWithoutUnauthorized, PolicyWithoutForbidden, TooManyScopeAlternatives, ScopePolicyInvalid, PolicyRequestNotReachable,
     ];
 
     public static DiagnosticDescriptor Find(string id) => All.First(d => d.Id == id);

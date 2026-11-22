@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 using ZeroAlloc.Authorization;
 
@@ -24,20 +23,17 @@ public readonly record struct AuthorizationDecision(Problem? Problem, IReadOnlyL
 /// <summary>
 ///     Decides a request's plan for the caller of a call, policy by policy, recording each outcome in the call's
 ///     <see cref="AuthorizationOutcomes" /> and reusing the ones already there. One for each call: the mediator pipeline and the edge both
-///     decide through it, so a policy runs once. A policy sees the caller and nothing of the request: it is the same check wherever it runs.
+///     decide through it, so a policy runs once. A policy sees the caller and nothing of the request: it is the same check wherever it runs,
+///     and a policy with scope attributes checks the caller's scopes itself.
 /// </summary>
 /// <param name="services">The services of the call, from which the caller and the policies are resolved.</param>
 /// <param name="outcomes">What each policy decided for this call.</param>
-/// <param name="options">How the caller's scopes are read.</param>
 [PublicAPI]
 public sealed class RequestAuthorizer(
     IServiceProvider services,
-    AuthorizationOutcomes outcomes,
-    IOptions<RequestAuthorizationOptions> options
+    AuthorizationOutcomes outcomes
 )
 {
-    private HashSet<string>? _granted;
-
     /// <summary>The caller of this call; anonymous when the application registered no <see cref="ISecurityContext" />.</summary>
     public ISecurityContext Caller => field ??= services.GetService<ISecurityContext>() ?? AnonymousSecurityContext.Instance;
 
@@ -92,42 +88,21 @@ public sealed class RequestAuthorizer(
         return outcome.Allowed ? AuthorizationDecision.Allowed : new(Forbid(outcome), [.. policy.Scopes]);
     }
 
-    // What the policy decides for this call: recorded the first time, then reused. The declared scopes are checked before the policy runs.
+    // What the policy decides for this call: recorded the first time, then reused. A policy with scope attributes checks the scopes itself, and
+    // says which the caller lacks.
     private async ValueTask<PolicyOutcome> OutcomeAsync(PolicyRequirement policy, CancellationToken cancellationToken)
     {
         if (outcomes.TryGet(policy, out var outcome)) return outcome;
 
-        var granted = _granted ??= GrantedScopes();
-        List<string>? missing = null;
-        foreach (var scope in policy.Scopes)
+        var result = await policy.Evaluate(services, Caller, cancellationToken).ConfigureAwait(false);
+        outcome = result switch
         {
-            if (!granted.Contains(scope)) ( missing ??= [] ).Add(scope);
-        }
-
-        if (missing is { })
-        {
-            outcome = new(false, missing, null);
-        }
-        else
-        {
-            var result = await policy.Evaluate(services, Caller, cancellationToken).ConfigureAwait(false);
-            outcome = result.IsSuccess ? PolicyOutcome.Success : new(false, [], result.Error);
-        }
-
+            { IsSuccess: true } => PolicyOutcome.Success,
+            { Error: { Code: ScopeRequirements.MissingScopeCode, Reason: { } missing } } => new(false, missing.Split(' ', StringSplitOptions.RemoveEmptyEntries), null),
+            _ => new(false, [], result.Error),
+        };
         outcomes.Record(policy, outcome);
         return outcome;
-    }
-
-    private HashSet<string> GrantedScopes()
-    {
-        var granted = new HashSet<string>(StringComparer.Ordinal);
-        foreach (var claim in options.Value.ScopeClaims)
-        {
-            if (!Caller.Claims.TryGetValue(claim, out var value)) continue;
-            foreach (var scope in value.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)) granted.Add(scope);
-        }
-
-        return granted;
     }
 
     private static Forbidden Forbid(PolicyOutcome outcome)

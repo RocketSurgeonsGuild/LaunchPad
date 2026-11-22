@@ -12,13 +12,12 @@ public static class AuthorizationServiceCollectionExtensions
 {
     /// <summary>
     ///     Registers what every plan needs: the <see cref="RequestAuthorizer" /> and the <see cref="AuthorizationOutcomes" /> of each call,
-    ///     the <see cref="RequestAuthorizationPlans" /> of the application and the <see cref="RequestAuthorizationOptions" />.
+    ///     and the <see cref="RequestAuthorizationPlans" /> of the application.
     /// </summary>
     /// <param name="services">The services.</param>
     public static IServiceCollection AddLaunchPadAuthorization(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
-        services.AddOptions<RequestAuthorizationOptions>();
         services.TryAddSingleton<RequestAuthorizationPlans>();
         services.TryAddScoped<AuthorizationOutcomes>();
         services.TryAddScoped<RequestAuthorizer>();

@@ -2,6 +2,8 @@ using System.Security.Claims;
 
 using Microsoft.AspNetCore.Http;
 
+using Rocket.Surgery.LaunchPad.Authorization;
+
 using ZeroAlloc.Authorization;
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Authorization;
@@ -38,6 +40,10 @@ public sealed class ClaimsSecurityContext : ISecurityContext
     private static readonly string[] IdClaims = [ClaimTypes.NameIdentifier, "sub", "client_id", "azp", "appid"];
     private static readonly string[] RoleClaims = [ClaimTypes.Role, "role", "roles"];
 
+    // The claims a token names the caller's scopes by: OAuth 2.0's scope, and Microsoft Entra's scp, under that name or the claim type
+    // ASP.NET Core maps it to. Policies read them all as the scope claim.
+    private static readonly string[] ScopeClaims = ["scp", "http://schemas.microsoft.com/identity/claims/scope"];
+
     private ClaimsSecurityContext(string id, IReadOnlySet<string> roles, IReadOnlyDictionary<string, string> claims)
     {
         Id = id;
@@ -56,7 +62,8 @@ public sealed class ClaimsSecurityContext : ISecurityContext
 
     /// <summary>
     ///     The principal as a security context: its subject as the id, its role claims as roles, and its claims by type, the values of a
-    ///     repeated claim joined by a space. A principal that is not authenticated is the anonymous security context.
+    ///     repeated claim joined by a space. Its scopes are its <c>scope</c> claim, whichever claim the token carried them in. A principal
+    ///     that is not authenticated is the anonymous security context.
     /// </summary>
     /// <param name="user">The principal.</param>
     public static ISecurityContext From(ClaimsPrincipal? user)
@@ -69,7 +76,8 @@ public sealed class ClaimsSecurityContext : ISecurityContext
         {
             foreach (var claim in identity.Claims)
             {
-                claims[claim.Type] = claims.TryGetValue(claim.Type, out var value) ? value + " " + claim.Value : claim.Value;
+                var type = Array.IndexOf(ScopeClaims, claim.Type) >= 0 ? ScopeRequirements.ScopeClaim : claim.Type;
+                claims[type] = claims.TryGetValue(type, out var value) ? value + " " + claim.Value : claim.Value;
                 if (claim.Type == identity.RoleClaimType || Array.IndexOf(RoleClaims, claim.Type) >= 0) roles.Add(claim.Value);
             }
         }

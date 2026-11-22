@@ -85,7 +85,7 @@ One of LaunchPad's standard error cases (not found, invalid, unprocessable, unau
 _Avoid_: Error result, failure, problem details (that is the HTTP shape of a problem)
 
 **Policy**:
-A named rule that decides whether a caller may run an operation, declared on the operation's request. It declares the scopes it requires and may add logic of its own.
+A named rule that decides whether a caller may run an operation, declared on the operation's request. Most are the scopes they require and nothing else; one with a rule of its own is written by hand.
 _Avoid_: Permission, requirement, role (one thing a policy may check), authorization rule
 
 **Scope**:

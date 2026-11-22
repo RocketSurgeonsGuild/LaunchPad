@@ -12,17 +12,11 @@ namespace Api.Generators.Tests;
 public class AuthorizationGeneratorTests() : GeneratorTest()
 {
     private const string Policies = """
-        [Policy("Rockets.Read"), RequiresScopes("rockets:read")]
-        public sealed class RocketsRead : IAuthorizationPolicy
-        {
-            public ValueTask<UnitResult<AuthorizationFailure>> EvaluateAsync(ISecurityContext ctx, CancellationToken ct = default) => default;
-        }
+        [Policy("Rockets.Read"), RequireScope("rockets:read")]
+        public sealed partial class RocketsRead : IAuthorizationPolicy;
 
-        [Policy("Rockets.Write"), RequiresScopes("rockets:write", "rockets:read")]
-        public sealed class RocketsWrite : IAuthorizationPolicy
-        {
-            public ValueTask<UnitResult<AuthorizationFailure>> EvaluateAsync(ISecurityContext ctx, CancellationToken ct = default) => default;
-        }
+        [Policy("Rockets.Write"), RequireScope("rockets:write", "rockets:read")]
+        public sealed partial class RocketsWrite : IAuthorizationPolicy;
 
         [Policy("Admin")]
         internal sealed class Admin : IAuthorizationPolicy
@@ -55,7 +49,7 @@ public class AuthorizationGeneratorTests() : GeneratorTest()
     [
         typeof(ZeroAlloc.Authorization.PolicyAttribute).Assembly,
         typeof(ZeroAlloc.Results.UnitResult<>).Assembly,
-        typeof(Rocket.Surgery.LaunchPad.Authorization.RequiresScopesAttribute).Assembly,
+        typeof(Rocket.Surgery.LaunchPad.Authorization.RequireScopeAttribute).Assembly,
         typeof(Rocket.Surgery.LaunchPad.Foundation.Unauthorized).Assembly,
         typeof(System.Runtime.Serialization.DataContractAttribute).Assembly,
     ];
@@ -87,6 +81,37 @@ public class AuthorizationGeneratorTests() : GeneratorTest()
 
             [RequirePolicy("Rockets.Read")]
             public readonly record struct ListRockets : IStreamRequest<RocketModel>;
+            """
+        );
+
+        AssertCompiles(result);
+        await Verify(result);
+    }
+
+    [Test]
+    public async Task Should_Write_The_Scope_Check_Of_A_Policy_With_Scope_Attributes()
+    {
+        var result = await Contracts(
+            Usings + """
+            [Policy("Rockets.Read"), RequireScope("rockets:read")]
+            public sealed partial class RocketsRead : IAuthorizationPolicy;
+
+            // every scope of each [RequireScope], and one of each [RequireAnyScope]
+            [Policy("Rockets.Launch"), RequireScope("rockets:read", "rockets:write"), RequireAnyScope("pads:east", "pads:west"), RequireScope("launches:write")]
+            internal partial record RocketsLaunch : IAuthorizationPolicy;
+
+            public static partial class Nested
+            {
+                [Policy("Rockets.Nested"), RequireAnyScope("a", "b")]
+                internal sealed partial class Inner : IAuthorizationPolicy;
+            }
+
+            public sealed record RocketModel(string Id);
+            public union RocketResult(RocketModel, Unauthorized, Forbidden);
+
+            [RequirePolicy("Rockets.Launch")]
+            [RequireAnyPolicy("Rockets.Read", "Rockets.Nested")]
+            public readonly record struct LaunchRocket(string Id) : IRequest<RocketResult>;
             """
         );
 
@@ -131,17 +156,32 @@ public class AuthorizationGeneratorTests() : GeneratorTest()
             public sealed record RocketModel(string Id);
             public union RocketResult(RocketModel, Unauthorized, Forbidden);
 
-            [RequiresScopes("rockets:read")]
-            public sealed class NotAPolicy;
+            [RequireScope("rockets:read")]
+            public sealed partial class NotAPolicy;
 
-            [Policy("Blank"), RequiresScopes("rockets:read", " ")]
-            public sealed class Blank : IAuthorizationPolicy
+            [Policy("Blank"), RequireScope("rockets:read", " ")]
+            public sealed partial class Blank : IAuthorizationPolicy;
+
+            [Policy("Spaced"), RequireAnyScope("rockets:read rockets:write")]
+            public sealed partial class Spaced : IAuthorizationPolicy;
+
+            [Policy("None"), RequireAnyScope]
+            public sealed partial class None : IAuthorizationPolicy;
+
+            [Policy("NotPartial"), RequireScope("rockets:read")]
+            public sealed class NotPartial : IAuthorizationPolicy;
+
+            [Policy("NoInterface"), RequireScope("rockets:read")]
+            public sealed partial class NoInterface;
+
+            [Policy("WithArguments"), RequireScope("rockets:read")]
+            public sealed partial class WithArguments : IAuthorizationPolicy<int>
             {
-                public ValueTask<UnitResult<AuthorizationFailure>> EvaluateAsync(ISecurityContext ctx, CancellationToken ct = default) => default;
+                public ValueTask<UnitResult<AuthorizationFailure>> EvaluateAsync(ISecurityContext ctx, int level, CancellationToken ct = default) => default;
             }
 
-            [Policy("Spaced"), RequiresScopes("rockets:read rockets:write")]
-            public sealed class Spaced : IAuthorizationPolicy
+            [Policy("OwnLogic"), RequireScope("rockets:read")]
+            public sealed partial class OwnLogic : IAuthorizationPolicy
             {
                 public ValueTask<UnitResult<AuthorizationFailure>> EvaluateAsync(ISecurityContext ctx, CancellationToken ct = default) => default;
             }
@@ -251,6 +291,7 @@ public class AuthorizationGeneratorTests() : GeneratorTest()
              .WithProjectName("Contracts")
              .WithGenerator<AttributesGenerator>()
              .WithGenerator<AuthorizationPlanGenerator>()
+             .WithGenerator<ScopePolicyGenerator>()
              .AddReferences(FrameworkReferences)
              .AddReferences(MediatorAssemblies(Mediator.ZeroAlloc))
              .AddReferences(AuthorizationAssemblies)
@@ -280,6 +321,7 @@ public class AuthorizationGeneratorTests() : GeneratorTest()
                           .WithAssemblyLoadContext(AssemblyLoadContext)
                           .WithProjectName("Contracts")
                           .WithGenerator<AuthorizationPlanGenerator>()
+                          .WithGenerator<ScopePolicyGenerator>()
                           .AddReferences(FrameworkReferences)
                           .AddReferences(MediatorAssemblies(Mediator.ZeroAlloc))
                           .AddReferences(AuthorizationAssemblies)
@@ -298,6 +340,10 @@ public class AuthorizationGeneratorTests() : GeneratorTest()
 
         AssertCompiles(result);
         // only the suppressions of the static Mediator ban for the types ZeroAlloc.Mediator generates
-        await result.Results.Values.SelectMany(r => r.SyntaxTrees).Select(t => Path.GetFileName(t.FilePath)).Should().BeEquivalentTo(["LaunchPadStaticMediatorBan.g.cs"]);
+        await result
+             .Results[typeof(AuthorizationPlanGenerator)]
+             .SyntaxTrees.Select(t => Path.GetFileName(t.FilePath))
+             .Should()
+             .BeEquivalentTo(["LaunchPadStaticMediatorBan.g.cs"]);
     }
 }

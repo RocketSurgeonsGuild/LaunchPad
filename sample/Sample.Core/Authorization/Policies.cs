@@ -1,13 +1,12 @@
 using Rocket.Surgery.LaunchPad.Authorization;
 
 using ZeroAlloc.Authorization;
-using ZeroAlloc.Results;
 
 namespace Sample.Core.Authorization;
 
 /// <summary>
-///     The policies of the sample's operations and the scopes they require. Each request names one with <c>[RequirePolicy]</c>; LaunchPad
-///     checks the scope before the policy runs, and states it as the scope of the operation on every transport.
+///     The policies of the sample's operations and the scopes they require. Each request names one with <c>[RequirePolicy]</c>; the policy
+///     checks the caller's scope, and LaunchPad states it as the scope of the operation on every transport.
 /// </summary>
 public static class Policies
 {
@@ -49,20 +48,16 @@ public static class Scopes
     };
 }
 
-// A policy that only requires its scope has nothing of its own to decide: LaunchPad has checked the scope by the time it runs.
-internal abstract class ScopePolicy : IAuthorizationPolicy
-{
-    public ValueTask<UnitResult<AuthorizationFailure>> EvaluateAsync(ISecurityContext ctx, CancellationToken ct = default) => new(UnitResult<AuthorizationFailure>.Success());
-}
+// Each policy is the scope it requires and nothing else, so LaunchPad writes its EvaluateAsync: the caller is checked for the scope wherever
+// the request is dispatched, by a server, a worker or anything else.
+[Policy(Policies.RocketsRead), RequireScope(Scopes.RocketsRead)]
+internal sealed partial class RocketsReadPolicy : IAuthorizationPolicy;
 
-[Policy(Policies.RocketsRead), RequiresScopes(Scopes.RocketsRead)]
-internal sealed class RocketsReadPolicy : ScopePolicy;
+[Policy(Policies.RocketsWrite), RequireScope(Scopes.RocketsWrite)]
+internal sealed partial class RocketsWritePolicy : IAuthorizationPolicy;
 
-[Policy(Policies.RocketsWrite), RequiresScopes(Scopes.RocketsWrite)]
-internal sealed class RocketsWritePolicy : ScopePolicy;
+[Policy(Policies.LaunchRecordsRead), RequireScope(Scopes.LaunchRecordsRead)]
+internal sealed partial class LaunchRecordsReadPolicy : IAuthorizationPolicy;
 
-[Policy(Policies.LaunchRecordsRead), RequiresScopes(Scopes.LaunchRecordsRead)]
-internal sealed class LaunchRecordsReadPolicy : ScopePolicy;
-
-[Policy(Policies.LaunchRecordsWrite), RequiresScopes(Scopes.LaunchRecordsWrite)]
-internal sealed class LaunchRecordsWritePolicy : ScopePolicy;
+[Policy(Policies.LaunchRecordsWrite), RequireScope(Scopes.LaunchRecordsWrite)]
+internal sealed partial class LaunchRecordsWritePolicy : IAuthorizationPolicy;

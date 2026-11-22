@@ -2,32 +2,82 @@
   Diagnostics: [
     {
       Id: LPAD1053,
-      Title: [RequiresScopes] is not valid here,
+      Title: Scope attributes are not valid here,
       Severity: Error,
       WarningLevel: 0,
-      Location: Input0.cs: (37,20)-(37,30),
-      MessageFormat: {0} declares [RequiresScopes], but {1},
-      Message: NotAPolicy declares [RequiresScopes], but it is not a [Policy], so nothing requires them,
+      Location: Input0.cs: (31,28)-(31,38),
+      MessageFormat: {0} has [RequireScope] or [RequireAnyScope], but {1},
+      Message: NotAPolicy has [RequireScope] or [RequireAnyScope], but it is not a [Policy], so nothing requires the scopes,
       Category: LaunchPad.Api
     },
     {
       Id: LPAD1053,
-      Title: [RequiresScopes] is not valid here,
+      Title: Scope attributes are not valid here,
       Severity: Error,
       WarningLevel: 0,
-      Location: Input0.cs: (40,20)-(40,25),
-      MessageFormat: {0} declares [RequiresScopes], but {1},
-      Message: Blank declares [RequiresScopes], but a scope is missing, blank or has a space in it,
+      Location: Input0.cs: (34,28)-(34,33),
+      MessageFormat: {0} has [RequireScope] or [RequireAnyScope], but {1},
+      Message: Blank has [RequireScope] or [RequireAnyScope], but a scope is missing, blank or has a space in it,
       Category: LaunchPad.Api
     },
     {
       Id: LPAD1053,
-      Title: [RequiresScopes] is not valid here,
+      Title: Scope attributes are not valid here,
       Severity: Error,
       WarningLevel: 0,
-      Location: Input0.cs: (46,20)-(46,26),
-      MessageFormat: {0} declares [RequiresScopes], but {1},
-      Message: Spaced declares [RequiresScopes], but a scope is missing, blank or has a space in it,
+      Location: Input0.cs: (37,28)-(37,34),
+      MessageFormat: {0} has [RequireScope] or [RequireAnyScope], but {1},
+      Message: Spaced has [RequireScope] or [RequireAnyScope], but a scope is missing, blank or has a space in it,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: LPAD1053,
+      Title: Scope attributes are not valid here,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (40,28)-(40,32),
+      MessageFormat: {0} has [RequireScope] or [RequireAnyScope], but {1},
+      Message: None has [RequireScope] or [RequireAnyScope], but a scope is missing, blank or has a space in it,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: LPAD1053,
+      Title: Scope attributes are not valid here,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (43,20)-(43,30),
+      MessageFormat: {0} has [RequireScope] or [RequireAnyScope], but {1},
+      Message: NotPartial has [RequireScope] or [RequireAnyScope], but it, or a type it is nested in, is generic or not partial, so its EvaluateAsync cannot be generated into it,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: LPAD1053,
+      Title: Scope attributes are not valid here,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (46,28)-(46,39),
+      MessageFormat: {0} has [RequireScope] or [RequireAnyScope], but {1},
+      Message: NoInterface has [RequireScope] or [RequireAnyScope], but it does not list IAuthorizationPolicy, which the generated EvaluateAsync implements; a policy with arguments is not a matter of scopes alone,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: LPAD1053,
+      Title: Scope attributes are not valid here,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (49,28)-(49,41),
+      MessageFormat: {0} has [RequireScope] or [RequireAnyScope], but {1},
+      Message: WithArguments has [RequireScope] or [RequireAnyScope], but it does not list IAuthorizationPolicy, which the generated EvaluateAsync implements; a policy with arguments is not a matter of scopes alone,
+      Category: LaunchPad.Api
+    },
+    {
+      Id: LPAD1053,
+      Title: Scope attributes are not valid here,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (55,28)-(55,36),
+      MessageFormat: {0} has [RequireScope] or [RequireAnyScope], but {1},
+      Message: OwnLogic has [RequireScope] or [RequireAnyScope], but it declares EvaluateAsync itself: a policy with scope attributes is those scopes and nothing else, and its EvaluateAsync is generated,
       Category: LaunchPad.Api
     },
     {
@@ -35,7 +85,7 @@
       Title: Request with a policy cannot be given a plan,
       Severity: Error,
       WarningLevel: 0,
-      Location: Input0.cs: (54,35)-(54,42),
+      Location: Input0.cs: (63,35)-(63,42),
       MessageFormat: {0} has a policy, but {1}, so its policies would never be checked,
       Message: Request has a policy, but it is private or protected, where generated code cannot name it, so its policies would never be checked,
       Category: LaunchPad.Api
@@ -45,10 +95,74 @@
       Title: Request with a policy cannot be given a plan,
       Severity: Error,
       WarningLevel: 0,
-      Location: Input0.cs: (58,30)-(58,37),
+      Location: Input0.cs: (67,30)-(67,37),
       MessageFormat: {0} has a policy, but {1}, so its policies would never be checked,
       Message: Generic<T> has a policy, but a generic request has no single plan, so its policies would never be checked,
       Category: LaunchPad.Api
+    },
+    {
+      Id: CS0535,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (34,36)-(34,56),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0535),
+      MessageFormat: '{0}' does not implement interface member '{1}',
+      Message: 'Blank' does not implement interface member 'IAuthorizationPolicy.EvaluateAsync(ISecurityContext, CancellationToken)',
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    },
+    {
+      Id: CS0535,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (37,37)-(37,57),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0535),
+      MessageFormat: '{0}' does not implement interface member '{1}',
+      Message: 'Spaced' does not implement interface member 'IAuthorizationPolicy.EvaluateAsync(ISecurityContext, CancellationToken)',
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    },
+    {
+      Id: CS0535,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (40,35)-(40,55),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0535),
+      MessageFormat: '{0}' does not implement interface member '{1}',
+      Message: 'None' does not implement interface member 'IAuthorizationPolicy.EvaluateAsync(ISecurityContext, CancellationToken)',
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    },
+    {
+      Id: CS0535,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (43,33)-(43,53),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0535),
+      MessageFormat: '{0}' does not implement interface member '{1}',
+      Message: 'NotPartial' does not implement interface member 'IAuthorizationPolicy.EvaluateAsync(ISecurityContext, CancellationToken)',
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
     }
   ]
 }

@@ -192,8 +192,9 @@ public class EdgeAuthorizationTests
     [Test]
     public async Task A_Principal_Becomes_A_Security_Context_With_Its_Subject_Roles_And_Claims()
     {
+        // scp is how Microsoft Entra names scopes: whichever claim carried them, policies read them as the scope claim
         var identity = new ClaimsIdentity(
-            [new("sub", "alice"), new(ClaimTypes.Role, "admin"), new("roles", "pilot"), new("scope", "a"), new("scope", "b")],
+            [new("sub", "alice"), new(ClaimTypes.Role, "admin"), new("roles", "pilot"), new("scope", "a"), new("scp", "b")],
             "test"
         );
 
@@ -237,6 +238,7 @@ public class EdgeAuthorizationTests
         // what the generated servers put on an operation: each policy of the request by name, and a transformer that states its scopes
         app.MapGet("/launches/{id}", async (string id, IMediator mediator) => Answer(await mediator.Send(new GetLaunch(id), CancellationToken.None)))
            .RequireAuthorization("Launches.Read")
+           .RequireAuthorization("Launches.Known")
            .AddOpenApiOperationTransformer(Scopes<GetLaunch>);
         app.MapGet("/launches/{id}/cancel", async (string id, IMediator mediator) => Answer(await mediator.Send(new CancelLaunch(id), CancellationToken.None)))
            .RequireAuthorization("Launches.Read")
@@ -289,8 +291,18 @@ public sealed class Calls
     public void Evaluate() => Interlocked.Increment(ref _policy);
 }
 
-[Policy("Launches.Read"), RequiresScopes("launches:read")]
-public sealed class LaunchesRead(Calls calls) : IAuthorizationPolicy
+[Policy("Launches.Read"), RequireScope("launches:read")]
+public sealed partial class LaunchesRead : IAuthorizationPolicy;
+
+[Policy("Launches.Write"), RequireScope("launches:write")]
+public sealed partial class LaunchesWrite : IAuthorizationPolicy;
+
+[Policy("Launches.Admin"), RequireScope("launches:admin", "launches:read")]
+public sealed partial class LaunchesAdmin : IAuthorizationPolicy;
+
+// a policy with a rule of its own, which counts how often it runs
+[Policy("Launches.Known")]
+public sealed class LaunchesKnown(Calls calls) : IAuthorizationPolicy
 {
     public ValueTask<UnitResult<AuthorizationFailure>> EvaluateAsync(ISecurityContext ctx, CancellationToken ct = default)
     {
@@ -299,23 +311,12 @@ public sealed class LaunchesRead(Calls calls) : IAuthorizationPolicy
     }
 }
 
-[Policy("Launches.Write"), RequiresScopes("launches:write")]
-public sealed class LaunchesWrite : IAuthorizationPolicy
-{
-    public ValueTask<UnitResult<AuthorizationFailure>> EvaluateAsync(ISecurityContext ctx, CancellationToken ct = default) => new(UnitResult<AuthorizationFailure>.Success());
-}
-
-[Policy("Launches.Admin"), RequiresScopes("launches:admin", "launches:read")]
-public sealed class LaunchesAdmin : IAuthorizationPolicy
-{
-    public ValueTask<UnitResult<AuthorizationFailure>> EvaluateAsync(ISecurityContext ctx, CancellationToken ct = default) => new(UnitResult<AuthorizationFailure>.Success());
-}
-
 public sealed record Launch(string Id);
 
 public union LaunchResult(Launch, Unauthorized, Forbidden);
 
 [RequirePolicy("Launches.Read")]
+[RequirePolicy("Launches.Known")]
 public readonly record struct GetLaunch(string Id) : IRequest<LaunchResult>;
 
 [RequirePolicy("Launches.Read")]

@@ -2,6 +2,7 @@
   FinalDiagnostics: [],
   GeneratorDiagnostics: {
     Rocket.Surgery.LaunchPad.Analyzers.Api.AttributesGenerator: [],
-    Rocket.Surgery.LaunchPad.Analyzers.Authorization.AuthorizationPlanGenerator: []
+    Rocket.Surgery.LaunchPad.Analyzers.Authorization.AuthorizationPlanGenerator: [],
+    Rocket.Surgery.LaunchPad.Analyzers.Authorization.ScopePolicyGenerator: []
   }
 }

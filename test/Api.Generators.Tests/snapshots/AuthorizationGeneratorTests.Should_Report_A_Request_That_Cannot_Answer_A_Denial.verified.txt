@@ -5,7 +5,7 @@
       Title: Request with a policy cannot answer Unauthorized,
       Severity: Error,
       WarningLevel: 0,
-      Location: Input0.cs: (39,30)-(39,39),
+      Location: Input0.cs: (33,30)-(33,39),
       MessageFormat: {0} has a policy, so its response must be a union with an Unauthorized case (or Problem), which a caller with no identity is answered with; {1},
       Message: NotAUnion has a policy, so its response must be a union with an Unauthorized case (or Problem), which a caller with no identity is answered with; RocketModel is not a union,
       Category: LaunchPad.Api
@@ -15,7 +15,7 @@
       Title: Request with a policy cannot answer Forbidden,
       Severity: Error,
       WarningLevel: 0,
-      Location: Input0.cs: (42,30)-(42,41),
+      Location: Input0.cs: (36,30)-(36,41),
       MessageFormat: {0} has a policy, so its response union {1} must have a Forbidden case (or Problem), which a caller a policy denies is answered with,
       Message: NoForbidden has a policy, so its response union WithoutForbidden must have a Forbidden case (or Problem), which a caller a policy denies is answered with,
       Category: LaunchPad.Api
@@ -25,7 +25,7 @@
       Title: Request with a policy cannot answer Unauthorized,
       Severity: Error,
       WarningLevel: 0,
-      Location: Input0.cs: (45,30)-(45,44),
+      Location: Input0.cs: (39,30)-(39,44),
       MessageFormat: {0} has a policy, so its response must be a union with an Unauthorized case (or Problem), which a caller with no identity is answered with; {1},
       Message: NoUnauthorized has a policy, so its response must be a union with an Unauthorized case (or Problem), which a caller with no identity is answered with; WithoutUnauthorized has none,
       Category: LaunchPad.Api
@@ -35,7 +35,7 @@
       Title: Request with a policy cannot answer Unauthorized,
       Severity: Error,
       WarningLevel: 0,
-      Location: Input0.cs: (48,30)-(48,37),
+      Location: Input0.cs: (42,30)-(42,37),
       MessageFormat: {0} has a policy, so its response must be a union with an Unauthorized case (or Problem), which a caller with no identity is answered with; {1},
       Message: Neither has a policy, so its response must be a union with an Unauthorized case (or Problem), which a caller with no identity is answered with; WithNeither has none,
       Category: LaunchPad.Api
@@ -45,7 +45,7 @@
       Title: Request with a policy cannot answer Forbidden,
       Severity: Error,
       WarningLevel: 0,
-      Location: Input0.cs: (48,30)-(48,37),
+      Location: Input0.cs: (42,30)-(42,37),
       MessageFormat: {0} has a policy, so its response union {1} must have a Forbidden case (or Problem), which a caller a policy denies is answered with,
       Message: Neither has a policy, so its response union WithNeither must have a Forbidden case (or Problem), which a caller a policy denies is answered with,
       Category: LaunchPad.Api
