@@ -5,7 +5,7 @@
 - Version: `2.0.1-pr.1284`
 - Namespace: `Rocket.Surgery.LaunchPad.Foundation.Joints`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3332-merge.Sha.108cb13ce492322587639698c87355d3b8fcee1b/src/Foundation/Joints/DefaultJoint.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3332-merge.Sha.fb40f4ae51769f679795c3f90ed1c13a62505cf5/src/Foundation/Joints/DefaultJoint.cs)
 - Implements: `IDovetailJoint`, `IServiceJoint`
 
 The joint every LaunchPad application starts from. Implements the `Joints.IServiceJoint`

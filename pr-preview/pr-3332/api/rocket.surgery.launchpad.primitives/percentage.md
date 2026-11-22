@@ -5,7 +5,7 @@
 - Version: `2.0.1-pr.1284`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3332-merge.Sha.108cb13ce492322587639698c87355d3b8fcee1b/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Percentage.g.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3332-merge.Sha.fb40f4ae51769f679795c3f90ed1c13a62505cf5/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Percentage.g.cs)
 - Implements: `IStrongType<Percentage, decimal>`, `IComparable<Percentage>`, `IConvertible`, `IEquatable<Percentage>`, `IFormattable`, `IParsable<Percentage>`, `ISpanFormattable`, `ISpanParsable<Percentage>`, `IUtf8SpanFormattable`, `IUtf8SpanParsable<Percentage>`, `IComparisonOperators<Percentage, Percentage, bool>`, `IEqualityOperators<Percentage, Percentage, bool>`
 
 A percentage from 0 to 100, valid under [PercentageRules](/LaunchPad/pr-preview/pr-3332/api/rocket.surgery.launchpad.primitives/percentagerules.md).
