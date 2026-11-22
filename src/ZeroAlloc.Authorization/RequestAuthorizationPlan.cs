@@ -59,9 +59,6 @@ public sealed class PolicyGroup(params PolicyRequirement[] policies)
 [PublicAPI]
 public abstract class RequestAuthorizationPlan
 {
-    /// <summary>What an edge policy name starts with; the rest is the plan's <see cref="Id" />.</summary>
-    public const string PolicyPrefix = "launchpad:";
-
     /// <summary>The most alternatives that are published.</summary>
     public const int MaxAlternatives = 16;
 
@@ -75,24 +72,17 @@ public abstract class RequestAuthorizationPlan
     /// <summary>The request.</summary>
     public Type RequestType { get; }
 
-    /// <summary>What names the plan at the edge: the request's full type name.</summary>
+    /// <summary>The request's full type name.</summary>
     public string Id { get; }
 
     /// <summary>The requirements, all of which must pass.</summary>
     public IReadOnlyList<PolicyGroup> Groups { get; }
-
-    /// <summary>The name of the edge policy that checks this plan.</summary>
-    public string PolicyName => PolicyPrefix + Id;
 
     /// <summary>
     ///     The scopes that satisfy the plan, as alternatives: any one set is enough. A stacked policy adds its scopes to every alternative, a
     ///     group of alternatives multiplies them; duplicates and alternatives that contain another are dropped.
     /// </summary>
     public IReadOnlyList<IReadOnlyList<string>> ScopeAlternatives => field ??= Alternatives(Groups);
-
-    /// <summary>The caller as policies see them at the edge, where there is no request yet: reading the request throws.</summary>
-    /// <param name="context">The caller.</param>
-    public abstract ISecurityContext AtTheEdge(ISecurityContext context);
 
     private static IReadOnlyList<IReadOnlyList<string>> Alternatives(IReadOnlyList<PolicyGroup> groups)
     {
@@ -122,31 +112,19 @@ public abstract class RequestAuthorizationPlan
 /// <typeparam name="TRequest">The request.</typeparam>
 /// <param name="groups">The requirements, all of which must pass.</param>
 [PublicAPI]
-public sealed class RequestAuthorizationPlan<TRequest>(params PolicyGroup[] groups) : RequestAuthorizationPlan(typeof(TRequest), groups)
+public sealed class RequestAuthorizationPlan<TRequest>(params PolicyGroup[] groups) : RequestAuthorizationPlan(typeof(TRequest), groups);
+
+/// <summary>
+///     On an endpoint: the request it dispatches, whose plan states the scopes the endpoint requires. The generated HTTP servers put it on an
+///     operation whose request has policies; the policies themselves are on the endpoint by name.
+/// </summary>
+/// <param name="requestType">The request.</param>
+[PublicAPI]
+[AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = true)]
+public sealed class RequestPoliciesAttribute(Type requestType) : Attribute
 {
-    /// <inheritdoc />
-    public override ISecurityContext AtTheEdge(ISecurityContext context) => new EdgeSecurityContext(context);
-
-    /// <summary>The caller as policies see them in the pipeline: with the request as the resource.</summary>
-    /// <param name="context">The caller.</param>
-    /// <param name="request">The request.</param>
-    public ISecurityContext WithRequest(ISecurityContext context, TRequest request) => new RequestSecurityContext(context, request);
-
-    private sealed class RequestSecurityContext(ISecurityContext inner, TRequest request) : IResourceSecurityContext<TRequest>
-    {
-        public string Id => inner.Id;
-        public IReadOnlySet<string> Roles => inner.Roles;
-        public IReadOnlyDictionary<string, string> Claims => inner.Claims;
-        public TRequest Resource => request;
-    }
-
-    private sealed class EdgeSecurityContext(ISecurityContext inner) : IResourceSecurityContext<TRequest>
-    {
-        public string Id => inner.Id;
-        public IReadOnlySet<string> Roles => inner.Roles;
-        public IReadOnlyDictionary<string, string> Claims => inner.Claims;
-        public TRequest Resource => throw new RequestNotAvailableException();
-    }
+    /// <summary>The request.</summary>
+    public Type RequestType { get; } = requestType;
 }
 
 /// <summary>
@@ -167,38 +145,34 @@ public sealed class AuthorizationResponse<TResponse>(Func<Unauthorized, TRespons
     public Func<Forbidden, TResponse> Forbidden { get; } = forbidden;
 }
 
-/// <summary>
-///     The plans of the application, by the name the edge knows them by, and what the edge has learned about its policies. One for the
-///     application.
-/// </summary>
+/// <summary>The plans of the application, by request, and the policies they name, by the name an endpoint carries. One for the application.</summary>
 /// <param name="plans">Every plan that is registered.</param>
 [PublicAPI]
 public sealed class RequestAuthorizationPlans(IEnumerable<RequestAuthorizationPlan> plans)
 {
-    private readonly Dictionary<string, RequestAuthorizationPlan> _plans = plans.GroupBy(p => p.Id, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
+    private readonly Dictionary<Type, RequestAuthorizationPlan> _plans = plans.GroupBy(p => p.RequestType).ToDictionary(g => g.Key, g => g.First());
 
-    // The policy classes that read the request: found the first time one throws at the edge, then skipped there.
-    private readonly System.Collections.Concurrent.ConcurrentDictionary<Type, bool> _readsTheRequest = new();
+    private Dictionary<string, PolicyRequirement>? _policies;
 
-    /// <summary>The plan of the request with this id, if it has policies.</summary>
-    /// <param name="id">The request's full type name.</param>
-    public RequestAuthorizationPlan? Find(string id)
+    /// <summary>The plan of a request, if it has policies.</summary>
+    /// <param name="requestType">The request.</param>
+    public RequestAuthorizationPlan? Find(Type requestType)
     {
-        ArgumentNullException.ThrowIfNull(id);
-        return _plans.GetValueOrDefault(id);
+        ArgumentNullException.ThrowIfNull(requestType);
+        return _plans.GetValueOrDefault(requestType);
     }
 
-    /// <summary>The plan an edge policy name stands for; null for any other policy name, and for a request without a plan.</summary>
-    /// <param name="policyName">The policy name on an endpoint.</param>
-    public RequestAuthorizationPlan? FindByPolicyName(string? policyName) =>
-        policyName?.StartsWith(RequestAuthorizationPlan.PolicyPrefix, StringComparison.Ordinal) is true
-            ? Find(policyName[RequestAuthorizationPlan.PolicyPrefix.Length..])
-            : null;
-
-    internal bool ReadsTheRequest(Type policy) => _readsTheRequest.ContainsKey(policy);
-
-    internal void MarkReadsTheRequest(Type policy) => _readsTheRequest[policy] = true;
+    /// <summary>
+    ///     A policy some request names, by its <see cref="PolicyRequirement.Key" />: the policy's name, with the arguments the request passes
+    ///     it. Null for a name no request names, which is then a policy of the application's own.
+    /// </summary>
+    /// <param name="name">The policy name on an endpoint.</param>
+    public PolicyRequirement? FindPolicy(string? name) =>
+        name is null
+            ? null
+            : ( _policies ??= _plans
+                             .Values.SelectMany(p => p.Groups)
+                             .SelectMany(g => g.Policies)
+                             .GroupBy(p => p.Key, StringComparer.Ordinal)
+                             .ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal) ).GetValueOrDefault(name);
 }
-
-/// <summary>A policy read the request at the edge, where there is none yet: it is decided in the pipeline instead.</summary>
-internal sealed class RequestNotAvailableException() : InvalidOperationException("The request is not available where this policy is running.");

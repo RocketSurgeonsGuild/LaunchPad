@@ -24,7 +24,7 @@ namespace Sample.Server
     public partial class RocketsMutations
     {
         [GraphQLName("inspectRocket")]
-        [Authorize(Policy = "launchpad:Sample.Contracts.InspectRocket+Request")]
+        [Authorize(Policy = "Rockets.Read")]
         [global::Rocket.Surgery.LaunchPad.HotChocolate.Authorization.GraphQLRequiresScopes("rockets:read")]
         public async Task<global::Sample.Contracts.RocketModel> InspectRocket(global::Sample.Contracts.InspectRocket.Request request, IResolverContext context, CancellationToken cancellationToken)
         {
@@ -53,7 +53,7 @@ namespace Sample.Server
 
         [GraphQLName("launchRocket")]
         [Authorize(Policy = "Own")]
-        [Authorize(Policy = "launchpad:Sample.Contracts.LaunchRocket+Request")]
+        [Authorize]
         [global::Rocket.Surgery.LaunchPad.HotChocolate.Authorization.GraphQLAuthenticated]
         public async Task<global::Sample.Contracts.RocketModel> LaunchRocket(global::Sample.Contracts.LaunchRocket.Request request, IResolverContext context, CancellationToken cancellationToken)
         {
@@ -81,7 +81,8 @@ namespace Sample.Server
         }
 
         [GraphQLName("deleteRocket")]
-        [Authorize(Policy = "launchpad:Sample.Contracts.DeleteRocket+Request")]
+        [Authorize(Policy = "Rockets.Read")]
+        [Authorize]
         [global::Rocket.Surgery.LaunchPad.HotChocolate.Authorization.GraphQLRequiresScopes("rockets:read")]
         public async Task<global::Sample.Contracts.RocketModel> DeleteRocket(global::Sample.Contracts.DeleteRocket.Request request, IResolverContext context, CancellationToken cancellationToken)
         {

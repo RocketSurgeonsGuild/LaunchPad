@@ -47,7 +47,7 @@ ZeroAlloc.Authorization 2.3 is host-neutral and AOT-safe. LaunchPad uses its:
 
 - `[Policy("Name")]` classes implementing `IAuthorizationPolicy` (or `IAuthorizationPolicy<T1..T3>` for a policy with arguments);
 - `[RequirePolicy(name, args…)]` (stacked attributes are AND) and `[RequireAnyPolicy(names…)]` (an OR group) on a request;
-- `ISecurityContext` (`Id`, `Roles`, `Claims`) and `IResourceSecurityContext<TResource>`, through which a policy reads the request;
+- `ISecurityContext` (`Id`, `Roles`, `Claims`): the caller, which is all a policy sees. LaunchPad does not pass the request (`IResourceSecurityContext<TResource>`), so a policy is the same check wherever it runs; a rule about what a request contains belongs in its handler, which answers `Forbidden` itself;
 - diagnostics ZAUTH001 to ZAUTH009. LaunchPad registers each policy a request names itself, as a scoped service, so an application need not call `AddZeroAllocAuthorization()`.
 
 What it lacks, which LaunchPad adds:
@@ -78,7 +78,7 @@ What it lacks, which LaunchPad adds:
 
 1. The security context is resolved from the request's services. An anonymous one answers `Unauthorized`; no policy runs.
 2. Each policy is looked up in the request's **authorization outcomes** (scoped, keyed by policy name and arguments). An outcome that is there is reused.
-3. Otherwise the policy's declared scopes are checked against the caller's scopes, and only then its `EvaluateAsync` runs, with the request as its resource. The outcome is recorded.
+3. Otherwise the policy's declared scopes are checked against the caller's scopes, and only then its `EvaluateAsync` runs. The outcome is recorded.
 4. A group that fails answers `Forbidden`, with the failure's reason as its detail, and the missing scopes when that was why.
 
 A request without a policy attribute passes straight through. One that has a policy attribute and no plan in the services is refused with an exception that names the missing registration, so a forgotten registration never lets a request through. A stream request is checked by the behavior's `CheckStream`, which the mediator calls before the stream handler; it has no item to answer with, so a denial throws `AuthorizationDeniedException` carrying the problem, and each transport writes it as that case.
@@ -91,9 +91,9 @@ A request without a policy attribute passes straight through. One that has a pol
 
 The generated servers also reject at the edge, before the request is bound, through the transport's own authorization.
 
-- **The bridge.** An `IAuthorizationPolicyProvider` in `ZeroAlloc.AspNetCore` answers a policy name of the form `launchpad:{request type}` with an ASP.NET Core policy holding one requirement, which the generated endpoint names (`RequireAuthorization`, `[Authorize]`, and HotChocolate's `[Authorize]` for a field). Any other name goes to the default provider, so an application's own policies are untouched.
-- **The handler** of that requirement runs the request's plan as the behavior does, with a security context that has no request, and records each outcome. The behavior then finds them and runs nothing twice.
-- **A policy that reads the request** can't run there. The edge's security context answers `Resource` by throwing; the handler takes that as "not decided here", records nothing for that policy and remembers the policy class (in `RequestAuthorizationPlans`, for the application), so later calls skip it at the edge. The behavior runs it with the request.
+- **The bridge.** A generated endpoint names each policy every caller must pass (the `[RequirePolicy]` entries) by its own name: `RequireAuthorization("Rockets.Write")`, `[Authorize(Policy = "Rockets.Write")]`, and HotChocolate's `[Authorize]` for a field. A policy with arguments is named with them (`MinimumClearance(3)`). An `IAuthorizationPolicyProvider` in `ZeroAlloc.AspNetCore` answers the name of a policy some request names with an ASP.NET Core policy that runs it; any other name goes to the default provider. A request's policy and an ASP.NET Core policy of the application with the same name are one name for two things, and the request's policy is the one that answers: giving them different names is the application's to do.
+- **The handler** runs the policy through the call's `RequestAuthorizer` and records its outcome. The behavior then finds it and runs nothing twice.
+- **A group of alternatives** (`[RequireAnyPolicy]`) has no counterpart at the edge, which can only say "all of these". The endpoint then requires a caller and nothing more (a plain `[Authorize]`), and the group is decided in the pipeline.
 - **The answer.** The authorization middleware's result handler lets the authentication schemes challenge or forbid, then writes the body: problem details with `case`, as the generated HTTP servers write the `Unauthorized` or `Forbidden` case, or for a gRPC call the status with the `case` trailer and no message. A 401, and a 403 for missing scopes, carry `WWW-Authenticate: Bearer` with `scope="…"`, and `error="insufficient_scope"` on the 403 ([RFC 6750](https://www.rfc-editor.org/rfc/rfc6750#section-3)); a gRPC client reads it among the trailers. A GraphQL field is rejected by HotChocolate's own authorization, which asks ASP.NET Core for the policy; an error filter gives its error the code and `extensions.case` of the union case.
 
 Where there is no edge (Blazor Server, a worker, a console application, a hand-written endpoint that dispatches the request), nothing is recorded and the behavior evaluates everything.
@@ -170,4 +170,5 @@ Decided 2026-11-21, with the reasons in [ADR-0011](../adr/0011-request-policies-
 9. Every sample operation is protected, with Keycloak through Aspire; tests use a signing key of their own.
 10. An operation's security scheme is always declared in the OpenAPI document: a requirement of an undeclared scheme is written as `{}`, which reads as "no security" (found while building).
 11. Plans are registered with the application's services by a joint written from a template, not from a module initializer: the behavior, the edge and the policies all get what they need from the services (decided 2026-11-22).
-12. `@requiresScopes` and `@authenticated` are declared by LaunchPad: HotChocolate 16 does not have the composite schema directives (found while building).
+12. A policy sees the caller only, never the request, and is named at the edge by its own name (decided 2026-11-22). A name shared with an ASP.NET Core policy of the application is the application's to resolve.
+13. `@requiresScopes` and `@authenticated` are declared by LaunchPad: HotChocolate 16 does not have the composite schema directives (found while building).

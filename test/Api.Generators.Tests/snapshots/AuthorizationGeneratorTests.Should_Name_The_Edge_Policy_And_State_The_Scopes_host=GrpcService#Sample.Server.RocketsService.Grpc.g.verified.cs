@@ -100,7 +100,7 @@ namespace Sample.Server
         }
 
         /// <summary>Sends <see cref="Sample.Contracts.InspectRocket.Request" /> through the mediator.</summary>
-        [Authorize(Policy = "launchpad:Sample.Contracts.InspectRocket+Request")]
+        [Authorize(Policy = "Rockets.Read")]
         public async ValueTask<global::Sample.Contracts.RocketModel> InspectRocket(global::Sample.Contracts.InspectRocket.Request request, CallContext context)
         {
             var __sender = (context.ServerCallContext!).GetHttpContext().RequestServices.GetRequiredService<IMediator>();
@@ -127,7 +127,7 @@ namespace Sample.Server
         }
 
         /// <summary>Sends <see cref="Sample.Contracts.LaunchRocket.Request" /> through the mediator.</summary>
-        [Authorize(Policy = "launchpad:Sample.Contracts.LaunchRocket+Request")]
+        [Authorize]
         public async ValueTask<global::Sample.Contracts.RocketModel> LaunchRocket(global::Sample.Contracts.LaunchRocket.Request request, CallContext context)
         {
             var __sender = (context.ServerCallContext!).GetHttpContext().RequestServices.GetRequiredService<IMediator>();
@@ -154,7 +154,8 @@ namespace Sample.Server
         }
 
         /// <summary>Sends <see cref="Sample.Contracts.DeleteRocket.Request" /> through the mediator.</summary>
-        [Authorize(Policy = "launchpad:Sample.Contracts.DeleteRocket+Request")]
+        [Authorize(Policy = "Rockets.Read")]
+        [Authorize]
         public async ValueTask<global::Sample.Contracts.RocketModel> DeleteRocket(global::Sample.Contracts.DeleteRocket.Request request, CallContext context)
         {
             var __sender = (context.ServerCallContext!).GetHttpContext().RequestServices.GetRequiredService<IMediator>();

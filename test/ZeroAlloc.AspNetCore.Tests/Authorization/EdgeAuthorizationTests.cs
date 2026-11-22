@@ -75,19 +75,37 @@ public class EdgeAuthorizationTests
     }
 
     [Test]
-    public async Task A_Policy_That_Reads_The_Request_Is_Decided_In_The_Pipeline_And_Answers_Its_Case()
+    public async Task Every_Policy_Of_An_Endpoint_Must_Pass_And_The_Challenge_Names_The_Scopes_Of_Them_All()
     {
         await using var app = await Start();
         using var client = app.GetTestClient();
 
-        using var own = await Send(client, "/launches/1/cancel?owner=alice", "alice", "launches:read");
-        using var other = await Send(client, "/launches/1/cancel?owner=bob", "alice", "launches:read");
+        using var anonymous = await client.GetAsync(new Uri("/launches/1/cancel", UriKind.Relative), CancellationToken.None);
+        using var reader = await Send(client, "/launches/1/cancel", "alice", "launches:read");
+        using var both = await Send(client, "/launches/1/cancel", "alice", "launches:read launches:write");
 
-        await own.StatusCode.Should().BeEqualTo(HttpStatusCode.OK);
-        await other.StatusCode.Should().BeEqualTo(HttpStatusCode.Forbidden);
-        var problem = JsonNode.Parse(await other.Content.ReadAsStringAsync(CancellationToken.None))!;
-        await problem["case"]!.GetValue<string>().Should().BeEqualTo("Forbidden");
-        await problem["detail"]!.GetValue<string>().Should().BeEqualTo("Only the owner may cancel a launch.");
+        await anonymous.StatusCode.Should().BeEqualTo(HttpStatusCode.Unauthorized);
+        await anonymous.Headers.WwwAuthenticate.ToString().Should().BeEqualTo("Bearer scope=\"launches:read launches:write\"");
+        await reader.StatusCode.Should().BeEqualTo(HttpStatusCode.Forbidden);
+        await reader.Headers.WwwAuthenticate.ToString().Should().BeEqualTo("Bearer error=\"insufficient_scope\", scope=\"launches:write\"");
+        await both.StatusCode.Should().BeEqualTo(HttpStatusCode.OK);
+    }
+
+    [Test]
+    public async Task A_Group_Of_Alternatives_Requires_A_Caller_At_The_Edge_And_Is_Decided_In_The_Pipeline()
+    {
+        await using var app = await Start();
+        using var client = app.GetTestClient();
+
+        using var anonymous = await client.PostAsync(new Uri("/launches/1/abort", UriKind.Relative), null, CancellationToken.None);
+        using var reader = await Send(client, "/launches/1/abort", "alice", "launches:read", HttpMethod.Post);
+        using var writer = await Send(client, "/launches/1/abort", "alice", "launches:write", HttpMethod.Post);
+
+        await anonymous.StatusCode.Should().BeEqualTo(HttpStatusCode.Unauthorized);
+        await JsonNode.Parse(await anonymous.Content.ReadAsStringAsync(CancellationToken.None))!["case"]!.GetValue<string>().Should().BeEqualTo("Unauthorized");
+        await reader.StatusCode.Should().BeEqualTo(HttpStatusCode.Forbidden);
+        await JsonNode.Parse(await reader.Content.ReadAsStringAsync(CancellationToken.None))!["case"]!.GetValue<string>().Should().BeEqualTo("Forbidden");
+        await writer.StatusCode.Should().BeEqualTo(HttpStatusCode.OK);
     }
 
     [Test]
@@ -187,9 +205,9 @@ public class EdgeAuthorizationTests
         await ( ClaimsSecurityContext.From(new(new ClaimsIdentity())) is AnonymousSecurityContext ).Should().BeTrue();
     }
 
-    private static async Task<HttpResponseMessage> Send(HttpClient client, string path, string user, string? scope)
+    private static async Task<HttpResponseMessage> Send(HttpClient client, string path, string user, string? scope, HttpMethod? method = null)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(path, UriKind.Relative));
+        using var request = new HttpRequestMessage(method ?? HttpMethod.Get, new Uri(path, UriKind.Relative));
         request.Headers.Add("X-User", user);
         if (scope is { }) request.Headers.Add("X-Scope", scope);
         return await client.SendAsync(request, CancellationToken.None);
@@ -216,13 +234,19 @@ public class EdgeAuthorizationTests
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapOpenApi();
+        // what the generated servers put on an operation: each policy of the request by name, and the request, for its scopes
         app.MapGet("/launches/{id}", async (string id, IMediator mediator) => Answer(await mediator.Send(new GetLaunch(id), CancellationToken.None)))
-           .RequireAuthorization(RequestAuthorizationPlan.PolicyPrefix + typeof(GetLaunch).FullName);
-        app.MapGet("/launches/{id}/cancel", async (string id, string owner, IMediator mediator) => Answer(await mediator.Send(new CancelLaunch(id, owner), CancellationToken.None)))
-           .RequireAuthorization(RequestAuthorizationPlan.PolicyPrefix + typeof(CancelLaunch).FullName);
+           .RequireAuthorization("Launches.Read")
+           .WithMetadata(new RequestPoliciesAttribute(typeof(GetLaunch)));
+        app.MapGet("/launches/{id}/cancel", async (string id, IMediator mediator) => Answer(await mediator.Send(new CancelLaunch(id), CancellationToken.None)))
+           .RequireAuthorization("Launches.Read")
+           .RequireAuthorization("Launches.Write")
+           .WithMetadata(new RequestPoliciesAttribute(typeof(CancelLaunch)));
+        // a group of alternatives is left to the pipeline: the endpoint only requires a caller
         app.MapPost("/launches/{id}/abort", async (string id, IMediator mediator) => Answer(await mediator.Send(new AbortLaunch(id), CancellationToken.None)))
-           .RequireAuthorization(RequestAuthorizationPlan.PolicyPrefix + typeof(AbortLaunch).FullName);
-        app.MapPost("/launches/grpc", () => TypedResults.Ok()).RequireAuthorization(RequestAuthorizationPlan.PolicyPrefix + typeof(GetLaunch).FullName);
+           .RequireAuthorization()
+           .WithMetadata(new RequestPoliciesAttribute(typeof(AbortLaunch)));
+        app.MapPost("/launches/grpc", () => TypedResults.Ok()).RequireAuthorization("Launches.Read").WithMetadata(new RequestPoliciesAttribute(typeof(GetLaunch)));
         app.MapGet("/own", () => TypedResults.Ok()).RequireAuthorization("Own");
         await app.StartAsync();
         return app;
@@ -280,17 +304,6 @@ public sealed class LaunchesAdmin : IAuthorizationPolicy
     public ValueTask<UnitResult<AuthorizationFailure>> EvaluateAsync(ISecurityContext ctx, CancellationToken ct = default) => new(UnitResult<AuthorizationFailure>.Success());
 }
 
-[Policy("Launches.Owner")]
-public sealed class LaunchesOwner : IAuthorizationPolicy
-{
-    public ValueTask<UnitResult<AuthorizationFailure>> EvaluateAsync(ISecurityContext ctx, CancellationToken ct = default) =>
-        new(
-            ctx is IResourceSecurityContext<CancelLaunch> { Resource.Owner: var owner } && owner == ctx.Id
-                ? UnitResult<AuthorizationFailure>.Success()
-                : UnitResult<AuthorizationFailure>.Failure(new("owner.other", "Only the owner may cancel a launch."))
-        );
-}
-
 public sealed record Launch(string Id);
 
 public union LaunchResult(Launch, Unauthorized, Forbidden);
@@ -299,8 +312,8 @@ public union LaunchResult(Launch, Unauthorized, Forbidden);
 public readonly record struct GetLaunch(string Id) : IRequest<LaunchResult>;
 
 [RequirePolicy("Launches.Read")]
-[RequirePolicy("Launches.Owner")]
-public readonly record struct CancelLaunch(string Id, string Owner) : IRequest<LaunchResult>;
+[RequirePolicy("Launches.Write")]
+public readonly record struct CancelLaunch(string Id) : IRequest<LaunchResult>;
 
 [RequireAnyPolicy("Launches.Write", "Launches.Admin")]
 public readonly record struct AbortLaunch(string Id) : IRequest<LaunchResult>;

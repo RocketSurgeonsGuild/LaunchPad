@@ -132,43 +132,43 @@ public class AuthorizationBehaviorTests
     }
 
     [Test]
-    [Arguments("alice", true)]
-    [Arguments("bob", false)]
-    public async Task A_Policy_Reads_The_Request_As_Its_Resource(string owner, bool allowed)
-    {
-        await using var call = Call(new Caller("alice", "rockets:write"));
-
-        var result = await call.Mediator.Send(new RenameRocket("Falcon", owner), CancellationToken.None);
-
-        await ( result.Value is RocketModel ).Should().BeEqualTo(allowed);
-    }
-
-    [Test]
     public async Task What_The_Edge_Decided_Is_Not_Run_Again()
     {
-        await using var call = Call(new Caller("alice", "rockets:write"));
+        await using var call = Call(new Caller("alice", "rockets:write", "admin"));
 
-        var edge = await call.AtTheEdge<RenameRocket>();
-        var result = await call.Mediator.Send(new RenameRocket("Falcon", "alice"), CancellationToken.None);
+        var edge = await call.AtTheEdge("Rockets.Write");
+        var result = await call.Mediator.Send(new DeleteRocket("Falcon"), CancellationToken.None);
 
         await edge.IsAllowed.Should().BeTrue();
         await ( result.Value is RocketModel ).Should().BeTrue();
-        // Owner reads the request: the edge tried it, left it undecided, and the pipeline ran it with the request.
-        await call.Calls.Should().BeEquivalentTo(["Rockets.Write", "Owner", "Owner"], CollectionOrdering.Matching);
+        // Rockets.Write ran at the edge and was not run again; Admin, which the edge was not asked for, ran in the pipeline.
+        await call.Calls.Should().BeEquivalentTo(["Rockets.Write", "Admin"], CollectionOrdering.Matching);
     }
 
     [Test]
-    public async Task The_Edge_Skips_A_Policy_It_Knows_Reads_The_Request()
+    public async Task The_Edge_Denies_A_Policy_For_Its_Scopes()
     {
-        await using var call = Call(new Caller("alice", "rockets:write"));
-        await call.AtTheEdge<RenameRocket>();
+        await using var call = Call(new Caller("alice", "rockets:read"));
 
-        // another call of the same application
-        await using var scope = call.Application.CreateAsyncScope();
-        var plan = scope.ServiceProvider.GetRequiredService<RequestAuthorizationPlan<RenameRocket>>();
-        await scope.ServiceProvider.GetRequiredService<RequestAuthorizer>().AuthorizeAtTheEdgeAsync(plan, CancellationToken.None);
+        var edge = await call.AtTheEdge("Rockets.Write");
 
-        await call.Calls.Should().BeEquivalentTo(["Rockets.Write", "Owner", "Rockets.Write"], CollectionOrdering.Matching);
+        await ( edge.Problem is Forbidden ).Should().BeTrue();
+        await edge.RequiredScopes.Should().BeEquivalentTo(["rockets:write"]);
+    }
+
+    [Test]
+    public async Task A_Policy_Is_Found_By_The_Name_An_Endpoint_Carries()
+    {
+        await using var call = Call(null);
+        var plans = call.Services.GetRequiredService<RequestAuthorizationPlans>();
+
+        await plans.FindPolicy("Rockets.Write")!.Scopes.Should().BeEquivalentTo(["rockets:write"]);
+        // a policy with arguments is named with them: the same policy with other arguments is another check
+        await plans.FindPolicy("MinimumClearance(3)").Should().NotBeNull();
+        await plans.FindPolicy("MinimumClearance").Should().BeNull();
+        await plans.FindPolicy("Own").Should().BeNull();
+        await plans.Find(typeof(LaunchRocket))!.ScopeAlternatives.Select(a => string.Join(' ', a)).Should().BeEquivalentTo([""]);
+        await plans.Find(typeof(Ping)).Should().BeNull();
     }
 
     [Test]
@@ -184,30 +184,6 @@ public class AuthorizationBehaviorTests
 
         await exception.Message.Should().Contain("no authorization plan is registered");
         await ( await mediator.Send(new Ping(), CancellationToken.None) ).Name.Should().BeEqualTo("ping");
-    }
-
-    [Test]
-    public async Task The_Plans_Of_The_Application_Are_Found_By_Their_Edge_Policy_Name()
-    {
-        await using var call = Call(null);
-        var plans = call.Services.GetRequiredService<RequestAuthorizationPlans>();
-
-        var plan = plans.FindByPolicyName("launchpad:" + typeof(LaunchRocket).FullName);
-
-        await plan!.ScopeAlternatives.Select(a => string.Join(' ', a)).Should().BeEquivalentTo([""]);
-        await plans.FindByPolicyName("launchpad:" + typeof(Ping).FullName).Should().BeNull();
-        await plans.FindByPolicyName("Own").Should().BeNull();
-    }
-
-    [Test]
-    public async Task The_Edge_Denies_What_Is_Certain()
-    {
-        await using var call = Call(new Caller("alice", "rockets:read"));
-
-        var edge = await call.AtTheEdge<RenameRocket>();
-
-        await ( edge.Problem is Forbidden ).Should().BeTrue();
-        await edge.RequiredScopes.Should().BeEquivalentTo(["rockets:write"]);
     }
 
     [Test]
@@ -260,12 +236,12 @@ public class AuthorizationBehaviorTests
     private sealed class TestCall(ServiceProvider provider, AsyncServiceScope scope) : IAsyncDisposable
     {
         public IServiceProvider Services => scope.ServiceProvider;
-        public ServiceProvider Application => provider;
-
-        public ValueTask<AuthorizationDecision> AtTheEdge<TRequest>() =>
-            Services.GetRequiredService<RequestAuthorizer>().AuthorizeAtTheEdgeAsync(Services.GetRequiredService<RequestAuthorizationPlan<TRequest>>(), CancellationToken.None);
         public IMediator Mediator => Services.GetRequiredService<IMediator>();
         public IReadOnlyList<string> Calls => provider.GetRequiredService<PolicyCalls>().Calls;
+
+        // what the edge does for a policy an endpoint names
+        public ValueTask<AuthorizationDecision> AtTheEdge(string policy) =>
+            Services.GetRequiredService<RequestAuthorizer>().AuthorizeAsync(Services.GetRequiredService<RequestAuthorizationPlans>().FindPolicy(policy)!, CancellationToken.None);
 
         public async ValueTask DisposeAsync()
         {

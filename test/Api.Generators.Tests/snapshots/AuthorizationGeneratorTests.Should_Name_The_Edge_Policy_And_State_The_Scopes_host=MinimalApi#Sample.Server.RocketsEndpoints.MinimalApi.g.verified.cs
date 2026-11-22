@@ -61,7 +61,8 @@ namespace Sample.Server
                 endpoint.WithMetadata(new ProducesResponseTypeMetadata(401, typeof(ProblemDetails), new string[] { "application/problem+json" }));
                 endpoint.WithMetadata(new ProducesResponseTypeMetadata(403, typeof(ProblemDetails), new string[] { "application/problem+json" }));
                 endpoint.WithName("InspectRocket");
-                endpoint.RequireAuthorization("launchpad:Sample.Contracts.InspectRocket+Request");
+                endpoint.RequireAuthorization("Rockets.Read");
+                endpoint.WithMetadata(new global::Rocket.Surgery.LaunchPad.Authorization.RequestPoliciesAttribute(typeof(global::Sample.Contracts.InspectRocket.Request)));
                 ConfigureInspectRocket(endpoint);
             }
 
@@ -80,7 +81,8 @@ namespace Sample.Server
                 endpoint.WithMetadata(new ProducesResponseTypeMetadata(403, typeof(ProblemDetails), new string[] { "application/problem+json" }));
                 endpoint.WithName("LaunchRocket");
                 endpoint.RequireAuthorization("Own");
-                endpoint.RequireAuthorization("launchpad:Sample.Contracts.LaunchRocket+Request");
+                endpoint.RequireAuthorization();
+                endpoint.WithMetadata(new global::Rocket.Surgery.LaunchPad.Authorization.RequestPoliciesAttribute(typeof(global::Sample.Contracts.LaunchRocket.Request)));
                 ConfigureLaunchRocket(endpoint);
             }
 
@@ -97,7 +99,9 @@ namespace Sample.Server
                 endpoint.WithMetadata(new ProducesResponseTypeMetadata(401, typeof(ProblemDetails), new string[] { "application/problem+json" }));
                 endpoint.WithMetadata(new ProducesResponseTypeMetadata(403, typeof(ProblemDetails), new string[] { "application/problem+json" }));
                 endpoint.WithName("DeleteRocket");
-                endpoint.RequireAuthorization("launchpad:Sample.Contracts.DeleteRocket+Request");
+                endpoint.RequireAuthorization("Rockets.Read");
+                endpoint.RequireAuthorization();
+                endpoint.WithMetadata(new global::Rocket.Surgery.LaunchPad.Authorization.RequestPoliciesAttribute(typeof(global::Sample.Contracts.DeleteRocket.Request)));
                 ConfigureDeleteRocket(endpoint);
             }
 

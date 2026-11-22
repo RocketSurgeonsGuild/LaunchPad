@@ -70,14 +70,14 @@ public static class AuthorizationProblems
 ///     Answers what the authorization middleware rejected for a request's policies as the <see cref="Unauthorized" /> or
 ///     <see cref="Forbidden" /> case would be answered, after the authentication schemes challenged or forbade.
 /// </summary>
-internal sealed class RequestPoliciesResultHandler : IAuthorizationMiddlewareResultHandler
+internal sealed class RequestPoliciesResultHandler(RequestAuthorizationPlans plans) : IAuthorizationMiddlewareResultHandler
 {
     private readonly AuthorizationMiddlewareResultHandler _schemes = new();
 
     public async Task HandleAsync(RequestDelegate next, HttpContext context, AuthorizationPolicy policy, PolicyAuthorizationResult authorizeResult)
     {
         await _schemes.HandleAsync(next, context, policy, authorizeResult).ConfigureAwait(false);
-        if (authorizeResult.Succeeded || context.Response.HasStarted || RequestPoliciesHandler.Decision(context) is not { Problem: { } problem } decision) return;
+        if (authorizeResult.Succeeded || context.Response.HasStarted || Decision(context, authorizeResult) is not { Problem: { } problem } decision) return;
         // A scheme that redirects to sign in answered already.
         if (context.Response.StatusCode is not ( StatusCodes.Status401Unauthorized or StatusCodes.Status403Forbidden )) return;
 
@@ -94,6 +94,14 @@ internal sealed class RequestPoliciesResultHandler : IAuthorizationMiddlewareRes
 
         await Results.Problem(AuthorizationProblems.Details(problem)).ExecuteAsync(context).ConfigureAwait(false);
     }
+
+    // What a policy of the endpoint denied. An endpoint whose request leaves a group of alternatives to the pipeline only requires a caller at
+    // the edge: when that is what challenged, the answer is still the request's, for the scopes of its plan.
+    private AuthorizationDecision? Decision(HttpContext context, PolicyAuthorizationResult result) =>
+        RequestPolicyHandler.Decision(context)
+     ?? ( result.Challenged && context.GetEndpoint() is { } endpoint && EndpointPlans.Of(endpoint.Metadata, plans).FirstOrDefault() is { } plan
+            ? new AuthorizationDecision(new Unauthorized("Authentication is required."), plan.ScopeAlternatives is [var scopes, ..] ? scopes : [])
+            : null );
 
     // A gRPC call that is rejected before it starts answers with its trailers as headers and no message: the status of the case, its name in
     // the case trailer, as the generated gRPC servers answer a union case, and the challenge beside them.

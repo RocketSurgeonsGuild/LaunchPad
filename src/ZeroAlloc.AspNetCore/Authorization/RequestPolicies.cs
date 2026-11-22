@@ -11,64 +11,63 @@ using AuthorizationOptions = Microsoft.AspNetCore.Authorization.AuthorizationOpt
 
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Authorization;
 
-/// <summary>The requirement of an edge policy: the policies of one request, checked before the request is bound.</summary>
-/// <param name="id">The request's full type name.</param>
-/// <param name="plan">The request's plan; null when no request with policies has that name, which denies.</param>
-internal sealed class RequestPoliciesRequirement(string id, RequestAuthorizationPlan? plan) : IAuthorizationRequirement
+/// <summary>The requirement of an edge policy: one policy a request names, checked before the request is bound.</summary>
+/// <param name="policy">The policy.</param>
+internal sealed class RequestPolicyRequirement(PolicyRequirement policy) : IAuthorizationRequirement
 {
-    public string Id { get; } = id;
-    public RequestAuthorizationPlan? Plan { get; } = plan;
+    public PolicyRequirement Policy { get; } = policy;
 
-    public override string ToString() => $"The policies of {Id}";
+    public override string ToString() => $"The policy {Policy.Key}";
 }
 
 /// <summary>
-///     Answers the policy names the generated servers put on an operation whose request has policies (<c>launchpad:{request}</c>) with a policy
-///     that checks the request's plan. Every other name is the application's own.
+///     Answers the name of a policy some request names (<c>[RequirePolicy]</c>, <c>[RequireAnyPolicy]</c>) with an ASP.NET Core policy that
+///     runs it: the generated servers put those names on an operation whose request has policies. Every other name is the application's own.
 /// </summary>
+/// <remarks>
+///     A request's policy and an ASP.NET Core policy of the application with the same name are one name for two things: the request's policy
+///     is the one that answers. Give them different names.
+/// </remarks>
 internal sealed class RequestPolicyProvider(IOptions<AuthorizationOptions> options, RequestAuthorizationPlans plans) : DefaultAuthorizationPolicyProvider(options)
 {
     private readonly ConcurrentDictionary<string, AuthorizationPolicy> _policies = new(StringComparer.Ordinal);
 
     public override Task<AuthorizationPolicy?> GetPolicyAsync(string policyName) =>
-        policyName.StartsWith(RequestAuthorizationPlan.PolicyPrefix, StringComparison.Ordinal)
-            ? Task.FromResult<AuthorizationPolicy?>(_policies.GetOrAdd(policyName, Build))
+        plans.FindPolicy(policyName) is { } policy
+            ? Task.FromResult<AuthorizationPolicy?>(_policies.GetOrAdd(policyName, static (_, policy) => new AuthorizationPolicyBuilder().AddRequirements(new RequestPolicyRequirement(policy)).Build(), policy))
             : base.GetPolicyAsync(policyName);
-
-    private AuthorizationPolicy Build(string policyName) =>
-        new AuthorizationPolicyBuilder()
-           .AddRequirements(new RequestPoliciesRequirement(policyName[RequestAuthorizationPlan.PolicyPrefix.Length..], plans.FindByPolicyName(policyName)))
-           .Build();
 }
 
 /// <summary>
-///     Checks a request's plan at the edge, with the services of the HTTP request, so the outcomes it records are the ones the mediator
-///     pipeline finds. The decision is kept on the <see cref="HttpContext" /> for the answer.
+///     Checks a policy at the edge, with the services of the HTTP request, so the outcome it records is the one the mediator pipeline finds.
+///     The decision is kept on the <see cref="HttpContext" /> for the answer.
 /// </summary>
-internal sealed class RequestPoliciesHandler(IHttpContextAccessor accessor) : AuthorizationHandler<RequestPoliciesRequirement>
+internal sealed class RequestPolicyHandler(IHttpContextAccessor accessor) : AuthorizationHandler<RequestPolicyRequirement>
 {
     private static readonly object DecisionKey = new();
 
+    /// <summary>What the policies of the endpoint denied the caller, if any did: the first denial, with the scopes of them all.</summary>
     public static AuthorizationDecision? Decision(HttpContext context) =>
         context.Items.TryGetValue(DecisionKey, out var value) && value is AuthorizationDecision decision ? decision : null;
 
-    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, RequestPoliciesRequirement requirement)
+    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, RequestPolicyRequirement requirement)
     {
-        var http = context.Resource as HttpContext ?? accessor.HttpContext;
-        if (http is null || requirement.Plan is not { } plan)
+        if (( context.Resource as HttpContext ?? accessor.HttpContext ) is not { } http)
         {
-            context.Fail(new(this, $"{requirement.Id} has no authorization plan to check."));
+            context.Fail(new(this, $"{requirement} has no HTTP request to check it for."));
             return;
         }
 
-        var decision = await http.RequestServices.GetRequiredService<RequestAuthorizer>().AuthorizeAtTheEdgeAsync(plan, http.RequestAborted).ConfigureAwait(false);
+        var decision = await http.RequestServices.GetRequiredService<RequestAuthorizer>().AuthorizeAsync(requirement.Policy, http.RequestAborted).ConfigureAwait(false);
         if (decision.Problem is not { } problem)
         {
             context.Succeed(requirement);
             return;
         }
 
-        http.Items[DecisionKey] = decision;
+        // An endpoint names each of its policies, and each that denies is asked: the answer is the first denial, challenging for the scopes
+        // of them all.
+        http.Items[DecisionKey] = Decision(http) is { } earlier ? earlier with { RequiredScopes = [.. earlier.RequiredScopes.Union(decision.RequiredScopes, StringComparer.Ordinal)] } : decision;
         context.Fail(new(this, problem.Detail ?? problem.GetType().Name));
     }
 }

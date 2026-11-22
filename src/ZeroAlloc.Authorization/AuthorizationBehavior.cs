@@ -70,7 +70,7 @@ public sealed class AuthorizationBehavior : IPipelineBehavior
     {
         services ??= PipelineBehaviorServices.Current;
         if (Plan<TRequest>(services) is not { } plan) return;
-        var decision = await services!.GetRequiredService<RequestAuthorizer>().AuthorizeAsync(plan, request, ct).ConfigureAwait(false);
+        var decision = await services!.GetRequiredService<RequestAuthorizer>().AuthorizeAsync(plan, ct).ConfigureAwait(false);
         if (decision.Problem is { } problem) throw new AuthorizationDeniedException(problem);
     }
 
@@ -82,7 +82,7 @@ public sealed class AuthorizationBehavior : IPipelineBehavior
         Func<TRequest, CancellationToken, ValueTask<TResponse>> next
     )
     {
-        var decision = await services.GetRequiredService<RequestAuthorizer>().AuthorizeAsync(plan, request, ct).ConfigureAwait(false);
+        var decision = await services.GetRequiredService<RequestAuthorizer>().AuthorizeAsync(plan, ct).ConfigureAwait(false);
         return decision.Problem is not { } problem
             ? await next(request, ct).ConfigureAwait(false)
             : (problem, services.GetService<AuthorizationResponse<TResponse>>()) switch

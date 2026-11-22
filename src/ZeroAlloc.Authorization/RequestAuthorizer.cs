@@ -24,17 +24,15 @@ public readonly record struct AuthorizationDecision(Problem? Problem, IReadOnlyL
 /// <summary>
 ///     Decides a request's plan for the caller of a call, policy by policy, recording each outcome in the call's
 ///     <see cref="AuthorizationOutcomes" /> and reusing the ones already there. One for each call: the mediator pipeline and the edge both
-///     decide through it, so a policy runs once.
+///     decide through it, so a policy runs once. A policy sees the caller and nothing of the request: it is the same check wherever it runs.
 /// </summary>
 /// <param name="services">The services of the call, from which the caller and the policies are resolved.</param>
 /// <param name="outcomes">What each policy decided for this call.</param>
-/// <param name="plans">The plans of the application.</param>
 /// <param name="options">How the caller's scopes are read.</param>
 [PublicAPI]
 public sealed class RequestAuthorizer(
     IServiceProvider services,
     AuthorizationOutcomes outcomes,
-    RequestAuthorizationPlans plans,
     IOptions<RequestAuthorizationOptions> options
 )
 {
@@ -53,68 +51,52 @@ public sealed class RequestAuthorizer(
          || string.Equals(context.Id, AnonymousSecurityContext.AnonymousId, StringComparison.Ordinal);
     }
 
-    /// <summary>Decides the plan with the request: every policy that has no outcome yet runs.</summary>
-    /// <typeparam name="TRequest">The request.</typeparam>
-    /// <param name="plan">The request's plan.</param>
-    /// <param name="request">The request.</param>
-    /// <param name="cancellationToken">The cancellation token of the call.</param>
-    public ValueTask<AuthorizationDecision> AuthorizeAsync<TRequest>(RequestAuthorizationPlan<TRequest> plan, TRequest request, CancellationToken cancellationToken)
-    {
-        ArgumentNullException.ThrowIfNull(plan);
-        return DecideAsync(plan, plan.WithRequest(Caller, request), false, cancellationToken);
-    }
-
-    /// <summary>
-    ///     Decides the plan at the edge, before there is a request. A policy that reads the request is left for the pipeline, so the
-    ///     decision denies only what is certain.
-    /// </summary>
+    /// <summary>Decides a request's plan for the caller: every policy that has no outcome yet for this call runs.</summary>
     /// <param name="plan">The request's plan.</param>
     /// <param name="cancellationToken">The cancellation token of the call.</param>
-    public ValueTask<AuthorizationDecision> AuthorizeAtTheEdgeAsync(RequestAuthorizationPlan plan, CancellationToken cancellationToken)
+    public async ValueTask<AuthorizationDecision> AuthorizeAsync(RequestAuthorizationPlan plan, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(plan);
-        return DecideAsync(plan, plan.AtTheEdge(Caller), true, cancellationToken);
-    }
-
-    private async ValueTask<AuthorizationDecision> DecideAsync(RequestAuthorizationPlan plan, ISecurityContext context, bool atTheEdge, CancellationToken cancellationToken)
-    {
         if (IsAnonymous(Caller)) return new(new Unauthorized("Authentication is required."), ScopesOf(plan.Groups));
 
         foreach (var group in plan.Groups)
         {
-            var allowed = false;
-            var deferred = false;
             var last = PolicyOutcome.Success;
+            var allowed = false;
             foreach (var policy in group.Policies)
             {
-                if (!outcomes.TryGet(policy, out var outcome))
-                {
-                    if (await EvaluateAsync(policy, context, atTheEdge, cancellationToken).ConfigureAwait(false) is not { } decided)
-                    {
-                        deferred = true;
-                        continue;
-                    }
-
-                    outcome = decided;
-                    outcomes.Record(policy, outcome);
-                }
-
-                last = outcome;
-                if (!outcome.Allowed) continue;
+                last = await OutcomeAsync(policy, cancellationToken).ConfigureAwait(false);
+                if (!last.Allowed) continue;
                 allowed = true;
                 break;
             }
 
-            if (allowed || deferred) continue;
-            return new(Forbid(last), ScopesOf([group]));
+            if (!allowed) return new(Forbid(last), ScopesOf([group]));
         }
 
         return AuthorizationDecision.Allowed;
     }
 
-    // Null: the policy reads the request and there is none here.
-    private async ValueTask<PolicyOutcome?> EvaluateAsync(PolicyRequirement policy, ISecurityContext context, bool atTheEdge, CancellationToken cancellationToken)
+    /// <summary>
+    ///     Decides one policy for the caller, as the edge does for each policy an endpoint names. Its outcome is recorded, so the plan of the
+    ///     request finds it and the policy doesn't run again.
+    /// </summary>
+    /// <param name="policy">The policy.</param>
+    /// <param name="cancellationToken">The cancellation token of the call.</param>
+    public async ValueTask<AuthorizationDecision> AuthorizeAsync(PolicyRequirement policy, CancellationToken cancellationToken)
     {
+        ArgumentNullException.ThrowIfNull(policy);
+        if (IsAnonymous(Caller)) return new(new Unauthorized("Authentication is required."), [.. policy.Scopes]);
+
+        var outcome = await OutcomeAsync(policy, cancellationToken).ConfigureAwait(false);
+        return outcome.Allowed ? AuthorizationDecision.Allowed : new(Forbid(outcome), [.. policy.Scopes]);
+    }
+
+    // What the policy decides for this call: recorded the first time, then reused. The declared scopes are checked before the policy runs.
+    private async ValueTask<PolicyOutcome> OutcomeAsync(PolicyRequirement policy, CancellationToken cancellationToken)
+    {
+        if (outcomes.TryGet(policy, out var outcome)) return outcome;
+
         var granted = _granted ??= GrantedScopes();
         List<string>? missing = null;
         foreach (var scope in policy.Scopes)
@@ -122,19 +104,18 @@ public sealed class RequestAuthorizer(
             if (!granted.Contains(scope)) ( missing ??= [] ).Add(scope);
         }
 
-        if (missing is { }) return new PolicyOutcome(false, missing, null);
-        if (atTheEdge && plans.ReadsTheRequest(policy.PolicyType)) return null;
+        if (missing is { })
+        {
+            outcome = new(false, missing, null);
+        }
+        else
+        {
+            var result = await policy.Evaluate(services, Caller, cancellationToken).ConfigureAwait(false);
+            outcome = result.IsSuccess ? PolicyOutcome.Success : new(false, [], result.Error);
+        }
 
-        try
-        {
-            var result = await policy.Evaluate(services, context, cancellationToken).ConfigureAwait(false);
-            return result.IsSuccess ? PolicyOutcome.Success : new PolicyOutcome(false, [], result.Error);
-        }
-        catch (RequestNotAvailableException) when (atTheEdge)
-        {
-            plans.MarkReadsTheRequest(policy.PolicyType);
-            return null;
-        }
+        outcomes.Record(policy, outcome);
+        return outcome;
     }
 
     private HashSet<string> GrantedScopes()

@@ -50,20 +50,6 @@ public sealed class MinimumClearance : IAuthorizationPolicy<int>
         );
 }
 
-[Policy("Owner")]
-public sealed class Owner(PolicyCalls calls) : IAuthorizationPolicy
-{
-    public ValueTask<UnitResult<AuthorizationFailure>> EvaluateAsync(ISecurityContext ctx, CancellationToken ct = default)
-    {
-        calls.Record("Owner");
-        return new(
-            ctx is IResourceSecurityContext<RenameRocket> { Resource.Owner: var owner } && owner == ctx.Id
-                ? UnitResult<AuthorizationFailure>.Success()
-                : UnitResult<AuthorizationFailure>.Failure(new("owner.other", "Only the owner may rename a rocket."))
-        );
-    }
-}
-
 /// <summary>What ran, so a test can tell a policy ran once.</summary>
 public sealed class PolicyCalls
 {
@@ -104,10 +90,6 @@ public readonly record struct LaunchRocket(string Name) : IRequest<RocketResult>
 [RequirePolicy("MinimumClearance", 3)]
 public readonly record struct InspectRocket(string Name) : IRequest<RocketResult>;
 
-[RequirePolicy("Rockets.Write")]
-[RequirePolicy("Owner")]
-public readonly record struct RenameRocket(string Name, string Owner) : IRequest<RocketResult>;
-
 [RequirePolicy("Rockets.Read")]
 public readonly record struct ListRockets : IStreamRequest<RocketModel>;
 
@@ -117,7 +99,6 @@ public class Handlers
       IRequestHandler<DeleteRocket, AnyResult>,
       IRequestHandler<LaunchRocket, RocketResult>,
       IRequestHandler<InspectRocket, RocketResult>,
-      IRequestHandler<RenameRocket, RocketResult>,
       IStreamRequestHandler<ListRockets, RocketModel>
 {
     public ValueTask<RocketModel> Handle(Ping request, CancellationToken ct) => new(new RocketModel("ping"));
@@ -125,7 +106,6 @@ public class Handlers
     public ValueTask<AnyResult> Handle(DeleteRocket request, CancellationToken ct) => new(new RocketModel(request.Name));
     public ValueTask<RocketResult> Handle(LaunchRocket request, CancellationToken ct) => new(new RocketModel(request.Name));
     public ValueTask<RocketResult> Handle(InspectRocket request, CancellationToken ct) => new(new RocketModel(request.Name));
-    public ValueTask<RocketResult> Handle(RenameRocket request, CancellationToken ct) => new(new RocketModel(request.Name));
 
     public async IAsyncEnumerable<RocketModel> Handle(ListRockets request, [System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken ct)
     {

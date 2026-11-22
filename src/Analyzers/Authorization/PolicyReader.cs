@@ -34,8 +34,18 @@ internal sealed record RequestPoliciesModel(EquatableArray<PolicyGroupModel> Gro
 
     public bool IsEmpty => Groups.IsEmpty;
 
-    /// <summary>The id the request's plan has at the edge: the request's full type name, as <c>Type.FullName</c> writes it.</summary>
-    public static string PlanId(ITypeSymbol request) => request.MetadataName();
+    /// <summary>
+    ///     The names an endpoint carries for the policies every caller must pass (the <c>[RequirePolicy]</c> entries): each the policy's name,
+    ///     with the arguments the request passes it, which is the key the runtime knows the policy by.
+    /// </summary>
+    public IEnumerable<string> EdgePolicies =>
+        Groups.Where(g => g.Policies.Length == 1).Select(g => g.Policies[0]).Select(p => p.ArgumentsKey.Length == 0 ? p.Name : p.Name + "(" + p.ArgumentsKey + ")").Distinct(StringComparer.Ordinal);
+
+    /// <summary>
+    ///     Whether a group of alternatives (<c>[RequireAnyPolicy]</c>) is left to the pipeline: an endpoint has no way to say "any of these",
+    ///     so it only requires a caller.
+    /// </summary>
+    public bool HasAlternatives => Groups.Any(g => g.Policies.Length > 1);
 
     /// <summary>
     ///     The scopes that satisfy the request, as alternatives: any one set is enough. AND groups add their scopes to every alternative, an
@@ -83,7 +93,7 @@ internal static class PolicyReader
     public const string Unauthorized = "Rocket.Surgery.LaunchPad.Foundation.Unauthorized";
     public const string Forbidden = "Rocket.Surgery.LaunchPad.Foundation.Forbidden";
 
-    public const string PolicyPrefix = "launchpad:";
+    public const string RequestPoliciesAttribute = "Rocket.Surgery.LaunchPad.Authorization.RequestPoliciesAttribute";
     public const string EdgeType = "Rocket.Surgery.LaunchPad.AspNetCore.Authorization.AuthorizationProblems";
     public const string GraphQLAuthorizeAttribute = "HotChocolate.Authorization.AuthorizeAttribute";
     public const string GraphQLScopesAttribute = "Rocket.Surgery.LaunchPad.HotChocolate.Authorization.GraphQLRequiresScopesAttribute";

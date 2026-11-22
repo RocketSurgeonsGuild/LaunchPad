@@ -139,9 +139,12 @@ internal sealed record OperationModel(
     string? ResponseSummary = null,
     EquatableArray<DescriptionModel> ResponseDescriptions = default,
     RpcModel? Rpc = null,
-    // Authorization (docs/design/authorization.md): the edge policy of a request with policies, where the server has the edge; the scopes
-    // its policies declare, as alternatives; and whether the GraphQL schema states them.
-    string? RequestPolicy = null,
+    // Authorization (docs/design/authorization.md), where the server has LaunchPad's edge: the request, whose plan states the scopes of the
+    // endpoint; the policies of the request the endpoint names (they are in Policies too, for the transports that read those); whether a
+    // group of alternatives leaves the endpoint requiring only a caller; the scopes as alternatives; whether the GraphQL schema states them.
+    string? RequestPolicies = null,
+    EquatableArray<string> RequestPolicyNames = default,
+    bool RequestAuthenticated = false,
     EquatableArray<EquatableArray<string>> ScopeAlternatives = default,
     bool GraphQLScopes = false
 )
@@ -149,7 +152,7 @@ internal sealed record OperationModel(
     public bool HasBody => Verb is HttpVerb.Post or HttpVerb.Put or HttpVerb.Patch;
 
     /// <summary>The operation names a policy, roles or authentication schemes and doesn't allow anonymous callers: it can answer 401 and 403.</summary>
-    public bool RequiresAuthorization => !AllowAnonymous && ( !Policies.IsEmpty || !Roles.IsEmpty || !AuthenticationSchemes.IsEmpty );
+    public bool RequiresAuthorization => !AllowAnonymous && ( !Policies.IsEmpty || !Roles.IsEmpty || !AuthenticationSchemes.IsEmpty || RequestAuthenticated );
 
     /// <summary>The type the transport carries: the input type when one is declared, otherwise the request.</summary>
     public string WireType => InputType ?? RequestType;

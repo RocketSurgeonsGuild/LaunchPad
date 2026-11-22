@@ -28,13 +28,13 @@ public sealed class OpenApiAuthorizationOptions
     public IDictionary<string, string> ScopeDescriptions { get; } = new Dictionary<string, string>(StringComparer.Ordinal);
 }
 
-/// <summary>The plans of the requests an endpoint's operations dispatch, from the edge policies the generated servers name on it.</summary>
+/// <summary>The plans of the requests an endpoint dispatches, from the <see cref="RequestPoliciesAttribute" /> the generated servers put on it.</summary>
 internal static class EndpointPlans
 {
-    public static IEnumerable<RequestAuthorizationPlan> Of(IList<object> metadata, RequestAuthorizationPlans plans) =>
+    public static IEnumerable<RequestAuthorizationPlan> Of(IEnumerable<object> metadata, RequestAuthorizationPlans plans) =>
         metadata.OfType<IAllowAnonymous>().Any()
             ? []
-            : metadata.OfType<IAuthorizeData>().Select(data => plans.FindByPolicyName(data.Policy)).OfType<RequestAuthorizationPlan>();
+            : metadata.OfType<RequestPoliciesAttribute>().Select(request => plans.Find(request.RequestType)).OfType<RequestAuthorizationPlan>();
 }
 
 /// <summary>

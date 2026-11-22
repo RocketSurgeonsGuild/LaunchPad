@@ -137,6 +137,14 @@ public sealed class ControllerGenerator : IIncrementalGenerator
             yield return Attribute(Authorize, [.. settings]);
         }
 
+        // The request's own policies: a group of alternatives is left to the pipeline, so the action only requires a caller; and the request
+        // itself, whose plan states the scopes of the operation in the OpenAPI document.
+        if (operation.RequestAuthenticated) yield return Attribute(Authorize);
+        if (operation.RequestPolicies is { } requestPolicies)
+        {
+            yield return Attribute("global::Rocket.Surgery.LaunchPad.Authorization.RequestPolicies", Arg(TypeOf(Type(requestPolicies))));
+        }
+
         if (operation.AllowAnonymous) yield return Attribute("global::Microsoft.AspNetCore.Authorization.AllowAnonymous");
         if (host.HasApiVersioning && ServerEmit.Version(host, operation) is { } version) yield return Attribute("global::Asp.Versioning.MapToApiVersion", Arg(Literal(version)));
         foreach (var produces in Produces(operation)) yield return produces;

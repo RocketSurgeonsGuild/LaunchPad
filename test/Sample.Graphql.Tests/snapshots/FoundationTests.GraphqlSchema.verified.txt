@@ -51,58 +51,42 @@ type Query {
 type Mutation {
   "Create a launch record"
   createLaunchRecord(request: CreateLaunchRecordRequest!): CreateLaunchRecordResponse!
-    @authorize(
-      policy: "launchpad:Sample.Core.Operations.LaunchRecords.CreateLaunchRecord+Request"
-    )
+    @authorize(policy: "LaunchRecords.Write")
     @requiresScopes(scopes: [["launch-records:write"]])
     @cost(weight: "10")
   "The launch record update request"
   editLaunchRecord(request: EditLaunchRecordRequest!): LaunchRecordModel!
-    @authorize(
-      policy: "launchpad:Sample.Core.Operations.LaunchRecords.EditLaunchRecord+Request"
-    )
+    @authorize(policy: "LaunchRecords.Write")
     @requiresScopes(scopes: [["launch-records:write"]])
     @cost(weight: "10")
   "The patch request"
   patchLaunchRecord(request: EditLaunchRecordPatchRequestInput!): LaunchRecordModel!
-    @authorize(
-      policy: "launchpad:Sample.Core.Operations.LaunchRecords.EditLaunchRecord+PatchRequest"
-    )
+    @authorize(policy: "LaunchRecords.Write")
     @requiresScopes(scopes: [["launch-records:write"]])
     @cost(weight: "10")
   "The request to delete a launch record"
   deleteLaunchRecord(request: DeleteLaunchRecordRequest!): Boolean!
-    @authorize(
-      policy: "launchpad:Sample.Core.Operations.LaunchRecords.DeleteLaunchRecord+Request"
-    )
+    @authorize(policy: "LaunchRecords.Write")
     @requiresScopes(scopes: [["launch-records:write"]])
     @cost(weight: "10")
   "The operation to create a new rocket record"
   createRocket(request: CreateRocketRequest!): CreateRocketResponse!
-    @authorize(
-      policy: "launchpad:Sample.Core.Operations.Rockets.CreateRocket+Request"
-    )
+    @authorize(policy: "Rockets.Write")
     @requiresScopes(scopes: [["rockets:write"]])
     @cost(weight: "10")
   "The edit operation to update a rocket"
   editRocket(request: EditRocketRequest!): RocketModel!
-    @authorize(
-      policy: "launchpad:Sample.Core.Operations.Rockets.EditRocket+Request"
-    )
+    @authorize(policy: "Rockets.Write")
     @requiresScopes(scopes: [["rockets:write"]])
     @cost(weight: "10")
   "The changes to apply to a rocket. They are applied to the rocket's current values, and the resulting Request is validated and sent through the mediator."
   patchRocket(request: EditRocketPatchRequestInput!): RocketModel!
-    @authorize(
-      policy: "launchpad:Sample.Core.Operations.Rockets.EditRocket+PatchRequest"
-    )
+    @authorize(policy: "Rockets.Write")
     @requiresScopes(scopes: [["rockets:write"]])
     @cost(weight: "10")
   "The request to remove a rocket from the system"
   deleteRocket(request: DeleteRocketRequest!): Boolean!
-    @authorize(
-      policy: "launchpad:Sample.Core.Operations.Rockets.DeleteRocket+Request"
-    )
+    @authorize(policy: "Rockets.Write")
     @requiresScopes(scopes: [["rockets:write"]])
     @cost(weight: "10")
 }

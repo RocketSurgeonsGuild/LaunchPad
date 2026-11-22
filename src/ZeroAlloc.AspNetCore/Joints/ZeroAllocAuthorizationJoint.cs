@@ -21,8 +21,8 @@ namespace Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 /// <remarks>
 ///     <para>
 ///         The caller policies see is the one ASP.NET Core authenticated, unless the application registered its own
-///         <see cref="ISecurityContext" />. The generated servers name a policy of the form <c>launchpad:{request}</c> on an operation whose
-///         request has policies; it runs the request's plan and records the outcomes the mediator pipeline then reuses. What it rejects is
+///         <see cref="ISecurityContext" />. The generated servers name the policies of a request on its operation; each is answered with an
+///         ASP.NET Core policy that runs it and records the outcome the mediator pipeline then reuses. What it rejects is
 ///         answered as the <see cref="Unauthorized" /> or <see cref="Forbidden" /> case, with the scopes in <c>WWW-Authenticate</c>.
 ///     </para>
 ///     <para>
@@ -48,7 +48,7 @@ public class ZeroAllocAuthorizationJoint : IServiceJoint
 
         services.AddSingleton<IAuthorizationPolicyProvider, RequestPolicyProvider>();
         services.AddSingleton<IAuthorizationMiddlewareResultHandler, RequestPoliciesResultHandler>();
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IAuthorizationHandler, RequestPoliciesHandler>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IAuthorizationHandler, RequestPolicyHandler>());
 
         // A denial the pipeline throws (a stream request has no response to answer with) answers as its case.
         services.AddExceptionHandler(
