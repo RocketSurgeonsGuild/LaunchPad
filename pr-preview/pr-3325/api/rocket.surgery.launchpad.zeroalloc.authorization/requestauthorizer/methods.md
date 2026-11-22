@@ -5,56 +5,23 @@
 - Kind: `Methods`
 - Members: `3`
 
-Decides a request's plan for the caller of a call, policy by policy, recording each outcome in the call's [AuthorizationOutcomes](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/authorizationoutcomes.md) and reusing the ones already there. One for each call: the mediator pipeline and the edge both decide through it, so a policy runs once.
+Decides a request's plan for the caller of a call, policy by policy, recording each outcome in the call's [AuthorizationOutcomes](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/authorizationoutcomes.md) and reusing the ones already there. One for each call: the mediator pipeline and the edge both decide through it, so a policy runs once. A policy sees the caller and nothing of the request: it is the same check wherever it runs.
 
 <a id="authorizeasync"></a>
-<a id="authorizeasync-requestauthorizationplan-trequest-trequest-cancellationtoken"></a>
+<a id="authorizeasync-requestauthorizationplan-cancellationtoken"></a>
 
-## AuthorizeAsync(RequestAuthorizationPlan<TRequest>, TRequest, CancellationToken)
+## AuthorizeAsync(RequestAuthorizationPlan, CancellationToken)
 
-- Name: `AuthorizeAsync(RequestAuthorizationPlan<TRequest>, TRequest, CancellationToken)`
+- Name: `AuthorizeAsync(RequestAuthorizationPlan, CancellationToken)`
 - Returns: `ValueTask<AuthorizationDecision>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/ZeroAlloc.Authorization/RequestAuthorizer.cs#L63-L64)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/ZeroAlloc.Authorization/RequestAuthorizer.cs)
 
-Decides the plan with the request: every policy that has no outcome yet runs.
+Decides a request's plan for the caller: every policy that has no outcome yet for this call runs.
 
 ```csharp
 public sealed class RequestAuthorizer
 {
-    public ValueTask<AuthorizationDecision> AuthorizeAsync<TRequest>(
-        RequestAuthorizationPlan<TRequest> plan,
-        TRequest request,
-        CancellationToken cancellationToken)
-    {
-        // ...
-    }
-}
-```
-
-## Parameters
-
-- `plan` ([RequestAuthorizationPlan<TRequest>](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/requestauthorizationplan-1.md))
-  The request's plan.
-- `request` (`TRequest`)
-  The request.
-- `cancellationToken` (`CancellationToken`)
-  The cancellation token of the call.
-
-<a id="authorizeattheedgeasync"></a>
-<a id="authorizeattheedgeasync-requestauthorizationplan-cancellationtoken"></a>
-
-## AuthorizeAtTheEdgeAsync(RequestAuthorizationPlan, CancellationToken)
-
-- Name: `AuthorizeAtTheEdgeAsync(RequestAuthorizationPlan, CancellationToken)`
-- Returns: `ValueTask<AuthorizationDecision>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/ZeroAlloc.Authorization/RequestAuthorizer.cs#L75-L76)
-
-Decides the plan at the edge, before there is a request. A policy that reads the request is left for the pipeline, so the decision denies only what is certain.
-
-```csharp
-public sealed class RequestAuthorizer
-{
-    public ValueTask<AuthorizationDecision> AuthorizeAtTheEdgeAsync(
+    public ValueTask<AuthorizationDecision> AuthorizeAsync(
         RequestAuthorizationPlan plan,
         CancellationToken cancellationToken)
     {
@@ -70,6 +37,35 @@ public sealed class RequestAuthorizer
 - `cancellationToken` (`CancellationToken`)
   The cancellation token of the call.
 
+<a id="authorizeasync-policyrequirement-cancellationtoken"></a>
+
+## AuthorizeAsync(PolicyRequirement, CancellationToken)
+
+- Name: `AuthorizeAsync(PolicyRequirement, CancellationToken)`
+- Returns: `ValueTask<AuthorizationDecision>`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/ZeroAlloc.Authorization/RequestAuthorizer.cs)
+
+Decides one policy for the caller, as the edge does for each policy an endpoint names. Its outcome is recorded, so the plan of the request finds it and the policy doesn't run again.
+
+```csharp
+public sealed class RequestAuthorizer
+{
+    public ValueTask<AuthorizationDecision> AuthorizeAsync(
+        PolicyRequirement policy,
+        CancellationToken cancellationToken)
+    {
+        // ...
+    }
+}
+```
+
+## Parameters
+
+- `policy` ([PolicyRequirement](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/policyrequirement.md))
+  The policy.
+- `cancellationToken` (`CancellationToken`)
+  The cancellation token of the call.
+
 <a id="isanonymous"></a>
 <a id="isanonymous-isecuritycontext"></a>
 
@@ -78,7 +74,7 @@ public sealed class RequestAuthorizer
 - Name: `IsAnonymous(ISecurityContext)`
 - Modifiers: `static`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/ZeroAlloc.Authorization/RequestAuthorizer.cs#L50-L53)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/ZeroAlloc.Authorization/RequestAuthorizer.cs#L48-L51)
 
 Whether the caller has no identity.
 

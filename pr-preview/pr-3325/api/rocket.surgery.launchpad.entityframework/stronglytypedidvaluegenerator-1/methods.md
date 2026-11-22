@@ -15,7 +15,7 @@ Value generator for StronglyTypedIds
 - Name: `Next(EntityEntry)`
 - Modifiers: `override`
 - Returns: `T`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/EntityFramework/StronglyTypedIdValueGenerator.cs#L21)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/EntityFramework/StronglyTypedIdValueGenerator.cs#L21)
 
 Template method to be overridden by implementations to perform value generation.
 

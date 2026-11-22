@@ -14,7 +14,7 @@ Writes a `HealthChecks.HealthReport` as JSON in the shape the HealthChecks.UI da
 
 - Name: `Write(Utf8JsonWriter, HealthReport, JsonSerializerOptions?)`
 - Modifiers: `static`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/AspNetCore/HealthChecks/LaunchPadHealthCheckResponseWriter.cs#L71-L110)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/AspNetCore/HealthChecks/LaunchPadHealthCheckResponseWriter.cs#L71-L110)
 
 Writes the report as a JSON object.
 
@@ -48,7 +48,7 @@ public static class LaunchPadHealthCheckResponseWriter
 - Name: `WriteAsync(HttpContext, HealthReport)`
 - Modifiers: `static`
 - Returns: `Task`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/AspNetCore/HealthChecks/LaunchPadHealthCheckResponseWriter.cs#L52-L61)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/AspNetCore/HealthChecks/LaunchPadHealthCheckResponseWriter.cs#L52-L61)
 
 Writes the report to the response. Use it as a `HealthCheckOptions.ResponseWriter`.
 

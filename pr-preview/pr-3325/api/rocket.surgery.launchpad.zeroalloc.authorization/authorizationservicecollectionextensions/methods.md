@@ -15,7 +15,7 @@ Registers what authorizes requests by their policies. LaunchPad's generator writ
 - Name: `AddAuthorizationResponse(IServiceCollection, Func<Unauthorized, TResponse>, Func<Forbidden, TResponse>)`
 - Modifiers: `extension`
 - Returns: `IServiceCollection`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/ZeroAlloc.Authorization/AuthorizationServiceCollectionExtensions.cs#L56-L58)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/ZeroAlloc.Authorization/AuthorizationServiceCollectionExtensions.cs#L56-L58)
 
 Registers how a denial becomes a response, unless the response has it registered.
 
@@ -49,7 +49,7 @@ public static class AuthorizationServiceCollectionExtensions
 - Name: `AddLaunchPadAuthorization(IServiceCollection)`
 - Modifiers: `extension`
 - Returns: `IServiceCollection`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/ZeroAlloc.Authorization/AuthorizationServiceCollectionExtensions.cs#L20-L25)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/ZeroAlloc.Authorization/AuthorizationServiceCollectionExtensions.cs#L20-L25)
 
 Registers what every plan needs: the [RequestAuthorizer](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/requestauthorizer.md) and the [AuthorizationOutcomes](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/authorizationoutcomes.md) of each call, the [RequestAuthorizationPlans](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/requestauthorizationplans.md) of the application and the [RequestAuthorizationOptions](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/requestauthorizationoptions.md).
 
@@ -77,7 +77,7 @@ public static class AuthorizationServiceCollectionExtensions
 - Name: `AddRequestAuthorizationPlan(IServiceCollection, PolicyGroup[])`
 - Modifiers: `extension`
 - Returns: `IServiceCollection`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/ZeroAlloc.Authorization/AuthorizationServiceCollectionExtensions.cs#L34-L42)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/ZeroAlloc.Authorization/AuthorizationServiceCollectionExtensions.cs#L34-L42)
 
 Registers the plan of a request, unless it has one.
 

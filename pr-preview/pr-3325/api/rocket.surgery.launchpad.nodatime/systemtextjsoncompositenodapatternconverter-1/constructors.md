@@ -13,7 +13,7 @@ A JSON converter for types which can be represented by a single string value, pa
 ## SystemTextJsonCompositeNodaPatternConverter(Action<T>, IPattern<T>)
 
 - Name: `Constructor(Action<T>, IPattern<T>)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/NodaTime/SystemTextJsonCompositeNodaPatternConverter.cs#L25-L78)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/NodaTime/SystemTextJsonCompositeNodaPatternConverter.cs#L25-L78)
 
 A JSON converter for types which can be represented by a single string value, parsed or formatted from an `Text.IPattern`1`.
 
@@ -47,7 +47,7 @@ The first pattern formats; reading tries each pattern in turn. The value is also
 ## SystemTextJsonCompositeNodaPatternConverter(IPattern<T>)
 
 - Name: `Constructor(IPattern<T>)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/NodaTime/SystemTextJsonCompositeNodaPatternConverter.cs#L31)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/NodaTime/SystemTextJsonCompositeNodaPatternConverter.cs#L31)
 
 Creates a new instance with a pattern and no validator.
 

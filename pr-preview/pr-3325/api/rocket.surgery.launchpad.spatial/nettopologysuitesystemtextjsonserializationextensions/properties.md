@@ -14,7 +14,7 @@ Extensions for NetTopologySuite
 - Name: `TypeInfoResolver`
 - Modifiers: `static` `get`
 - Returns: `IJsonTypeInfoResolver`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/Spatial/NetTopologySuiteSystemTextJsonSerializationExtensions.cs#L24)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/Spatial/NetTopologySuiteSystemTextJsonSerializationExtensions.cs#L24)
 
 Resolves the metadata of the geometry and feature types from the converter factory in the options, without reflection, for when they are serialized at the root or as an `Object`.
 

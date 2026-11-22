@@ -5,25 +5,25 @@
 - Kind: `Methods`
 - Members: `2`
 
-The plans of the application, by the name the edge knows them by, and what the edge has learned about its policies. One for the application.
+The plans of the application, by request, and the policies they name, by the name an endpoint carries. One for the application.
 
 <a id="find"></a>
-<a id="find-string"></a>
+<a id="find-type"></a>
 
-## Find(string)
+## Find(Type)
 
-- Name: `Find(string)`
+- Name: `Find(Type)`
 - Modifiers: `nullable`
 - Returns: [RequestAuthorizationPlan?](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/requestauthorizationplan.md)
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/ZeroAlloc.Authorization/RequestAuthorizationPlan.cs#L187-L188)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/ZeroAlloc.Authorization/RequestAuthorizationPlan.cs#L161-L162)
 
-The plan of the request with this id, if it has policies.
+The plan of a request, if it has policies.
 
 ```csharp
 public sealed class RequestAuthorizationPlans
 {
     public RequestAuthorizationPlan? Find(
-        string id)
+        Type requestType)
     {
         // ...
     }
@@ -32,26 +32,26 @@ public sealed class RequestAuthorizationPlans
 
 ## Parameters
 
-- `id` (`string`)
-  The request's full type name.
+- `requestType` (`Type`)
+  The request.
 
-<a id="findbypolicyname"></a>
-<a id="findbypolicyname-string"></a>
+<a id="findpolicy"></a>
+<a id="findpolicy-string"></a>
 
-## FindByPolicyName(string?)
+## FindPolicy(string?)
 
-- Name: `FindByPolicyName(string?)`
+- Name: `FindPolicy(string?)`
 - Modifiers: `nullable`
-- Returns: [RequestAuthorizationPlan?](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/requestauthorizationplan.md)
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/ZeroAlloc.Authorization/RequestAuthorizationPlan.cs#L194-L196)
+- Returns: [PolicyRequirement?](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/policyrequirement.md)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/ZeroAlloc.Authorization/RequestAuthorizationPlan.cs#L171-L177)
 
-The plan an edge policy name stands for; null for any other policy name, and for a request without a plan.
+A policy some request names, by its [PolicyRequirement.Key](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/policyrequirement/properties.md#key): the policy's name, with the arguments the request passes it. Null for a name no request names, which is then a policy of the application's own.
 
 ```csharp
 public sealed class RequestAuthorizationPlans
 {
-    public RequestAuthorizationPlan? FindByPolicyName(
-        string? policyName)
+    public PolicyRequirement? FindPolicy(
+        string? name)
     {
         // ...
     }
@@ -60,5 +60,5 @@ public sealed class RequestAuthorizationPlans
 
 ## Parameters
 
-- `policyName` (`string?`)
+- `name` (`string?`)
   The policy name on an endpoint.

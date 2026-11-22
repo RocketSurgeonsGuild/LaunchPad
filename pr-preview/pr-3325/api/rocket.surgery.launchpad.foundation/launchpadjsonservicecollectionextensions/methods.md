@@ -15,7 +15,7 @@ Registers JSON type info resolvers for the `SystemTextJsonJoint` to chain into t
 - Name: `AddJsonTypeInfoResolver(IServiceCollection, IJsonTypeInfoResolver, int)`
 - Modifiers: `extension`
 - Returns: `IServiceCollection`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/Foundation/LaunchPadJsonServiceCollectionExtensions.cs#L31-L37)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/Foundation/LaunchPadJsonServiceCollectionExtensions.cs#L31-L37)
 
 Adds a JSON type info resolver, usually a source generated `Serialization.JsonSerializerContext`, to the front of the `JsonSerializerOptions.TypeInfoResolverChain` of the application's `Json.JsonSerializerOptions`, and of the ASP.NET Core HTTP and MVC JSON options when LaunchPad's ASP.NET Core package is used.
 

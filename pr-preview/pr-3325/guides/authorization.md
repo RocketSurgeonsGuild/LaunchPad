@@ -37,7 +37,8 @@ public sealed class RocketsWrite : IAuthorizationPolicy
 ```
 
 LaunchPad checks the scopes before the policy runs, so a policy that only requires scopes has nothing to decide. A policy with a rule
-of its own returns a failure with a reason. It can read the request through `IResourceSecurityContext<TRequest>`.
+of its own returns a failure with a reason. A policy sees the caller and nothing of the request, so it is the same check for
+every request that names it; a rule about what a request contains belongs in its handler, which answers `Forbidden` itself.
 
 ## Require it on a request
 
@@ -73,7 +74,12 @@ spaces; `RequestAuthorizationOptions.ScopeClaims` changes that.
 ## What each transport does
 
 The generated servers check a request's policies twice over, and run each policy once: at the **edge**, before the request is
-bound, and in the mediator pipeline. A policy that reads the request runs in the pipeline only.
+bound, and in the mediator pipeline.
+
+At the edge an operation carries the policies of its request by name, as `[Authorize(Policy = "Rockets.Write")]` would, and LaunchPad
+answers those names. Don't give an ASP.NET Core policy of your own the name of a request's policy: the request's policy is the one
+that answers. A `[RequireAnyPolicy]` group has no counterpart at the edge, so the operation then only requires a caller there and the
+pipeline decides the group.
 
 | Transport | A denial is answered as                                                          | The scopes are published as                                           |
 | --------- | -------------------------------------------------------------------------------- | --------------------------------------------------------------------- |

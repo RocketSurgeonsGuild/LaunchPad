@@ -15,7 +15,7 @@ How an `Foundation.Unauthorized` or `Foundation.Forbidden` problem is written ov
 - Name: `Challenge(AuthorizationDecision, string?)`
 - Modifiers: `static` `nullable`
 - Returns: `string?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/ZeroAlloc.AspNetCore/Authorization/AuthorizationProblems.cs#L53-L65)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/ZeroAlloc.AspNetCore/Authorization/AuthorizationProblems.cs#L53-L65)
 
 The `WWW-Authenticate` challenge of a denial (RFC 6750): the scopes to ask for, and `insufficient_scope` when the caller is known and lacks one. Null when the denial names no scopes.
 
@@ -46,7 +46,7 @@ public static class AuthorizationProblems
 - Name: `Details(Problem)`
 - Modifiers: `static`
 - Returns: `ProblemDetails`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/ZeroAlloc.AspNetCore/Authorization/AuthorizationProblems.cs#L30-L42)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/ZeroAlloc.AspNetCore/Authorization/AuthorizationProblems.cs#L30-L42)
 
 The problem as the problem details a union case answers with: the case's name in `case`, and its data.
 
@@ -74,7 +74,7 @@ public static class AuthorizationProblems
 - Name: `StatusCode(Problem)`
 - Modifiers: `static`
 - Returns: `int`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/ZeroAlloc.AspNetCore/Authorization/AuthorizationProblems.cs#L24)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/ZeroAlloc.AspNetCore/Authorization/AuthorizationProblems.cs#L24)
 
 The status of the problem: 401 for `Foundation.Unauthorized`, otherwise 403.
 

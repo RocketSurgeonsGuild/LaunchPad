@@ -13,7 +13,7 @@ An amount of money in a currency.
 ## Money(decimal, CurrencyCode)
 
 - Name: `Constructor(decimal, CurrencyCode)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/Primitives/StrongTypes/Money.cs#L24-L29)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/Primitives/StrongTypes/Money.cs#L24-L29)
 
 Creates an amount of money.
 

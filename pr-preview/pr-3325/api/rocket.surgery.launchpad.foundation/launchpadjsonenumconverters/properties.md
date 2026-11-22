@@ -14,7 +14,7 @@ The enum converters the `SystemTextJsonJoint` adds to the `Json.JsonSerializerOp
 - Name: `Converters`
 - Modifiers: `static` `get`
 - Returns: `IReadOnlyCollection<JsonConverter>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.485b8b823e39f66de1cc144d4dd7b3bfd6b45f6e/src/Foundation/LaunchPadJsonEnumConverters.cs#L39-L44)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.b12891a76083b718e1ed50b524f1c30a2c5447d7/src/Foundation/LaunchPadJsonEnumConverters.cs#L39-L44)
 
 The converters registered so far.
 
