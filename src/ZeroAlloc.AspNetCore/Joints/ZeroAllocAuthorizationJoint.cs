@@ -42,9 +42,8 @@ public class ZeroAllocAuthorizationJoint : IServiceJoint
     {
         services.AddHttpContextAccessor();
         services.AddAuthorization();
-        services.AddOptions<RequestAuthorizationOptions>();
+        services.AddLaunchPadAuthorization();
         services.AddOptions<OpenApiAuthorizationOptions>();
-        services.TryAddScoped<AuthorizationOutcomes>();
         services.TryAddScoped<ISecurityContext, HttpSecurityContext>();
 
         services.AddSingleton<IAuthorizationPolicyProvider, RequestPolicyProvider>();

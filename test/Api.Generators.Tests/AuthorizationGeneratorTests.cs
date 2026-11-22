@@ -251,7 +251,49 @@ public class AuthorizationGeneratorTests() : GeneratorTest()
              .AddReferences(FrameworkReferences)
              .AddReferences(MediatorAssemblies(Mediator.ZeroAlloc))
              .AddReferences(AuthorizationAssemblies)
-             .AddSources(source)
+             .AddSources(source, RegistrationJoint)
              .Build()
              .GenerateAsync(TestContext.CancellationToken);
+
+    // The joint the template of Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization writes into a project, by name: where it is, the generator
+    // writes the registration method it calls.
+    private const string RegistrationJoint = """
+        namespace Rocket.Surgery.LaunchPad.Authorization.Generated
+        {
+            internal sealed class LaunchPadRequestAuthorizationJoint
+            {
+                public void Register(Microsoft.Extensions.DependencyInjection.IServiceCollection services) => services.AddLaunchPadRequestAuthorization();
+            }
+        }
+        """;
+
+    [Test]
+    public async Task Should_Write_No_Registration_Without_The_Joint()
+    {
+        var result = await GeneratorTestContextBuilder
+                          .Create()
+                          .WithLogger(Logger)
+                          .WithLanguageVersion(LanguageVersion.Preview)
+                          .WithAssemblyLoadContext(AssemblyLoadContext)
+                          .WithProjectName("Contracts")
+                          .WithGenerator<AuthorizationPlanGenerator>()
+                          .AddReferences(FrameworkReferences)
+                          .AddReferences(MediatorAssemblies(Mediator.ZeroAlloc))
+                          .AddReferences(AuthorizationAssemblies)
+                          .AddSources(
+                               Usings + Policies + """
+
+                               public sealed record RocketModel(string Id);
+                               public union RocketResult(RocketModel, Unauthorized, Forbidden);
+
+                               [RequirePolicy("Rockets.Read")]
+                               public readonly record struct GetRocket(string Id) : IRequest<RocketResult>;
+                               """
+                           )
+                          .Build()
+                          .GenerateAsync(TestContext.CancellationToken);
+
+        AssertCompiles(result);
+        await result.Results.Values.SelectMany(r => r.SyntaxTrees).Should().BeEmpty();
+    }
 }

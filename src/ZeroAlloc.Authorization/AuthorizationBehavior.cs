@@ -1,3 +1,6 @@
+using Microsoft.Extensions.DependencyInjection;
+
+using ZeroAlloc.Authorization;
 using ZeroAlloc.Mediator;
 
 // The parameter order is ZeroAlloc.Mediator's contract for a pipeline behavior.
@@ -11,9 +14,16 @@ namespace Rocket.Surgery.LaunchPad.Authorization;
 ///     without policies passes straight through.
 /// </summary>
 /// <remarks>
-///     Policies the edge already decided for this call are not run again: their outcomes are in the call's
-///     <see cref="AuthorizationOutcomes" />. A stream request has no response to answer with, so its denial throws
-///     <see cref="AuthorizationDeniedException" />.
+///     <para>
+///         The plan of a request, and how a denial becomes its response, are registered with the services of the application: LaunchPad's
+///         generator writes <c>AddLaunchPadRequestAuthorization()</c> for each project, and the joint LaunchPad writes beside it applies it.
+///         A request that has a policy attribute and no plan is not let through: it throws, naming the registration that is missing.
+///     </para>
+///     <para>
+///         Policies the edge already decided for this call are not run again: their outcomes are in the call's
+///         <see cref="AuthorizationOutcomes" />. A stream request has no response to answer with, so its denial throws
+///         <see cref="AuthorizationDeniedException" />.
+///     </para>
 /// </remarks>
 [PublicAPI]
 [PipelineBehavior(Order = -1000)]
@@ -30,13 +40,7 @@ public sealed class AuthorizationBehavior : IPipelineBehavior
         CancellationToken ct,
         Func<TRequest, CancellationToken, ValueTask<TResponse>> next
     )
-        where TRequest : IRequest<TResponse>
-    {
-        ArgumentNullException.ThrowIfNull(next);
-        return RequestAuthorizationPlan<TRequest>.Instance is { } plan
-            ? AuthorizeAsync(plan, request, Services(PipelineBehaviorServices.Current, plan), ct, next)
-            : next(request, ct);
-    }
+        where TRequest : IRequest<TResponse> => Handle(request, PipelineBehaviorServices.Current, ct, next);
 
     /// <summary>Checks the request's policies with the services of the request being dispatched.</summary>
     /// <typeparam name="TRequest">The request.</typeparam>
@@ -47,16 +51,14 @@ public sealed class AuthorizationBehavior : IPipelineBehavior
     /// <param name="next">The rest of the pipeline.</param>
     public static ValueTask<TResponse> Handle<TRequest, TResponse>(
         TRequest request,
-        IServiceProvider services,
+        IServiceProvider? services,
         CancellationToken ct,
         Func<TRequest, CancellationToken, ValueTask<TResponse>> next
     )
         where TRequest : IRequest<TResponse>
     {
         ArgumentNullException.ThrowIfNull(next);
-        return RequestAuthorizationPlan<TRequest>.Instance is { } plan
-            ? AuthorizeAsync(plan, request, Services(services, plan), ct, next)
-            : next(request, ct);
+        return Plan<TRequest>(services) is { } plan ? AuthorizeAsync(plan, request, services!, ct, next) : next(request, ct);
     }
 
     /// <summary>Checks a stream request's policies before its handler runs; a denial throws <see cref="AuthorizationDeniedException" />.</summary>
@@ -66,8 +68,9 @@ public sealed class AuthorizationBehavior : IPipelineBehavior
     /// <param name="ct">The cancellation token of the enumeration.</param>
     public static async ValueTask CheckStream<TRequest>(TRequest request, IServiceProvider? services, CancellationToken ct)
     {
-        if (RequestAuthorizationPlan<TRequest>.Instance is not { } plan) return;
-        var decision = await RequestAuthorizer.AuthorizeAsync(plan, request, Services(services ?? PipelineBehaviorServices.Current, plan), ct).ConfigureAwait(false);
+        services ??= PipelineBehaviorServices.Current;
+        if (Plan<TRequest>(services) is not { } plan) return;
+        var decision = await services!.GetRequiredService<RequestAuthorizer>().AuthorizeAsync(plan, request, ct).ConfigureAwait(false);
         if (decision.Problem is { } problem) throw new AuthorizationDeniedException(problem);
     }
 
@@ -79,20 +82,32 @@ public sealed class AuthorizationBehavior : IPipelineBehavior
         Func<TRequest, CancellationToken, ValueTask<TResponse>> next
     )
     {
-        var decision = await RequestAuthorizer.AuthorizeAsync(plan, request, services, ct).ConfigureAwait(false);
-        return decision.Problem switch
+        var decision = await services.GetRequiredService<RequestAuthorizer>().AuthorizeAsync(plan, request, ct).ConfigureAwait(false);
+        return  decision.Problem is not { } problem 
+            ?  await next(request, ct).ConfigureAwait(false) 
+            :  (problem, services.GetService<AuthorizationResponse<TResponse>>()) switch
         {
-            null => await next(request, ct).ConfigureAwait(false),
-            Unauthorized unauthorized when AuthorizationResponse<TResponse>.Unauthorized is { } answer => answer(unauthorized),
-            Forbidden forbidden when AuthorizationResponse<TResponse>.Forbidden is { } answer => answer(forbidden),
-            var problem => throw new AuthorizationDeniedException(problem),
+            (Unauthorized unauthorized, { } response) => response.Unauthorized(unauthorized),
+            (Forbidden forbidden, { } response) => response.Forbidden(forbidden),
+            _ => throw new AuthorizationDeniedException(problem),
         };
     }
 
-    // A request with policies is never let through because nothing could decide them.
-    private static IServiceProvider Services(IServiceProvider? services, RequestAuthorizationPlan plan) =>
-        services
-     ?? throw new InvalidOperationException(
-            $"{plan.Id} has policies, and was dispatched without the services of a call to check them with. Dispatch it through IMediator resolved from a service scope."
-        );
+    // The plan of the request, from the services of the call; null for a request without policies. A request with a policy attribute is
+    // never let through because its plan was not registered, or because there are no services to find it in.
+    private static RequestAuthorizationPlan<TRequest>? Plan<TRequest>(IServiceProvider? services) =>
+        services?.GetService<RequestAuthorizationPlan<TRequest>>()
+     ?? ( HasPolicies<TRequest>.Value
+            ? throw new InvalidOperationException(
+                services is null
+                    ? $"{typeof(TRequest)} has policies, and was dispatched without the services of a call to check them with. Dispatch it through IMediator resolved from a service scope."
+                    : $"{typeof(TRequest)} has policies, but no authorization plan is registered for it. Apply the joints of its assembly (ConfigureDovetail), or call AddLaunchPadRequestAuthorization() of that assembly on the services."
+            )
+            : null );
+
+    // Read once for each request type, and only to refuse a request whose plan is missing.
+    private static class HasPolicies<TRequest>
+    {
+        public static readonly bool Value = typeof(TRequest).IsDefined(typeof(RequirePolicyAttribute), false) || typeof(TRequest).IsDefined(typeof(RequireAnyPolicyAttribute), false);
+    }
 }

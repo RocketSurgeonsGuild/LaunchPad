@@ -1,0 +1,7 @@
+<Project>
+    <!-- The joint that registers the authorization plans of the project's requests, as a template. -->
+    <Import
+        Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization.Templates.targets"
+        Condition="'$(_LaunchPadAuthorizationTemplatesImported)' != 'true'"
+    />
+</Project>

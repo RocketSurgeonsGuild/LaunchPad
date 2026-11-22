@@ -48,7 +48,7 @@ ZeroAlloc.Authorization 2.3 is host-neutral and AOT-safe. LaunchPad uses its:
 - `[Policy("Name")]` classes implementing `IAuthorizationPolicy` (or `IAuthorizationPolicy<T1..T3>` for a policy with arguments);
 - `[RequirePolicy(name, args…)]` (stacked attributes are AND) and `[RequireAnyPolicy(names…)]` (an OR group) on a request;
 - `ISecurityContext` (`Id`, `Roles`, `Claims`) and `IResourceSecurityContext<TResource>`, through which a policy reads the request;
-- diagnostics ZAUTH001 to ZAUTH009, and `AddZeroAllocAuthorization()`, which registers every policy as a scoped service. A policy that is not registered is created with its dependencies from the call's services, so an application need not call it.
+- diagnostics ZAUTH001 to ZAUTH009. LaunchPad registers each policy a request names itself, as a scoped service, so an application need not call `AddZeroAllocAuthorization()`.
 
 What it lacks, which LaunchPad adds:
 
@@ -62,11 +62,17 @@ What it lacks, which LaunchPad adds:
 
 ## 3. Evaluation
 
-**The plan.** For each request with a policy attribute, in the project that declares it, the generator writes the request's authorization plan and registers it from a module initializer in a static generic cache (no reflection, no service lookup):
+**The plan.** For each request with a policy attribute, in the project that declares it, the generator writes the request's authorization plan into `AddLaunchPadRequestAuthorization()`, which registers it with the application's services:
 
 - its groups, in attribute order: each an AND entry (one policy with its constant arguments) or an OR group (several policies);
 - per policy: its name and arguments, the scopes it declares, and a delegate that resolves the policy class from the request's services and calls `EvaluateAsync`;
 - how to answer: `Unauthorized` and `Forbidden` converted to the response union.
+
+**The registration.** Everything is a service: nothing is static, and nothing runs when an assembly loads.
+
+- `AddLaunchPadRequestAuthorization()` is written into each project, internal to it. It registers the project's plans (each as `RequestAuthorizationPlan<TRequest>`, and among all `RequestAuthorizationPlan`s for the edge), an `AuthorizationResponse<TResponse>` per response union, and each policy class as a scoped service.
+- A joint calls it. The package ships the joint as a template (`src/ZeroAlloc.Authorization/build/LaunchPadRequestAuthorizationJoint.cs.template`), written into every project that references the package and runs Dovetail's generator and LaunchPad's analyzer, the way Foundation ships the joint of `[Mutable]` validators. The generator writes the method only where the joint is. An application without Dovetail calls the method of each assembly itself.
+- `RequestAuthorizer` is a scoped service that decides a plan for the call: it is given the call's services, its authorization outcomes and the application's `RequestAuthorizationPlans`, and resolves the caller and the policies from the services.
 
 **The behavior.** `AuthorizationBehavior` is a ZeroAlloc.Mediator pipeline behavior at order `-1000`, ahead of validation. For a request with a plan:
 
@@ -75,7 +81,7 @@ What it lacks, which LaunchPad adds:
 3. Otherwise the policy's declared scopes are checked against the caller's scopes, and only then its `EvaluateAsync` runs, with the request as its resource. The outcome is recorded.
 4. A group that fails answers `Forbidden`, with the failure's reason as its detail, and the missing scopes when that was why.
 
-A request without a plan passes straight through. A stream request is checked by the behavior's `CheckStream`, which the mediator calls before the stream handler; it has no item to answer with, so a denial throws `AuthorizationDeniedException` carrying the problem, and each transport writes it as that case.
+A request without a policy attribute passes straight through. One that has a policy attribute and no plan in the services is refused with an exception that names the missing registration, so a forgotten registration never lets a request through. A stream request is checked by the behavior's `CheckStream`, which the mediator calls before the stream handler; it has no item to answer with, so a denial throws `AuthorizationDeniedException` carrying the problem, and each transport writes it as that case.
 
 **The caller's scopes** are read from the security context's `scope` claim (space separated, OAuth and Keycloak) and `scp` (Entra), both by default; `RequestAuthorizationOptions.ScopeClaims` changes them.
 
@@ -87,7 +93,7 @@ The generated servers also reject at the edge, before the request is bound, thro
 
 - **The bridge.** An `IAuthorizationPolicyProvider` in `ZeroAlloc.AspNetCore` answers a policy name of the form `launchpad:{request type}` with an ASP.NET Core policy holding one requirement, which the generated endpoint names (`RequireAuthorization`, `[Authorize]`, and HotChocolate's `[Authorize]` for a field). Any other name goes to the default provider, so an application's own policies are untouched.
 - **The handler** of that requirement runs the request's plan as the behavior does, with a security context that has no request, and records each outcome. The behavior then finds them and runs nothing twice.
-- **A policy that reads the request** can't run there. The edge's security context answers `Resource` by throwing; the handler takes that as "not decided here", records nothing for that policy and remembers the policy class, so later calls skip it at the edge. The behavior runs it with the request.
+- **A policy that reads the request** can't run there. The edge's security context answers `Resource` by throwing; the handler takes that as "not decided here", records nothing for that policy and remembers the policy class (in `RequestAuthorizationPlans`, for the application), so later calls skip it at the edge. The behavior runs it with the request.
 - **The answer.** The authorization middleware's result handler lets the authentication schemes challenge or forbid, then writes the body: problem details with `case`, as the generated HTTP servers write the `Unauthorized` or `Forbidden` case, or for a gRPC call the status with the `case` trailer and no message. A 401, and a 403 for missing scopes, carry `WWW-Authenticate: Bearer` with `scope="…"`, and `error="insufficient_scope"` on the 403 ([RFC 6750](https://www.rfc-editor.org/rfc/rfc6750#section-3)); a gRPC client reads it among the trailers. A GraphQL field is rejected by HotChocolate's own authorization, which asks ASP.NET Core for the policy; an error filter gives its error the code and `extensions.case` of the union case.
 
 Where there is no edge (Blazor Server, a worker, a console application, a hand-written endpoint that dispatches the request), nothing is recorded and the behavior evaluates everything.
@@ -128,13 +134,13 @@ ZeroAlloc's own ZAUTH001 to ZAUTH009 still report an unknown policy name, a dupl
 
 ## 7. Packages
 
-| Package                                            | Gets                                                                                                                                                                      |
-| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization` | New, host-neutral: `[RequiresScopes]`, the plan types, `AuthorizationBehavior`, the authorization outcomes, `RequestAuthorizationOptions`, and its joint.                 |
-| `Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore`    | The security context from `HttpContext.User`, the bridge and its handler, the result handler (HTTP and gRPC), `OpenApiAuthorizationOptions` and the OpenAPI transformers. |
-| `Rocket.Surgery.LaunchPad.ZeroAlloc.Grpc`          | The interceptor that answers a denial the pipeline threw (a stream request) as a status with its `case` trailer.                                                          |
-| `Rocket.Surgery.LaunchPad.ZeroAlloc.HotChocolate`  | `@requiresScopes` and `@authenticated`, HotChocolate's ASP.NET Core authorization, and the error filter for a rejected field.                                             |
-| `Rocket.Surgery.LaunchPad.Analyzers`               | The plan generator and its diagnostics, and what the API generators name at the edge and state in the GraphQL schema.                                                     |
+| Package                                            | Gets                                                                                                                                                                                                        |
+| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization` | New, host-neutral: `[RequiresScopes]`, the plan types, `AuthorizationBehavior`, `RequestAuthorizer`, the authorization outcomes, its joint, and the template of the joint that registers a project's plans. |
+| `Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore`    | The security context from `HttpContext.User`, the bridge and its handler, the result handler (HTTP and gRPC), `OpenApiAuthorizationOptions` and the OpenAPI transformers.                                   |
+| `Rocket.Surgery.LaunchPad.ZeroAlloc.Grpc`          | The interceptor that answers a denial the pipeline threw (a stream request) as a status with its `case` trailer.                                                                                            |
+| `Rocket.Surgery.LaunchPad.ZeroAlloc.HotChocolate`  | `@requiresScopes` and `@authenticated`, HotChocolate's ASP.NET Core authorization, and the error filter for a rejected field.                                                                               |
+| `Rocket.Surgery.LaunchPad.Analyzers`               | The plan generator and its diagnostics, and what the API generators name at the edge and state in the GraphQL schema.                                                                                       |
 
 The LaunchPad SDK adds the new package to a project that references ZeroAlloc.Authorization directly, and the transport packages as it does today.
 
@@ -163,4 +169,5 @@ Decided 2026-11-21, with the reasons in [ADR-0011](../adr/0011-request-policies-
 8. The application owns the OpenAPI security scheme; LaunchPad's `oauth2` scheme is opt-in.
 9. Every sample operation is protected, with Keycloak through Aspire; tests use a signing key of their own.
 10. An operation's security scheme is always declared in the OpenAPI document: a requirement of an undeclared scheme is written as `{}`, which reads as "no security" (found while building).
-11. `@requiresScopes` and `@authenticated` are declared by LaunchPad: HotChocolate 16 does not have the composite schema directives (found while building).
+11. Plans are registered with the application's services by a joint written from a template, not from a module initializer: the behavior, the edge and the policies all get what they need from the services (decided 2026-11-22).
+12. `@requiresScopes` and `@authenticated` are declared by LaunchPad: HotChocolate 16 does not have the composite schema directives (found while building).

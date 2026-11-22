@@ -11,6 +11,11 @@
         <RootNamespace>Rocket.Surgery.LaunchPad.Authorization</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
+        <!-- The template of the joint that registers a project's authorization plans, and the targets that declare it -->
+        <None Include="build/*.*" Pack="true" PackagePath="build" />
+        <None Include="buildTransitive/*.*" Pack="true" PackagePath="buildTransitive" />
+    </ItemGroup>
+    <ItemGroup>
         <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
         <PackageReference Include="ZeroAlloc.Authorization" />
         <PackageReference Include="ZeroAlloc.Mediator" />

@@ -1,5 +1,3 @@
-using System.Collections.Concurrent;
-
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -24,42 +22,46 @@ public readonly record struct AuthorizationDecision(Problem? Problem, IReadOnlyL
 }
 
 /// <summary>
-///     Decides a request's plan for a caller, policy by policy, recording each outcome in the call's <see cref="AuthorizationOutcomes" /> and
-///     reusing the ones already there. The mediator pipeline and the edge both decide through it.
+///     Decides a request's plan for the caller of a call, policy by policy, recording each outcome in the call's
+///     <see cref="AuthorizationOutcomes" /> and reusing the ones already there. One for each call: the mediator pipeline and the edge both
+///     decide through it, so a policy runs once.
 /// </summary>
+/// <param name="services">The services of the call, from which the caller and the policies are resolved.</param>
+/// <param name="outcomes">What each policy decided for this call.</param>
+/// <param name="plans">The plans of the application.</param>
+/// <param name="options">How the caller's scopes are read.</param>
 [PublicAPI]
-public static class RequestAuthorizer
+public sealed class RequestAuthorizer(
+    IServiceProvider services,
+    AuthorizationOutcomes outcomes,
+    RequestAuthorizationPlans plans,
+    IOptions<RequestAuthorizationOptions> options
+)
 {
-    // The policy classes that read the request: found the first time one throws at the edge, then skipped there.
-    private static readonly ConcurrentDictionary<Type, bool> NeedsRequest = new();
+    private HashSet<string>? _granted;
 
-    /// <summary>The caller of the call these services belong to; anonymous when none is registered.</summary>
-    /// <param name="services">The services of the call.</param>
-    public static ISecurityContext SecurityContext(IServiceProvider services) =>
-        services.GetService<ISecurityContext>() ?? AnonymousSecurityContext.Instance;
+    /// <summary>The caller of this call; anonymous when the application registered no <see cref="ISecurityContext" />.</summary>
+    public ISecurityContext Caller => field ??= services.GetService<ISecurityContext>() ?? AnonymousSecurityContext.Instance;
 
     /// <summary>Whether the caller has no identity.</summary>
     /// <param name="context">The caller.</param>
-    public static bool IsAnonymous(ISecurityContext context) =>
-        context is AnonymousSecurityContext || string.IsNullOrEmpty(context.Id) || string.Equals(context.Id, AnonymousSecurityContext.AnonymousId, StringComparison.Ordinal);
+    public static bool IsAnonymous(ISecurityContext context)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+        return context is AnonymousSecurityContext
+         || string.IsNullOrEmpty(context.Id)
+         || string.Equals(context.Id, AnonymousSecurityContext.AnonymousId, StringComparison.Ordinal);
+    }
 
     /// <summary>Decides the plan with the request: every policy that has no outcome yet runs.</summary>
     /// <typeparam name="TRequest">The request.</typeparam>
     /// <param name="plan">The request's plan.</param>
     /// <param name="request">The request.</param>
-    /// <param name="services">The services of the call.</param>
     /// <param name="cancellationToken">The cancellation token of the call.</param>
-    public static ValueTask<AuthorizationDecision> AuthorizeAsync<TRequest>(
-        RequestAuthorizationPlan<TRequest> plan,
-        TRequest request,
-        IServiceProvider services,
-        CancellationToken cancellationToken
-    )
+    public ValueTask<AuthorizationDecision> AuthorizeAsync<TRequest>(RequestAuthorizationPlan<TRequest> plan, TRequest request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(plan);
-        ArgumentNullException.ThrowIfNull(services);
-        var context = SecurityContext(services);
-        return DecideAsync(plan, context, plan.WithRequest(context, request), false, services, cancellationToken);
+        return DecideAsync(plan, plan.WithRequest(Caller, request), false, cancellationToken);
     }
 
     /// <summary>
@@ -67,29 +69,17 @@ public static class RequestAuthorizer
     ///     decision denies only what is certain.
     /// </summary>
     /// <param name="plan">The request's plan.</param>
-    /// <param name="services">The services of the call.</param>
     /// <param name="cancellationToken">The cancellation token of the call.</param>
-    public static ValueTask<AuthorizationDecision> AuthorizeAtTheEdgeAsync(RequestAuthorizationPlan plan, IServiceProvider services, CancellationToken cancellationToken)
+    public ValueTask<AuthorizationDecision> AuthorizeAtTheEdgeAsync(RequestAuthorizationPlan plan, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(plan);
-        ArgumentNullException.ThrowIfNull(services);
-        var context = SecurityContext(services);
-        return DecideAsync(plan, context, plan.AtTheEdge(context), true, services, cancellationToken);
+        return DecideAsync(plan, plan.AtTheEdge(Caller), true, cancellationToken);
     }
 
-    private static async ValueTask<AuthorizationDecision> DecideAsync(
-        RequestAuthorizationPlan plan,
-        ISecurityContext caller,
-        ISecurityContext context,
-        bool atTheEdge,
-        IServiceProvider services,
-        CancellationToken cancellationToken
-    )
+    private async ValueTask<AuthorizationDecision> DecideAsync(RequestAuthorizationPlan plan, ISecurityContext context, bool atTheEdge, CancellationToken cancellationToken)
     {
-        if (IsAnonymous(caller)) return new(new Unauthorized("Authentication is required."), ScopesOf(plan.Groups));
+        if (IsAnonymous(Caller)) return new(new Unauthorized("Authentication is required."), ScopesOf(plan.Groups));
 
-        var outcomes = services.GetService<AuthorizationOutcomes>();
-        HashSet<string>? granted = null;
         foreach (var group in plan.Groups)
         {
             var allowed = false;
@@ -97,17 +87,16 @@ public static class RequestAuthorizer
             var last = PolicyOutcome.Success;
             foreach (var policy in group.Policies)
             {
-                if (outcomes is null || !outcomes.TryGet(policy, out var outcome))
+                if (!outcomes.TryGet(policy, out var outcome))
                 {
-                    granted ??= GrantedScopes(caller, services);
-                    if (await EvaluateAsync(policy, context, granted, atTheEdge, services, cancellationToken).ConfigureAwait(false) is not { } decided)
+                    if (await EvaluateAsync(policy, context, atTheEdge, cancellationToken).ConfigureAwait(false) is not { } decided)
                     {
                         deferred = true;
                         continue;
                     }
 
                     outcome = decided;
-                    outcomes?.Record(policy, outcome);
+                    outcomes.Record(policy, outcome);
                 }
 
                 last = outcome;
@@ -124,15 +113,9 @@ public static class RequestAuthorizer
     }
 
     // Null: the policy reads the request and there is none here.
-    private static async ValueTask<PolicyOutcome?> EvaluateAsync(
-        PolicyRequirement policy,
-        ISecurityContext context,
-        HashSet<string> granted,
-        bool atTheEdge,
-        IServiceProvider services,
-        CancellationToken cancellationToken
-    )
+    private async ValueTask<PolicyOutcome?> EvaluateAsync(PolicyRequirement policy, ISecurityContext context, bool atTheEdge, CancellationToken cancellationToken)
     {
+        var granted = _granted ??= GrantedScopes();
         List<string>? missing = null;
         foreach (var scope in policy.Scopes)
         {
@@ -140,7 +123,7 @@ public static class RequestAuthorizer
         }
 
         if (missing is { }) return new PolicyOutcome(false, missing, null);
-        if (atTheEdge && NeedsRequest.ContainsKey(policy.PolicyType)) return null;
+        if (atTheEdge && plans.ReadsTheRequest(policy.PolicyType)) return null;
 
         try
         {
@@ -149,9 +132,21 @@ public static class RequestAuthorizer
         }
         catch (RequestNotAvailableException) when (atTheEdge)
         {
-            NeedsRequest[policy.PolicyType] = true;
+            plans.MarkReadsTheRequest(policy.PolicyType);
             return null;
         }
+    }
+
+    private HashSet<string> GrantedScopes()
+    {
+        var granted = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var claim in options.Value.ScopeClaims)
+        {
+            if (!Caller.Claims.TryGetValue(claim, out var value)) continue;
+            foreach (var scope in value.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)) granted.Add(scope);
+        }
+
+        return granted;
     }
 
     private static Forbidden Forbid(PolicyOutcome outcome)
@@ -177,19 +172,4 @@ public static class RequestAuthorizer
 
         return [.. scopes];
     }
-
-    private static HashSet<string> GrantedScopes(ISecurityContext caller, IServiceProvider services)
-    {
-        var claims = services.GetService<IOptions<RequestAuthorizationOptions>>()?.Value.ScopeClaims ?? DefaultScopeClaims;
-        var granted = new HashSet<string>(StringComparer.Ordinal);
-        foreach (var claim in claims)
-        {
-            if (!caller.Claims.TryGetValue(claim, out var value)) continue;
-            foreach (var scope in value.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)) granted.Add(scope);
-        }
-
-        return granted;
-    }
-
-    private static readonly string[] DefaultScopeClaims = [.. new RequestAuthorizationOptions().ScopeClaims];
 }

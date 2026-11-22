@@ -31,26 +31,21 @@ public sealed class OpenApiAuthorizationOptions
 /// <summary>The plans of the requests an endpoint's operations dispatch, from the edge policies the generated servers name on it.</summary>
 internal static class EndpointPlans
 {
-    public static IEnumerable<RequestAuthorizationPlan> Of(IList<object> metadata)
-    {
-        if (metadata.OfType<IAllowAnonymous>().Any()) yield break;
-        foreach (var data in metadata.OfType<IAuthorizeData>())
-        {
-            if (data.Policy is not { } name || !name.StartsWith(RequestAuthorizationPlan.PolicyPrefix, StringComparison.Ordinal)) continue;
-            if (RequestAuthorizationPlan.Find(name[RequestAuthorizationPlan.PolicyPrefix.Length..]) is { } plan) yield return plan;
-        }
-    }
+    public static IEnumerable<RequestAuthorizationPlan> Of(IList<object> metadata, RequestAuthorizationPlans plans) =>
+        metadata.OfType<IAllowAnonymous>().Any()
+            ? []
+            : metadata.OfType<IAuthorizeData>().Select(data => plans.FindByPolicyName(data.Policy)).OfType<RequestAuthorizationPlan>();
 }
 
 /// <summary>
 ///     States the scopes of an operation whose request has policies: a security requirement per alternative, any one of which is enough
 ///     (docs/design/authorization.md, section 5).
 /// </summary>
-internal sealed class RequestPoliciesOperationTransformer(IOptions<OpenApiAuthorizationOptions> options) : IOpenApiOperationTransformer
+internal sealed class RequestPoliciesOperationTransformer(IOptions<OpenApiAuthorizationOptions> options, RequestAuthorizationPlans plans) : IOpenApiOperationTransformer
 {
     public Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
     {
-        foreach (var plan in EndpointPlans.Of(context.Description.ActionDescriptor.EndpointMetadata))
+        foreach (var plan in EndpointPlans.Of(context.Description.ActionDescriptor.EndpointMetadata, plans))
         {
             foreach (var alternative in plan.ScopeAlternatives)
             {
@@ -68,14 +63,14 @@ internal sealed class RequestPoliciesOperationTransformer(IOptions<OpenApiAuthor
 ///     the authorization code flow and every scope when the application gave both endpoints, otherwise a bearer token. A requirement of a
 ///     scheme the document doesn't declare is written as <c>{}</c>, which reads as "no security", so the scheme is never left out.
 /// </summary>
-internal sealed class RequestPoliciesSecuritySchemeTransformer(IOptions<OpenApiAuthorizationOptions> options) : IOpenApiDocumentTransformer
+internal sealed class RequestPoliciesSecuritySchemeTransformer(IOptions<OpenApiAuthorizationOptions> options, RequestAuthorizationPlans registered) : IOpenApiDocumentTransformer
 {
     public Task TransformAsync(OpenApiDocument document, OpenApiDocumentTransformerContext context, CancellationToken cancellationToken)
     {
         var settings = options.Value;
         if (document.Components?.SecuritySchemes?.ContainsKey(settings.SchemeName) is true) return Task.CompletedTask;
 
-        var plans = context.DescriptionGroups.SelectMany(g => g.Items).SelectMany(d => EndpointPlans.Of(d.ActionDescriptor.EndpointMetadata)).ToArray();
+        var plans = context.DescriptionGroups.SelectMany(g => g.Items).SelectMany(d => EndpointPlans.Of(d.ActionDescriptor.EndpointMetadata, registered)).ToArray();
         if (plans.Length == 0) return Task.CompletedTask;
 
         var scopes = new SortedDictionary<string, string>(StringComparer.Ordinal);

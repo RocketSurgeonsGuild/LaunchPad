@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 using Rocket.Surgery.LaunchPad.Authorization;
@@ -25,7 +26,7 @@ internal sealed class RequestPoliciesRequirement(string id, RequestAuthorization
 ///     Answers the policy names the generated servers put on an operation whose request has policies (<c>launchpad:{request}</c>) with a policy
 ///     that checks the request's plan. Every other name is the application's own.
 /// </summary>
-internal sealed class RequestPolicyProvider(IOptions<AuthorizationOptions> options) : DefaultAuthorizationPolicyProvider(options)
+internal sealed class RequestPolicyProvider(IOptions<AuthorizationOptions> options, RequestAuthorizationPlans plans) : DefaultAuthorizationPolicyProvider(options)
 {
     private readonly ConcurrentDictionary<string, AuthorizationPolicy> _policies = new(StringComparer.Ordinal);
 
@@ -34,11 +35,10 @@ internal sealed class RequestPolicyProvider(IOptions<AuthorizationOptions> optio
             ? Task.FromResult<AuthorizationPolicy?>(_policies.GetOrAdd(policyName, Build))
             : base.GetPolicyAsync(policyName);
 
-    private static AuthorizationPolicy Build(string policyName)
-    {
-        var id = policyName[RequestAuthorizationPlan.PolicyPrefix.Length..];
-        return new AuthorizationPolicyBuilder().AddRequirements(new RequestPoliciesRequirement(id, RequestAuthorizationPlan.Find(id))).Build();
-    }
+    private AuthorizationPolicy Build(string policyName) =>
+        new AuthorizationPolicyBuilder()
+           .AddRequirements(new RequestPoliciesRequirement(policyName[RequestAuthorizationPlan.PolicyPrefix.Length..], plans.FindByPolicyName(policyName)))
+           .Build();
 }
 
 /// <summary>
@@ -61,7 +61,7 @@ internal sealed class RequestPoliciesHandler(IHttpContextAccessor accessor) : Au
             return;
         }
 
-        var decision = await RequestAuthorizer.AuthorizeAtTheEdgeAsync(plan, http.RequestServices, http.RequestAborted).ConfigureAwait(false);
+        var decision = await http.RequestServices.GetRequiredService<RequestAuthorizer>().AuthorizeAtTheEdgeAsync(plan, http.RequestAborted).ConfigureAwait(false);
         if (decision.Problem is not { } problem)
         {
             context.Succeed(requirement);

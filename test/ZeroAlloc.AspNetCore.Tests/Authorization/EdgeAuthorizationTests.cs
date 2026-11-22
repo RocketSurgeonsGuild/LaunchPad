@@ -16,6 +16,7 @@ using Microsoft.Extensions.Options;
 using Rocket.Surgery.LaunchPad.AspNetCore.Authorization;
 using Rocket.Surgery.LaunchPad.AspNetCore.Joints;
 using Rocket.Surgery.LaunchPad.Authorization;
+using Rocket.Surgery.LaunchPad.Authorization.Generated;
 using Rocket.Surgery.LaunchPad.Foundation;
 
 using ZeroAlloc.Authorization;
@@ -200,6 +201,8 @@ public class EdgeAuthorizationTests
         builder.WebHost.UseTestServer();
         builder.Services.AddOpenApi();
         builder.Services.AddMediator();
+        // what the joint LaunchPad writes into a project applies: the plans the generator wrote for the requests of this assembly
+        builder.Services.AddLaunchPadRequestAuthorization();
         builder.Services.AddSingleton<Calls>();
         builder.Services.AddAuthentication("Test").AddScheme<AuthenticationSchemeOptions, HeaderAuthentication>("Test", null);
         builder.Services.AddAuthorizationBuilder().AddPolicy("Own", policy => policy.RequireAuthenticatedUser());

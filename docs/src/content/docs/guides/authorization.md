@@ -21,6 +21,11 @@ detail in the [design page](https://github.com/RocketSurgeonsGuild/LaunchPad/blo
 
 The [LaunchPad SDK](../concepts/launchpad-sdk/) adds the LaunchPad packages to a project that references `ZeroAlloc.Authorization`.
 
+LaunchPad writes a [Joint](../concepts/joints/) into each of those projects that registers the authorization plans of its requests, so
+an application that calls `ConfigureDovetail()` has nothing to register. An application without Dovetail calls
+`services.AddLaunchPadRequestAuthorization()` (in `Rocket.Surgery.LaunchPad.Authorization.Generated`) from each project that
+declares requests with policies. A request with a policy and no registered plan is refused with an exception, never let through.
+
 ## Declare a policy
 
 A policy is a class with a name. `[RequiresScopes]` lists the scopes it requires of the caller, all of them:

@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 
 using Rocket.Surgery.LaunchPad.Authorization;
+using Rocket.Surgery.LaunchPad.Authorization.Generated;
 using Rocket.Surgery.LaunchPad.Foundation;
 using ZeroAlloc.Mediator;
 
@@ -146,42 +147,64 @@ public class AuthorizationBehaviorTests
     public async Task What_The_Edge_Decided_Is_Not_Run_Again()
     {
         await using var call = Call(new Caller("alice", "rockets:write"));
-        var plan = RequestAuthorizationPlan.Find(typeof(RenameRocket).FullName!)!;
 
-        var edge = await RequestAuthorizer.AuthorizeAtTheEdgeAsync(plan, call.Services, CancellationToken.None);
+        var edge = await call.AtTheEdge<RenameRocket>();
         var result = await call.Mediator.Send(new RenameRocket("Falcon", "alice"), CancellationToken.None);
 
         await edge.IsAllowed.Should().BeTrue();
         await ( result.Value is RocketModel ).Should().BeTrue();
-        // The scope policy ran at the edge and was not run again. Owner reads the request, so the pipeline ran it; whether the edge
-        // tried it first depends on whether an earlier call already found that it reads the request.
-        await call.Calls.Count(c => c == "Rockets.Write").Should().BeEqualTo(1);
-        await ( call.Calls.Count(c => c == "Owner") is 1 or 2 ).Should().BeTrue();
-        await call.Calls[^1].Should().BeEqualTo("Owner");
+        // Owner reads the request: the edge tried it, left it undecided, and the pipeline ran it with the request.
+        await call.Calls.Should().BeEquivalentTo(["Rockets.Write", "Owner", "Owner"], CollectionOrdering.Matching);
     }
 
     [Test]
     public async Task The_Edge_Skips_A_Policy_It_Knows_Reads_The_Request()
     {
-        var plan = RequestAuthorizationPlan.Find(typeof(RenameRocket).FullName!)!;
-        await using (var first = Call(new Caller("alice", "rockets:write")))
-        {
-            await RequestAuthorizer.AuthorizeAtTheEdgeAsync(plan, first.Services, CancellationToken.None);
-        }
-
         await using var call = Call(new Caller("alice", "rockets:write"));
-        await RequestAuthorizer.AuthorizeAtTheEdgeAsync(plan, call.Services, CancellationToken.None);
+        await call.AtTheEdge<RenameRocket>();
 
-        await call.Calls.Should().BeEquivalentTo(["Rockets.Write"]);
+        // another call of the same application
+        await using var scope = call.Application.CreateAsyncScope();
+        var plan = scope.ServiceProvider.GetRequiredService<RequestAuthorizationPlan<RenameRocket>>();
+        await scope.ServiceProvider.GetRequiredService<RequestAuthorizer>().AuthorizeAtTheEdgeAsync(plan, CancellationToken.None);
+
+        await call.Calls.Should().BeEquivalentTo(["Rockets.Write", "Owner", "Rockets.Write"], CollectionOrdering.Matching);
+    }
+
+    [Test]
+    public async Task A_Request_With_A_Policy_And_No_Plan_Is_Not_Let_Through()
+    {
+        var services = new ServiceCollection();
+        services.AddMediator();
+        await using var provider = services.BuildServiceProvider(true);
+        await using var scope = provider.CreateAsyncScope();
+        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+
+        var exception = await ( (Func<Task>)( async () => await mediator.Send(new GetRocket("Falcon"), CancellationToken.None) ) ).Should().Throw<InvalidOperationException>();
+
+        await exception.Message.Should().Contain("no authorization plan is registered");
+        await ( await mediator.Send(new Ping(), CancellationToken.None) ).Name.Should().BeEqualTo("ping");
+    }
+
+    [Test]
+    public async Task The_Plans_Of_The_Application_Are_Found_By_Their_Edge_Policy_Name()
+    {
+        await using var call = Call(null);
+        var plans = call.Services.GetRequiredService<RequestAuthorizationPlans>();
+
+        var plan = plans.FindByPolicyName("launchpad:" + typeof(LaunchRocket).FullName);
+
+        await plan!.ScopeAlternatives.Select(a => string.Join(' ', a)).Should().BeEquivalentTo([""]);
+        await plans.FindByPolicyName("launchpad:" + typeof(Ping).FullName).Should().BeNull();
+        await plans.FindByPolicyName("Own").Should().BeNull();
     }
 
     [Test]
     public async Task The_Edge_Denies_What_Is_Certain()
     {
         await using var call = Call(new Caller("alice", "rockets:read"));
-        var plan = RequestAuthorizationPlan.Find(typeof(RenameRocket).FullName!)!;
 
-        var edge = await RequestAuthorizer.AuthorizeAtTheEdgeAsync(plan, call.Services, CancellationToken.None);
+        var edge = await call.AtTheEdge<RenameRocket>();
 
         await ( edge.Problem is Forbidden ).Should().BeTrue();
         await edge.RequiredScopes.Should().BeEquivalentTo(["rockets:write"]);
@@ -227,8 +250,8 @@ public class AuthorizationBehaviorTests
         var services = new ServiceCollection();
         services.AddMediator();
         services.AddSingleton<PolicyCalls>();
-        services.AddOptions<RequestAuthorizationOptions>();
-        services.AddScoped<AuthorizationOutcomes>();
+        // what the joint LaunchPad writes into a project applies: the plans the generator wrote for the requests of this assembly
+        services.AddLaunchPadRequestAuthorization();
         if (caller is { }) services.AddScoped(_ => caller);
         var provider = services.BuildServiceProvider(true);
         return new(provider, provider.CreateAsyncScope());
@@ -237,6 +260,10 @@ public class AuthorizationBehaviorTests
     private sealed class TestCall(ServiceProvider provider, AsyncServiceScope scope) : IAsyncDisposable
     {
         public IServiceProvider Services => scope.ServiceProvider;
+        public ServiceProvider Application => provider;
+
+        public ValueTask<AuthorizationDecision> AtTheEdge<TRequest>() =>
+            Services.GetRequiredService<RequestAuthorizer>().AuthorizeAtTheEdgeAsync(Services.GetRequiredService<RequestAuthorizationPlan<TRequest>>(), CancellationToken.None);
         public IMediator Mediator => Services.GetRequiredService<IMediator>();
         public IReadOnlyList<string> Calls => provider.GetRequiredService<PolicyCalls>().Calls;
 

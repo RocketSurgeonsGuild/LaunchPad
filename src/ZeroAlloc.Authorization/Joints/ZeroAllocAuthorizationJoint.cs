@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Rocket.Surgery.LaunchPad.Authorization.Joints;
 
@@ -15,9 +14,5 @@ namespace Rocket.Surgery.LaunchPad.Authorization.Joints;
 public class ZeroAllocAuthorizationJoint : IServiceJoint
 {
     /// <inheritdoc />
-    public void Register(IDovetailContext context, IServiceCollection services)
-    {
-        services.AddOptions<RequestAuthorizationOptions>();
-        services.TryAddScoped<AuthorizationOutcomes>();
-    }
+    public void Register(IDovetailContext context, IServiceCollection services) => services.AddLaunchPadAuthorization();
 }

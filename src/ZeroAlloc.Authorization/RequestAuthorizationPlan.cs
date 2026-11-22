@@ -1,12 +1,10 @@
-using System.Collections.Concurrent;
-
 using ZeroAlloc.Authorization;
 using ZeroAlloc.Results;
 
 namespace Rocket.Surgery.LaunchPad.Authorization;
 
 /// <summary>Runs one policy for a caller, with the services of the call.</summary>
-/// <param name="services">The services of the call, from which the policy is resolved.</param>
+/// <param name="services">The services of the call, from which the policy is resolved: the plan's registration registers it.</param>
 /// <param name="context">The caller.</param>
 /// <param name="cancellationToken">The cancellation token of the call.</param>
 public delegate ValueTask<UnitResult<AuthorizationFailure>> PolicyEvaluator(
@@ -55,13 +53,17 @@ public sealed class PolicyGroup(params PolicyRequirement[] policies)
 }
 
 /// <summary>
-///     The policies a request requires, written by LaunchPad's generator for every request with a policy attribute and registered when its
-///     assembly loads.
+///     The policies a request requires. LaunchPad's generator writes one for every request with a policy attribute, and registers it with the
+///     services of the application (<see cref="AuthorizationServiceCollectionExtensions.AddRequestAuthorizationPlan{TRequest}" />).
 /// </summary>
 [PublicAPI]
 public abstract class RequestAuthorizationPlan
 {
-    private static readonly ConcurrentDictionary<string, RequestAuthorizationPlan> Plans = new(StringComparer.Ordinal);
+    /// <summary>What an edge policy name starts with; the rest is the plan's <see cref="Id" />.</summary>
+    public const string PolicyPrefix = "launchpad:";
+
+    /// <summary>The most alternatives that are published.</summary>
+    public const int MaxAlternatives = 16;
 
     private protected RequestAuthorizationPlan(Type requestType, PolicyGroup[] groups)
     {
@@ -79,9 +81,6 @@ public abstract class RequestAuthorizationPlan
     /// <summary>The requirements, all of which must pass.</summary>
     public IReadOnlyList<PolicyGroup> Groups { get; }
 
-    /// <summary>What an edge policy name starts with; the rest is the plan's <see cref="Id" />.</summary>
-    public const string PolicyPrefix = "launchpad:";
-
     /// <summary>The name of the edge policy that checks this plan.</summary>
     public string PolicyName => PolicyPrefix + Id;
 
@@ -91,32 +90,9 @@ public abstract class RequestAuthorizationPlan
     /// </summary>
     public IReadOnlyList<IReadOnlyList<string>> ScopeAlternatives => field ??= Alternatives(Groups);
 
-    /// <summary>The most alternatives that are published.</summary>
-    public const int MaxAlternatives = 16;
-
-    /// <summary>The plan of the request with this id, if it has policies.</summary>
-    /// <param name="id">The request's full type name.</param>
-    public static RequestAuthorizationPlan? Find(string id)
-    {
-        ArgumentNullException.ThrowIfNull(id);
-        if (Plans.TryGetValue(id, out var plan)) return plan;
-        // A plan is registered when its assembly's module initializer runs, which is when code of that assembly first runs: later than the
-        // edge can ask for it. The request is found among the loaded assemblies and its module initialized.
-        return Load(id) ? Plans.GetValueOrDefault(id) : null;
-    }
-
-    [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "A request with a plan is rooted by the plan's registration; a type that was trimmed has no plan to find.")]
-    private static bool Load(string id)
-    {
-        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-        {
-            if (assembly.IsDynamic || assembly.GetType(id, false) is not { } type) continue;
-            System.Runtime.CompilerServices.RuntimeHelpers.RunModuleConstructor(type.Module.ModuleHandle);
-            return true;
-        }
-
-        return false;
-    }
+    /// <summary>The caller as policies see them at the edge, where there is no request yet: reading the request throws.</summary>
+    /// <param name="context">The caller.</param>
+    public abstract ISecurityContext AtTheEdge(ISecurityContext context);
 
     private static IReadOnlyList<IReadOnlyList<string>> Alternatives(IReadOnlyList<PolicyGroup> groups)
     {
@@ -140,35 +116,14 @@ public abstract class RequestAuthorizationPlan
 
         return alternatives.ConvertAll(IReadOnlyList<string> (a) => [.. a]);
     }
-
-    /// <summary>Registers the plan of a request. Called by generated code.</summary>
-    /// <typeparam name="TRequest">The request.</typeparam>
-    /// <param name="groups">The requirements, all of which must pass.</param>
-    public static void Register<TRequest>(params PolicyGroup[] groups)
-    {
-        var plan = new RequestAuthorizationPlan<TRequest>(groups);
-        RequestAuthorizationPlan<TRequest>.Instance = plan;
-        Plans[plan.Id] = plan;
-    }
-
-    /// <summary>The caller as policies see them at the edge, where there is no request yet: reading the request throws.</summary>
-    /// <param name="context">The caller.</param>
-    public abstract ISecurityContext AtTheEdge(ISecurityContext context);
 }
 
 /// <summary>The plan of <typeparamref name="TRequest" />.</summary>
 /// <typeparam name="TRequest">The request.</typeparam>
+/// <param name="groups">The requirements, all of which must pass.</param>
 [PublicAPI]
-public sealed class RequestAuthorizationPlan<TRequest> : RequestAuthorizationPlan
+public sealed class RequestAuthorizationPlan<TRequest>(params PolicyGroup[] groups) : RequestAuthorizationPlan(typeof(TRequest), groups)
 {
-    // The plan is registered by the module initializer of the request's assembly, which may not have run when the plan is first asked for.
-    static RequestAuthorizationPlan() => System.Runtime.CompilerServices.RuntimeHelpers.RunModuleConstructor(typeof(TRequest).Module.ModuleHandle);
-
-    internal RequestAuthorizationPlan(PolicyGroup[] groups) : base(typeof(TRequest), groups) { }
-
-    /// <summary>The plan, or null for a request without policies.</summary>
-    public static RequestAuthorizationPlan<TRequest>? Instance { get; internal set; }
-
     /// <inheritdoc />
     public override ISecurityContext AtTheEdge(ISecurityContext context) => new EdgeSecurityContext(context);
 
@@ -195,27 +150,54 @@ public sealed class RequestAuthorizationPlan<TRequest> : RequestAuthorizationPla
 }
 
 /// <summary>
-///     How a denial becomes a response: the conversions of <see cref="Unauthorized" /> and <see cref="Forbidden" /> to the response union,
-///     registered by generated code.
+///     How a denial becomes a response: the conversions of <see cref="Unauthorized" /> and <see cref="Forbidden" /> to the response union.
+///     LaunchPad's generator registers one for the response of every request with a policy
+///     (<see cref="AuthorizationServiceCollectionExtensions.AddAuthorizationResponse{TResponse}" />).
 /// </summary>
 /// <typeparam name="TResponse">The response union.</typeparam>
+/// <param name="unauthorized">Converts <see cref="Foundation.Unauthorized" /> to the response.</param>
+/// <param name="forbidden">Converts <see cref="Foundation.Forbidden" /> to the response.</param>
 [PublicAPI]
-public static class AuthorizationResponse<TResponse>
+public sealed class AuthorizationResponse<TResponse>(Func<Unauthorized, TResponse> unauthorized, Func<Forbidden, TResponse> forbidden)
 {
-    /// <summary>Converts <see cref="Unauthorized" /> to the response.</summary>
-    public static Func<Unauthorized, TResponse>? Unauthorized { get; private set; }
+    /// <summary>Converts <see cref="Foundation.Unauthorized" /> to the response.</summary>
+    public Func<Unauthorized, TResponse> Unauthorized { get; } = unauthorized;
 
-    /// <summary>Converts <see cref="Forbidden" /> to the response.</summary>
-    public static Func<Forbidden, TResponse>? Forbidden { get; private set; }
+    /// <summary>Converts <see cref="Foundation.Forbidden" /> to the response.</summary>
+    public Func<Forbidden, TResponse> Forbidden { get; } = forbidden;
+}
 
-    /// <summary>Registers the conversions. Called by generated code.</summary>
-    /// <param name="unauthorized">Converts <see cref="Unauthorized" /> to the response.</param>
-    /// <param name="forbidden">Converts <see cref="Forbidden" /> to the response.</param>
-    public static void Register(Func<Unauthorized, TResponse> unauthorized, Func<Forbidden, TResponse> forbidden)
+/// <summary>
+///     The plans of the application, by the name the edge knows them by, and what the edge has learned about its policies. One for the
+///     application.
+/// </summary>
+/// <param name="plans">Every plan that is registered.</param>
+[PublicAPI]
+public sealed class RequestAuthorizationPlans(IEnumerable<RequestAuthorizationPlan> plans)
+{
+    private readonly Dictionary<string, RequestAuthorizationPlan> _plans = plans.GroupBy(p => p.Id, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
+
+    // The policy classes that read the request: found the first time one throws at the edge, then skipped there.
+    private readonly System.Collections.Concurrent.ConcurrentDictionary<Type, bool> _readsTheRequest = new();
+
+    /// <summary>The plan of the request with this id, if it has policies.</summary>
+    /// <param name="id">The request's full type name.</param>
+    public RequestAuthorizationPlan? Find(string id)
     {
-        Unauthorized = unauthorized;
-        Forbidden = forbidden;
+        ArgumentNullException.ThrowIfNull(id);
+        return _plans.GetValueOrDefault(id);
     }
+
+    /// <summary>The plan an edge policy name stands for; null for any other policy name, and for a request without a plan.</summary>
+    /// <param name="policyName">The policy name on an endpoint.</param>
+    public RequestAuthorizationPlan? FindByPolicyName(string? policyName) =>
+        policyName?.StartsWith(RequestAuthorizationPlan.PolicyPrefix, StringComparison.Ordinal) is true
+            ? Find(policyName[RequestAuthorizationPlan.PolicyPrefix.Length..])
+            : null;
+
+    internal bool ReadsTheRequest(Type policy) => _readsTheRequest.ContainsKey(policy);
+
+    internal void MarkReadsTheRequest(Type policy) => _readsTheRequest[policy] = true;
 }
 
 /// <summary>A policy read the request at the edge, where there is none yet: it is decided in the pipeline instead.</summary>
