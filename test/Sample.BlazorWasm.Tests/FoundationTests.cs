@@ -7,6 +7,8 @@ using Sample.BlazorWasm.Forms;
 
 using ZeroAlloc.Validation;
 
+[assembly: CLSCompliant(false)]
+
 namespace Sample.BlazorWasm.Tests;
 
 public class FoundationTests : HandleTestHostBase
