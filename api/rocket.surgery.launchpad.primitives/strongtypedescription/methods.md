@@ -46,7 +46,7 @@ public abstract class StrongTypeDescription
 - Name: `Create(string?)`
 - Modifiers: `static`
 - Returns: [StrongTypeDescription](/LaunchPad/api/rocket.surgery.launchpad.primitives/strongtypedescription.md)
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.58a05033e5e3d052ad687f1ec7ee0750304f817e/src/Primitives/Descriptions/StrongTypeDescription.cs#L35-L37)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.1439b27645502c7f052b674cfbf301f1b8fcb921/src/Primitives/Descriptions/StrongTypeDescription.cs#L35-L37)
 
 Describes a strong type whose value is not a number.
 
@@ -78,7 +78,7 @@ public abstract class StrongTypeDescription
 - Name: `CreateNumber(string?)`
 - Modifiers: `static`
 - Returns: [StrongTypeDescription](/LaunchPad/api/rocket.surgery.launchpad.primitives/strongtypedescription.md)
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.58a05033e5e3d052ad687f1ec7ee0750304f817e/src/Primitives/Descriptions/StrongTypeDescription.cs#L51-L75)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.1439b27645502c7f052b674cfbf301f1b8fcb921/src/Primitives/Descriptions/StrongTypeDescription.cs#L51-L75)
 
 Describes a strong type whose value is a number, which also has bounds.
 

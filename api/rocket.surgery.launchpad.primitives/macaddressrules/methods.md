@@ -14,7 +14,7 @@ The rules of a MAC address, an IEEE EUI-48, in the IEEE 802 hexadecimal represen
 - Name: `Define`
 - Modifiers: `static`
 - Returns: `StrongTypeDefinition<string>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.58a05033e5e3d052ad687f1ec7ee0750304f817e/src/Primitives/StrongTypes/MacAddress.cs#L24)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.1439b27645502c7f052b674cfbf301f1b8fcb921/src/Primitives/StrongTypes/MacAddress.cs#L24)
 
 ```csharp
 public sealed class MacAddressRules

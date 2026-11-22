@@ -13,7 +13,7 @@ A joint that destructures the NodaTime types in the logger Dovetail creates, the
 ## Register(IDovetailContext, IServiceCollection, LoggerConfiguration)
 
 - Name: `Register(IDovetailContext, IServiceCollection, LoggerConfiguration)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.58a05033e5e3d052ad687f1ec7ee0750304f817e/src/NodaTime/Joints/NodaTimeSerilogJoint.cs#L21-L24)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.1439b27645502c7f052b674cfbf301f1b8fcb921/src/NodaTime/Joints/NodaTimeSerilogJoint.cs#L21-L24)
 
 Register the Serilog part.
 

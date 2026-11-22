@@ -15,7 +15,7 @@ Useful extensions for enumerations.
 - Name: `GetAsyncEnumerator(IAsyncEnumerator<T>)`
 - Modifiers: `extension`
 - Returns: `IAsyncEnumerator<T>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.58a05033e5e3d052ad687f1ec7ee0750304f817e/src/Foundation/Extensions/UsefulEnumerableExtensions.cs#L22)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.1439b27645502c7f052b674cfbf301f1b8fcb921/src/Foundation/Extensions/UsefulEnumerableExtensions.cs#L22)
 
 Allows you to enumerate over an enumerator you have without the need for it to be an `Generic.IAsyncEnumerator`1`.
 
@@ -42,7 +42,7 @@ public static class UsefulEnumerableExtensions
 - Name: `GetEnumerator(IEnumerator<T>)`
 - Modifiers: `extension`
 - Returns: `IEnumerator<T>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.58a05033e5e3d052ad687f1ec7ee0750304f817e/src/Foundation/Extensions/UsefulEnumerableExtensions.cs#L14)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.1439b27645502c7f052b674cfbf301f1b8fcb921/src/Foundation/Extensions/UsefulEnumerableExtensions.cs#L14)
 
 Allows you to enumerate over an enumerator you have without the need for it to be an `Generic.IEnumerable`1`.
 
