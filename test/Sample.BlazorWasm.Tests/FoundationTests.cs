@@ -7,7 +7,11 @@ using Sample.BlazorWasm.Forms;
 
 using ZeroAlloc.Validation;
 
-[assembly: CLSCompliant(false)]
+// as in Sdk.Tests: the public test classes expose nothing for other languages to consume. Qualified, because Codacy compiles the file on
+// its own, without the implicit usings.
+#pragma warning disable IDE0001
+[assembly: System.CLSCompliant(false)]
+#pragma warning restore IDE0001
 
 namespace Sample.BlazorWasm.Tests;
 
