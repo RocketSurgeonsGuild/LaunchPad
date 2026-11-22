@@ -14,7 +14,7 @@ A request was denied where there is no response to answer with: a stream request
 - Name: `Problem`
 - Modifiers: `get`
 - Returns: `Problem`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/ZeroAlloc.Authorization/AuthorizationDeniedException.cs#L12)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.Authorization/AuthorizationDeniedException.cs#L12)
 
 The `Foundation.Unauthorized` or `Foundation.Forbidden` problem.
 

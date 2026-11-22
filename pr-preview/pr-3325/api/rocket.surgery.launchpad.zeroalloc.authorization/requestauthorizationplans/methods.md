@@ -15,7 +15,7 @@ The plans of the application, by request, and the policies they name, by the nam
 - Name: `Find(Type)`
 - Modifiers: `nullable`
 - Returns: [RequestAuthorizationPlan?](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/requestauthorizationplan.md)
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/ZeroAlloc.Authorization/RequestAuthorizationPlan.cs#L151-L152)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.Authorization/RequestAuthorizationPlan.cs#L158-L159)
 
 The plan of a request, if it has policies.
 
@@ -43,7 +43,7 @@ public sealed class RequestAuthorizationPlans
 - Name: `FindPolicy(string?)`
 - Modifiers: `nullable`
 - Returns: [PolicyRequirement?](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/policyrequirement.md)
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/ZeroAlloc.Authorization/RequestAuthorizationPlan.cs#L161-L167)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.Authorization/RequestAuthorizationPlan.cs#L168-L174)
 
 A policy some request names, by its [PolicyRequirement.Key](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/policyrequirement/properties.md#key): the policy's name, with the arguments the request passes it. Null for a name no request names, which is then a policy of the application's own.
 

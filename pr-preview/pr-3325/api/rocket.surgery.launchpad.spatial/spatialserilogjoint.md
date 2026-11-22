@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Spatial](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.spatial.md)
-- Version: `2.0.1-pr.1296`
+- Version: `2.0.1-pr.1298`
 - Namespace: `Rocket.Surgery.LaunchPad.Spatial.Joints`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/Spatial/Joints/SpatialSerilogJoint.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/Spatial/Joints/SpatialSerilogJoint.cs)
 - Implements: `IDovetailJoint`, `ISerilogJoint`
 
 A joint that destructures the NetTopologySuite types in the logger Dovetail creates, the way [NetTopologySuiteLoggerConfigurationExtensions.NetTopologySuiteTypes(LoggerDestructuringConfiguration)](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.spatial/nettopologysuiteloggerconfigurationextensions/methods.md#nettopologysuitetypes-loggerdestructuringconfiguration) does. Implements the `Joints.ISerilogJoint`

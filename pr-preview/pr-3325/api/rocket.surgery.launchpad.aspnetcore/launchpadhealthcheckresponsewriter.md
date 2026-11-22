@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.AspNetCore](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.aspnetcore.md)
-- Version: `2.0.1-pr.1296`
+- Version: `2.0.1-pr.1298`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.HealthChecks`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/AspNetCore/HealthChecks/LaunchPadHealthCheckResponseWriter.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/AspNetCore/HealthChecks/LaunchPadHealthCheckResponseWriter.cs)
 
 Writes a `HealthChecks.HealthReport` as JSON in the shape the HealthChecks.UI dashboard reads ( `UIResponseWriter`).
 

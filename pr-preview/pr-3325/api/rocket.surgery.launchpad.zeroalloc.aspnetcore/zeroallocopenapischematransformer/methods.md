@@ -14,7 +14,7 @@ Describes the ZeroAlloc.Validation attributes of a type's properties in its Open
 
 - Name: `TransformAsync(OpenApiSchema, OpenApiSchemaTransformerContext, CancellationToken)`
 - Returns: `Task`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/ZeroAlloc.AspNetCore/OpenApi/ZeroAllocOpenApiSchemaTransformer.cs#L29-L46)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.AspNetCore/OpenApi/ZeroAllocOpenApiSchemaTransformer.cs#L29-L46)
 
 Transforms the specified OpenAPI schema.
 

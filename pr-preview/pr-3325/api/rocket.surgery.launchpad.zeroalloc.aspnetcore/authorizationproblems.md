@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.aspnetcore.md)
-- Version: `2.0.1-pr.1296`
+- Version: `2.0.1-pr.1298`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.Authorization`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/ZeroAlloc.AspNetCore/Authorization/AuthorizationProblems.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.AspNetCore/Authorization/AuthorizationProblems.cs)
 
 How an `Foundation.Unauthorized` or `Foundation.Forbidden` problem is written over HTTP: as the generated servers write the case.
 

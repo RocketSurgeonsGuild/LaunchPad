@@ -28,20 +28,27 @@ without services, so no policy could be checked: LaunchPad bans it (RS0030, an e
 
 ## Declare a policy
 
-A policy is a class with a name. `[RequiresScopes]` lists the scopes it requires of the caller, all of them:
+A policy is a class with a name. Most policies are the scopes they require, and for those you write no code:
 
 ```csharp
-[Policy("Rockets.Write"), RequiresScopes("rockets:write")]
-public sealed class RocketsWrite : IAuthorizationPolicy
-{
-    public ValueTask<UnitResult<AuthorizationFailure>> EvaluateAsync(ISecurityContext ctx, CancellationToken ct = default) =>
-        new(UnitResult<AuthorizationFailure>.Success());
-}
+[Policy("Rockets.Write"), RequireScope("rockets:write")]
+public sealed partial class RocketsWrite : IAuthorizationPolicy;
 ```
 
-LaunchPad checks the scopes before the policy runs, so a policy that only requires scopes has nothing to decide. A policy with a rule
-of its own returns a failure with a reason. A policy sees the caller and nothing of the request, so it is the same check for
-every request that names it; a rule about what a request contains belongs in its handler, which answers `Forbidden` itself.
+LaunchPad writes the policy's `EvaluateAsync`, which checks the caller's scopes. The check is the policy's own, so it runs wherever
+the request is dispatched: behind a server, in a worker, anywhere.
+
+| Attribute                     | The caller needs               |
+| ----------------------------- | ------------------------------ |
+| `[RequireScope("a", "b")]`    | every scope it lists           |
+| `[RequireAnyScope("a", "b")]` | at least one of those it lists |
+
+Several attributes on one policy must all be satisfied. The class is partial, lists `IAuthorizationPolicy` and does not declare
+`EvaluateAsync` (LPAD1053 otherwise).
+
+A policy with a rule of its own is an ordinary ZeroAlloc policy: write its `EvaluateAsync` and leave the scope attributes off. A
+policy sees the caller and nothing of the request, so it is the same check for every request that names it; a rule about what a
+request contains belongs in its handler, which answers `Forbidden` itself.
 
 ## Require it on a request
 
@@ -58,21 +65,21 @@ public readonly union Result(Unit, NotFound, Unauthorized, Forbidden);
 - A stream request has no response to answer with: its denial is thrown as `AuthorizationDeniedException`, and each transport
   answers it as the same case.
 
-| Diagnostic | When                                                                                        |
-| ---------- | ------------------------------------------------------------------------------------------- |
-| LPAD1050   | The response of a request with a policy is not a union, or its union has no `Unauthorized`. |
-| LPAD1051   | Its union has no `Forbidden`.                                                               |
-| LPAD1052   | Its policies expand to more than 16 alternative sets of scopes.                             |
-| LPAD1053   | `[RequiresScopes]` is on a type that is not a `[Policy]`, or a scope is blank.              |
-| LPAD1054   | The request is generic, private or protected, so its policies could not be checked.         |
+| Diagnostic | When                                                                                          |
+| ---------- | --------------------------------------------------------------------------------------------- |
+| LPAD1050   | The response of a request with a policy is not a union, or its union has no `Unauthorized`.   |
+| LPAD1051   | Its union has no `Forbidden`.                                                                 |
+| LPAD1052   | Its policies expand to more than 16 alternative sets of scopes.                               |
+| LPAD1053   | A class with a scope attribute is not a `[Policy]`, not partial, or declares `EvaluateAsync`. |
+| LPAD1054   | The request is generic, private or protected, so its policies could not be checked.           |
 
 ## Who the caller is
 
-Policies see an `ISecurityContext`: an id, roles and claims. The scopes are read from its `scope` claim (and `scp`), separated by
-spaces; `RequestAuthorizationOptions.ScopeClaims` changes that.
+Policies see an `ISecurityContext`: an id, roles and claims. The caller's scopes are its `scope` claim, separated by spaces.
 
 - In an ASP.NET Core application the caller is the one ASP.NET Core authenticated. Add authentication as usual, for example JWT bearer.
-- Anywhere else (a worker, a console application, a Blazor circuit) register your own `ISecurityContext` as a scoped service.
+- Anywhere else (a worker, a console application, a Blazor circuit) register your own `ISecurityContext` as a scoped service, with
+  the scopes it has in its `scope` claim.
 
 ## What each transport does
 

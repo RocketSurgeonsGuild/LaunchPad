@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.EntityFramework](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.entityframework.md)
-- Version: `2.0.1-pr.1296`
+- Version: `2.0.1-pr.1298`
 - Namespace: `Rocket.Surgery.LaunchPad.EntityFramework`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/EntityFramework/LpContext.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/EntityFramework/LpContext.cs)
 - Inherits: `DbContext`
 
 Default DB Context that ensures that configuration is pulled from the assembly of TContext Also enables DateTimeOffset support with Sqlite

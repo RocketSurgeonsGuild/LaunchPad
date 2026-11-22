@@ -5,7 +5,7 @@
 - Kind: `Methods`
 - Members: `3`
 
-Decides a request's plan for the caller of a call, policy by policy, recording each outcome in the call's [AuthorizationOutcomes](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/authorizationoutcomes.md) and reusing the ones already there. One for each call: the mediator pipeline and the edge both decide through it, so a policy runs once. A policy sees the caller and nothing of the request: it is the same check wherever it runs.
+Decides a request's plan for the caller of a call, policy by policy, recording each outcome in the call's [AuthorizationOutcomes](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/authorizationoutcomes.md) and reusing the ones already there. One for each call: the mediator pipeline and the edge both decide through it, so a policy runs once. A policy sees the caller and nothing of the request: it is the same check wherever it runs, and a policy with scope attributes checks the caller's scopes itself.
 
 <a id="authorizeasync"></a>
 <a id="authorizeasync-requestauthorizationplan-cancellationtoken"></a>
@@ -14,7 +14,7 @@ Decides a request's plan for the caller of a call, policy by policy, recording e
 
 - Name: `AuthorizeAsync(RequestAuthorizationPlan, CancellationToken)`
 - Returns: `ValueTask<AuthorizationDecision>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/ZeroAlloc.Authorization/RequestAuthorizer.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.Authorization/RequestAuthorizer.cs)
 
 Decides a request's plan for the caller: every policy that has no outcome yet for this call runs.
 
@@ -43,7 +43,7 @@ public sealed class RequestAuthorizer
 
 - Name: `AuthorizeAsync(PolicyRequirement, CancellationToken)`
 - Returns: `ValueTask<AuthorizationDecision>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/ZeroAlloc.Authorization/RequestAuthorizer.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.Authorization/RequestAuthorizer.cs)
 
 Decides one policy for the caller, as the edge does for each policy an endpoint names. Its outcome is recorded, so the plan of the request finds it and the policy doesn't run again.
 
@@ -74,7 +74,7 @@ public sealed class RequestAuthorizer
 - Name: `IsAnonymous(ISecurityContext)`
 - Modifiers: `static`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/ZeroAlloc.Authorization/RequestAuthorizer.cs#L48-L51)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.Authorization/RequestAuthorizer.cs#L44-L47)
 
 Whether the caller has no identity.
 

@@ -14,7 +14,7 @@ The rules of a VIN, a vehicle identification number (ISO 3779), such as `1M8GDM9
 - Name: `Define`
 - Modifiers: `static`
 - Returns: `StrongTypeDefinition<string>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/Primitives/StrongTypes/Vin.cs#L28-L31)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/Primitives/StrongTypes/Vin.cs#L28-L31)
 
 ```csharp
 public sealed class VinRules

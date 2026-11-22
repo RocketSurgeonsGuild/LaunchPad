@@ -13,7 +13,7 @@ A range of times of day from [TimeRange.Start](/LaunchPad/pr-preview/pr-3325/api
 ## TimeRange(TimeOnly, TimeOnly)
 
 - Name: `Constructor(TimeOnly, TimeOnly)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/Primitives/StrongTypes/TimeRange.cs#L19-L24)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/Primitives/StrongTypes/TimeRange.cs#L19-L24)
 
 Creates a range from `start` to `end`.
 

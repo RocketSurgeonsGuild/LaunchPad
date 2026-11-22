@@ -14,7 +14,7 @@ The rules of a hexadecimal color: the CSS Color 4 §5.2 hex notation `#RGB` or `
 - Name: `Define`
 - Modifiers: `static`
 - Returns: `StrongTypeDefinition<string>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/Primitives/StrongTypes/HexColor.cs#L23)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/Primitives/StrongTypes/HexColor.cs#L23)
 
 ```csharp
 public sealed class HexColorRules

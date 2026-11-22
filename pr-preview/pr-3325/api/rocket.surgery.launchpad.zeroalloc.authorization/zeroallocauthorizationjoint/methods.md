@@ -5,7 +5,7 @@
 - Kind: `Methods`
 - Members: `1`
 
-Registers what the [AuthorizationBehavior](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/authorizationbehavior.md) shares with the edge: the [AuthorizationOutcomes](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/authorizationoutcomes.md) of each call and the [RequestAuthorizationOptions](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/requestauthorizationoptions.md). Implements the `Joints.IServiceJoint`
+Registers what the [AuthorizationBehavior](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/authorizationbehavior.md) shares with the edge: the [AuthorizationOutcomes](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/authorizationoutcomes.md) of each call. Implements the `Joints.IServiceJoint`
 
 <a id="register"></a>
 <a id="register-idovetailcontext-iservicecollection"></a>
@@ -13,7 +13,7 @@ Registers what the [AuthorizationBehavior](/LaunchPad/pr-preview/pr-3325/api/roc
 ## Register(IDovetailContext, IServiceCollection)
 
 - Name: `Register(IDovetailContext, IServiceCollection)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/ZeroAlloc.Authorization/Joints/ZeroAllocAuthorizationJoint.cs#L17)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.Authorization/Joints/ZeroAllocAuthorizationJoint.cs#L16)
 
 Register the Service part.
 

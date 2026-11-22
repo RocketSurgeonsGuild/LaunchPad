@@ -15,9 +15,9 @@ A `Claims.ClaimsPrincipal` as a security context.
 - Name: `From(ClaimsPrincipal?)`
 - Modifiers: `static`
 - Returns: `ISecurityContext`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/ZeroAlloc.AspNetCore/Authorization/HttpSecurityContext.cs#L64-L88)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.AspNetCore/Authorization/HttpSecurityContext.cs#L71-L96)
 
-The principal as a security context: its subject as the id, its role claims as roles, and its claims by type, the values of a repeated claim joined by a space. A principal that is not authenticated is the anonymous security context.
+The principal as a security context: its subject as the id, its role claims as roles, and its claims by type, the values of a repeated claim joined by a space. Its scopes are its `scope` claim, whichever claim the token carried them in. A principal that is not authenticated is the anonymous security context.
 
 ```csharp
 public sealed class ClaimsSecurityContext

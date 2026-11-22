@@ -14,7 +14,7 @@ The rules of an IBAN, an international bank account number (ISO 13616-1), such a
 - Name: `Define`
 - Modifiers: `static`
 - Returns: `StrongTypeDefinition<string>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/Primitives/StrongTypes/Iban.cs#L26-L29)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/Primitives/StrongTypes/Iban.cs#L26-L29)
 
 ```csharp
 public sealed class IbanRules

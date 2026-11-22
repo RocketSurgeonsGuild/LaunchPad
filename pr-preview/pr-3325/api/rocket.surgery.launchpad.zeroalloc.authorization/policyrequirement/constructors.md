@@ -5,17 +5,17 @@
 - Kind: `Constructors`
 - Members: `1`
 
-One policy a request names: its name and arguments, the scopes it declares and how to run it.
+One policy a request names: its name and arguments, the scopes it requires and how to run it.
 
 <a id="constructor"></a>
 <a id="constructor-string-string-type-string-policyevaluator"></a>
 
-## PolicyRequirement(string, string, Type, string[], PolicyEvaluator)
+## PolicyRequirement(string, string, Type, string[][], PolicyEvaluator)
 
-- Name: `Constructor(string, string, Type, string[], PolicyEvaluator)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/ZeroAlloc.Authorization/RequestAuthorizationPlan.cs#L24-L40)
+- Name: `Constructor(string, string, Type, string[][], PolicyEvaluator)`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.Authorization/RequestAuthorizationPlan.cs#L26-L44)
 
-One policy a request names: its name and arguments, the scopes it declares and how to run it.
+One policy a request names: its name and arguments, the scopes it requires and how to run it.
 
 ```csharp
 public sealed class PolicyRequirement
@@ -24,7 +24,7 @@ public sealed class PolicyRequirement
         string name,
         string arguments,
         Type policyType,
-        string[] scopes,
+        string[][] scopeAlternatives,
         PolicyEvaluator evaluate)
     {
         // ...
@@ -40,11 +40,7 @@ public sealed class PolicyRequirement
   The constant arguments the request passes it, as text; empty for none.
 - `policyType` (`Type`)
   The policy class.
-- `scopes` (`string[]`)
-  The scopes the policy declares with [RequiresScopesAttribute](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/requiresscopesattribute.md).
+- `scopeAlternatives` (`string[][]`)
+  The scopes the policy's scope attributes require, as alternatives: each a set of scopes that satisfies the policy. One empty set for a policy without scope attributes.
 - `evaluate` ([PolicyEvaluator](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/policyevaluator.md))
   Runs the policy.
-
-## Remarks
-
-Describes one policy a request names.

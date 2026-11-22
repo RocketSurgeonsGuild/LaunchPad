@@ -15,7 +15,7 @@ Registers what authorizes requests by their policies. LaunchPad's generator writ
 - Name: `AddAuthorizationResponse(IServiceCollection, Func<Unauthorized, TResponse>, Func<Forbidden, TResponse>)`
 - Modifiers: `extension`
 - Returns: `IServiceCollection`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/ZeroAlloc.Authorization/AuthorizationServiceCollectionExtensions.cs#L56-L58)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.Authorization/AuthorizationServiceCollectionExtensions.cs#L55-L57)
 
 Registers how a denial becomes a response, unless the response has it registered.
 
@@ -49,9 +49,9 @@ public static class AuthorizationServiceCollectionExtensions
 - Name: `AddLaunchPadAuthorization(IServiceCollection)`
 - Modifiers: `extension`
 - Returns: `IServiceCollection`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/ZeroAlloc.Authorization/AuthorizationServiceCollectionExtensions.cs#L20-L25)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.Authorization/AuthorizationServiceCollectionExtensions.cs#L20-L24)
 
-Registers what every plan needs: the [RequestAuthorizer](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/requestauthorizer.md) and the [AuthorizationOutcomes](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/authorizationoutcomes.md) of each call, the [RequestAuthorizationPlans](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/requestauthorizationplans.md) of the application and the [RequestAuthorizationOptions](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/requestauthorizationoptions.md).
+Registers what every plan needs: the [RequestAuthorizer](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/requestauthorizer.md) and the [AuthorizationOutcomes](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/authorizationoutcomes.md) of each call, and the [RequestAuthorizationPlans](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/requestauthorizationplans.md) of the application.
 
 ```csharp
 public static class AuthorizationServiceCollectionExtensions
@@ -77,7 +77,7 @@ public static class AuthorizationServiceCollectionExtensions
 - Name: `AddRequestAuthorizationPlan(IServiceCollection, PolicyGroup[])`
 - Modifiers: `extension`
 - Returns: `IServiceCollection`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/ZeroAlloc.Authorization/AuthorizationServiceCollectionExtensions.cs#L34-L42)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.Authorization/AuthorizationServiceCollectionExtensions.cs#L33-L41)
 
 Registers the plan of a request, unless it has one.
 

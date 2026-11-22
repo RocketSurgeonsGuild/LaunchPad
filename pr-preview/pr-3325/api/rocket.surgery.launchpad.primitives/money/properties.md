@@ -14,7 +14,7 @@ An amount of money in a currency.
 - Name: `Amount`
 - Modifiers: `get`
 - Returns: `decimal`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/Primitives/StrongTypes/Money.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/Primitives/StrongTypes/Money.cs)
 
 The amount, in units of the currency (not minor units: 12.50 US dollars is 12.50).
 
@@ -29,7 +29,7 @@ public decimal Amount { get; }
 - Name: `Currency`
 - Modifiers: `get`
 - Returns: [CurrencyCode](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.primitives/currencycode.md)
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/Primitives/StrongTypes/Money.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/Primitives/StrongTypes/Money.cs)
 
 The currency.
 

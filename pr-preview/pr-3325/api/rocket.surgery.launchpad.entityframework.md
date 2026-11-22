@@ -1,9 +1,9 @@
 # Rocket.Surgery.LaunchPad.EntityFramework
 
 - Package: `Rocket.Surgery.LaunchPad.EntityFramework`
-- Version: `2.0.1-pr.1296`
+- Version: `2.0.1-pr.1298`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/EntityFramework)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/EntityFramework)
 - NuGet: [Rocket.Surgery.LaunchPad.EntityFramework](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.EntityFramework)
 
 ## Namespaces

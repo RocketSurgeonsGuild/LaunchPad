@@ -14,7 +14,7 @@ Reports a field HotChocolate's authorization rejected as the `Unauthorized` or `
 - Name: `NotAuthenticated`
 - Modifiers: `static` `const`
 - Returns: `string`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/ZeroAlloc.HotChocolate/Authorization/AuthorizationErrorFilter.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.HotChocolate/Authorization/AuthorizationErrorFilter.cs)
 
 HotChocolate's code for a caller that is not authenticated.
 
@@ -29,7 +29,7 @@ public const static string NotAuthenticated
 - Name: `NotAuthorized`
 - Modifiers: `static` `const`
 - Returns: `string`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.cda885391825d90598517a0aef31b3494df7c9f7/src/ZeroAlloc.HotChocolate/Authorization/AuthorizationErrorFilter.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.HotChocolate/Authorization/AuthorizationErrorFilter.cs)
 
 HotChocolate's code for a caller that is not allowed.
 
