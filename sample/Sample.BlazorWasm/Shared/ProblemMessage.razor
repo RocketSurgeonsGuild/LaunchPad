@@ -1,0 +1,13 @@
+@if (Problem is { })
+{
+    <div class="alert alert-danger"
+         role="alert">
+        @Problem.Message()
+    </div>
+}
+
+@code {
+    /// <summary>The problem details of the last call to Sample.Minimal, if it failed.</summary>
+    [Parameter]
+    public ProblemDetails? Problem { get; set; }
+}

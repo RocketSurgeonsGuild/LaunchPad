@@ -1,6 +1,10 @@
+using System.Text.Json;
+
 using Microsoft.Extensions.DependencyInjection;
 
-using ZeroAlloc.Mediator;
+using Sample.BlazorWasm.Client;
+using Sample.BlazorWasm.Forms;
+
 using ZeroAlloc.Validation;
 
 namespace Sample.BlazorWasm.Tests;
@@ -8,32 +12,55 @@ namespace Sample.BlazorWasm.Tests;
 public class FoundationTests : HandleTestHostBase
 {
     [Test]
-    public async Task Should_Handle_Requests_Through_The_Joints()
-    {
-        var response = await ServiceProvider
-                            .GetRequiredService<IMediator>()
-                            .Send(new TestHandler.Request { FirstName = "Ada", LastName = "Lovelace" }, TestContext.CancellationToken);
-
-        await response.FullName.Should().BeEqualTo("Ada Lovelace");
-    }
-
-    [Test]
     public async Task Should_Register_The_Validators_Of_The_Sample()
     {
         var result = await ServiceProvider
-                          .GetRequiredService<ValidatorFor<TestHandler.Request>>()
-                          .ValidateAsync(new TestHandler.Request(), TestContext.CancellationToken);
+                          .GetRequiredService<ValidatorFor<RocketRequest>>()
+                          .ValidateAsync(new RocketRequest { SerialNumber = "short" }, TestContext.CancellationToken);
 
-        await result.Failures.ToArray().Select(z => z.PropertyName).Distinct().Should().BeEquivalentTo([nameof(TestHandler.Request.FirstName), nameof(TestHandler.Request.LastName)], CollectionOrdering.Matching);
+        await result.Failures.ToArray().Select(z => z.PropertyName).Distinct().Should().BeEquivalentTo([nameof(RocketRequest.SerialNumber)], CollectionOrdering.Matching);
     }
 
     [Test]
     public async Task Should_Register_The_Validator_Of_The_View_Model()
     {
         var result = await ServiceProvider
-                          .GetRequiredService<ValidatorFor<TestHandler.RequestViewModel>>()
-                          .ValidateAsync(new TestHandler.RequestViewModel { FirstName = "", LastName = "Lovelace" }, TestContext.CancellationToken);
+                          .GetRequiredService<ValidatorFor<RocketForm>>()
+                          .ValidateAsync(new RocketForm { SerialNumber = "", Type = RocketType.AtlasV }, TestContext.CancellationToken);
 
-        await result.Failures.ToArray().Select(z => z.PropertyName).Distinct().Should().BeEquivalentTo([nameof(TestHandler.RequestViewModel.FirstName)], CollectionOrdering.Matching);
+        await result.Failures.ToArray().Select(z => z.PropertyName).Distinct().Should().BeEquivalentTo([nameof(RocketForm.SerialNumber)], CollectionOrdering.Matching);
+    }
+
+    [Test]
+    public async Task Should_Accept_A_Valid_Rocket()
+    {
+        var result = await ServiceProvider
+                          .GetRequiredService<ValidatorFor<RocketForm>>()
+                          .ValidateAsync(new RocketForm { SerialNumber = "1234567890", Type = RocketType.FalconHeavy }, TestContext.CancellationToken);
+
+        await result.IsValid.Should().BeTrue();
+    }
+
+    [Test]
+    public async Task Should_Read_The_Rockets_Of_Sample_Minimal_Without_Reflection()
+    {
+        var rocket = JsonSerializer.Deserialize(
+            """{"id":"0058f30b-982a-9428-aa4e-aa704a6eb989","sn":"1234567890","type":"falconHeavy"}""",
+            RocketsClientJson.Default.RocketModel
+        );
+
+        await rocket!.Sn.Should().BeEqualTo("1234567890");
+        await rocket.Type.Should().BeEqualTo(RocketType.FalconHeavy);
+    }
+
+    [Test]
+    public async Task Should_Read_The_Problem_Details_Of_Sample_Minimal()
+    {
+        var problem = JsonSerializer.Deserialize(
+            """{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.5","title":"Not Found","status":404,"detail":"Rocket 1 was not found"}""",
+            RocketsClientJson.Default.ProblemDetails
+        );
+
+        await problem!.Message().Should().BeEqualTo("Rocket 1 was not found");
     }
 }

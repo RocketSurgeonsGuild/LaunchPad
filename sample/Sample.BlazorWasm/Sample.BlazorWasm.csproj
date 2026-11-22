@@ -1,4 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+    <Sdk Name="Chirograph" />
     <PropertyGroup>
         <TargetFrameworks>$(LaunchPadBrowserTargetFrameworks)</TargetFrameworks>
         <!--
@@ -24,12 +25,21 @@
         <PackageReference Include="Joinery.Dovetail.OpenTelemetry" />
         <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
         <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
-        <!-- ZeroAlloc.Mediator generates the mediator from the handlers in this project -->
-        <PackageReference Include="ZeroAlloc.Mediator" />
-        <PackageReference Include="ZeroAlloc.Mediator.Generator" PrivateAssets="all" />
-        <PackageReference Include="ZeroAlloc.Mediator.Validation" />
+        <!-- the forms' view models are validated in the browser, with the same rules the server applies -->
         <PackageReference Include="ZeroAlloc.Validation" />
         <PackageReference Include="ZeroAlloc.Validation.Inject" PrivateAssets="all" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!--
+            The rockets come from Sample.Minimal, through the Refit client Chirograph generates from the OpenAPI document the sample writes
+            when it builds. Sample.AppHost gives the client its address (Program.cs reads it); Chirograph's joint registers it.
+        -->
+        <OpenApiClient Include="..\Sample.Minimal\Sample.Minimal.csproj" Generator="Refitter" ClientName="RocketsClient" Namespace="Sample.BlazorWasm.Client" />
+        <!-- what Chirograph adds for a Refitter client, referenced here so central package management gives the version (NU1009) -->
+        <PackageReference Include="Refit.HttpClientFactory" />
+        <!-- a global using rather than one in each file: the generated code only exists after a build, so dotnet format sees the namespace as unused -->
+        <Using Include="Sample.BlazorWasm.Client" />
     </ItemGroup>
 
     <ItemGroup>
