@@ -41,8 +41,10 @@ builder.AddSample("command", "Sample.Command", http: false, https: false).WithEx
 
 // Blazor WebAssembly isn't a process of its own: the Blazor gateway serves the client to the browser. The integration builds the client with
 // the AppHost's environment and has no option for its framework, so the AppHost names it there (Sample.BlazorWasm.csproj reads it).
+// The client's rockets come from Sample.Minimal: the gateway proxies it under the client's path (_api/minimal), on the client's own origin,
+// and gives the client that address as services__minimal__https__0.
 Environment.SetEnvironmentVariable("LaunchPadSampleBrowserTargetFramework", $"{SampleResourceExtensions.TargetFramework}-browser");
-var blazorWasm = builder.AddBlazorWasmApp("blazor-wasm", "../Sample.BlazorWasm/Sample.BlazorWasm.csproj");
+var blazorWasm = builder.AddBlazorWasmApp("blazor-wasm", "../Sample.BlazorWasm/Sample.BlazorWasm.csproj").WithReference(minimal);
 builder.AddDotnetProjectBlazorGateway("blazor-wasm-gateway").WithBlazorClientApp(blazorWasm);
 
 builder.Build().Run();

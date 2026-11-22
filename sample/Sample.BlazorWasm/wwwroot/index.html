@@ -5,10 +5,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <title>Sample.BlazorWasm</title>
         <!--
-            Relative, so the app works where it is served: at the root (dotnet run, the DevServer) and under /blazor-wasm/ (Sample.AppHost's
-            Blazor gateway). The pages are all one segment deep, so the base of any of them is the app's root.
+            Where the app is served: at the root (dotnet run, the DevServer) and under /blazor-wasm/ (Sample.AppHost's Blazor gateway). The
+            pages under rockets/ are more than one segment deep, so the base is the path before the first segment of a route, set here before
+            anything relative to it loads. The links of the pages are relative to it.
         -->
         <base href="./" />
+        <script>
+            document.querySelector('base').setAttribute('href', location.pathname.replace(/\/(?:rockets|counter|fetchdata)(?:\/.*)?$/, '/'));
+        </script>
         <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
         <link href="css/app.css" rel="stylesheet" />
     </head>
