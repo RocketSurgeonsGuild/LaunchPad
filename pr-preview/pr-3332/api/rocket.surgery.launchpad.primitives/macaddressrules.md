@@ -1,0 +1,32 @@
+# MacAddressRules
+
+- Kind: `class`
+- Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3332/api/rocket.surgery.launchpad.primitives.md)
+- Version: `2.0.1-pr.1284`
+- Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
+- Target framework: `net11.0`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3332-merge.Sha.108cb13ce492322587639698c87355d3b8fcee1b/src/Primitives/StrongTypes/MacAddress.cs)
+- Implements: `IStrongTypeTemplate<string>`
+
+The rules of a MAC address, an IEEE EUI-48, in the IEEE 802 hexadecimal representation: six groups of two upper-case hexadecimal digits separated by hyphens, such as `00-1A-2B-3C-4D-5E`.
+
+## Definition
+
+```csharp
+namespace Rocket.Surgery.LaunchPad.StrongTypes;
+
+public sealed class MacAddressRules
+    : SuperStrong.Types.IStrongTypeTemplate<string>
+{
+    // ...
+}
+```
+
+## Remarks
+
+- IEEE 802 §8.1 writes each octet as two upper-case hexadecimal digits separated by hyphens. Colons ( `00:1a:2b:3c:4d:5e`), dots, lower case and the bare 12 digits are rejected rather than converted, since SuperStrong validates without changing the value.
+- EUI-64 addresses are rejected. Any EUI-48 is accepted, including broadcast and multicast addresses.
+
+## Methods
+
+- [Define](/LaunchPad/pr-preview/pr-3332/api/rocket.surgery.launchpad.primitives/macaddressrules/methods.md#define) : `StrongTypeDefinition<string>` `static`
