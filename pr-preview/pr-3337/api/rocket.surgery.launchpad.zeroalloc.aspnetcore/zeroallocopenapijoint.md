@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore](/LaunchPad/pr-preview/pr-3337/api/rocket.surgery.launchpad.zeroalloc.aspnetcore.md)
-- Version: `2.0.1-pr.1324`
+- Version: `2.0.1-pr.1325`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.Joints`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.09dd538c83fe5dc2188f0956cd1425be399f85c1/src/ZeroAlloc.AspNetCore/Joints/ZeroAllocOpenApiJoint.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.7307fcdde362b2224f6c0071b6dfb1eaf21e5cff/src/ZeroAlloc.AspNetCore/Joints/ZeroAllocOpenApiJoint.cs)
 - Implements: `IDovetailJoint`, `IServiceJoint`
 
 Adds the [ZeroAllocOpenApiSchemaTransformer](/LaunchPad/pr-preview/pr-3337/api/rocket.surgery.launchpad.zeroalloc.aspnetcore/zeroallocopenapischematransformer.md) to every OpenAPI document, so the ZeroAlloc.Validation rules show in the schemas. Implements the `Joints.IServiceJoint`

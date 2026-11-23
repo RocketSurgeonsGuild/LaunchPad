@@ -1,9 +1,9 @@
 # Rocket.Surgery.LaunchPad.Primitives
 
 - Package: `Rocket.Surgery.LaunchPad.Primitives`
-- Version: `2.0.1-pr.1324`
+- Version: `2.0.1-pr.1325`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3337-merge.Sha.09dd538c83fe5dc2188f0956cd1425be399f85c1/src/Primitives)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3337-merge.Sha.7307fcdde362b2224f6c0071b6dfb1eaf21e5cff/src/Primitives)
 - NuGet: [Rocket.Surgery.LaunchPad.Primitives](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Primitives)
 
 ## Namespaces
@@ -23,6 +23,7 @@
 ### Rocket.Surgery.LaunchPad.Primitives.Advanced
 
 - [PrimitiveBuilder<TPrimitive, TValue>](/LaunchPad/pr-preview/pr-3337/api/rocket.surgery.launchpad.primitives/primitivebuilder-2.md) -- `class` `sealed` -- Creates a domain primitive with rules of the caller's own on top of its rules.
+- [PrimitivePatterns](/LaunchPad/pr-preview/pr-3337/api/rocket.surgery.launchpad.primitives/primitivepatterns.md) -- `class` `static` -- The patterns of the primitive kinds, which the code the generator writes for a kind matches the value against.
 
 ### Rocket.Surgery.LaunchPad.Primitives.Descriptions
 

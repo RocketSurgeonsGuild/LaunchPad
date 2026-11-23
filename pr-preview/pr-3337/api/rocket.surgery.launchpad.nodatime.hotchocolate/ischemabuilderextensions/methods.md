@@ -15,7 +15,7 @@ Schema builder extensions
 - Name: `AddNodaTimeFilters(ISchemaBuilder)`
 - Modifiers: `extension`
 - Returns: `ISchemaBuilder`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.09dd538c83fe5dc2188f0956cd1425be399f85c1/src/NodaTime.HotChocolate/ISchemaBuilderExtensions.cs#L24-L51)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.7307fcdde362b2224f6c0071b6dfb1eaf21e5cff/src/NodaTime.HotChocolate/ISchemaBuilderExtensions.cs#L24-L51)
 
 Binds the NodaTime types HotChocolate has scalars for ( `OffsetDateTime`, `Duration`, `LocalDate`, `LocalDateTime` and `LocalTime`), and `Instant`, which the Joint binds to the `DateTime` scalar, to comparable filters.
 

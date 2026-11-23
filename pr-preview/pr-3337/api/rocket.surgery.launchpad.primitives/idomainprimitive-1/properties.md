@@ -14,7 +14,7 @@ A domain primitive: a type the Primitives generator completes, which only holds 
 - Name: `IsDefault`
 - Modifiers: `virtual` `get`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.09dd538c83fe5dc2188f0956cd1425be399f85c1/src/Primitives/IDomainPrimitive.cs#L22)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.7307fcdde362b2224f6c0071b6dfb1eaf21e5cff/src/Primitives/IDomainPrimitive.cs#L22)
 
 Whether this is the default value of a domain primitive declared as a struct, which holds no value. A domain primitive declared as a class is never default: a missing value is `null`.
 

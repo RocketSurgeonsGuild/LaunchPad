@@ -131,12 +131,24 @@ Rules are attributes on the domain primitive. The normalizations change the valu
 | `[Length(min, max)]`            | strings           | From `min` to `max` characters.                                                                                                        |
 | `[ExactLength(n)]`              | strings           | Exactly `n` characters.                                                                                                                |
 | `[Regex(pattern)]`              | strings           | Matches the pattern. Repeatable; the analyzers check the pattern.                                                                      |
+| a `[GeneratedRegex]` member     | strings           | Matches the pattern, which the regular expression generator turns into code. See below.                                                |
 | `[PrimitiveRange(min, max)]`    | numbers and dates | From `min` to `max`: numbers for a number, ISO 8601 text for a date or a time. `MinExclusive` and `MaxExclusive` leave out the bounds. |
 | `[CustomValidator<TValidator>]` | any value         | Checks with an `ICustomValidator<T>`, after every other rule. Repeatable.                                                              |
 
 The string rules apply to a string strong ID too, and `[PrimitiveRange]` to a strong ID of an `int` or a `long`. After the built-in normalizations and before any `[Normalize<T>]`, a string is normalized to Unicode form C, and a string that can’t be (an unpaired surrogate) is rejected with `INVALID_UNICODE`. A string far longer than its maximum length is rejected before it is normalized, so a huge value costs nothing to reject.
 
-A pattern, of `[Regex]` or of a primitive kind, is built once into a static `Regex` with `RegexOptions.CultureInvariant` and a one second timeout; a match that times out rejects the value. The pattern is interpreted, as native AOT interprets every pattern, rather than compiled. It isn’t a `[GeneratedRegex]`: the regular expression generator is a source generator too, and one source generator doesn’t see what another writes, so a `[GeneratedRegex]` partial method the Primitives generator wrote would never be implemented.
+The pattern of a primitive kind is a `[GeneratedRegex]` of `PrimitivePatterns` (in `Rocket.Surgery.LaunchPad.Primitives.Advanced`), which the regular expression generator turns into code when Primitives is built. A pattern of your own can be a `[GeneratedRegex]` too: every static `[GeneratedRegex]` property, or method without parameters, of a string domain primitive or a string strong ID is a rule, checked after its `[Regex]` rules, that reports `FORMAT` with the default message. Its description (and so the pattern of its OpenAPI schema) is its pattern with the options that change what it matches written inline: `RegexOptions.IgnoreCase` makes `^[a-z]+$` `(?i)^[a-z]+$`.
+
+```csharp
+[StringPrimitive, Trim, UpperCase]
+public readonly partial record struct Sku
+{
+    [GeneratedRegex("^[A-Z]{3}-[0-9]+$", RegexOptions.CultureInvariant, 1000)]
+    private static partial Regex Format { get; }
+}
+```
+
+You declare the `[GeneratedRegex]` yourself because the Primitives generator can’t: the regular expression generator is a source generator too, and one source generator doesn’t see what another writes, so a `[GeneratedRegex]` the Primitives generator wrote would never be implemented. A `[Regex]` is built once into a static `Regex` with `RegexOptions.CultureInvariant` and a one second timeout, and interpreted rather than compiled, as native AOT interprets every pattern built at run time. LPAD2023 suggests a `[GeneratedRegex]` for a `[Regex]` that doesn’t set its own `ErrorCode` or `ErrorMessage` and comes after every `[Regex]` that does, and its fix writes it. The patterns of the kinds have the same one second timeout. A match that times out rejects the value.
 
 Every check but `[CustomValidator<T>]` has `ErrorCode` and `ErrorMessage` too; a custom validator returns its own `PrimitiveError`. A normalizer and a custom validator are static, so nothing is allocated or resolved to run them:
 
@@ -264,19 +276,19 @@ if (!Sku.TryCreate(input, out var sku, out var error))
 
 The codes are these, as they apply, and any `ErrorCode` a rule or a primitive attribute sets:
 
-| Code              | Reported by                                                                                              |
-| ----------------- | -------------------------------------------------------------------------------------------------------- |
-| `NULL_INPUT`      | a `null` string                                                                                          |
-| `INVALID_UNICODE` | a string that isn’t valid Unicode                                                                        |
-| `EMPTY`           | an empty or blank string (`[NotEmpty]`, a kind that requires a value), or the empty value of a strong ID |
-| `LENGTH`          | the length rules                                                                                         |
-| `FORMAT`          | `[Regex]`, and the format of a string kind (its pattern, its URL schemes, its ISO list, the IBAN check)  |
-| `RANGE`           | `[PrimitiveRange]`, the bounds of a kind, a `float`, `double` or `Half` that isn’t finite                |
-| `SCALE`           | `[Rating]` with more decimals than its `Scale`                                                           |
-| `TEMPORAL`        | `PastOnly`, `FutureOnly`, and the checks of the date kinds                                               |
-| `UNKNOWN_MEMBER`  | a value or a name that isn’t a member of a smart enum                                                    |
-| `CURRENCY`        | a `[Money]` currency that isn’t an ISO 4217 code, or not the currency of `[Money("USD")]`                |
-| `INVARIANT`       | nothing generated: it is the code for a value object’s own `Validate` to use                             |
+| Code              | Reported by                                                                                                                          |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `NULL_INPUT`      | a `null` string                                                                                                                      |
+| `INVALID_UNICODE` | a string that isn’t valid Unicode                                                                                                    |
+| `EMPTY`           | an empty or blank string (`[NotEmpty]`, a kind that requires a value), or the empty value of a strong ID                             |
+| `LENGTH`          | the length rules                                                                                                                     |
+| `FORMAT`          | `[Regex]`, a `[GeneratedRegex]` member, and the format of a string kind (its pattern, its URL schemes, its ISO list, the IBAN check) |
+| `RANGE`           | `[PrimitiveRange]`, the bounds of a kind, a `float`, `double` or `Half` that isn’t finite                                            |
+| `SCALE`           | `[Rating]` with more decimals than its `Scale`                                                                                       |
+| `TEMPORAL`        | `PastOnly`, `FutureOnly`, and the checks of the date kinds                                                                           |
+| `UNKNOWN_MEMBER`  | a value or a name that isn’t a member of a smart enum                                                                                |
+| `CURRENCY`        | a `[Money]` currency that isn’t an ISO 4217 code, or not the currency of `[Money("USD")]`                                            |
+| `INVARIANT`       | nothing generated: it is the code for a value object’s own `Validate` to use                                                         |
 
 A `[DateRange]`, a `[TimeRange]` and a `[Money]` with `Min` or `Max` report `RANGE` too.
 
@@ -474,7 +486,7 @@ A rejected value also adds a `domain_primitive.validation.failure` event to the 
 
 [Section titled “Analyzers”](#analyzers)
 
-LPAD2001 to LPAD2022 are analyzers. LPAD2101 to LPAD2103 are reported by the generator itself: they are declarations it has to refuse to complete as written, so it is the generator that finds them.
+LPAD2001 to LPAD2023 are analyzers. LPAD2101 to LPAD2103 are reported by the generator itself: they are declarations it has to refuse to complete as written, so it is the generator that finds them.
 
 | ID       | Severity | Reports                                                                                                                                                                                                                                                                                 |
 | -------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -500,6 +512,7 @@ LPAD2001 to LPAD2022 are analyzers. LPAD2101 to LPAD2103 are reported by the gen
 | LPAD2020 | Error    | `PastOnly` or `FutureOnly` on a `Duration`, `Period`, `Offset` or `AnnualDate`, or both on one domain primitive.                                                                                                                                                                        |
 | LPAD2021 | Warning  | A NodaTime domain primitive in a project that doesn’t reference `Rocket.Surgery.LaunchPad.NodaTime`.                                                                                                                                                                                    |
 | LPAD2022 | Warning  | A rule that doesn’t apply to the kind: a string rule on a number, a date or a `Guid` strong ID, `[PrimitiveRange]` on a string, a string strong ID or a `Guid` strong ID, a `[PrimitiveRange]` of numbers on a date or of text on a number, any rule on a smart enum or a value object. |
+| LPAD2023 | Info     | A `[Regex]` without its own `ErrorCode` or `ErrorMessage`, which can be a `[GeneratedRegex]` member (code fix).                                                                                                                                                                         |
 | LPAD2101 | Error    | A value type the primitive attribute doesn’t support (a strong ID of a `double`, say), or a date `Kind` whose type the project doesn’t reference.                                                                                                                                       |
 | LPAD2102 | Error    | More than one primitive attribute on a type.                                                                                                                                                                                                                                            |
 | LPAD2103 | Error    | An invalid attribute argument: a `GuidVersion` other than 4 or 7, `GuidVersion` on a strong ID that isn’t of a `Guid`, a `Kind` the attribute doesn’t take, a domain primitive nested in a generic type, or a `[Money]`, `[DateRange]` or `[TimeRange]` named like one of its values.   |

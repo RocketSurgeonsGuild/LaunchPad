@@ -14,7 +14,7 @@ A JSON type info resolver, usually a source generated `Serialization.JsonSeriali
 - Name: `LibraryOrder`
 - Modifiers: `static` `const`
 - Returns: `int`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.09dd538c83fe5dc2188f0956cd1425be399f85c1/src/Foundation/JsonTypeInfoResolverRegistration.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.7307fcdde362b2224f6c0071b6dfb1eaf21e5cff/src/Foundation/JsonTypeInfoResolverRegistration.cs)
 
 The order LaunchPad's own resolvers are registered with, behind the application's, so an application can take over any type.
 

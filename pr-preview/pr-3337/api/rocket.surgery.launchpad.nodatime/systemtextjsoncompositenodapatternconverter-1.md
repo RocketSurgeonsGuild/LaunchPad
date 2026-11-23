@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.NodaTime](/LaunchPad/pr-preview/pr-3337/api/rocket.surgery.launchpad.nodatime.md)
-- Version: `2.0.1-pr.1324`
+- Version: `2.0.1-pr.1325`
 - Namespace: `Rocket.Surgery.LaunchPad.NodaTime`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.09dd538c83fe5dc2188f0956cd1425be399f85c1/src/NodaTime/SystemTextJsonCompositeNodaPatternConverter.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.7307fcdde362b2224f6c0071b6dfb1eaf21e5cff/src/NodaTime/SystemTextJsonCompositeNodaPatternConverter.cs)
 - Inherits: `JsonConverter<T>`
 
 A JSON converter for types which can be represented by a single string value, parsed or formatted from an `Text.IPattern`1`.

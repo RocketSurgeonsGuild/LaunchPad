@@ -1,9 +1,9 @@
 # Rocket.Surgery.LaunchPad.Foundation
 
 - Package: `Rocket.Surgery.LaunchPad.Foundation`
-- Version: `2.0.1-pr.1324`
+- Version: `2.0.1-pr.1325`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3337-merge.Sha.09dd538c83fe5dc2188f0956cd1425be399f85c1/src/Foundation)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3337-merge.Sha.7307fcdde362b2224f6c0071b6dfb1eaf21e5cff/src/Foundation)
 - NuGet: [Rocket.Surgery.LaunchPad.Foundation](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Foundation)
 
 ## Namespaces

@@ -15,7 +15,7 @@ GraphQl extensions
 - Name: `WithProblemDetails(ErrorBuilder, IProblemDetailsData)`
 - Modifiers: `extension`
 - Returns: `ErrorBuilder`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.09dd538c83fe5dc2188f0956cd1425be399f85c1/src/HotChocolate/GraphqlExtensions.cs#L20-L32)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.7307fcdde362b2224f6c0071b6dfb1eaf21e5cff/src/HotChocolate/GraphqlExtensions.cs#L20-L32)
 
 Add problem details to the error
 
