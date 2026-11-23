@@ -3,7 +3,6 @@ using Joinery.Dovetail.Joints;
 
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -27,7 +26,6 @@ internal class DataJoint : IServiceJoint
         services
            .AddDbContextPool<RocketDbContext>(
                 x => x
-                    .ReplaceService<IValueConverterSelector, StronglyTypedIdValueConverterSelector>()
                     .EnableDetailedErrors()
                     .EnableSensitiveDataLogging()
                     .EnableServiceProviderCaching().UseSqlite(

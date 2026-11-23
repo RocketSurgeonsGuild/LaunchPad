@@ -60,7 +60,7 @@ public static partial class CreateLaunchRecord
         [Required]
         public OffsetDateTime ScheduledLaunchDate { get; init; } // TODO: Make generator that can be used to create a writable view model
 
-        internal bool IsAssigned(RocketId id) => id != default;
+        internal bool IsAssigned(RocketId id) => !id.IsDefault && id.Value != Guid.Empty;
     }
 
     /// <summary>

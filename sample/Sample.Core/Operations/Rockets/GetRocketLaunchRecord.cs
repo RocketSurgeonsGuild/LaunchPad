@@ -31,9 +31,9 @@ public static partial class GetRocketLaunchRecord
         [Must(nameof(IsAssigned))]
         public LaunchRecordId LaunchRecordId { get; init; }
 
-        internal bool IsAssigned(RocketId id) => id != default;
+        internal bool IsAssigned(RocketId id) => !id.IsDefault && id.Value != Guid.Empty;
 
-        internal bool IsAssigned(LaunchRecordId id) => id != default;
+        internal bool IsAssigned(LaunchRecordId id) => !id.IsDefault && id.Value != Guid.Empty;
     }
 
     /// <summary>What the operation answers: the launch record, or not found.</summary>

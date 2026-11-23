@@ -1,6 +1,5 @@
 using HotChocolate;
 using HotChocolate.Data;
-using HotChocolate.Data.Filters;
 using HotChocolate.Data.Sorting;
 
 using NetTopologySuite.Geometries;
@@ -146,18 +145,6 @@ internal class RocketSort : SortInputType<ReadyRocket>
     }
 }
 
-public class CustomFilterConventionExtension : FilterConventionExtension
-{
-    protected override void Configure(IFilterConventionDescriptor descriptor)
-    {
-        base.Configure(descriptor);
-
-        descriptor
-           .BindRuntimeType<RocketId, StronglyTypedIdOperationFilterInputType>()
-           .BindRuntimeType<LaunchRecordId, StronglyTypedIdOperationFilterInputType>();
-    }
-}
-
 public class ReadyRocketType : ObjectType<ReadyRocket>
 {
     protected override void Configure(IObjectTypeDescriptor<ReadyRocket> descriptor) =>
@@ -174,36 +161,5 @@ public class LaunchRecordType : ObjectType<LaunchRecord>
            .Field(z => z.Rocket)
            .Type<NonNullType<ObjectType<ReadyRocket>>>();
         descriptor.Field(z => z.RocketId).Ignore();
-    }
-}
-
-public class StronglyTypedIdOperationFilterInputType
-    : FilterInputType
-      , IComparableOperationFilterInputType
-{
-    public StronglyTypedIdOperationFilterInputType() { }
-
-    public StronglyTypedIdOperationFilterInputType(Action<IFilterInputTypeDescriptor> configure)
-        : base(configure) { }
-
-    protected override void Configure(IFilterInputTypeDescriptor descriptor)
-    {
-        descriptor
-           .Operation(DefaultFilterOperations.Equals)
-           .Type<UuidType>();
-
-        descriptor
-           .Operation(DefaultFilterOperations.NotEquals)
-           .Type<UuidType>();
-
-        descriptor
-           .Operation(DefaultFilterOperations.In)
-           .Type<ListType<UuidType>>();
-
-        descriptor
-           .Operation(DefaultFilterOperations.NotIn)
-           .Type<ListType<UuidType>>();
-
-        descriptor.AllowAnd(false).AllowOr(false);
     }
 }

@@ -76,13 +76,13 @@ type Mutation {
 "The launch record creation response"
 type CreateLaunchRecordResponse {
   "The id of the new launch record"
-  id: UUID!
+  id: ID!
 }
 
 "The identifier of the rocket that was created"
 type CreateRocketResponse {
   "The rocket id"
-  id: UUID!
+  id: ID!
 }
 
 "Models an OGC-style LineString"
@@ -203,7 +203,7 @@ type GeometryOutputs {
 
 type LaunchRecord {
   rocket: ReadyRocket!
-  id: UUID!
+  id: ID!
   partner: String
   payload: String
   payloadWeightKg: Long!
@@ -214,7 +214,7 @@ type LaunchRecord {
 "The launch record details"
 type LaunchRecordModel {
   "The launch record id"
-  id: UUID!
+  id: ID!
   "The launch partner"
   partner: String!
   "The payload details"
@@ -272,7 +272,7 @@ type PageInfo {
 "A rocket in inventory"
 type ReadyRocket {
   launchRecords: [LaunchRecord!]!
-  id: UUID!
+  id: ID!
   serialNumber: String!
   type: RocketType!
 }
@@ -280,7 +280,7 @@ type ReadyRocket {
 "The details of a given rocket"
 type RocketModel {
   "The unique rocket identifier"
-  id: UUID!
+  id: ID!
   "The serial number of the rocket"
   sn: String!
   "The type of the rocket"
@@ -332,7 +332,7 @@ input ComparableDateTimeOffsetOperationFilterInput {
 "Create a launch record"
 input CreateLaunchRecordRequest {
   "The rocket to use"
-  rocketId: UUID!
+  rocketId: ID!
   "The launch partner"
   partner: String
   "The launch partners payload"
@@ -356,29 +356,29 @@ input CreateRocketRequest {
 "The request to delete a launch record"
 input DeleteLaunchRecordRequest {
   "The id of the record to delete"
-  id: UUID!
+  id: ID!
 }
 
 "The request to remove a rocket from the system"
 input DeleteRocketRequest {
   "The id of the rocket to remove"
-  id: UUID!
+  id: ID!
 }
 
 input EditLaunchRecordPatchRequestInput {
-  id: UUID!
+  id: ID!
   partner: String
   payload: String
   payloadWeightKg: Float
   actualLaunchDate: DateTime
   scheduledLaunchDate: DateTime
-  rocketId: UUID
+  rocketId: ID
 }
 
 "The launch record update request"
 input EditLaunchRecordRequest {
   "The launch record to update"
-  id: UUID!
+  id: ID!
   "The updated launch partner"
   partner: String!
   "The updated launch payload"
@@ -390,11 +390,11 @@ input EditLaunchRecordRequest {
   "The scheduled launch date"
   scheduledLaunchDate: DateTime!
   "The update rocket id"
-  rocketId: UUID!
+  rocketId: ID!
 }
 
 input EditRocketPatchRequestInput {
-  id: UUID!
+  id: ID!
   serialNumber: String
   type: RocketType
 }
@@ -402,7 +402,7 @@ input EditRocketPatchRequestInput {
 "The edit operation to update a rocket"
 input EditRocketRequest {
   "The rocket id"
-  id: UUID!
+  id: ID!
   "The serial number of the rocket"
   serialNumber: String!
   "The type of the rocket"
@@ -506,10 +506,17 @@ input GeometryInputsInput {
   geometry: Geometry
 }
 
+input IdOperationFilterInput {
+  eq: ID @cost(weight: "10")
+  neq: ID @cost(weight: "10")
+  in: [ID] @cost(weight: "10")
+  nin: [ID] @cost(weight: "10")
+}
+
 input LaunchRecordFilterInput {
   and: [LaunchRecordFilterInput!]
   or: [LaunchRecordFilterInput!]
-  id: StronglyTypedIdFilterOfUuidTypeFilterInput
+  id: IdOperationFilterInput
   partner: StringOperationFilterInput
   payload: StringOperationFilterInput
   payloadWeightKg: LongOperationFilterInput
@@ -560,7 +567,7 @@ input NodaTimeInputsInput {
 input ReadyRocketFilterInput {
   and: [ReadyRocketFilterInput!]
   or: [ReadyRocketFilterInput!]
-  id: StronglyTypedIdFilterOfUuidTypeFilterInput
+  id: IdOperationFilterInput
   serialNumber: StringOperationFilterInput
   type: RocketTypeOperationFilterInput
   launchRecords: ListFilterInputTypeOfLaunchRecordFilterInput
@@ -592,20 +599,6 @@ input StringOperationFilterInput {
   nstartsWith: String @cost(weight: "20")
   endsWith: String @cost(weight: "20")
   nendsWith: String @cost(weight: "20")
-}
-
-input StronglyTypedIdFilterOfUuidTypeFilterInput {
-  eq: UUID @cost(weight: "10")
-  neq: UUID @cost(weight: "10")
-  in: [UUID] @cost(weight: "10")
-  nin: [UUID] @cost(weight: "10")
-}
-
-input StronglyTypedIdOperationFilterInput {
-  eq: UUID @cost(weight: "10")
-  neq: UUID @cost(weight: "10")
-  in: [UUID] @cost(weight: "10")
-  nin: [UUID] @cost(weight: "10")
 }
 
 enum GeoJSONGeometryType {
@@ -667,10 +660,6 @@ scalar Long
 
 "A position is an array of numbers. There MUST be two or more elements. The first two elements are longitude and latitude, or easting and northing, precisely in that order and using decimal numbers. Altitude or elevation MAY be included as an optional third element."
 scalar Position
-
-"The `UUID` scalar type represents a Universally Unique Identifier (UUID) as defined by RFC 9562."
-scalar UUID
-  @specifiedBy(url: "https://scalars.graphql.org/chillicream/uuid.html")
 
 "The purpose of the `cost` directive is to define a `weight` for GraphQL types, fields, and arguments. Static analysis can use these weights when calculating the overall cost of a query or response."
 directive @cost(

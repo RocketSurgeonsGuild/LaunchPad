@@ -28,7 +28,7 @@ public static partial class GetRocketLaunchRecords
         [Must(nameof(IsAssigned))]
         public RocketId Id { get; init; }
 
-        internal bool IsAssigned(RocketId id) => id != default;
+        internal bool IsAssigned(RocketId id) => !id.IsDefault && id.Value != Guid.Empty;
     }
 
     /// <summary>

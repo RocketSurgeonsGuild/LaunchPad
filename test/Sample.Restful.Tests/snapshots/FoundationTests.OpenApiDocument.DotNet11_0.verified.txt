@@ -637,8 +637,7 @@
             name: id,
             required: true,
             schema: {
-              format: uuid,
-              type: string
+              $ref: #/components/schemas/LaunchRecordId
             }
           }
         ],
@@ -711,8 +710,7 @@
             name: id,
             required: true,
             schema: {
-              format: uuid,
-              type: string
+              $ref: #/components/schemas/LaunchRecordId
             }
           }
         ],
@@ -772,8 +770,7 @@
             name: id,
             required: true,
             schema: {
-              format: uuid,
-              type: string
+              $ref: #/components/schemas/LaunchRecordId
             }
           }
         ],
@@ -853,8 +850,7 @@
             name: id,
             required: true,
             schema: {
-              format: uuid,
-              type: string
+              $ref: #/components/schemas/LaunchRecordId
             }
           }
         ],
@@ -1058,8 +1054,7 @@
             name: id,
             required: true,
             schema: {
-              format: uuid,
-              type: string
+              $ref: #/components/schemas/RocketId
             }
           }
         ],
@@ -1112,8 +1107,7 @@
             name: id,
             required: true,
             schema: {
-              format: uuid,
-              type: string
+              $ref: #/components/schemas/RocketId
             }
           }
         ],
@@ -1173,8 +1167,7 @@
             name: id,
             required: true,
             schema: {
-              format: uuid,
-              type: string
+              $ref: #/components/schemas/RocketId
             }
           }
         ],
@@ -1254,8 +1247,7 @@
             name: id,
             required: true,
             schema: {
-              format: uuid,
-              type: string
+              $ref: #/components/schemas/RocketId
             }
           }
         ],
@@ -1337,8 +1329,7 @@
             name: id,
             required: true,
             schema: {
-              format: uuid,
-              type: string
+              $ref: #/components/schemas/RocketId
             }
           }
         ],
@@ -1403,7 +1394,7 @@
             name: id,
             required: true,
             schema: {
-              type: string
+              $ref: #/components/schemas/RocketId
             }
           },
           {
@@ -1412,7 +1403,7 @@
             name: launchRecordId,
             required: true,
             schema: {
-              type: string
+              $ref: #/components/schemas/LaunchRecordId
             }
           }
         ],

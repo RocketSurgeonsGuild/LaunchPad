@@ -51,7 +51,7 @@ public static partial class EditRocket
         [IsInEnum]
         public RocketType Type { get; init; }
 
-        internal bool IsAssigned(RocketId id) => id != default;
+        internal bool IsAssigned(RocketId id) => !id.IsDefault && id.Value != Guid.Empty;
     }
 
     /// <summary>

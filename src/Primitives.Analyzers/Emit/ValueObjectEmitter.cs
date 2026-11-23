@@ -214,19 +214,21 @@ internal static class ValueObjectEmitter
 
     private static string Read(MemberInfo member)
     {
-        if (member.PrimitiveValue is { } primitive) return $"{member.Underlying}.Create({PrimitiveEmitter.ReadJson(primitive)})";
-        return  member.Value is { } value 
-            ?  PrimitiveEmitter.ReadJson(value) 
-            :  $"{Names.Json}.JsonSerializer.Deserialize(ref reader, ({Names.JsonMetadata}.JsonTypeInfo<{member.TypeOf}>)options.GetTypeInfo(typeof({member.TypeOf})))!";
+        return  member.PrimitiveValue is { } primitive 
+            ?  $"{member.Underlying}.Create({PrimitiveEmitter.ReadJson(primitive)})" 
+            :  member.Value is { } value
+            ? PrimitiveEmitter.ReadJson(value)
+            : $"{Names.Json}.JsonSerializer.Deserialize(ref reader, ({Names.JsonMetadata}.JsonTypeInfo<{member.TypeOf}>)options.GetTypeInfo(typeof({member.TypeOf})))!";
     }
 
     private static string Write(MemberInfo member, string expression)
     {
         var value = member.IsNullableValueType ? expression + ".Value" : expression;
-        if (member.PrimitiveValue is { } primitive) return PrimitiveEmitter.WriteJson(primitive, value + ".Value");
-        return  member.Value is { } info 
-            ?  PrimitiveEmitter.WriteJson(info, value) 
-            :  $"{Names.Json}.JsonSerializer.Serialize(writer, {expression}, ({Names.JsonMetadata}.JsonTypeInfo<{member.TypeOf}>)options.GetTypeInfo(typeof({member.TypeOf})));";
+        return  member.PrimitiveValue is { } primitive 
+            ?  PrimitiveEmitter.WriteJson(primitive, value + ".Value") 
+            :  member.Value is { } info
+            ? PrimitiveEmitter.WriteJson(info, value)
+            : $"{Names.Json}.JsonSerializer.Serialize(writer, {expression}, ({Names.JsonMetadata}.JsonTypeInfo<{member.TypeOf}>)options.GetTypeInfo(typeof({member.TypeOf})));";
     }
 
     private static void JsonConverter(SourceWriter writer, PrimitiveModel model)
@@ -234,7 +236,8 @@ internal static class ValueObjectEmitter
         var t = model.Name;
         var members = model.Members;
         writer.Line("// Written as an object of its values, named by the options' naming policy (camel case when there is none).");
-        writer.Line($"private sealed class {t}JsonConverter : {Names.Json}.Serialization.JsonConverter<{t}>");
+        // Public, so the JSON context of an application (System.Text.Json's source generator) can create it from another assembly.
+        writer.Line($"public sealed class {t}JsonConverter : {Names.Json}.Serialization.JsonConverter<{t}>");
         writer.Open();
         writer.Line($"private static string Name({Names.Json}.JsonSerializerOptions options, string name, string camelCase) => options.PropertyNamingPolicy?.ConvertName(name) ?? camelCase;");
         writer.Line();

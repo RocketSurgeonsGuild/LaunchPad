@@ -78,10 +78,11 @@ internal static class SingleValueEmitter
 
     private static ClockInfo? Clock(PrimitiveModel model)
     {
-        if (model.Dates is not { } dates || !( dates.PastOnly || dates.FutureOnly || dates.MaxAge is not null )) return null;
-        return  Now(model.Value!, "clock") is null 
+        return  model.Dates is not { } dates || !( dates.PastOnly || dates.FutureOnly || dates.MaxAge is not null ) 
             ?   null  
-            :   model.Value!.IsNodaTime
+            :   Now(model.Value!, "clock") is null
+            ? null
+            : model.Value!.IsNodaTime
             ? new("global::NodaTime.IClock", "clock", "global::NodaTime.SystemClock.Instance")
             : new("global::System.TimeProvider", "timeProvider", "global::System.TimeProvider.System");
     }
@@ -891,7 +892,8 @@ internal static class SingleValueEmitter
     {
         var t = model.Name;
         var v = model.Value!;
-        writer.Line($"private sealed class {t}JsonConverter : {Names.Json}.Serialization.JsonConverter<{t}>");
+        // Public, so the JSON context of an application (System.Text.Json's source generator) can create it from another assembly.
+        writer.Line($"public sealed class {t}JsonConverter : {Names.Json}.Serialization.JsonConverter<{t}>");
         writer.Open();
         writer.Line($"public override {t} Read(ref {Names.Json}.Utf8JsonReader reader, global::System.Type typeToConvert, {Names.Json}.JsonSerializerOptions options)");
         writer.Open();

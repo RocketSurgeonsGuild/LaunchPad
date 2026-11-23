@@ -46,6 +46,11 @@
             Hosts="HostApplication;WebApplication"
         />
         <_LaunchPadPrimitivesTemplate
+            Include="LaunchPadPrimitivesHotChocolateFilteringJoint"
+            References="Rocket.Surgery.LaunchPad.Primitives;HotChocolate.Types;HotChocolate.Data"
+            Hosts="HostApplication;WebApplication"
+        />
+        <_LaunchPadPrimitivesTemplate
             Include="LaunchPadPrimitivesEntityFrameworkJoint"
             References="Rocket.Surgery.LaunchPad.Primitives;Microsoft.EntityFrameworkCore"
             Hosts="HostApplication;WebApplication"

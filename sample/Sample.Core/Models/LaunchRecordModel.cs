@@ -1,17 +1,17 @@
 using NodaTime;
 using Riok.Mapperly.Abstractions;
+using Rocket.Surgery.LaunchPad.Primitives;
 using Sample.Core.Domain;
-using StronglyTypedIds;
 
 namespace Sample.Core.Models;
 
 /// <summary>
 ///     Unique Id of a launch record
 /// </summary>
-#pragma warning disable CA1036
-[StronglyTypedId(Template.Guid, "guid-efcore")]
-public readonly partial struct LaunchRecordId { }
-#pragma warning restore CA1036
+// The empty ID is read like any other, as the samples' clients send it in the bodies whose ID the route gives: the operations' validators
+// reject it (IsAssigned).
+[StrongId<Guid>(RejectEmpty = false)]
+public readonly partial record struct LaunchRecordId;
 
 /// <summary>
 ///     The launch record details

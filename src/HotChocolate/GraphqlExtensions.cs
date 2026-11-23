@@ -1,9 +1,4 @@
 using HotChocolate;
-using HotChocolate.Data.Filters;
-using HotChocolate.Execution.Configuration;
-using HotChocolate.Types;
-
-using Microsoft.Extensions.DependencyInjection;
 
 using Rocket.Surgery.LaunchPad.Foundation;
 
@@ -35,37 +30,5 @@ public static class GraphqlExtensions
         }
 
         return error;
-    }
-
-    /// <summary>
-    ///     Configures a strongly typed id with the GraphQL scalar type of its underlying value: converts between the id and its value, binds the
-    ///     id to the scalar type, and filters it as that scalar.
-    /// </summary>
-    /// <remarks>
-    ///     The conversions are given rather than found by reflection, so this is trim and native AOT safe:
-    ///     <c>builder.ConfigureStronglyTypedId&lt;RocketId, Guid, UuidType&gt;(id =&gt; id.Value, value =&gt; new(value))</c>.
-    /// </remarks>
-    /// <param name="builder">The request executor builder.</param>
-    /// <param name="toValue">Gets the underlying value of an id.</param>
-    /// <param name="fromValue">Creates an id from its underlying value.</param>
-    /// <typeparam name="TStrongType">The strongly typed id.</typeparam>
-    /// <typeparam name="TValue">The underlying value of the id.</typeparam>
-    /// <typeparam name="TSchemaType">The GraphQL scalar type of the underlying value.</typeparam>
-    /// <returns>The builder.</returns>
-    public static IRequestExecutorBuilder ConfigureStronglyTypedId<TStrongType, TValue, TSchemaType>(
-        this IRequestExecutorBuilder builder,
-        Func<TStrongType, TValue> toValue,
-        Func<TValue, TStrongType> fromValue
-    )
-        where TSchemaType : ITypeDefinition
-    {
-        ArgumentNullException.ThrowIfNull(builder);
-        ArgumentNullException.ThrowIfNull(toValue);
-        ArgumentNullException.ThrowIfNull(fromValue);
-        builder.AddTypeConverter<TStrongType, TValue>(value => toValue(value));
-        builder.AddTypeConverter<TValue, TStrongType>(value => fromValue(value));
-        builder.BindRuntimeType<TStrongType, TSchemaType>();
-        builder.AddConvention<IFilterConvention, StronglyTypedIdFilterConventionExtension<TStrongType, TSchemaType>>();
-        return builder;
     }
 }
