@@ -13,7 +13,7 @@ namespace Sdk.Tests;
 ///     Domain primitives are optional: an application opts in by referencing <c>Rocket.Surgery.LaunchPad.Primitives</c> itself, which writes the
 ///     templates that describe them to the libraries it uses (docs/adr/0011-primitives-is-a-port-of-dotnet-domain-primitives.md). The domain
 ///     primitives here are declared in a contracts library, as an application usually does: a strong ID, an email address, a number with a
-///     range, a smart enum, a value object of the application's own and the money and date range kinds, as structs and classes.
+///     range, a rating, a smart enum, a value object of the application's own and the money and date range kinds, as structs and classes.
 /// </summary>
 /// <param name="targetFramework">The target framework of the throwaway projects.</param>
 [TargetFrameworks]
@@ -43,15 +43,18 @@ public partial class SdkPrimitivesTests(string targetFramework)
     {
         var packages = await PackedSdk.Pack();
         using var archive = ZipFile.OpenRead(Path.Combine(packages.Feed, $"{packageId}.{packages.Version}.nupkg"));
-        using var reader = new StreamReader(archive.GetEntry("THIRD-PARTY-NOTICES.md")!.Open());
+        var notices = archive.GetEntry("THIRD-PARTY-NOTICES.md");
 
+        await notices.Should().NotBeNull();
+        using var reader = new StreamReader(notices!.Open());
         await ( await reader.ReadToEndAsync(Cancellation) ).Should().Contain("dotnet-domain-primitives");
     }
 
     /// <summary>
     ///     The OpenAPI document gives each domain primitive the schema of its value, narrowed by its rules, as a named schema, in a body and in the
-    ///     route and the query of a Minimal API and an MVC controller, and each value object the schema of an object. A nullable domain
-    ///     primitive refers to the schema with null.
+    ///     route and the query of a Minimal API and an MVC controller, and each value object the named schema of an object of its values: a
+    ///     domain primitive value refers to its schema, a NodaTime value is text, and a nullable value may be null. A nullable domain primitive
+    ///     or value object refers to the schema with null.
     /// </summary>
     [Test]
     public async Task Should_Describe_Domain_Primitives_In_The_OpenApi_Document()
@@ -64,7 +67,9 @@ public partial class SdkPrimitivesTests(string targetFramework)
     }
 
     /// <summary>
-    ///     <c>LaunchPadPrimitivesOpenApiRepresentation</c> set to <c>Inline</c> writes the value's schema in place instead of a named one.
+    ///     <c>LaunchPadPrimitivesOpenApiRepresentation</c> set to <c>Inline</c> writes the value's schema in place instead of a named one, in a
+    ///     value object too. A value object keeps its named schema, which a nullable property refers to with null: the schema itself is not
+    ///     nullable.
     /// </summary>
     [Test]
     public async Task Should_Describe_Domain_Primitives_In_Place_When_Asked()
@@ -77,8 +82,9 @@ public partial class SdkPrimitivesTests(string targetFramework)
     }
 
     /// <summary>
-    ///     EF Core stores a domain primitive as its value, with the maximum length of its rules, and a value object (the application's own, money
-    ///     and a date range) as a complex type: the database the context creates, a key that is a strong ID of a Guid generated when the
+    ///     EF Core stores a domain primitive as its value, with the maximum length and the scale of its rules, and a value object (the
+    ///     application's own, money and a date range) as a complex type: the database the context creates (SQLite's column types have no
+    ///     length or precision, so the type mapping of each column is printed too), a key that is a strong ID of a Guid generated when the
     ///     entity is added, and the entity read back out.
     /// </summary>
     [Test]
@@ -89,8 +95,11 @@ public partial class SdkPrimitivesTests(string targetFramework)
         await tree.Build("app", Cancellation);
         var output = await tree.Run("app", Cancellation, "--ef");
 
+        await output.Should().Contain("Id: CustomerId stored as Guid, size -, precision -, scale -, generated OnAdd by a value generator");
         await output.Should().Contain("Key generated on insert: True (version 7)");
         await output.Should().Contain("Complex types: Address (Address), Balance (Balance), Membership (Membership)");
+        await output.Should().Contain("Email: CustomerEmail stored as String, size 320,");
+        await output.Should().Contain("Rating: Stars stored as Decimal, size -, precision 18, scale 1,");
         await Verify(output, "txt");
     }
 
@@ -123,6 +132,43 @@ public partial class SdkPrimitivesTests(string targetFramework)
         await tree.Build("app", Cancellation);
 
         await Verify(await tree.Run("app", Cancellation), "txt");
+    }
+
+    /// <summary>
+    ///     An application that references HotChocolate.Data gets the filtering joint: a strong ID field is filtered by its ID (equal, not equal,
+    ///     in and not in), written as the ID scalar, instead of by an object filter of the strong ID's properties.
+    /// </summary>
+    [Test]
+    public async Task Should_Filter_Strong_IDs_By_Their_ID()
+    {
+        using var tree = await Tree(graphQL: true, program: FilteringApp, packages: ["HotChocolate.Data"]);
+
+        await tree.Build("app", Cancellation);
+        var output = await tree.Run("app", Cancellation);
+
+        await output.Should().Contain("id: IdOperationFilterInput");
+        await Verify(output, "txt");
+    }
+
+    /// <summary>
+    ///     With <c>LaunchPadPrimitivesGraphQLRepresentation</c> set to <c>Named</c>, a strong ID field is filtered by the scalar named after
+    ///     the strong ID.
+    /// </summary>
+    [Test]
+    public async Task Should_Filter_Strong_IDs_By_Their_Named_Scalar_When_Asked()
+    {
+        using var tree = await Tree(
+            application => application.Property("LaunchPadPrimitivesGraphQLRepresentation", "Named"),
+            graphQL: true,
+            program: FilteringApp,
+            packages: ["HotChocolate.Data"]
+        );
+
+        await tree.Build("app", Cancellation);
+        var output = await tree.Run("app", Cancellation);
+
+        await output.Should().Contain("id: CustomerIdOperationFilterInput");
+        await Verify(output, "txt");
     }
 
     /// <summary>
@@ -215,7 +261,7 @@ public partial class SdkPrimitivesTests(string targetFramework)
     [Test]
     public async Task Should_Publish_Domain_Primitives_With_Native_Aot()
     {
-        if (NativeToolchainMissing() is { } reason) Skip.Test(reason);
+        if (await NativeToolchainMissing() is { } reason) Skip.Test(reason);
 
         var packages = await PackedSdk.Pack();
         using var tree = new SdkTree(packages, targetFramework);
@@ -247,13 +293,33 @@ public partial class SdkPrimitivesTests(string targetFramework)
     private static partial Regex TrimmingWarning();
 
     /// <summary>
-    ///     Why native AOT can't publish on this machine, if it can't: the ILCompiler links with the platform's native toolchain.
+    ///     Why native AOT can't publish on this machine, if it can't: the ILCompiler links with the platform's native toolchain. On macOS
+    ///     <c>/usr/bin/xcrun</c> is there without the Command Line Tools too, so it has to find clang.
     /// </summary>
-    private static string? NativeToolchainMissing()
+    private static async Task<string?> NativeToolchainMissing()
     {
         if (OperatingSystem.IsWindows()) return "native AOT needs the Visual Studio C++ tools, which these tests don't look for on Windows";
-        string[] linkers = OperatingSystem.IsMacOS() ? ["/usr/bin/xcrun"] : ["/usr/bin/clang", "/usr/bin/gcc", "/usr/local/bin/clang"];
+        if (OperatingSystem.IsMacOS())
+        {
+            return await XcrunFindsClang() ? null : "native AOT needs clang, and 'xcrun --find clang' finds none: install the Xcode Command Line Tools";
+        }
+
+        string[] linkers = ["/usr/bin/clang", "/usr/bin/gcc", "/usr/local/bin/clang"];
         return linkers.Any(File.Exists) ? null : $"native AOT needs a native linker ({string.Join(", ", linkers)}), and this machine has none";
+    }
+
+    private static async Task<bool> XcrunFindsClang()
+    {
+        if (!File.Exists("/usr/bin/xcrun")) return false;
+        var psi = new ProcessStartInfo("/usr/bin/xcrun", ["--find", "clang"]) { RedirectStandardOutput = true, RedirectStandardError = true, UseShellExecute = false, };
+        using var process = Process.Start(psi);
+        if (process is null) return false;
+        var output = process.StandardOutput.ReadToEndAsync(Cancellation);
+        var error = process.StandardError.ReadToEndAsync(Cancellation);
+        await process.WaitForExitAsync(Cancellation);
+        await output;
+        await error;
+        return process.ExitCode == 0;
     }
 
     private static async Task<string> RunExecutable(string path)
@@ -269,8 +335,9 @@ public partial class SdkPrimitivesTests(string targetFramework)
 
     /// <summary>
     ///     A contracts library with the domain primitives (and <paramref name="contracts" />), and an ASP.NET Core application that references
-    ///     it and, unless told otherwise, Primitives, with <paramref name="program" /> (the OpenAPI and EF Core application by default). The
-    ///     application references <paramref name="packages" /> and the library <paramref name="contractsPackages" />. The domain primitives
+    ///     it and, unless told otherwise, Primitives, with <paramref name="program" /> (the OpenAPI and EF Core application by default, for
+    ///     which the library also declares the value objects of a booking and references NodaTime). The application references
+    ///     <paramref name="packages" /> and the library <paramref name="contractsPackages" />. The domain primitives
     ///     are declared in a library of their own, as an application usually does, and can't be in the project of a JSON context that
     ///     serializes them: the JSON source generator doesn't see the converter the domain primitive generator declares in the same
     ///     compilation, as no source generator sees what another one writes.
@@ -285,6 +352,12 @@ public partial class SdkPrimitivesTests(string targetFramework)
         string[]? contractsPackages = null
     )
     {
+        if (program is null && !graphQL)
+        {
+            contracts = BookingContracts + contracts;
+            contractsPackages = [.. contractsPackages ?? [], "NodaTime"];
+        }
+
         var packed = await PackedSdk.Pack();
         var tree = new SdkTree(packed, targetFramework);
         var library = HostModelShape.Project(HostModel.None, targetFramework).ItemPackageReference(Primitives, packed.Version);
@@ -355,6 +428,9 @@ public partial class SdkPrimitivesTests(string targetFramework)
         [Slug]
         public sealed partial record Handle;
 
+        [Rating]
+        public readonly partial record struct Stars;
+
         public sealed class Customer
         {
             public CustomerId Id { get; set; }
@@ -366,6 +442,7 @@ public partial class SdkPrimitivesTests(string targetFramework)
             public Balance Balance { get; set; }
             public Membership? Membership { get; set; }
             public Handle? Handle { get; set; }
+            public Stars Rating { get; set; }
         }
 
         public static class Customers
@@ -382,6 +459,7 @@ public partial class SdkPrimitivesTests(string targetFramework)
                     Balance = Balance.Create(12.5m, "GBP"),
                     Membership = Membership.Create(new(2026, 1, 1), new(2026, 12, 31)),
                     Handle = Handle.Create("ada-lovelace"),
+                    Rating = Stars.Create(4.5m),
                 };
         }
         """;
@@ -408,7 +486,7 @@ public partial class SdkPrimitivesTests(string targetFramework)
         foreach (var country in new[] { "GB", "ZZ" })
         {
             var result = await executor.ExecuteAsync(
-                $$"""{ customer(id: "6f9619ff-8b86-d011-b42d-00cf4fc964ff", country: "{{country}}") { id email country points tier address { street city } balance { amount currency } membership { start end } handle } }"""
+                $$"""{ customer(id: "6f9619ff-8b86-d011-b42d-00cf4fc964ff", country: "{{country}}") { id email country points tier address { street city } balance { amount currency } membership { start end } handle rating } }"""
             );
             Console.WriteLine();
             Console.WriteLine(result.ToJson());
@@ -417,6 +495,60 @@ public partial class SdkPrimitivesTests(string targetFramework)
         public sealed class Query
         {
             public Customer GetCustomer(CustomerId id, Country country) => Customers.Ada(id, country);
+        }
+        """";
+
+    // The application prints its GraphQL schema, then the rows a filter on their strong ID finds: with eq, in and nin.
+    private const string FilteringApp = """"
+        #nullable enable
+        using System;
+        using System.Linq;
+        using HotChocolate;
+        using HotChocolate.Data;
+        using HotChocolate.Execution;
+        using Microsoft.AspNetCore.Builder;
+        using Microsoft.Extensions.DependencyInjection;
+        using Microsoft.Extensions.Logging;
+        using Throwaway;
+        using Throwaway.Contracts;
+
+        var builder = WebApplication.CreateBuilder(args);
+        builder.Logging.ClearProviders();
+        builder.Services.AddGraphQL().AddFiltering().AddQueryType<Query>();
+        var app = await builder.ConfigureDovetail();
+
+        var executor = await app.Services.GetRequiredService<IRequestExecutorProvider>().GetExecutorAsync();
+        Console.WriteLine(executor.Schema.ToString().Trim());
+        foreach (var filter in new[]
+        {
+            $$"""{ id: { eq: "{{Query.Ada}}" } }""",
+            $$"""{ id: { in: ["{{Query.Ada}}", "{{Query.Grace}}"] } }""",
+            $$"""{ id: { nin: ["{{Query.Ada}}"] } }""",
+        })
+        {
+            var result = await executor.ExecuteAsync($$"""{ rows(where: {{filter}}) { id name } }""");
+            Console.WriteLine();
+            Console.WriteLine(filter);
+            Console.WriteLine(result.ToJson());
+        }
+
+        public sealed record Row(CustomerId Id, string Name);
+
+        public sealed class Query
+        {
+            public const string Ada = "6f9619ff-8b86-d011-b42d-00cf4fc964ff";
+            public const string Grace = "0198d6a4-1c2b-7000-8000-000000000001";
+            public const string Linus = "0198d6a4-1c2b-7000-8000-000000000002";
+
+            private static readonly Row[] Rows =
+            [
+                new(CustomerId.Create(Guid.Parse(Ada)), "Ada"),
+                new(CustomerId.Create(Guid.Parse(Grace)), "Grace"),
+                new(CustomerId.Create(Guid.Parse(Linus)), "Linus"),
+            ];
+
+            [UseFiltering]
+            public IQueryable<Row> GetRows() => Rows.AsQueryable();
         }
         """";
 
@@ -460,6 +592,16 @@ public partial class SdkPrimitivesTests(string targetFramework)
             var entity = context.Model.FindEntityType(typeof(Customer))!;
             Console.WriteLine();
             Console.WriteLine($"Complex types: {string.Join(", ", entity.GetComplexProperties().OrderBy(z => z.Name, StringComparer.Ordinal).Select(z => $"{z.Name} ({z.ComplexType.ClrType.Name})"))}");
+            // SQLite's column types have no length or precision, so the type mapping of each column says what the joint gave it
+            var table = Microsoft.EntityFrameworkCore.Metadata.StoreObjectIdentifier.Table("Customers");
+            var properties = entity.GetProperties().Concat(entity.GetComplexProperties().SelectMany(z => z.ComplexType.GetProperties()));
+            foreach (var property in properties.OrderBy(z => z.GetColumnName(table), StringComparer.Ordinal))
+            {
+                var mapping = property.GetRelationalTypeMapping();
+                Console.WriteLine($"{property.GetColumnName(table)}: {property.ClrType.Name} stored as {( mapping.Converter?.ProviderClrType ?? mapping.ClrType ).Name}, size {mapping.Size?.ToString() ?? "-"}, precision {mapping.Precision?.ToString() ?? "-"}, scale {mapping.Scale?.ToString() ?? "-"}, generated {property.ValueGenerated}{( property.GetValueGeneratorFactory() is null ? "" : " by a value generator" )}");
+            }
+
+            Console.WriteLine();
             // no ID: the key is generated when the entity is added
             var added = Customers.Ada(default, Country.Create("GB"));
             context.Customers.Add(added);
@@ -467,11 +609,12 @@ public partial class SdkPrimitivesTests(string targetFramework)
             Console.WriteLine($"Key generated on insert: {added.Id.Value != Guid.Empty} (version {added.Id.Value.Version})");
             context.ChangeTracker.Clear();
             var customer = context.Customers.Single(z => z.Email == CustomerEmail.Create("ada@example.com"));
-            Console.WriteLine($"Read back: {customer.Id == added.Id} {customer.Email} {customer.Country} {customer.Points} {customer.Tier.Name} {customer.Address.Street}, {customer.Address.City} {customer.Balance} {customer.Membership?.Start:O}..{customer.Membership?.End:O} {customer.Handle}");
+            Console.WriteLine($"Read back: {customer.Id == added.Id} {customer.Email} {customer.Country} {customer.Points} {customer.Tier.Name} {customer.Address.Street}, {customer.Address.City} {customer.Balance} {customer.Membership?.Start:O}..{customer.Membership?.End:O} {customer.Handle} {customer.Rating}");
             return;
         }
 
         app.MapGet("/customers/{id}", (CustomerId id, CustomerEmail email, LoyaltyPoints? points) => (Customer?)null);
+        app.MapGet("/bookings/{id}", (CustomerId id) => (Booking?)null);
         app.MapControllers();
         app.Urls.Add("http://127.0.0.1:0");
         await app.StartAsync();
@@ -506,6 +649,7 @@ public partial class SdkPrimitivesTests(string targetFramework)
         }
 
         [System.Text.Json.Serialization.JsonSerializable(typeof(Customer))]
+        [System.Text.Json.Serialization.JsonSerializable(typeof(Booking))]
         internal sealed partial class AppJsonContext : System.Text.Json.Serialization.JsonSerializerContext;
 
         [ApiController]
@@ -634,6 +778,25 @@ public partial class SdkPrimitivesTests(string targetFramework)
                 return ExportResult.Success;
             }
         }
+        """;
+
+    // The value objects of a booking, which the OpenAPI and EF Core application declares a Minimal API endpoint for: a range of NodaTime
+    // dates, and a value object of the application's own with a domain primitive, nullable values and a nullable NodaTime value.
+    private const string BookingContracts = """
+
+        [DateRange(Kind = DatePrimitiveKind.LocalDate)]
+        public sealed partial record Stay;
+
+        [ValueObject]
+        public readonly partial record struct Contact
+        {
+            public CustomerEmail Email { get; init; }
+            public string? Phone { get; init; }
+            public NodaTime.LocalDate? Since { get; init; }
+            public Handle? Handle { get; init; }
+        }
+
+        public sealed record Booking(CustomerId Id, Contact Contact, Stay Stay);
         """;
 
     // Domain primitives of NodaTime values.

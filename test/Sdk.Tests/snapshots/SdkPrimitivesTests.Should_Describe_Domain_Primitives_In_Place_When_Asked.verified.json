@@ -1,5 +1,16 @@
 ﻿{
   "parameters": {
+    "/bookings/{id}": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    ],
     "/customers/{id}": [
       {
         "name": "id",
@@ -94,6 +105,63 @@
         }
       }
     },
+    "Booking": {
+      "required": [
+        "id",
+        "contact",
+        "stay"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "contact": {
+          "$ref": "#/components/schemas/Contact"
+        },
+        "stay": {
+          "$ref": "#/components/schemas/Stay"
+        }
+      }
+    },
+    "Contact": {
+      "required": [
+        "email"
+      ],
+      "type": "object",
+      "properties": {
+        "email": {
+          "maxLength": 320,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$",
+          "type": "string",
+          "format": "email"
+        },
+        "phone": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "since": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "format": "date"
+        },
+        "handle": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "type": [
+            "null",
+            "string"
+          ]
+        }
+      }
+    },
     "Customer": {
       "required": [
         "email",
@@ -158,6 +226,16 @@
             "null",
             "string"
           ]
+        },
+        "rating": {
+          "maximum": 5,
+          "minimum": 0,
+          "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+          "type": [
+            "number",
+            "string"
+          ],
+          "format": "double"
         }
       }
     },
@@ -166,10 +244,24 @@
         "start",
         "end"
       ],
-      "type": [
-        "null",
-        "object"
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "string",
+          "format": "date"
+        },
+        "end": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "Stay": {
+      "required": [
+        "start",
+        "end"
       ],
+      "type": "object",
       "properties": {
         "start": {
           "type": "string",

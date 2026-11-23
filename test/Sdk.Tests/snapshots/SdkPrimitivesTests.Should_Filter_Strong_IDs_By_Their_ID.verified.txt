@@ -1,0 +1,85 @@
+﻿schema {
+  query: Query
+}
+
+type Query {
+  rows(where: RowFilterInput): [Row!]!
+}
+
+type Row {
+  id: ID!
+  name: String!
+}
+
+input IdOperationFilterInput {
+  eq: ID
+  neq: ID
+  in: [ID]
+  nin: [ID]
+}
+
+input RowFilterInput {
+  and: [RowFilterInput!]
+  or: [RowFilterInput!]
+  id: IdOperationFilterInput
+  name: StringOperationFilterInput
+}
+
+input StringOperationFilterInput {
+  and: [StringOperationFilterInput!]
+  or: [StringOperationFilterInput!]
+  eq: String
+  neq: String
+  contains: String
+  ncontains: String
+  in: [String]
+  nin: [String]
+  startsWith: String
+  nstartsWith: String
+  endsWith: String
+  nendsWith: String
+}
+
+{ id: { eq: "6f9619ff-8b86-d011-b42d-00cf4fc964ff" } }
+{
+  "data": {
+    "rows": [
+      {
+        "id": "6f9619ff-8b86-d011-b42d-00cf4fc964ff",
+        "name": "Ada"
+      }
+    ]
+  }
+}
+
+{ id: { in: ["6f9619ff-8b86-d011-b42d-00cf4fc964ff", "0198d6a4-1c2b-7000-8000-000000000001"] } }
+{
+  "data": {
+    "rows": [
+      {
+        "id": "6f9619ff-8b86-d011-b42d-00cf4fc964ff",
+        "name": "Ada"
+      },
+      {
+        "id": "0198d6a4-1c2b-7000-8000-000000000001",
+        "name": "Grace"
+      }
+    ]
+  }
+}
+
+{ id: { nin: ["6f9619ff-8b86-d011-b42d-00cf4fc964ff"] } }
+{
+  "data": {
+    "rows": [
+      {
+        "id": "0198d6a4-1c2b-7000-8000-000000000001",
+        "name": "Grace"
+      },
+      {
+        "id": "0198d6a4-1c2b-7000-8000-000000000002",
+        "name": "Linus"
+      }
+    ]
+  }
+}

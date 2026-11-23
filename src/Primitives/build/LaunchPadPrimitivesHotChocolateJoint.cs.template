@@ -53,19 +53,22 @@ internal sealed class LaunchPadPrimitivesHotChocolateJoint : IServiceJoint
 
 /// <summary>
 ///     Keeps a value object's fields to its values: HotChocolate infers an object type's fields from its public methods and properties, and a
-///     value object also has IsDefault and its kind's helpers (Contains, Days and the like).
+///     value object also has IsDefault and its kind's helpers (Contains, Overlaps, Days and the like). The other fields are removed before
+///     HotChocolate registers the types the fields depend on, so a helper's argument (the range Overlaps takes) adds no input type to the
+///     schema; ignoring the fields once the type is initialized would leave that input type behind.
 /// </summary>
 [global::System.CodeDom.Compiler.GeneratedCode("LaunchPad", "generated"), global::Microsoft.CodeAnalysis.EmbeddedAttribute, global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 internal sealed class LaunchPadPrimitivesHotChocolateInterceptor : TypeInterceptor
 {
-    public override void OnAfterInitialize(ITypeDiscoveryContext discoveryContext, TypeSystemConfiguration configuration)
+    public override void OnBeforeRegisterDependencies(ITypeDiscoveryContext discoveryContext, TypeSystemConfiguration configuration)
     {
         if (configuration is not ObjectTypeConfiguration { RuntimeType: { } runtimeType } objectType) return;
         if (LaunchPadPrimitives.ValueObjects.FirstOrDefault(z => z.Type == runtimeType) is not { } valueObject) return;
 
-        foreach (var field in objectType.Fields)
+        for (var index = objectType.Fields.Count - 1; index >= 0; index--)
         {
-            if (field.Member is MethodInfo || field.Member is { } member && !valueObject.Properties.Contains(member.Name)) field.Ignore = true;
+            if (objectType.Fields[index].Member is { } member && ( member is MethodInfo || !valueObject.Properties.Contains(member.Name) ))
+                objectType.Fields.RemoveAt(index);
         }
     }
 }

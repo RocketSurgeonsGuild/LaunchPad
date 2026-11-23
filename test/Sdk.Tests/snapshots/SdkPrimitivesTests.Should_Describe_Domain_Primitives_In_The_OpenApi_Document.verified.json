@@ -1,5 +1,15 @@
 ﻿{
   "parameters": {
+    "/bookings/{id}": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/CustomerId"
+        }
+      }
+    ],
     "/customers/{id}": [
       {
         "name": "id",
@@ -79,6 +89,59 @@
         }
       }
     },
+    "Booking": {
+      "required": [
+        "id",
+        "contact",
+        "stay"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/components/schemas/CustomerId"
+        },
+        "contact": {
+          "$ref": "#/components/schemas/Contact"
+        },
+        "stay": {
+          "$ref": "#/components/schemas/Stay"
+        }
+      }
+    },
+    "Contact": {
+      "required": [
+        "email"
+      ],
+      "type": "object",
+      "properties": {
+        "email": {
+          "$ref": "#/components/schemas/CustomerEmail"
+        },
+        "phone": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "since": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "format": "date"
+        },
+        "handle": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/components/schemas/Handle"
+            }
+          ]
+        }
+      }
+    },
     "Country": {
       "maxLength": 2,
       "minLength": 2,
@@ -131,6 +194,9 @@
               "$ref": "#/components/schemas/Handle"
             }
           ]
+        },
+        "rating": {
+          "$ref": "#/components/schemas/Stars"
         }
       }
     },
@@ -169,6 +235,33 @@
       "format": "int32"
     },
     "Membership": {
+      "required": [
+        "start",
+        "end"
+      ],
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "string",
+          "format": "date"
+        },
+        "end": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "Stars": {
+      "maximum": 5,
+      "minimum": 0,
+      "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+      "type": [
+        "number",
+        "string"
+      ],
+      "format": "double"
+    },
+    "Stay": {
       "required": [
         "start",
         "end"

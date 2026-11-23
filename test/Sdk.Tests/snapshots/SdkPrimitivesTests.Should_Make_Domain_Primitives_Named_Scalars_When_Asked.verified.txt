@@ -26,14 +26,10 @@ type Customer {
   balance: Balance!
   membership: Membership
   handle: Handle
+  rating: Stars!
 }
 
 type Membership {
-  start: LocalDate!
-  end: LocalDate!
-}
-
-input MembershipInput {
   start: LocalDate!
   end: LocalDate!
 }
@@ -58,6 +54,8 @@ scalar LocalDate
 
 scalar LoyaltyPoints
 
+scalar Stars
+
 {
   "data": {
     "customer": {
@@ -78,7 +76,8 @@ scalar LoyaltyPoints
         "start": "2026-01-01",
         "end": "2026-12-31"
       },
-      "handle": "ada-lovelace"
+      "handle": "ada-lovelace",
+      "rating": 4.5
     }
   }
 }

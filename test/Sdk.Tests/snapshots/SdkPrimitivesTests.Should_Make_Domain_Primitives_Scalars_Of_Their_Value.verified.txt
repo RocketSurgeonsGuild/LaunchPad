@@ -26,14 +26,10 @@ type Customer {
   balance: Balance!
   membership: Membership
   handle: String
+  rating: Decimal!
 }
 
 type Membership {
-  start: LocalDate!
-  end: LocalDate!
-}
-
-input MembershipInput {
   start: LocalDate!
   end: LocalDate!
 }
@@ -66,7 +62,8 @@ scalar LocalDate
         "start": "2026-01-01",
         "end": "2026-12-31"
       },
-      "handle": "ada-lovelace"
+      "handle": "ada-lovelace",
+      "rating": 4.5
     }
   }
 }

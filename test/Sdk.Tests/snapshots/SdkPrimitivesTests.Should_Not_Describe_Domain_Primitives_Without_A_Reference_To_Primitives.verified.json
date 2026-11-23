@@ -1,5 +1,15 @@
 ﻿{
   "parameters": {
+    "/bookings/{id}": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
     "/customers/{id}": [
       {
         "name": "id",
@@ -46,6 +56,26 @@
   "schemas": {
     "Address": {},
     "Balance": {},
+    "Booking": {
+      "required": [
+        "id",
+        "contact",
+        "stay"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/components/schemas/CustomerId"
+        },
+        "contact": {
+          "$ref": "#/components/schemas/Contact"
+        },
+        "stay": {
+          "$ref": "#/components/schemas/Stay"
+        }
+      }
+    },
+    "Contact": {},
     "Country": {},
     "Customer": {
       "required": [
@@ -94,6 +124,9 @@
               "$ref": "#/components/schemas/Handle"
             }
           ]
+        },
+        "rating": {
+          "$ref": "#/components/schemas/Stars"
         }
       }
     },
@@ -102,6 +135,8 @@
     "CustomerTier": {},
     "Handle": {},
     "LoyaltyPoints": {},
-    "Membership": {}
+    "Membership": {},
+    "Stars": {},
+    "Stay": {}
   }
 }

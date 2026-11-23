@@ -56,28 +56,31 @@ internal sealed class LaunchPadPrimitivesOpenApiTransformer(bool inline) : IOpen
 {
     public async Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
     {
-        // ASP.NET Core says whether a named schema may be null, and refers to it in a oneOf with null for a nullable property: that stays, as
-        // the schema is shared by every property of its type. In place, the schema is the property's own, so a nullable property may be null.
-        var nullable = schema.Type is { } current && current.HasFlag(JsonSchemaType.Null)
-         || inline && context.JsonPropertyInfo is { IsGetNullable: true };
         var type = Nullable.GetUnderlyingType(context.JsonTypeInfo.Type) ?? context.JsonTypeInfo.Type;
         if (LaunchPadPrimitives.ValueObjects.FirstOrDefault(z => z.Type == type) is { } valueObject)
         {
+            // A value object always has a named schema, shared by every property of its type: ASP.NET Core refers to it in a oneOf with null
+            // for a nullable property, so the schema itself only keeps the null ASP.NET Core gave it.
+            var hadNull = schema.Type is { } current && current.HasFlag(JsonSchemaType.Null);
             await DescribeValueObject(schema, valueObject, context, cancellationToken).ConfigureAwait(false);
-            if (nullable) schema.Type |= JsonSchemaType.Null;
+            if (hadNull) schema.Type |= JsonSchemaType.Null;
             return;
         }
 
         if (LaunchPadPrimitives.Find(type) is not { } primitive) return;
 
+        // ASP.NET Core says whether a named schema may be null, and refers to it in a oneOf with null for a nullable property: that stays, as
+        // the schema is shared by every property of its type. In place, the schema is the property's own, so a nullable property may be null.
+        var nullable = schema.Type is { } described && described.HasFlag(JsonSchemaType.Null)
+         || inline && context.JsonPropertyInfo is { IsGetNullable: true };
         var value = await context.GetOrCreateSchemaAsync(primitive.ValueType, null, cancellationToken).ConfigureAwait(false);
         Describe(schema, value, primitive);
-        if (nullable && schema.Type is { } described) schema.Type = described | JsonSchemaType.Null;
+        if (nullable) AllowNull(schema);
     }
 
     // A value object is written by its own JSON converter as an object of its values, named by the options' naming policy (camel case when
     // there is none), so ASP.NET Core, which reads the serializer's metadata, knows nothing of them: they come from its description.
-    private static async Task DescribeValueObject(OpenApiSchema schema, ValueObjectDescription valueObject, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
+    private async Task DescribeValueObject(OpenApiSchema schema, ValueObjectDescription valueObject, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
     {
         var naming = context.JsonTypeInfo.Options.PropertyNamingPolicy ?? System.Text.Json.JsonNamingPolicy.CamelCase;
         var properties = new System.Collections.Generic.Dictionary<string, IOpenApiSchema>(StringComparer.Ordinal);
@@ -85,13 +88,70 @@ internal sealed class LaunchPadPrimitivesOpenApiTransformer(bool inline) : IOpen
         foreach (var member in valueObject.Members)
         {
             var name = naming.ConvertName(member.Name);
-            properties[name] = await context.GetOrCreateSchemaAsync(member.Type, null, cancellationToken).ConfigureAwait(false);
+            properties[name] = await DescribeMember(member, context, cancellationToken).ConfigureAwait(false);
             if (!member.IsNullable) required.Add(name);
         }
 
         schema.Type = JsonSchemaType.Object;
         schema.Properties = properties;
         schema.Required = required;
+    }
+
+    // ASP.NET Core turns a schema it marked with a schema ID into a reference to the named schema of that ID, and a schema it marked as a
+    // nullable property into a oneOf of null and that schema, when it resolves the schema of a body (OpenApiSchemaService); a reference put in
+    // the properties of a schema would be replaced by the schema it refers to.
+    private const string SchemaId = "x-schema-id";
+    private const string NullableProperty = "x-is-nullable-property";
+
+    // A value of a value object: a domain primitive is described as it is everywhere else (its named schema, or its schema in place), a
+    // NodaTime value (written by LaunchPad.NodaTime's converters) as text, and any other value by ASP.NET Core. A nullable value may be null.
+    private async Task<OpenApiSchema> DescribeMember(ValueObjectMemberDescription member, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
+    {
+        var type = Nullable.GetUnderlyingType(member.Type) ?? member.Type;
+        OpenApiSchema schema;
+        if (LaunchPadPrimitives.Find(type) is { } primitive)
+        {
+            schema = new OpenApiSchema();
+            Describe(schema, await context.GetOrCreateSchemaAsync(primitive.ValueType, null, cancellationToken).ConfigureAwait(false), primitive);
+            if (!inline)
+            {
+                schema.Metadata = new System.Collections.Generic.Dictionary<string, object>(StringComparer.Ordinal) { [SchemaId] = primitive.Type.Name };
+                if (member.IsNullable) schema.Metadata[NullableProperty] = true;
+                return schema;
+            }
+        }
+        else if (type.Namespace == "NodaTime")
+        {
+            schema = new OpenApiSchema { Type = JsonSchemaType.String, Format = NodaTimeFormat(type) };
+        }
+        else
+        {
+            schema = await context.GetOrCreateSchemaAsync(type, null, cancellationToken).ConfigureAwait(false);
+            if (schema.Metadata?.ContainsKey(SchemaId) == true)
+            {
+                if (member.IsNullable) schema.Metadata[NullableProperty] = true;
+                return schema;
+            }
+        }
+
+        if (member.IsNullable) AllowNull(schema);
+        return schema;
+    }
+
+    // The formats of the NodaTime values a domain primitive can hold, as the generator gives them.
+    private static string? NodaTimeFormat(Type type) =>
+        type.Name switch
+        {
+            "Instant" or "OffsetDateTime" => "date-time",
+            "LocalDate" => "date",
+            "LocalTime" => "time",
+            "Duration" or "Period" => "duration",
+            _ => null,
+        };
+
+    private static void AllowNull(OpenApiSchema schema)
+    {
+        if (schema.Type is { } type) schema.Type = type | JsonSchemaType.Null;
     }
 
     public async Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
