@@ -1,0 +1,4 @@
+﻿Trimmed: [ada]
+[   ]: InvalidNicknameException: Nickname must not be empty.
+[lovelace]: InvalidNicknameException: Nickname must be at most 5 character(s). Got 8.
+TryCreate: False LENGTH

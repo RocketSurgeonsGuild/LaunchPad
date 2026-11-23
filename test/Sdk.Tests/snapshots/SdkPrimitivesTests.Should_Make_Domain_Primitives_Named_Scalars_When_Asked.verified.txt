@@ -3,48 +3,60 @@
 }
 
 type Query {
-  customer(id: CustomerId!, country: CountryCode!): Customer!
+  customer(id: CustomerId!, country: Country!): Customer!
+}
+
+type Address {
+  street: String!
+  city: String!
+}
+
+type Balance {
+  amount: Decimal!
+  currency: String!
 }
 
 type Customer {
   id: CustomerId!
   email: CustomerEmail!
-  country: CountryCode!
-  rating: Rating!
-  balance: Money!
-  membership: DateRange
-  handle: Slug
+  country: Country!
+  points: LoyaltyPoints!
+  tier: CustomerTier!
+  address: Address!
+  balance: Balance!
+  membership: Membership
+  handle: Handle
 }
 
-type DateRange {
+type Membership {
   start: LocalDate!
   end: LocalDate!
 }
 
-type Money {
-  amount: Decimal!
-  currency: CurrencyCode!
+input MembershipInput {
+  start: LocalDate!
+  end: LocalDate!
 }
 
-scalar CountryCode
-
-scalar CurrencyCode
+scalar Country
 
 scalar CustomerEmail
 
 scalar CustomerId
 
+scalar CustomerTier
+
 "The `Decimal` scalar type represents a decimal floating-point number with high precision."
 scalar Decimal
   @specifiedBy(url: "https://scalars.graphql.org/chillicream/decimal.html")
+
+scalar Handle
 
 "The `LocalDate` scalar type represents a date without time or time zone information."
 scalar LocalDate
   @specifiedBy(url: "https://scalars.graphql.org/chillicream/local-date.html")
 
-scalar Rating
-
-scalar Slug
+scalar LoyaltyPoints
 
 {
   "data": {
@@ -52,7 +64,12 @@ scalar Slug
       "id": "6f9619ff-8b86-d011-b42d-00cf4fc964ff",
       "email": "ada@example.com",
       "country": "GB",
-      "rating": 4,
+      "points": 40,
+      "tier": 2,
+      "address": {
+        "street": "12 St James's Square",
+        "city": "London"
+      },
       "balance": {
         "amount": 12.5,
         "currency": "GBP"
@@ -69,7 +86,7 @@ scalar Slug
 {
   "errors": [
     {
-      "message": "The value is not a valid CountryCode.",
+      "message": "The value is not a valid Country.",
       "path": [
         "customer"
       ],
@@ -78,7 +95,7 @@ scalar Slug
           "country"
         ],
         "coordinate": "Query.customer(country:)",
-        "fieldType": "CountryCode"
+        "fieldType": "Country"
       }
     }
   ],

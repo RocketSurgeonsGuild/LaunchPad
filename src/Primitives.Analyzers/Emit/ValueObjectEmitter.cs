@@ -30,7 +30,10 @@ internal static class ValueObjectEmitter
         writer.Line($"public static string PrimitiveName => {Names.Literal(t)};");
         writer.Line();
         writer.Line("/// <inheritdoc />");
-        writer.Line($"public static {Names.ValueObjectDescription} Description {{ get; }} = new(typeof({t}), [{string.Join(", ", members.Select(m => Names.Literal(m.Name)))}]);");
+        writer.Line($"public static {Names.ValueObjectDescription} Description {{ get; }} = new(typeof({t}), [{string.Join(", ", members.Select(m => Names.Literal(m.Name)))}])");
+        writer.Line("{");
+        writer.Line($"    Members = [{string.Join(", ", members.Select(m => $"new({Names.Literal(m.Name)}, typeof({m.TypeOf}), {( m.IsNullable ? "true" : "false" )})"))}],");
+        writer.Line("};");
         writer.Line();
         writer.Line("/// <summary>The codes of the errors this value object reports.</summary>");
         writer.Open("public static class Errors");

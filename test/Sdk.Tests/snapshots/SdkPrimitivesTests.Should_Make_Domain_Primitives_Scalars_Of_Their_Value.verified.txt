@@ -3,27 +3,39 @@
 }
 
 type Query {
-  customer(id: UUID!, country: String!): Customer!
+  customer(id: ID!, country: String!): Customer!
+}
+
+type Address {
+  street: String!
+  city: String!
+}
+
+type Balance {
+  amount: Decimal!
+  currency: String!
 }
 
 type Customer {
-  id: UUID!
+  id: ID!
   email: String!
   country: String!
-  rating: Int!
-  balance: Money!
-  membership: DateRange
+  points: Int!
+  tier: Int!
+  address: Address!
+  balance: Balance!
+  membership: Membership
   handle: String
 }
 
-type DateRange {
+type Membership {
   start: LocalDate!
   end: LocalDate!
 }
 
-type Money {
-  amount: Decimal!
-  currency: String!
+input MembershipInput {
+  start: LocalDate!
+  end: LocalDate!
 }
 
 "The `Decimal` scalar type represents a decimal floating-point number with high precision."
@@ -34,17 +46,18 @@ scalar Decimal
 scalar LocalDate
   @specifiedBy(url: "https://scalars.graphql.org/chillicream/local-date.html")
 
-"The `UUID` scalar type represents a Universally Unique Identifier (UUID) as defined by RFC 9562."
-scalar UUID
-  @specifiedBy(url: "https://scalars.graphql.org/chillicream/uuid.html")
-
 {
   "data": {
     "customer": {
       "id": "6f9619ff-8b86-d011-b42d-00cf4fc964ff",
       "email": "ada@example.com",
       "country": "GB",
-      "rating": 4,
+      "points": 40,
+      "tier": 2,
+      "address": {
+        "street": "12 St James's Square",
+        "city": "London"
+      },
       "balance": {
         "amount": 12.5,
         "currency": "GBP"
@@ -61,7 +74,7 @@ scalar UUID
 {
   "errors": [
     {
-      "message": "Validation failed for strong type 'Rocket.Surgery.LaunchPad.StrongTypes.CountryCode'. Errors:\n- Value must match the regex pattern '^[A-Z]{2}\\z' (CultureInvariant).\n- Value must be an officially assigned ISO 3166-1 alpha-2 code.",
+      "message": "[FORMAT] Country must be an ISO 3166-1 alpha-2 country code. Got 'ZZ'. (Parameter 'value')",
       "path": [
         "customer"
       ],

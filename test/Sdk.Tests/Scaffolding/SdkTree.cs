@@ -154,6 +154,25 @@ internal sealed class SdkTree : IDisposable
     public Task<string> Run(string name, CancellationToken cancellationToken = default, string arguments = "") =>
         DotnetCli.Run($"\"{Path.Combine(Directory, name, "bin", "Debug", TargetFramework, $"{name}.dll")}\" {arguments}".TrimEnd(), Directory, cancellationToken: cancellationToken);
 
+    /// <summary>
+    ///     Publishes a project in Release for a runtime, into the <c>publish</c> folder of the project.
+    /// </summary>
+    /// <param name="name">The name of the project.</param>
+    /// <param name="runtimeIdentifier">The runtime the project is published for.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The output of the publish and the folder it published to.</returns>
+    public async Task<(string Output, string Folder)> Publish(string name, string runtimeIdentifier, CancellationToken cancellationToken = default)
+    {
+        var folder = Path.Combine(Directory, name, "publish");
+        var output = await DotnetCli.Run(
+            $"publish \"{ProjectPath(name)}\" --nologo -nodeReuse:false -c Release -r {runtimeIdentifier} -o \"{folder}\"",
+            Directory,
+            null,
+            cancellationToken
+        );
+        return (output, folder);
+    }
+
     /// <inheritdoc />
     public void Dispose()
     {

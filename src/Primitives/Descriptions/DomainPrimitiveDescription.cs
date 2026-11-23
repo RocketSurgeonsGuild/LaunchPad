@@ -148,4 +148,20 @@ public interface IDomainPrimitiveVisitor<out TResult>
 /// <param name="Type">The value object.</param>
 /// <param name="Properties">The names of the values it holds.</param>
 [PublicAPI]
-public sealed record ValueObjectDescription(Type Type, IReadOnlyList<string> Properties);
+public sealed record ValueObjectDescription(Type Type, IReadOnlyList<string> Properties)
+{
+    /// <summary>
+    ///     The values it holds, with their types, in declaration order: what an integration describes the value object with, as its own
+    ///     JSON converter writes it, so the serializer's metadata says nothing of its values.
+    /// </summary>
+    public IReadOnlyList<ValueObjectMemberDescription> Members { get; init; } = [];
+}
+
+/// <summary>
+///     One value a value object holds.
+/// </summary>
+/// <param name="Name">The name of its property.</param>
+/// <param name="Type">The type of the value.</param>
+/// <param name="IsNullable">Whether the value may be missing (a nullable reference or value type).</param>
+[PublicAPI]
+public sealed record ValueObjectMemberDescription(string Name, Type Type, bool IsNullable);

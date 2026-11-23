@@ -140,11 +140,35 @@ public sealed class PrimitiveRegistryGenerator : IIncrementalGenerator
 
     private static bool IsValueObject(INamedTypeSymbol type)
     {
-        return type.AllInterfaces.Any(static z => z is { Name: "IValueObject", TypeArguments.Length: 1 } && z.ContainingNamespace?.ToDisplayString() == Library) || type.GetAttributes().FirstOrDefault(static z => PrimitiveReader.IsPrimitiveAttribute(z.AttributeClass)) is { AttributeClass: { } attribute }
-            && PrimitiveReader.KindOf(attribute) is "ValueObject" or "Money" or "DateRange" or "TimeRange";
+        foreach (var candidate in type.AllInterfaces)
+        {
+            if (candidate is { Name: "IValueObject", TypeArguments.Length: 1 } && candidate.ContainingNamespace?.ToDisplayString() == Library) return true;
+        }
+
+        var kind = PrimitiveKind(type);
+        return kind is "ValueObject" or "Money" or "DateRange" or "TimeRange";
     }
 
-    private static bool IsStrongId(INamedTypeSymbol type) => type.AllInterfaces.Any(static z => z is { Name: "IStrongId", TypeArguments.Length: 2 } && z.ContainingNamespace?.ToDisplayString() == Library) || type.GetAttributes().Any(static z => PrimitiveReader.IsPrimitiveAttribute(z.AttributeClass) && PrimitiveReader.KindOf(z.AttributeClass!) == "StrongId");
+    private static bool IsStrongId(INamedTypeSymbol type)
+    {
+        foreach (var candidate in type.AllInterfaces)
+        {
+            if (candidate is { Name: "IStrongId", TypeArguments.Length: 2 } && candidate.ContainingNamespace?.ToDisplayString() == Library) return true;
+        }
+
+        return PrimitiveKind(type) == "StrongId";
+    }
+
+    // The kind of a domain primitive of this compilation, from its primitive attribute.
+    private static string? PrimitiveKind(INamedTypeSymbol type)
+    {
+        foreach (var attribute in type.GetAttributes())
+        {
+            if (PrimitiveReader.IsPrimitiveAttribute(attribute.AttributeClass)) return PrimitiveReader.KindOf(attribute.AttributeClass!);
+        }
+
+        return null;
+    }
 
     // The types of the compilation, and of every referenced assembly that references the library (by its assembly name).
     private static IEnumerable<INamedTypeSymbol> Types(Compilation compilation, string library, CancellationToken cancellationToken)
