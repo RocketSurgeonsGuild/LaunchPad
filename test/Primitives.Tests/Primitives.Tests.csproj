@@ -13,4 +13,8 @@
         <PackageReference Include="Rocket.Surgery.Extensions.Testing.SourceGenerators" />
         <PackageReference Include="Verify.SourceGenerators" />
     </ItemGroup>
+    <ItemGroup>
+        <!-- The analyzer assembly's internals (InternalsVisibleTo) include Polyfill's NotNullAttribute, which the global alias would make ambiguous. -->
+        <Using Remove="System.Diagnostics.CodeAnalysis.NotNullAttribute" />
+    </ItemGroup>
 </Project>

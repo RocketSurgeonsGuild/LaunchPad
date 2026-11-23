@@ -1,0 +1,134 @@
+using Rocket.Surgery.LaunchPad.Primitives.Analyzers.Analyzers;
+
+using static Primitives.Tests.Analyzers.AnalyzerTestSources;
+
+namespace Primitives.Tests.Analyzers;
+
+/// <summary>LPAD2013: two domain primitives with the same kind and rules.</summary>
+public class DuplicatePrimitiveAnalyzerTests
+{
+    private const string Usings = """
+                                  using Rocket.Surgery.LaunchPad.Primitives;
+
+                                  namespace Sample;
+
+
+                                  """;
+
+    [Test]
+    public async Task Should_Report_The_Second_Of_Two_Identical_Primitives()
+    {
+        var result = await Analyze<DuplicatePrimitiveAnalyzer>(
+            Usings
+          + """
+            [StringPrimitive, Regex("^[A-Z]+$")]
+            public readonly partial record struct EmployeeCode;
+
+            [StringPrimitive]
+            [Regex("^[A-Z]+$")]
+            public sealed partial record UserCode;
+            """
+        );
+
+        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2013: UserCode"], CollectionOrdering.Matching);
+        await Messages(result, "LPAD2013")
+             .Should()
+             .BeEquivalentTo(
+                  ["Domain primitive 'UserCode' has the same kind and rules as 'EmployeeCode'; merge them, or make sure they are different concepts"],
+                  CollectionOrdering.Matching
+              );
+    }
+
+    [Test]
+    [Arguments("[StringPrimitive, MinLength(5)]", "[MinLength(5), StringPrimitive]")]
+    [Arguments("[DatePrimitive(PastOnly = true, Kind = DatePrimitiveKind.DateOnly)]", "[DatePrimitive(Kind = DatePrimitiveKind.DateOnly, PastOnly = true)]")]
+    [Arguments("[Email]", "[Email]")]
+    [Arguments("[StrongId<System.Guid>]", "[StrongId<System.Guid>]")]
+    [Arguments("[Url(AllowedSchemes = new[] { \"https\" })]", "[Url(AllowedSchemes = new[] { \"https\" })]")]
+    public async Task Should_Report_Primitives_Written_Differently_With_The_Same_Rules(string first, string second)
+    {
+        var result = await Analyze<DuplicatePrimitiveAnalyzer>(
+            Usings
+          + $$"""
+              {{first}}
+              public readonly partial record struct A;
+
+              {{second}}
+              public readonly partial record struct B;
+              """
+        );
+
+        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2013: B"], CollectionOrdering.Matching);
+    }
+
+    [Test]
+    [Arguments("[StringPrimitive, MinLength(5)]", "[StringPrimitive, MinLength(10)]")]
+    [Arguments("[StringPrimitive, NotEmpty]", "[StringPrimitive, NotEmpty, Trim]")]
+    [Arguments("[NumericPrimitive<int>, PrimitiveRange(0, 10)]", "[NumericPrimitive<long>, PrimitiveRange(0, 10)]")]
+    [Arguments("[StrongId<System.Guid>]", "[StrongId<System.Guid>(GuidVersion = 4)]")]
+    [Arguments("[ValueObject]", "[ValueObject]")]
+    [Arguments("[SmartEnum<int>]", "[SmartEnum<int>]")]
+    public async Task Should_Accept_Primitives_That_Differ_Or_Are_Defined_By_Their_Members(string first, string second)
+    {
+        var result = await Analyze<DuplicatePrimitiveAnalyzer>(
+            Usings
+          + $$"""
+              {{first}}
+              public readonly partial record struct A;
+
+              {{second}}
+              public readonly partial record struct B;
+              """
+        );
+
+        await Diagnostics(result).Should().BeEmpty();
+    }
+
+    [Test]
+    public async Task Should_Report_Every_Copy_As_A_Duplicate_Of_The_First()
+    {
+        var result = await Analyze<DuplicatePrimitiveAnalyzer>(
+            Usings
+          + """
+            [StringPrimitive, NotEmpty]
+            public readonly partial record struct C;
+
+            [StringPrimitive, NotEmpty]
+            public readonly partial record struct A;
+
+            [StringPrimitive, NotEmpty, MaxLength(99)]
+            public readonly partial record struct Unique;
+
+            [StringPrimitive, NotEmpty]
+            public readonly partial record struct B;
+            """
+        );
+
+        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2013: C", "LPAD2013: B"], CollectionOrdering.Matching);
+        await Messages(result, "LPAD2013").Should().All(m => m.EndsWith("as 'A'; merge them, or make sure they are different concepts", StringComparison.Ordinal));
+    }
+
+    [Test]
+    public async Task Should_Ignore_Attributes_That_Are_Not_Primitive_Attributes()
+    {
+        var result = await Analyze<DuplicatePrimitiveAnalyzer>(
+            """
+            namespace Custom
+            {
+                public class StringPrimitiveAttribute : System.Attribute;
+            }
+
+            namespace Sample
+            {
+                [Custom.StringPrimitive]
+                public readonly partial record struct A;
+
+                [Custom.StringPrimitive]
+                public readonly partial record struct B;
+            }
+            """
+        );
+
+        await Diagnostics(result).Should().BeEmpty();
+    }
+}
