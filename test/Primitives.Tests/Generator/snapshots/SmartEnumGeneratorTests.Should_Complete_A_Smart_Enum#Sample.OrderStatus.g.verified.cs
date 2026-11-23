@@ -152,7 +152,7 @@ namespace Sample
                 return true;
             }
 
-            if (int.TryParse(s, provider, out var value) && TryFromValue(value, out var byValue))
+            if (int.TryParse(s, provider ?? global::System.Globalization.CultureInfo.InvariantCulture, out var value) && TryFromValue(value, out var byValue))
             {
                 result = byValue;
                 return true;
@@ -199,7 +199,9 @@ namespace Sample
         }
 
         // A member is written as its name in camel case, and read by its name (in any case) or its value.
-        private sealed class OrderStatusJsonConverter : global::System.Text.Json.Serialization.JsonConverter<OrderStatus>
+        /// <summary>The System.Text.Json converter of the domain primitive.</summary>
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public sealed class OrderStatusJsonConverter : global::System.Text.Json.Serialization.JsonConverter<OrderStatus>
         {
             public override OrderStatus Read(ref global::System.Text.Json.Utf8JsonReader reader, global::System.Type typeToConvert, global::System.Text.Json.JsonSerializerOptions options)
             {

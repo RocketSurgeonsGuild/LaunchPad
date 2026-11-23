@@ -171,7 +171,7 @@ namespace Sample
             {
                 if (value is Term primitive)
                 {
-                    if (destinationType == typeof(string)) return primitive.ToString();
+                    if (destinationType == typeof(string)) return primitive.ToString(null, culture);
                     if (destinationType == typeof(global::NodaTime.Period)) return primitive.Value;
                 }
 
@@ -179,7 +179,9 @@ namespace Sample
             }
         }
 
-        private sealed class TermJsonConverter : global::System.Text.Json.Serialization.JsonConverter<Term>
+        /// <summary>The System.Text.Json converter of the domain primitive.</summary>
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public sealed class TermJsonConverter : global::System.Text.Json.Serialization.JsonConverter<Term>
         {
             public override Term Read(ref global::System.Text.Json.Utf8JsonReader reader, global::System.Type typeToConvert, global::System.Text.Json.JsonSerializerOptions options)
             {

@@ -23,7 +23,10 @@ namespace Sample
         public static string PrimitiveName => "Shift";
 
         /// <inheritdoc />
-        public static global::Rocket.Surgery.LaunchPad.Primitives.Descriptions.ValueObjectDescription Description { get; } = new(typeof(Shift), ["Start", "End"]);
+        public static global::Rocket.Surgery.LaunchPad.Primitives.Descriptions.ValueObjectDescription Description { get; } = new(typeof(Shift), ["Start", "End"])
+        {
+            Members = [new("Start", typeof(global::NodaTime.LocalTime), false), new("End", typeof(global::NodaTime.LocalTime), false)],
+        };
 
         /// <summary>The codes of the errors this value object reports.</summary>
         public static class Errors
@@ -84,7 +87,9 @@ namespace Sample
         public global::NodaTime.Duration Duration => global::NodaTime.Period.Between(Start, End).ToDuration();
 
         // Written as an object of its values, named by the options' naming policy (camel case when there is none).
-        private sealed class ShiftJsonConverter : global::System.Text.Json.Serialization.JsonConverter<Shift>
+        /// <summary>The System.Text.Json converter of the domain primitive.</summary>
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public sealed class ShiftJsonConverter : global::System.Text.Json.Serialization.JsonConverter<Shift>
         {
             private static string Name(global::System.Text.Json.JsonSerializerOptions options, string name, string camelCase) => options.PropertyNamingPolicy?.ConvertName(name) ?? camelCase;
 

@@ -99,7 +99,7 @@ namespace Sample
         {
             if (s is not null)
             {
-                if (global::System.DateTimeOffset.TryParse(s, provider, out var value) && TryCreate(value, out var created, out _))
+                if (global::System.DateTimeOffset.TryParse(s, provider ?? global::System.Globalization.CultureInfo.InvariantCulture, out var value) && TryCreate(value, out var created, out _))
                 {
                     result = created;
                     return true;
@@ -117,7 +117,7 @@ namespace Sample
         /// <inheritdoc />
         public static bool TryParse(global::System.ReadOnlySpan<char> s, global::System.IFormatProvider? provider, [global::System.Diagnostics.CodeAnalysis.MaybeNullWhen(false)] out Deadline result)
         {
-            if (global::System.DateTimeOffset.TryParse(s, provider, out var value) && TryCreate(value, out var created, out _))
+            if (global::System.DateTimeOffset.TryParse(s, provider ?? global::System.Globalization.CultureInfo.InvariantCulture, out var value) && TryCreate(value, out var created, out _))
             {
                 result = created;
                 return true;
@@ -139,18 +139,18 @@ namespace Sample
         public override string ToString() => _value.ToString("O", global::System.Globalization.CultureInfo.InvariantCulture);
 
         /// <inheritdoc />
-        public string ToString(string? format, global::System.IFormatProvider? formatProvider) => _value.ToString(format, formatProvider);
+        public string ToString(string? format, global::System.IFormatProvider? formatProvider) => _value.ToString(string.IsNullOrEmpty(format) ? "O" : format, formatProvider ?? global::System.Globalization.CultureInfo.InvariantCulture);
 
         /// <inheritdoc />
         public bool TryFormat(global::System.Span<char> destination, out int charsWritten, global::System.ReadOnlySpan<char> format, global::System.IFormatProvider? provider)
         {
-            return FormatValue(_value, destination, out charsWritten, format, provider);
+            return FormatValue(_value, destination, out charsWritten, format.IsEmpty ? "O" : format, provider ?? global::System.Globalization.CultureInfo.InvariantCulture);
         }
 
         /// <inheritdoc />
         public bool TryFormat(global::System.Span<byte> utf8Destination, out int bytesWritten, global::System.ReadOnlySpan<char> format, global::System.IFormatProvider? provider)
         {
-            return FormatUtf8Value(_value, utf8Destination, out bytesWritten, format, provider);
+            return FormatUtf8Value(_value, utf8Destination, out bytesWritten, format.IsEmpty ? "O" : format, provider ?? global::System.Globalization.CultureInfo.InvariantCulture);
         }
 
         private static bool FormatValue<TValue>(TValue value, global::System.Span<char> destination, out int charsWritten, global::System.ReadOnlySpan<char> format, global::System.IFormatProvider? provider)
@@ -212,7 +212,7 @@ namespace Sample
             {
                 if (value is Deadline primitive)
                 {
-                    if (destinationType == typeof(string)) return primitive.ToString();
+                    if (destinationType == typeof(string)) return primitive.ToString(null, culture);
                     if (destinationType == typeof(global::System.DateTimeOffset)) return primitive.Value;
                 }
 
@@ -220,7 +220,9 @@ namespace Sample
             }
         }
 
-        private sealed class DeadlineJsonConverter : global::System.Text.Json.Serialization.JsonConverter<Deadline>
+        /// <summary>The System.Text.Json converter of the domain primitive.</summary>
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public sealed class DeadlineJsonConverter : global::System.Text.Json.Serialization.JsonConverter<Deadline>
         {
             public override Deadline Read(ref global::System.Text.Json.Utf8JsonReader reader, global::System.Type typeToConvert, global::System.Text.Json.JsonSerializerOptions options)
             {

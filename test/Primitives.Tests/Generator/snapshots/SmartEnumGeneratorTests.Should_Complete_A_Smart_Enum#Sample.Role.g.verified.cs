@@ -190,7 +190,9 @@ namespace Sample
         }
 
         // A member is written as its name in camel case, and read by its name (in any case) or its value.
-        private sealed class RoleJsonConverter : global::System.Text.Json.Serialization.JsonConverter<Role>
+        /// <summary>The System.Text.Json converter of the domain primitive.</summary>
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public sealed class RoleJsonConverter : global::System.Text.Json.Serialization.JsonConverter<Role>
         {
             public override Role Read(ref global::System.Text.Json.Utf8JsonReader reader, global::System.Type typeToConvert, global::System.Text.Json.JsonSerializerOptions options)
             {

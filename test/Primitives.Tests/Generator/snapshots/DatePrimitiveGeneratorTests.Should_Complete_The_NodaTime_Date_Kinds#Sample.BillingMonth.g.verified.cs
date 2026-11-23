@@ -86,7 +86,7 @@ namespace Sample
         private static global::Rocket.Surgery.LaunchPad.Primitives.PrimitiveError Validate(global::NodaTime.YearMonth value, global::NodaTime.IClock clock)
         {
             var now = clock.GetCurrentInstant().InUtc().Date.ToYearMonth();
-            if (value.CompareTo(now) > 0) return new global::Rocket.Surgery.LaunchPad.Primitives.PrimitiveError("TEMPORAL", "BillingMonth must be in the past.");
+            if (value.CompareTo(now) >= 0) return new global::Rocket.Surgery.LaunchPad.Primitives.PrimitiveError("TEMPORAL", "BillingMonth must be in the past.");
             return global::Rocket.Surgery.LaunchPad.Primitives.PrimitiveError.None;
         }
 
@@ -130,7 +130,7 @@ namespace Sample
         public override string ToString() => global::NodaTime.Text.YearMonthPattern.Iso.Format(_value);
 
         /// <inheritdoc />
-        public string ToString(string? format, global::System.IFormatProvider? formatProvider) => _value.ToString(format, formatProvider);
+        public string ToString(string? format, global::System.IFormatProvider? formatProvider) => _value.ToString(format, formatProvider ?? global::System.Globalization.CultureInfo.InvariantCulture);
 
         /// <inheritdoc />
         public bool TryFormat(global::System.Span<char> destination, out int charsWritten, global::System.ReadOnlySpan<char> format, global::System.IFormatProvider? provider)
@@ -211,7 +211,7 @@ namespace Sample
             {
                 if (value is BillingMonth primitive)
                 {
-                    if (destinationType == typeof(string)) return primitive.ToString();
+                    if (destinationType == typeof(string)) return primitive.ToString(null, culture);
                     if (destinationType == typeof(global::NodaTime.YearMonth)) return primitive.Value;
                 }
 
@@ -219,7 +219,9 @@ namespace Sample
             }
         }
 
-        private sealed class BillingMonthJsonConverter : global::System.Text.Json.Serialization.JsonConverter<BillingMonth>
+        /// <summary>The System.Text.Json converter of the domain primitive.</summary>
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public sealed class BillingMonthJsonConverter : global::System.Text.Json.Serialization.JsonConverter<BillingMonth>
         {
             public override BillingMonth Read(ref global::System.Text.Json.Utf8JsonReader reader, global::System.Type typeToConvert, global::System.Text.Json.JsonSerializerOptions options)
             {

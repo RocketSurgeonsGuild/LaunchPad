@@ -98,6 +98,7 @@ internal sealed record DateRules(bool PastOnly, bool FutureOnly, int? MaxAge, bo
 /// <param name="TypeOf">Its type as written in typeof (no nullable reference annotation).</param>
 /// <param name="Underlying">Its type without any nullable annotation (the T of a Nullable&lt;T&gt;).</param>
 /// <param name="IsNullableValueType">Whether it is a Nullable&lt;T&gt;.</param>
+/// <param name="IsValueType">Whether its type is a struct.</param>
 internal sealed record MemberInfo(
     string Name,
     string Type,
@@ -106,7 +107,8 @@ internal sealed record MemberInfo(
     bool IsNullable,
     string TypeOf,
     string Underlying,
-    bool IsNullableValueType
+    bool IsNullableValueType,
+    bool IsValueType = false
 )
 {
     public string Parameter => char.ToLowerInvariant(Name[0]) + Name[1..] is var name && SyntaxFacts.IsReserved(name) ? "@" + name : name;

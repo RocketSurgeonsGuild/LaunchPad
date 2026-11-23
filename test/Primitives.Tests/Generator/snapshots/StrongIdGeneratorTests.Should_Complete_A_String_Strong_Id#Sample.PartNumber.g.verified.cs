@@ -251,14 +251,16 @@ namespace Sample
             {
                 if (value is PartNumber primitive)
                 {
-                    if (destinationType == typeof(string)) return primitive.ToString();
+                    if (destinationType == typeof(string)) return primitive.ToString(null, culture);
                 }
 
                 return base.ConvertTo(context, culture, value, destinationType);
             }
         }
 
-        private sealed class PartNumberJsonConverter : global::System.Text.Json.Serialization.JsonConverter<PartNumber>
+        /// <summary>The System.Text.Json converter of the domain primitive.</summary>
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public sealed class PartNumberJsonConverter : global::System.Text.Json.Serialization.JsonConverter<PartNumber>
         {
             public override PartNumber Read(ref global::System.Text.Json.Utf8JsonReader reader, global::System.Type typeToConvert, global::System.Text.Json.JsonSerializerOptions options)
             {

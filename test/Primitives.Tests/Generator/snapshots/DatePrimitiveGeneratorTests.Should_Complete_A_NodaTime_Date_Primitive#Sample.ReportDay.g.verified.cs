@@ -132,7 +132,7 @@ namespace Sample
         public override string ToString() => IsDefault ? string.Empty : global::NodaTime.Text.LocalDatePattern.Iso.Format(_value);
 
         /// <inheritdoc />
-        public string ToString(string? format, global::System.IFormatProvider? formatProvider) => IsDefault ? string.Empty : _value.ToString(format, formatProvider);
+        public string ToString(string? format, global::System.IFormatProvider? formatProvider) => IsDefault ? string.Empty : _value.ToString(format, formatProvider ?? global::System.Globalization.CultureInfo.InvariantCulture);
 
         /// <inheritdoc />
         public bool TryFormat(global::System.Span<char> destination, out int charsWritten, global::System.ReadOnlySpan<char> format, global::System.IFormatProvider? provider)
@@ -223,7 +223,7 @@ namespace Sample
             {
                 if (value is ReportDay primitive)
                 {
-                    if (destinationType == typeof(string)) return primitive.ToString();
+                    if (destinationType == typeof(string)) return primitive.ToString(null, culture);
                     if (destinationType == typeof(global::NodaTime.LocalDate)) return primitive.Value;
                 }
 
@@ -231,7 +231,9 @@ namespace Sample
             }
         }
 
-        private sealed class ReportDayJsonConverter : global::System.Text.Json.Serialization.JsonConverter<ReportDay>
+        /// <summary>The System.Text.Json converter of the domain primitive.</summary>
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public sealed class ReportDayJsonConverter : global::System.Text.Json.Serialization.JsonConverter<ReportDay>
         {
             public override ReportDay Read(ref global::System.Text.Json.Utf8JsonReader reader, global::System.Type typeToConvert, global::System.Text.Json.JsonSerializerOptions options)
             {

@@ -23,8 +23,8 @@ public class DatePrimitiveTests
     public async Task Should_Accept_Only_The_Past_When_Past_Only()
     {
         await PastDay.TryCreate(Today.AddDays(-1), Time, out _, out _).Should().BeTrue();
-        // today is not in the future: it counts as the past
-        await PastDay.TryCreate(Today, Time, out _, out _).Should().BeTrue();
+        // today is not in the past (as upstream, and as FutureOnly rejects today)
+        await PastDay.TryCreate(Today, Time, out _, out _).Should().BeFalse();
         await PastDay.TryCreate(Today.AddDays(1), Time, out var future, out var error).Should().BeFalse();
         await future.IsDefault.Should().BeTrue();
         await error.Code.Should().BeEqualTo("TEMPORAL");
@@ -87,9 +87,10 @@ public class DatePrimitiveTests
         await CustomerBirthDate.TryCreate(Today.AddDays(1), Time, out _, out var future).Should().BeFalse();
         await future.Code.Should().BeEqualTo("TEMPORAL");
 
-        // at most MaxAge (120) years ago, to the day
+        // at most MaxAge (120) whole years old, as upstream: 120 and a day short of 121 are accepted, 121 is not
         await CustomerBirthDate.TryCreate(Today.AddYears(-120), Time, out _, out _).Should().BeTrue();
-        await CustomerBirthDate.TryCreate(Today.AddYears(-120).AddDays(-1), Time, out _, out var old).Should().BeFalse();
+        await CustomerBirthDate.TryCreate(Today.AddYears(-121).AddDays(1), Time, out _, out _).Should().BeTrue();
+        await CustomerBirthDate.TryCreate(Today.AddYears(-121), Time, out _, out var old).Should().BeFalse();
         await old.Message.Should().BeEqualTo("CustomerBirthDate must be at most 120 years ago.");
     }
 
@@ -184,7 +185,9 @@ public class NodaTimePrimitiveTests
         var born = NodaBirthDate.Create(new LocalDate(1990, 11, 24), Clock);
         await born.GetAge(Clock).Should().BeEqualTo(35);
         await NodaBirthDate.TryCreate(new LocalDate(2026, 11, 24), Clock, out _, out _).Should().BeFalse();
-        await NodaBirthDate.TryCreate(new LocalDate(1876, 11, 22), Clock, out _, out _).Should().BeFalse();
+        // at most MaxAge (150) whole years old
+        await NodaBirthDate.TryCreate(new LocalDate(1876, 11, 22), Clock, out _, out _).Should().BeTrue();
+        await NodaBirthDate.TryCreate(new LocalDate(1875, 11, 23), Clock, out _, out _).Should().BeFalse();
 
         var expires = NodaExpiration.Create(new LocalDate(2026, 12, 3), Clock);
         await expires.DaysUntilExpiration(Clock).Should().BeEqualTo(10);
@@ -194,8 +197,9 @@ public class NodaTimePrimitiveTests
         await Accepts<NodaWorkDay, LocalDate>(new LocalDate(2026, 11, 23));
         await Rejects<NodaWorkDay, LocalDate>(new LocalDate(2026, 11, 22), "TEMPORAL");
 
-        await BillingMonth.TryCreate(new YearMonth(2026, 11), Clock, out _, out _).Should().BeTrue();
-        await BillingMonth.TryCreate(new YearMonth(2026, 12), Clock, out _, out _).Should().BeFalse();
+        // the current month is now, which PastOnly rejects
+        await BillingMonth.TryCreate(new YearMonth(2026, 10), Clock, out _, out _).Should().BeTrue();
+        await BillingMonth.TryCreate(new YearMonth(2026, 11), Clock, out _, out _).Should().BeFalse();
     }
 
     [Test]

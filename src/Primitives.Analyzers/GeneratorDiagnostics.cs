@@ -11,7 +11,7 @@ internal static class GeneratorDiagnostics
     public static readonly DiagnosticDescriptor UnsupportedValueType = new(
         "LPAD2101",
         "Unsupported value type",
-        "{0} can't hold a {1}: {2}",
+        "{0} can't hold {1}: {2}",
         "LaunchPad.Primitives",
         DiagnosticSeverity.Error,
         true

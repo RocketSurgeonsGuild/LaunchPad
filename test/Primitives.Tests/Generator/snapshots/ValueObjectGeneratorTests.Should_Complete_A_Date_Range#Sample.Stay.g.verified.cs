@@ -26,7 +26,10 @@ namespace Sample
         public static string PrimitiveName => "Stay";
 
         /// <inheritdoc />
-        public static global::Rocket.Surgery.LaunchPad.Primitives.Descriptions.ValueObjectDescription Description { get; } = new(typeof(Stay), ["Start", "End"]);
+        public static global::Rocket.Surgery.LaunchPad.Primitives.Descriptions.ValueObjectDescription Description { get; } = new(typeof(Stay), ["Start", "End"])
+        {
+            Members = [new("Start", typeof(global::System.DateOnly), false), new("End", typeof(global::System.DateOnly), false)],
+        };
 
         /// <summary>The codes of the errors this value object reports.</summary>
         public static class Errors
@@ -75,7 +78,7 @@ namespace Sample
         }
 
         /// <inheritdoc />
-        public override string ToString() => IsDefault ? string.Empty : $"{(Start.ToString("O", global::System.Globalization.CultureInfo.InvariantCulture))}/{(End.ToString("O", global::System.Globalization.CultureInfo.InvariantCulture))}";
+        public override string ToString() => $"{(Start.ToString("O", global::System.Globalization.CultureInfo.InvariantCulture))}/{(End.ToString("O", global::System.Globalization.CultureInfo.InvariantCulture))}";
 
         /// <summary>Whether the range includes a value (both ends included).</summary>
         public bool Contains(global::System.DateOnly value) => value.CompareTo(Start) >= 0 && value.CompareTo(End) <= 0;
@@ -87,7 +90,9 @@ namespace Sample
         public int Days => End.DayNumber - Start.DayNumber + 1;
 
         // Written as an object of its values, named by the options' naming policy (camel case when there is none).
-        private sealed class StayJsonConverter : global::System.Text.Json.Serialization.JsonConverter<Stay>
+        /// <summary>The System.Text.Json converter of the domain primitive.</summary>
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public sealed class StayJsonConverter : global::System.Text.Json.Serialization.JsonConverter<Stay>
         {
             private static string Name(global::System.Text.Json.JsonSerializerOptions options, string name, string camelCase) => options.PropertyNamingPolicy?.ConvertName(name) ?? camelCase;
 
@@ -113,12 +118,6 @@ namespace Sample
 
             public override void Write(global::System.Text.Json.Utf8JsonWriter writer, Stay value, global::System.Text.Json.JsonSerializerOptions options)
             {
-                if (value.IsDefault)
-                {
-                    writer.WriteNullValue();
-                    return;
-                }
-
                 writer.WriteStartObject();
                 writer.WritePropertyName(Name(options, "Start", "start"));
                 global::System.Text.Json.Serialization.Metadata.JsonMetadataServices.DateOnlyConverter.Write(writer, value.Start, options);

@@ -116,6 +116,15 @@ internal static class ValueObjectEmitter
         var t = model.Name;
         writer.Line($"private static {Names.Error} Check({t} value)");
         writer.Open();
+        // A domain primitive the value object holds must hold a value itself, unless the member is nullable: a default struct or a null class
+        // would pass here and fail when it is written.
+        foreach (var member in model.Members.Where(static z => z is { PrimitiveValue: not null, IsNullable: false }))
+        {
+            var missing = member.IsValueType ? $"value.{member.Name}.IsDefault" : $"value.{member.Name} is null";
+            writer.Line($"if ({missing}) return {Names.NewError("INVARIANT", $"\"{t}.{member.Name} must have a value.\"")};");
+        }
+
+
         switch (model.Kind)
         {
             case "Money":
@@ -153,7 +162,7 @@ internal static class ValueObjectEmitter
     private static void KindMembers(SourceWriter writer, PrimitiveModel model)
     {
         var t = model.Name;
-        var empty = model.IsStruct ? "IsDefault ? string.Empty : " : "";
+        const string empty = "";
         switch (model.Kind)
         {
             case "Money":
@@ -289,7 +298,9 @@ internal static class ValueObjectEmitter
         writer.Line();
         writer.Line($"public override void Write({Names.Json}.Utf8JsonWriter writer, {t} value, {Names.Json}.JsonSerializerOptions options)");
         writer.Open();
-        if (model.IsStruct)
+        // A struct is written as its values even when they are all default (a TimeRange from midnight to midnight is a value), except when
+        // it holds a domain primitive that can't be written without a value: then the default struct is null.
+        if (model.IsStruct && members.Any(static z => z is { PrimitiveValue: not null, IsNullable: false }))
         {
             writer.Line("if (value.IsDefault)");
             writer.Open();

@@ -139,7 +139,8 @@ public class JsonTests
         await RoundTrips(Semester.Create(new LocalDate(2026, 9, 1), new LocalDate(2026, 12, 20)), """{"start":"2026-09-01","end":"2026-12-20"}""");
         await RoundTrips(WorkShiftTime.Create(TimeOnly.MinValue, new TimeOnly(8, 0)), """{"start":"00:00:00","end":"08:00:00"}""");
         await RoundTrips(Shift.Create(new LocalTime(9, 0), new LocalTime(17, 0)), """{"start":"09:00:00","end":"17:00:00"}""");
-        await JsonSerializer.Serialize(default(Cash), Options).Should().BeEqualTo("null");
+        // a default struct is written as its values: null comes only from a nullable value object
+        await JsonSerializer.Serialize(default(Cash), Options).Should().BeEqualTo("""{"amount":0,"currency":null}""");
     }
 
     [Test]

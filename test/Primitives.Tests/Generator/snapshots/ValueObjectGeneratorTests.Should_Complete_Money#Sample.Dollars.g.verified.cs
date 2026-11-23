@@ -23,7 +23,10 @@ namespace Sample
         public static string PrimitiveName => "Dollars";
 
         /// <inheritdoc />
-        public static global::Rocket.Surgery.LaunchPad.Primitives.Descriptions.ValueObjectDescription Description { get; } = new(typeof(Dollars), ["Amount", "Currency"]);
+        public static global::Rocket.Surgery.LaunchPad.Primitives.Descriptions.ValueObjectDescription Description { get; } = new(typeof(Dollars), ["Amount", "Currency"])
+        {
+            Members = [new("Amount", typeof(decimal), false), new("Currency", typeof(string), false)],
+        };
 
         /// <summary>The codes of the errors this value object reports.</summary>
         public static class Errors
@@ -105,7 +108,9 @@ namespace Sample
         public static bool operator >=(Dollars left, Dollars right) => SameCurrency(left, right) is not null && left.Amount >= right.Amount;
 
         // Written as an object of its values, named by the options' naming policy (camel case when there is none).
-        private sealed class DollarsJsonConverter : global::System.Text.Json.Serialization.JsonConverter<Dollars>
+        /// <summary>The System.Text.Json converter of the domain primitive.</summary>
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public sealed class DollarsJsonConverter : global::System.Text.Json.Serialization.JsonConverter<Dollars>
         {
             private static string Name(global::System.Text.Json.JsonSerializerOptions options, string name, string camelCase) => options.PropertyNamingPolicy?.ConvertName(name) ?? camelCase;
 

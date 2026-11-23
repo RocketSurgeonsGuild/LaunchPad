@@ -204,7 +204,7 @@ internal static class SingleValueEmitter
         writer.Open("public static class Errors");
         foreach (var code in codes)
         {
-            writer.Line($"/// <summary>The code <c>{code}</c>.</summary>");
+            writer.Line($"/// <summary>The code <c>{System.Security.SecurityElement.Escape(code)}</c>.</summary>");
             writer.Line($"public const string {ConstantName(code)} = {Names.Literal(code)};");
         }
 
@@ -499,12 +499,13 @@ internal static class SingleValueEmitter
         if (clock is null) return;
         writer.Line($"var now = {Now(v, clock.Name)};");
         var value = v.Ordered("value");
-        if (dates.PastOnly) writer.Line($"if ({value}.CompareTo(now) > 0) return {Names.NewError(dates.Error, $"\"{t} must be in the past.\"")};");
+        if (dates.PastOnly) writer.Line($"if ({value}.CompareTo(now) >= 0) return {Names.NewError(dates.Error, $"\"{t} must be in the past.\"")};");
         if (dates.FutureOnly) writer.Line($"if ({value}.CompareTo(now) <= 0) return {Names.NewError(dates.Error, $"\"{t} must be in the future.\"")};");
         if (dates.MaxAge is { } age)
         {
-            var oldest = v.IsNodaTime ? $"now.PlusYears(-{age})" : $"now.AddYears(-{age})";
-            writer.Line($"if (value.CompareTo({oldest}) < 0) return {Names.NewError(dates.Error, $"\"{t} must be at most {age} years ago.\"")};");
+            // At most MaxAge whole years old: born after the day MaxAge + 1 years ago.
+            var tooOld = v.IsNodaTime ? $"now.PlusYears(-{age + 1})" : $"now.AddYears(-{age + 1})";
+            writer.Line($"if (value.CompareTo({tooOld}) <= 0) return {Names.NewError(dates.Error, $"\"{t} must be at most {age} years ago.\"")};");
         }
     }
 
@@ -606,7 +607,7 @@ internal static class SingleValueEmitter
         }
         else
         {
-            writer.Line($"if ({vt}.TryParse(s, provider, out var value) && TryCreate(value, out var created, out _))");
+            writer.Line($"if ({vt}.TryParse(s, provider ?? {Names.Invariant}, out var value) && TryCreate(value, out var created, out _))");
         }
 
         writer.Open();
@@ -629,7 +630,7 @@ internal static class SingleValueEmitter
         if (v.IsSpanParsable && !v.IsString)
         {
             writer.Open();
-            writer.Line($"if ({vt}.TryParse(s, provider, out var value) && TryCreate(value, out var created, out _))");
+            writer.Line($"if ({vt}.TryParse(s, provider ?? {Names.Invariant}, out var value) && TryCreate(value, out var created, out _))");
             writer.Open();
             writer.Line("result = created;");
             writer.Line("return true;");
@@ -654,7 +655,7 @@ internal static class SingleValueEmitter
         if (v.IsUtf8SpanParsable && !v.IsString)
         {
             writer.Open();
-            writer.Line($"if ({vt}.TryParse(utf8Text, provider, out var value) && TryCreate(value, out var created, out _))");
+            writer.Line($"if ({vt}.TryParse(utf8Text, provider ?? {Names.Invariant}, out var value) && TryCreate(value, out var created, out _))");
             writer.Open();
             writer.Line("result = created;");
             writer.Line("return true;");
@@ -696,7 +697,7 @@ internal static class SingleValueEmitter
         writer.Line("/// <inheritdoc />");
         writer.Line(
             v.IsFormattable && !v.IsString
-                ? $"public string ToString(string? format, global::System.IFormatProvider? formatProvider) => {empty}_value.ToString(format, formatProvider);"
+                ? $"public string ToString(string? format, global::System.IFormatProvider? formatProvider) => {empty}_value.ToString({( v.Category == ValueCategory.Bcl ? "string.IsNullOrEmpty(format) ? \"O\" : format" : "format" )}, formatProvider ?? {Names.Invariant});"
                 : "public string ToString(string? format, global::System.IFormatProvider? formatProvider) => ToString();"
         );
         writer.Line();
@@ -716,7 +717,7 @@ internal static class SingleValueEmitter
 
         if (v.IsSpanFormattable && !v.IsString)
         {
-            writer.Line("return FormatValue(_value, destination, out charsWritten, format, provider);");
+            writer.Line($"return FormatValue(_value, destination, out charsWritten, {( v.Category == ValueCategory.Bcl ? "format.IsEmpty ? \"O\" : format" : "format" )}, provider ?? {Names.Invariant});");
         }
         else
         {
@@ -748,7 +749,7 @@ internal static class SingleValueEmitter
 
         if (v.IsUtf8SpanFormattable && !v.IsString)
         {
-            writer.Line("return FormatUtf8Value(_value, utf8Destination, out bytesWritten, format, provider);");
+            writer.Line($"return FormatUtf8Value(_value, utf8Destination, out bytesWritten, {( v.Category == ValueCategory.Bcl ? "format.IsEmpty ? \"O\" : format" : "format" )}, provider ?? {Names.Invariant});");
         }
         else
         {
@@ -883,7 +884,7 @@ internal static class SingleValueEmitter
         writer.Open();
         writer.Line($"if (value is {t} primitive)");
         writer.Open();
-        writer.Line("if (destinationType == typeof(string)) return primitive.ToString();");
+        writer.Line("if (destinationType == typeof(string)) return primitive.ToString(null, culture);");
         if (!v.IsString) writer.Line($"if (destinationType == typeof({vt})) return primitive.Value;");
         writer.Close();
         writer.Line();

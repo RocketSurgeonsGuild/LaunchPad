@@ -26,7 +26,10 @@ namespace Sample
         public static string PrimitiveName => "Price";
 
         /// <inheritdoc />
-        public static global::Rocket.Surgery.LaunchPad.Primitives.Descriptions.ValueObjectDescription Description { get; } = new(typeof(Price), ["Amount", "Currency"]);
+        public static global::Rocket.Surgery.LaunchPad.Primitives.Descriptions.ValueObjectDescription Description { get; } = new(typeof(Price), ["Amount", "Currency"])
+        {
+            Members = [new("Amount", typeof(decimal), false), new("Currency", typeof(string), false)],
+        };
 
         /// <summary>The codes of the errors this value object reports.</summary>
         public static class Errors
@@ -79,7 +82,7 @@ namespace Sample
         }
 
         /// <inheritdoc />
-        public override string ToString() => IsDefault ? string.Empty : $"{Amount.ToString(global::System.Globalization.CultureInfo.InvariantCulture)} {Currency}";
+        public override string ToString() => $"{Amount.ToString(global::System.Globalization.CultureInfo.InvariantCulture)} {Currency}";
 
         private static string SameCurrency(Price left, Price right) => string.Equals(left.Currency, right.Currency, global::System.StringComparison.Ordinal)
             ? left.Currency
@@ -103,7 +106,9 @@ namespace Sample
         public static bool operator >=(Price left, Price right) => SameCurrency(left, right) is not null && left.Amount >= right.Amount;
 
         // Written as an object of its values, named by the options' naming policy (camel case when there is none).
-        private sealed class PriceJsonConverter : global::System.Text.Json.Serialization.JsonConverter<Price>
+        /// <summary>The System.Text.Json converter of the domain primitive.</summary>
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public sealed class PriceJsonConverter : global::System.Text.Json.Serialization.JsonConverter<Price>
         {
             private static string Name(global::System.Text.Json.JsonSerializerOptions options, string name, string camelCase) => options.PropertyNamingPolicy?.ConvertName(name) ?? camelCase;
 
@@ -129,12 +134,6 @@ namespace Sample
 
             public override void Write(global::System.Text.Json.Utf8JsonWriter writer, Price value, global::System.Text.Json.JsonSerializerOptions options)
             {
-                if (value.IsDefault)
-                {
-                    writer.WriteNullValue();
-                    return;
-                }
-
                 writer.WriteStartObject();
                 writer.WritePropertyName(Name(options, "Amount", "amount"));
                 global::System.Text.Json.Serialization.Metadata.JsonMetadataServices.DecimalConverter.Write(writer, value.Amount, options);

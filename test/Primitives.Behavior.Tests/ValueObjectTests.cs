@@ -109,7 +109,7 @@ public class MoneyTests
     public async Task Should_Have_No_Value_When_Default()
     {
         await default(Cash).IsDefault.Should().BeTrue();
-        await default(Cash).ToString().Should().BeEqualTo(string.Empty);
+        await default(Cash).ToString().Should().BeEqualTo("0 ");
         await Cash.Create(0m, "USD").IsDefault.Should().BeFalse();
     }
 }

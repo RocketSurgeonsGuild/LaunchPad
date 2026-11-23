@@ -20,7 +20,10 @@ namespace Sample
         public static string PrimitiveName => "Address";
 
         /// <inheritdoc />
-        public static global::Rocket.Surgery.LaunchPad.Primitives.Descriptions.ValueObjectDescription Description { get; } = new(typeof(Address), ["Street", "City", "Country", "Floor"]);
+        public static global::Rocket.Surgery.LaunchPad.Primitives.Descriptions.ValueObjectDescription Description { get; } = new(typeof(Address), ["Street", "City", "Country", "Floor"])
+        {
+            Members = [new("Street", typeof(string), false), new("City", typeof(string), true), new("Country", typeof(global::Sample.Country), false), new("Floor", typeof(int?), true)],
+        };
 
         /// <summary>The codes of the errors this value object reports.</summary>
         public static class Errors
@@ -61,11 +64,14 @@ namespace Sample
 
         private static global::Rocket.Surgery.LaunchPad.Primitives.PrimitiveError Check(Address value)
         {
+            if (value.Country.IsDefault) return new global::Rocket.Surgery.LaunchPad.Primitives.PrimitiveError("INVARIANT", "Address.Country must have a value.");
             return global::Rocket.Surgery.LaunchPad.Primitives.PrimitiveError.None;
         }
 
         // Written as an object of its values, named by the options' naming policy (camel case when there is none).
-        private sealed class AddressJsonConverter : global::System.Text.Json.Serialization.JsonConverter<Address>
+        /// <summary>The System.Text.Json converter of the domain primitive.</summary>
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public sealed class AddressJsonConverter : global::System.Text.Json.Serialization.JsonConverter<Address>
         {
             private static string Name(global::System.Text.Json.JsonSerializerOptions options, string name, string camelCase) => options.PropertyNamingPolicy?.ConvertName(name) ?? camelCase;
 

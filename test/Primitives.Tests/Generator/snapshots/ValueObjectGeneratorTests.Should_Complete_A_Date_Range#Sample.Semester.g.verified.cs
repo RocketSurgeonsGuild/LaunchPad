@@ -23,7 +23,10 @@ namespace Sample
         public static string PrimitiveName => "Semester";
 
         /// <inheritdoc />
-        public static global::Rocket.Surgery.LaunchPad.Primitives.Descriptions.ValueObjectDescription Description { get; } = new(typeof(Semester), ["Start", "End"]);
+        public static global::Rocket.Surgery.LaunchPad.Primitives.Descriptions.ValueObjectDescription Description { get; } = new(typeof(Semester), ["Start", "End"])
+        {
+            Members = [new("Start", typeof(global::NodaTime.LocalDate), false), new("End", typeof(global::NodaTime.LocalDate), false)],
+        };
 
         /// <summary>The codes of the errors this value object reports.</summary>
         public static class Errors
@@ -84,7 +87,9 @@ namespace Sample
         public int Days => global::NodaTime.Period.DaysBetween(Start, End) + 1;
 
         // Written as an object of its values, named by the options' naming policy (camel case when there is none).
-        private sealed class SemesterJsonConverter : global::System.Text.Json.Serialization.JsonConverter<Semester>
+        /// <summary>The System.Text.Json converter of the domain primitive.</summary>
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public sealed class SemesterJsonConverter : global::System.Text.Json.Serialization.JsonConverter<Semester>
         {
             private static string Name(global::System.Text.Json.JsonSerializerOptions options, string name, string camelCase) => options.PropertyNamingPolicy?.ConvertName(name) ?? camelCase;
 

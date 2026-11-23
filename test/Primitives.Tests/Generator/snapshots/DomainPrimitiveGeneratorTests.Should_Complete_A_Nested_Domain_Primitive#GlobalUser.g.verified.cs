@@ -255,14 +255,16 @@ readonly partial record struct GlobalUser :
         {
             if (value is GlobalUser primitive)
             {
-                if (destinationType == typeof(string)) return primitive.ToString();
+                if (destinationType == typeof(string)) return primitive.ToString(null, culture);
             }
 
             return base.ConvertTo(context, culture, value, destinationType);
         }
     }
 
-    private sealed class GlobalUserJsonConverter : global::System.Text.Json.Serialization.JsonConverter<GlobalUser>
+    /// <summary>The System.Text.Json converter of the domain primitive.</summary>
+    [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+    public sealed class GlobalUserJsonConverter : global::System.Text.Json.Serialization.JsonConverter<GlobalUser>
     {
         public override GlobalUser Read(ref global::System.Text.Json.Utf8JsonReader reader, global::System.Type typeToConvert, global::System.Text.Json.JsonSerializerOptions options)
         {

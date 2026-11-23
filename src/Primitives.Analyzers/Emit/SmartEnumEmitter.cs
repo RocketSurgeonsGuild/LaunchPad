@@ -146,7 +146,7 @@ internal static class SmartEnumEmitter
             writer.Line(
                 v.IsString
                     ? "if (s is not null && TryFromValue(s, out var byValue))"
-                    : $"if ({vt}.TryParse(s, provider, out var value) && TryFromValue(value, out var byValue))"
+                    : $"if ({vt}.TryParse(s, provider ?? {Names.Invariant}, out var value) && TryFromValue(value, out var byValue))"
             );
             writer.Open();
             writer.Line("result = byValue;");

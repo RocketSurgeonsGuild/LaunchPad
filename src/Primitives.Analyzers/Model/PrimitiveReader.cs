@@ -637,7 +637,8 @@ internal static class PrimitiveReader
                 memberType.NullableAnnotation == NullableAnnotation.Annotated || isNullableValueType,
                 memberType.WithNullableAnnotation(NullableAnnotation.NotAnnotated).ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
                 underlying.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-                isNullableValueType
+                isNullableValueType,
+                memberType.IsValueType
             );
         }
 

@@ -130,7 +130,7 @@ namespace Sample
         public override string ToString() => global::NodaTime.Text.ZonedDateTimePattern.CreateWithInvariantCulture("uuuu'-'MM'-'dd'T'HH':'mm':'ss;FFFFFFFFFo<G> z", global::NodaTime.DateTimeZoneProviders.Tzdb).Format(_value);
 
         /// <inheritdoc />
-        public string ToString(string? format, global::System.IFormatProvider? formatProvider) => _value.ToString(format, formatProvider);
+        public string ToString(string? format, global::System.IFormatProvider? formatProvider) => _value.ToString(format, formatProvider ?? global::System.Globalization.CultureInfo.InvariantCulture);
 
         /// <inheritdoc />
         public bool TryFormat(global::System.Span<char> destination, out int charsWritten, global::System.ReadOnlySpan<char> format, global::System.IFormatProvider? provider)
@@ -211,7 +211,7 @@ namespace Sample
             {
                 if (value is Appointment primitive)
                 {
-                    if (destinationType == typeof(string)) return primitive.ToString();
+                    if (destinationType == typeof(string)) return primitive.ToString(null, culture);
                     if (destinationType == typeof(global::NodaTime.ZonedDateTime)) return primitive.Value;
                 }
 
@@ -219,7 +219,9 @@ namespace Sample
             }
         }
 
-        private sealed class AppointmentJsonConverter : global::System.Text.Json.Serialization.JsonConverter<Appointment>
+        /// <summary>The System.Text.Json converter of the domain primitive.</summary>
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public sealed class AppointmentJsonConverter : global::System.Text.Json.Serialization.JsonConverter<Appointment>
         {
             public override Appointment Read(ref global::System.Text.Json.Utf8JsonReader reader, global::System.Type typeToConvert, global::System.Text.Json.JsonSerializerOptions options)
             {

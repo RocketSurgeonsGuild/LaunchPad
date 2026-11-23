@@ -260,14 +260,16 @@ namespace Sample
             {
                 if (value is FirstName primitive)
                 {
-                    if (destinationType == typeof(string)) return primitive.ToString();
+                    if (destinationType == typeof(string)) return primitive.ToString(null, culture);
                 }
 
                 return base.ConvertTo(context, culture, value, destinationType);
             }
         }
 
-        private sealed class FirstNameJsonConverter : global::System.Text.Json.Serialization.JsonConverter<FirstName>
+        /// <summary>The System.Text.Json converter of the domain primitive.</summary>
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public sealed class FirstNameJsonConverter : global::System.Text.Json.Serialization.JsonConverter<FirstName>
         {
             public override FirstName Read(ref global::System.Text.Json.Utf8JsonReader reader, global::System.Type typeToConvert, global::System.Text.Json.JsonSerializerOptions options)
             {
