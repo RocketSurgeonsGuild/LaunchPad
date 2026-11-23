@@ -238,4 +238,14 @@ internal static class AnalyzerDiagnostics
         true,
         "A rule checks one kind of value: length, pattern and the normalizations a string, ranges a number or a date. Smart enums and value objects take no rules."
     );
+
+    public static readonly DiagnosticDescriptor UseGeneratedRegex = new(
+        "LPAD2023",
+        "Use a [GeneratedRegex] for the pattern",
+        "The pattern of [Regex] on '{0}' is built at run time and interpreted: declare it as a [GeneratedRegex] member of the domain primitive",
+        DesignCategory,
+        DiagnosticSeverity.Info,
+        true,
+        "A [GeneratedRegex] member of a domain primitive is a rule like [Regex], whose pattern the regular expression generator turns into code when the project is built. A [Regex] with an ErrorCode or ErrorMessage stays a [Regex]: a [GeneratedRegex] reports the FORMAT error."
+    );
 }

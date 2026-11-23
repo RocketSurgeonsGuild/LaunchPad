@@ -26,6 +26,46 @@ public class StringPrimitiveGeneratorTests
         await Verify(result);
     }
 
+    // A [GeneratedRegex] member of a string primitive or a string strong ID is a rule after its [Regex] rules, a property or a method.
+    // Its pattern describes it, with the options that change what it matches inline.
+    [Test]
+    public async Task Should_Match_The_GeneratedRegex_Members()
+    {
+        var result = await GeneratorTestBuilder.Generate(
+            """
+            using System.Text.RegularExpressions;
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [StringPrimitive, Trim, Regex("^[A-Z]")]
+            public readonly partial record struct Sku
+            {
+                [GeneratedRegex("^[A-Z]{3}-[0-9]{4}$", RegexOptions.CultureInvariant, 1000)]
+                private static partial Regex Format { get; }
+
+                [GeneratedRegex("[0-9]$")]
+                private static partial Regex EndsWithDigit();
+
+                // Described with its options inline; its name keeps the field of the [Regex] from being Pattern0.
+                [GeneratedRegex("^[a-z]", RegexOptions.IgnoreCase | RegexOptions.Multiline)]
+                private static partial Regex Pattern0 { get; }
+            }
+
+            [StrongId<string>]
+            public sealed partial record OrderNumber
+            {
+                [GeneratedRegex("^ORD-[0-9]+$")]
+                private static partial Regex Format { get; }
+            }
+            """,
+            regex: true
+        );
+
+        await result.ShouldCompileCleanly();
+        await Verify(result);
+    }
+
     [Test]
     public async Task Should_Complete_The_Normalization_Rules()
     {

@@ -192,7 +192,7 @@ internal static class PrimitiveReader
                               .ToEquatableArray();
 
         var strings = shape == PrimitiveShape.String || shape == PrimitiveShape.StrongId && value!.IsString
-            ? ReadStringRules(kind, primitive, rules, kindError, settings)
+            ? ReadStringRules(type, kind, primitive, rules, kindError, settings)
             : null;
         var range = shape is PrimitiveShape.Numeric or PrimitiveShape.Date or PrimitiveShape.StrongId && !value!.IsString
             ? ReadRange(kind, primitive, rules, kindError, value!)
@@ -336,6 +336,7 @@ internal static class PrimitiveReader
     }
 
     private static StringRules ReadStringRules(
+        INamedTypeSymbol type,
         string kind,
         AttributeData primitive,
         AttributeData[] rules,
@@ -381,14 +382,31 @@ internal static class PrimitiveReader
             }
         }
 
+        // The kind's pattern first, then each [Regex] (a field the generator writes, named by its place among them), then each
+        // [GeneratedRegex] member of the domain primitive, which the regular expression generator implements.
+        // A field is named Pattern0, Pattern1, ..., skipping a name the domain primitive uses.
+        var field = 0;
+        string FieldName()
+        {
+            while (type.MemberNames.Contains($"Pattern{field}")) field++;
+            return $"Pattern{field++}";
+        }
+
         var regexes = rules.Where(z => z.AttributeClass!.Name == "RegexAttribute" && z.ConstructorArguments is [{ Value: string }])
-                           .Select(z => new RegexRule((string)z.ConstructorArguments[0].Value!, Error(z, "FORMAT")))
+                           .Select(
+                                z =>
+                                {
+                                    var pattern = (string)z.ConstructorArguments[0].Value!;
+                                    return new RegexRule(FieldName(), pattern, Error(z, "FORMAT"), pattern);
+                                }
+                            )
                            .ToList();
+        regexes.AddRange(GeneratedRegexes.Members(type).Select(z => new RegexRule(z.Expression, null, new("FORMAT", null), GeneratedRegexes.Describe(z.Attribute))));
         var schemes = new List<string>();
         string? registry = null;
         var kindCheck = Error(null, "FORMAT", kindError);
 
-        void Pattern(string pattern) => regexes.Insert(0, new(pattern, kindCheck));
+        void Pattern(string name) => regexes.Insert(0, new($"{GeneratedRegexes.PrimitivePatterns}.{name}", null, kindCheck, null));
 
         // The length the kind sets (its MinLength and MaxLength, or its defaults), where no rule sets it.
         var (kindMin, kindMax) = KindDefaults.Length(kind, primitive);
@@ -399,14 +417,12 @@ internal static class PrimitiveReader
             case "Email":
                 trim = lower = true;
                 notEmpty ??= Error(null, "EMPTY", kindError);
-                Pattern(
-                    """^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"""
-                );
+                Pattern("Email");
                 break;
             case "Phone":
                 trim = true;
                 notEmpty ??= Error(null, "EMPTY", kindError);
-                Pattern("""^\+[1-9]\d{1,14}$""");
+                Pattern("Phone");
                 break;
             case "Url":
                 trim = true;
@@ -418,7 +434,7 @@ internal static class PrimitiveReader
             case "Slug":
                 trim = lower = true;
                 notEmpty ??= Error(null, "EMPTY", kindError);
-                Pattern("""^[a-z0-9]+(-[a-z0-9]+)*$""");
+                Pattern("Slug");
                 break;
             case "CountryCode":
                 trim = upper = true;
@@ -428,7 +444,7 @@ internal static class PrimitiveReader
             case "LanguageCode":
                 trim = lower = true;
                 exact = min == max;
-                Pattern("""^[a-z]{2}$""");
+                Pattern("LanguageCode");
                 break;
             case "CurrencyCode":
                 trim = upper = true;
@@ -437,41 +453,37 @@ internal static class PrimitiveReader
                 break;
             case "Username":
                 trim = true;
-                Pattern("""^[a-zA-Z0-9._-]+$""");
+                Pattern("Username");
                 break;
             case "PasswordHash":
                 notEmpty ??= Error(null, "EMPTY", kindError);
                 break;
             case "HexColor":
                 trim = upper = true;
-                Pattern("""^#([0-9A-F]{3}|[0-9A-F]{4}|[0-9A-F]{6}|[0-9A-F]{8})$""");
+                Pattern("HexColor");
                 break;
             case "IPAddress":
                 trim = true;
                 notEmpty ??= Error(null, "EMPTY", kindError);
-                Pattern(
-                    """^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$|^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$|^(?:[0-9a-fA-F]{1,4}:){1,7}:$|^:(?::[0-9a-fA-F]{1,4}){1,7}$|^(?:[0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}$|^(?:[0-9a-fA-F]{1,4}:){1,5}(?::[0-9a-fA-F]{1,4}){1,2}$|^(?:[0-9a-fA-F]{1,4}:){1,4}(?::[0-9a-fA-F]{1,4}){1,3}$|^(?:[0-9a-fA-F]{1,4}:){1,3}(?::[0-9a-fA-F]{1,4}){1,4}$|^(?:[0-9a-fA-F]{1,4}:){1,2}(?::[0-9a-fA-F]{1,4}){1,5}$|^[0-9a-fA-F]{1,4}:(?::[0-9a-fA-F]{1,4}){1,6}$|^::$"""
-                );
+                Pattern("IPAddress");
                 break;
             case "MacAddress":
                 trim = upper = true;
-                Pattern("""^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$""");
+                Pattern("MacAddress");
                 break;
             case "IBAN":
                 trim = upper = true;
-                Pattern("""^[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}$""");
+                Pattern("Iban");
                 registry = "Iban";
                 break;
             case "ISBN":
                 trim = true;
                 notEmpty ??= Error(null, "EMPTY", kindError);
-                Pattern(
-                    """^(?:ISBN(?:-1[03])?:? )?(?=[0-9X]{10}$|(?=(?:[0-9]+[- ]){3})[- 0-9X]{13}$|97[89][0-9]{10}$|(?=(?:[0-9]+[- ]){4})[- 0-9]{17}$)(?:97[89][- ]?)?[0-9]{1,5}[- ]?[0-9]+[- ]?[0-9]+[- ]?[0-9X]$"""
-                );
+                Pattern("Isbn");
                 break;
             case "VIN":
                 trim = upper = true;
-                Pattern("""^[A-HJ-NPR-Z0-9]{17}$""");
+                Pattern("Vin");
                 break;
             default:
                 break;

@@ -4,7 +4,7 @@ namespace Rocket.Surgery.LaunchPad.Primitives.Analyzers;
 
 /// <summary>
 ///     The diagnostics of the domain primitive generator: the cases it can't complete a type for. The shape of a declaration (partial,
-///     readonly, sealed, a record) is checked by the analyzers, LPAD2001 to LPAD2022.
+///     readonly, sealed, a record) is checked by the analyzers, LPAD2001 to LPAD2023.
 /// </summary>
 internal static class GeneratorDiagnostics
 {

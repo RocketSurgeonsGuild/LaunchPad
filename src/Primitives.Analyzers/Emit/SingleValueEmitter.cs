@@ -148,7 +148,9 @@ internal static class SingleValueEmitter
             var min = Math.Max(strings.MinLength ?? 0, strings.NotEmpty is null ? 0 : 1);
             if (min > 0) properties.Add($"MinLength = {min}");
             if (strings.MaxLength is { } max) properties.Add($"MaxLength = {max}");
-            if (strings.Regexes.Length > 0) properties.Add($"Patterns = [{string.Join(", ", strings.Regexes.Select(z => Names.Literal(z.Pattern)))}]");
+            // The pattern of a kind is described by its Regex, whose ToString() returns it.
+            if (strings.Regexes.Length > 0)
+                properties.Add($"Patterns = [{string.Join(", ", strings.Regexes.Select(z => z.Described is { } described ? Names.Literal(described) : $"{z.Expression}.ToString()"))}]");
         }
 
         if (model.Range is { } range && ( model.Value!.IsNumber || model.Shape == PrimitiveShape.StrongId ))
@@ -218,21 +220,22 @@ internal static class SingleValueEmitter
     private static void Regexes(SourceWriter writer, PrimitiveModel model)
     {
         if (model.Strings is not { } strings) return;
-        // Interpreted, not RegexOptions.Compiled: compiling a pattern is JIT work its first match pays inside the timeout, and native AOT
-        // interprets every pattern anyway. The values are short, so the interpreter takes microseconds. The timeout is wall-clock time,
-        // so it is a second rather than a few milliseconds: it bounds a runaway pattern without rejecting a valid value on a busy machine.
-        const string options = "global::System.Text.RegularExpressions.RegexOptions.CultureInvariant";
-        const string timeout = "global::System.TimeSpan.FromSeconds(1)";
-        for (var i = 0; i < strings.Regexes.Length; i++)
+        // Only a [Regex] is built here: the patterns of the kinds and the [GeneratedRegex] members of the domain primitive are built by the
+        // regular expression generator, which can't see a [GeneratedRegex] this generator writes. A [Regex] is interpreted, not
+        // RegexOptions.Compiled: compiling a pattern is JIT work its first match pays inside the timeout, and native AOT interprets every
+        // pattern anyway. The timeout is wall-clock time, so it is a second, like the kinds': it bounds a runaway pattern without rejecting a
+        // valid value on a busy machine.
+        var written = false;
+        foreach (var regex in strings.Regexes)
         {
+            if (regex.Pattern is not { } pattern) continue;
             writer.Line(
-                $"private static readonly global::System.Text.RegularExpressions.Regex Pattern{i} = new({Names.Literal(strings.Regexes[i].Pattern)}, {options}, {timeout});"
+                $"private static readonly global::System.Text.RegularExpressions.Regex {regex.Expression} = new({Names.Literal(pattern)}, global::System.Text.RegularExpressions.RegexOptions.CultureInvariant, global::System.TimeSpan.FromSeconds(1));"
             );
+            written = true;
         }
 
-        if (strings.NormalizeWhitespace)
-            writer.Line($"private static readonly global::System.Text.RegularExpressions.Regex WhiteSpace = new(@\"\\s+\", {options}, {timeout});");
-        if (strings.Regexes.Length > 0 || strings.NormalizeWhitespace) writer.Line();
+        if (written) writer.Line();
     }
 
     private static void Factories(SourceWriter writer, PrimitiveModel model, ClockInfo? clock)
@@ -321,7 +324,7 @@ internal static class SingleValueEmitter
             if (strings.Trim) writer.Line("value = value.Trim();");
             if (strings.TrimStart) writer.Line("value = value.TrimStart();");
             if (strings.TrimEnd) writer.Line("value = value.TrimEnd();");
-            if (strings.NormalizeWhitespace) writer.Line("value = WhiteSpace.Replace(value, \" \");");
+            if (strings.NormalizeWhitespace) writer.Line($"value = {GeneratedRegexes.PrimitivePatterns}.WhiteSpace.Replace(value, \" \");");
             if (strings.LowerCase) writer.Line("value = value.ToLowerInvariant();");
             if (strings.UpperCase) writer.Line("value = value.ToUpperInvariant();");
             writer.Line("try");
@@ -429,12 +432,11 @@ internal static class SingleValueEmitter
                 break;
         }
 
-        for (var i = 0; i < strings.Regexes.Length; i++)
+        foreach (var regex in strings.Regexes)
         {
-            var regex = strings.Regexes[i];
             writer.Line("try");
             writer.Open();
-            writer.Line($"if (!Pattern{i}.IsMatch(value)) return {Names.NewError(regex.Error, $"\"{t} has an invalid format.\"")};");
+            writer.Line($"if (!{regex.Expression}.IsMatch(value)) return {Names.NewError(regex.Error, $"\"{t} has an invalid format.\"")};");
             writer.Close();
             writer.Line("catch (global::System.Text.RegularExpressions.RegexMatchTimeoutException)");
             writer.Open();

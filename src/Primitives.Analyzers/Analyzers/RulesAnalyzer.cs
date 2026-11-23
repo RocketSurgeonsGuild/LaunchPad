@@ -12,6 +12,10 @@ namespace Rocket.Surgery.LaunchPad.Primitives.Analyzers.Analyzers;
 ///     Checks the attributes of a domain primitive: its rules and the arguments of its kind.
 ///     <list type="bullet">
 ///         <item>LPAD2004: the pattern of [Regex] is not a valid regular expression.</item>
+///         <item>
+///             LPAD2023: a valid [Regex] without an ErrorCode or ErrorMessage, and with no [Regex] after it that has one, which can be a
+///             [GeneratedRegex] member.
+///         </item>
 ///         <item>LPAD2005: [LowerCase] and [UpperCase] together.</item>
 ///         <item>
 ///             LPAD2006: a minimum greater than its maximum ([MinLength] and [MaxLength], [Length], [PrimitiveRange]), or a bound of the kind (its Min
@@ -69,6 +73,7 @@ public sealed class RulesAnalyzer : DiagnosticAnalyzer
         AnalyzerDiagnostics.DateDirectionMisuse,
         AnalyzerDiagnostics.NodaTimeWithoutLaunchPadNodaTime,
         AnalyzerDiagnostics.RuleNotApplicable,
+        AnalyzerDiagnostics.UseGeneratedRegex,
     ];
 
     /// <inheritdoc />
@@ -86,12 +91,19 @@ public sealed class RulesAnalyzer : DiagnosticAnalyzer
                 var compilation = start.Compilation;
                 var seesLaunchPadNodaTime = compilation.AssemblyName == PrimitiveSymbols.LaunchPadNodaTimeAssembly
                  || compilation.ReferencedAssemblyNames.Any(a => a.Name == PrimitiveSymbols.LaunchPadNodaTimeAssembly);
-                start.RegisterSymbolAction(c => Analyze(c, notEmptyByDefault, seesLaunchPadNodaTime, projectMaxLength), SymbolKind.NamedType);
+                var hasGeneratedRegex = compilation.GetTypeByMetadataName("System.Text.RegularExpressions.GeneratedRegexAttribute") is not null;
+                start.RegisterSymbolAction(c => Analyze(c, notEmptyByDefault, seesLaunchPadNodaTime, projectMaxLength, hasGeneratedRegex), SymbolKind.NamedType);
             }
         );
     }
 
-    private static void Analyze(SymbolAnalysisContext context, bool notEmptyByDefault, bool seesLaunchPadNodaTime, int projectMaxLength)
+    private static void Analyze(
+        SymbolAnalysisContext context,
+        bool notEmptyByDefault,
+        bool seesLaunchPadNodaTime,
+        int projectMaxLength,
+        bool hasGeneratedRegex
+    )
     {
         if (context.Symbol is not INamedTypeSymbol type || PrimitiveSymbols.GetDeclaration(type) is not { } primitive) return;
         if (PrimitiveSymbols.IsGenerated(type, context.CancellationToken)) return;
@@ -105,6 +117,13 @@ public sealed class RulesAnalyzer : DiagnosticAnalyzer
         AttributeData? minLength = null;
         AttributeData? maxLength = null;
         AttributeData? firstLength = null;
+        // The last [Regex] that sets its own ErrorCode or ErrorMessage, for LPAD2023.
+        var lastRegexWithError = -1;
+        for (var i = 0; i < primitive.Rules.Length; i++)
+        {
+            if (primitive.Rules[i] is { AttributeClass.OriginalDefinition.Name: "RegexAttribute", NamedArguments.IsEmpty: false }) lastRegexWithError = i;
+        }
+
         foreach (var rule in primitive.Rules)
         {
             var name = rule.AttributeClass!.OriginalDefinition.Name;
@@ -121,6 +140,18 @@ public sealed class RulesAnalyzer : DiagnosticAnalyzer
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(AnalyzerDiagnostics.InvalidRegex, PrimitiveSymbols.AttributeLocation(rule, type, cancellationToken), pattern, problem)
+                        );
+                    }
+                    // A [GeneratedRegex] reports FORMAT with the default message, so a [Regex] that sets its own stays one. A [GeneratedRegex] is
+                    // checked after every [Regex], so neither can one followed by a [Regex] that sets its own: the value would report that error
+                    // instead.
+                    else if (hasGeneratedRegex
+                          && rule.NamedArguments.IsEmpty
+                          && primitive.Rules.IndexOf(rule) > lastRegexWithError
+                          && Applies(primitive, rule, name, out _))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(AnalyzerDiagnostics.UseGeneratedRegex, PrimitiveSymbols.AttributeLocation(rule, type, cancellationToken), type.Name)
                         );
                     }
 
@@ -296,7 +327,7 @@ public sealed class RulesAnalyzer : DiagnosticAnalyzer
         switch (primitive.Attribute.AttributeClass!.OriginalDefinition.Name)
         {
             case "StrongIdAttribute" when primitive.TypeArgument?.SpecialType == SpecialType.System_String:
-                if (primitive.Rules.Any(r => StringIdConstraints.Contains(r.AttributeClass!.OriginalDefinition.Name))) return;
+                if (primitive.Rules.Any(r => StringIdConstraints.Contains(r.AttributeClass!.OriginalDefinition.Name)) || GeneratedRegexes.Any(primitive.Type)) return;
                 context.ReportDiagnostic(
                     Diagnostic.Create(
                         AnalyzerDiagnostics.MissingValidation,
@@ -346,8 +377,10 @@ public sealed class RulesAnalyzer : DiagnosticAnalyzer
         }
     }
 
+    // A [GeneratedRegex] member is a rule of a string, and of a string strong ID; the generator ignores it on any other domain primitive.
     private static bool HasValidation(PrimitiveDeclaration primitive) =>
-        primitive.Rules.Any(r => PrimitiveSymbols.IsValidationAttribute(r.AttributeClass) || r.AttributeClass!.OriginalDefinition.Name == "CustomValidatorAttribute");
+        primitive.Rules.Any(r => PrimitiveSymbols.IsValidationAttribute(r.AttributeClass) || r.AttributeClass!.OriginalDefinition.Name == "CustomValidatorAttribute")
+     || primitive.Family == PrimitiveFamily.String && GeneratedRegexes.Any(primitive.Type);
 
     /// <summary>Whether the rule applies to the kind of the domain primitive; when it doesn't, why, to end the message.</summary>
     private static bool Applies(PrimitiveDeclaration primitive, AttributeData attribute, string name, out string reason)

@@ -44,7 +44,7 @@ namespace Sample
         public static string PrimitiveName => "EmailAddress";
 
         /// <inheritdoc />
-        public static global::Rocket.Surgery.LaunchPad.Primitives.Descriptions.DomainPrimitiveDescription<EmailAddress, string> Description { get; } = new() { Format = "email", MinLength = 1, MaxLength = 320, Patterns = ["^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"] };
+        public static global::Rocket.Surgery.LaunchPad.Primitives.Descriptions.DomainPrimitiveDescription<EmailAddress, string> Description { get; } = new() { Format = "email", MinLength = 1, MaxLength = 320, Patterns = [global::Rocket.Surgery.LaunchPad.Primitives.Advanced.PrimitivePatterns.Email.ToString()] };
 
         /// <summary>The codes of the errors this domain primitive reports.</summary>
         public static class Errors
@@ -60,8 +60,6 @@ namespace Sample
             /// <summary>The code <c>NULL_INPUT</c>.</summary>
             public const string NullInput = "NULL_INPUT";
         }
-
-        private static readonly global::System.Text.RegularExpressions.Regex Pattern0 = new("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$", global::System.Text.RegularExpressions.RegexOptions.CultureInvariant, global::System.TimeSpan.FromSeconds(1));
 
         private static global::System.Exception Fail(global::Rocket.Surgery.LaunchPad.Primitives.PrimitiveError error) =>
             new global::Rocket.Surgery.LaunchPad.Primitives.DomainPrimitiveValidationException(error);
@@ -121,7 +119,7 @@ namespace Sample
             if (value.Length > 320) return new global::Rocket.Surgery.LaunchPad.Primitives.PrimitiveError("LENGTH", $"EmailAddress must be at most 320 character(s). Got {value.Length}.");
             try
             {
-                if (!Pattern0.IsMatch(value)) return new global::Rocket.Surgery.LaunchPad.Primitives.PrimitiveError("FORMAT", "EmailAddress has an invalid format.");
+                if (!global::Rocket.Surgery.LaunchPad.Primitives.Advanced.PrimitivePatterns.Email.IsMatch(value)) return new global::Rocket.Surgery.LaunchPad.Primitives.PrimitiveError("FORMAT", "EmailAddress has an invalid format.");
             }
             catch (global::System.Text.RegularExpressions.RegexMatchTimeoutException)
             {

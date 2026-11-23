@@ -27,6 +27,7 @@ LPAD2019 | LaunchPad.Primitives.Declaration | Error | DeclarationAnalyzer, class
 LPAD2020 | LaunchPad.Primitives.Declaration | Error | RulesAnalyzer, PastOnly or FutureOnly misused
 LPAD2021 | LaunchPad.Primitives.Declaration | Warning | RulesAnalyzer, NodaTime domain primitive without LaunchPad.NodaTime
 LPAD2022 | LaunchPad.Primitives.Declaration | Warning | RulesAnalyzer, rule does not apply to the primitive kind
+LPAD2023 | LaunchPad.Primitives.Design | Info | RulesAnalyzer, use a [GeneratedRegex] for the pattern
 LPAD2101 | LaunchPad.Primitives | Error | GeneratorDiagnostics, the value type a domain primitive can't hold
 LPAD2102 | LaunchPad.Primitives | Error | GeneratorDiagnostics, more than one primitive attribute on a type
 LPAD2103 | LaunchPad.Primitives | Error | GeneratorDiagnostics, an invalid attribute argument

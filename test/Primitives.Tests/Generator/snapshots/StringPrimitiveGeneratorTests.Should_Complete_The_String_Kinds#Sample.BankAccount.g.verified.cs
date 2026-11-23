@@ -44,7 +44,7 @@ namespace Sample
         public static string PrimitiveName => "BankAccount";
 
         /// <inheritdoc />
-        public static global::Rocket.Surgery.LaunchPad.Primitives.Descriptions.DomainPrimitiveDescription<BankAccount, string> Description { get; } = new() { MaxLength = 4096, Patterns = ["^[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}$"] };
+        public static global::Rocket.Surgery.LaunchPad.Primitives.Descriptions.DomainPrimitiveDescription<BankAccount, string> Description { get; } = new() { MaxLength = 4096, Patterns = [global::Rocket.Surgery.LaunchPad.Primitives.Advanced.PrimitivePatterns.Iban.ToString()] };
 
         /// <summary>The codes of the errors this domain primitive reports.</summary>
         public static class Errors
@@ -58,8 +58,6 @@ namespace Sample
             /// <summary>The code <c>NULL_INPUT</c>.</summary>
             public const string NullInput = "NULL_INPUT";
         }
-
-        private static readonly global::System.Text.RegularExpressions.Regex Pattern0 = new("^[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}$", global::System.Text.RegularExpressions.RegexOptions.CultureInvariant, global::System.TimeSpan.FromSeconds(1));
 
         private static global::System.Exception Fail(global::Rocket.Surgery.LaunchPad.Primitives.PrimitiveError error) =>
             new global::Rocket.Surgery.LaunchPad.Primitives.DomainPrimitiveValidationException(error);
@@ -118,7 +116,7 @@ namespace Sample
             if (value.Length > 4096) return new global::Rocket.Surgery.LaunchPad.Primitives.PrimitiveError("LENGTH", $"BankAccount must be at most 4096 character(s). Got {value.Length}.");
             try
             {
-                if (!Pattern0.IsMatch(value)) return new global::Rocket.Surgery.LaunchPad.Primitives.PrimitiveError("FORMAT", "BankAccount has an invalid format.");
+                if (!global::Rocket.Surgery.LaunchPad.Primitives.Advanced.PrimitivePatterns.Iban.IsMatch(value)) return new global::Rocket.Surgery.LaunchPad.Primitives.PrimitiveError("FORMAT", "BankAccount has an invalid format.");
             }
             catch (global::System.Text.RegularExpressions.RegexMatchTimeoutException)
             {

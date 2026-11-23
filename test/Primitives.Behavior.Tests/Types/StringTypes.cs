@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 using Rocket.Surgery.LaunchPad.Primitives;
 
 namespace Primitives.Behavior.Tests;
@@ -24,6 +26,17 @@ public readonly partial record struct Ragged;
 
 [StringPrimitive, Trim, Regex(@"^[A-Z]{2}-\d{4}$", ErrorMessage = "Must be in format XX-0000")]
 public readonly partial record struct ProductCode;
+
+// A [GeneratedRegex] member is a rule, after the [Regex] rules, that reports FORMAT.
+[StringPrimitive, Trim, UpperCase, Regex("^[A-Z]")]
+public sealed partial record SkuCode
+{
+    [GeneratedRegex(@"^[A-Z]{3}-\d{4}$", RegexOptions.CultureInvariant, 1000)]
+    private static partial Regex Format { get; }
+
+    [GeneratedRegex("[02468]$")]
+    private static partial Regex EndsEven();
+}
 
 [StringPrimitive, Regex("^[a-z]+$", ErrorCode = "LOWER_ONLY"), Regex("^.{3,}$", ErrorCode = "TOO_SHORT", ErrorMessage = "Three or more.")]
 public sealed partial record Word;

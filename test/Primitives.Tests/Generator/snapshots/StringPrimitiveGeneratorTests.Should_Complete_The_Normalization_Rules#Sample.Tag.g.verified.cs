@@ -57,8 +57,6 @@ namespace Sample
             public const string Size = "SIZE";
         }
 
-        private static readonly global::System.Text.RegularExpressions.Regex WhiteSpace = new(@"\s+", global::System.Text.RegularExpressions.RegexOptions.CultureInvariant, global::System.TimeSpan.FromSeconds(1));
-
         private static global::System.Exception Fail(global::Rocket.Surgery.LaunchPad.Primitives.PrimitiveError error) =>
             new global::Rocket.Surgery.LaunchPad.Primitives.DomainPrimitiveValidationException(error);
 
@@ -99,7 +97,7 @@ namespace Sample
             }
             value = value.TrimStart();
             value = value.TrimEnd();
-            value = WhiteSpace.Replace(value, " ");
+            value = global::Rocket.Surgery.LaunchPad.Primitives.Advanced.PrimitivePatterns.WhiteSpace.Replace(value, " ");
             value = value.ToLowerInvariant();
             try
             {

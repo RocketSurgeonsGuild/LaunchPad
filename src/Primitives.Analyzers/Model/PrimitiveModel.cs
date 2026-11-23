@@ -53,7 +53,20 @@ internal enum PrimitiveShape
 /// </summary>
 internal sealed record Check(string Code, string? Message);
 
-internal sealed record RegexRule(string Pattern, Check Error);
+/// <summary>
+///     A pattern the value must match.
+/// </summary>
+/// <param name="Expression">
+///     The C# expression of its <c>Regex</c>: a <c>[GeneratedRegex]</c> property of the kind in <c>PrimitivePatterns</c>, a <c>[GeneratedRegex]</c>
+///     member of the domain primitive, or for a <c>[Regex]</c> the field the generator writes.
+/// </param>
+/// <param name="Pattern">The pattern of a <c>[Regex]</c>, which the generator builds into its field; null for a <c>[GeneratedRegex]</c>.</param>
+/// <param name="Error">The error a value that doesn't match reports.</param>
+/// <param name="Described">
+///     What describes it in <c>Description.Patterns</c>: the pattern, with its options inline; null for the pattern of a kind, described by
+///     its <c>Regex</c>.
+/// </param>
+internal sealed record RegexRule(string Expression, string? Pattern, Check Error, string? Described);
 
 internal sealed record StringRules(
     bool Trim,

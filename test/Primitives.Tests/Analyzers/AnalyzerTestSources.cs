@@ -47,6 +47,8 @@ internal static class AnalyzerTestSources
            .WithLanguageVersion(LanguageVersion.Preview)
            .WithDocumentationMode(DocumentationMode.Diagnose)
            .AddReferences(typeof(Rocket.Surgery.LaunchPad.Primitives.IDomainPrimitive<>).Assembly)
+           // Regex and [GeneratedRegex], which LPAD2023 and its fix use.
+           .AddReferences(typeof(System.Text.RegularExpressions.Regex).Assembly)
            .AddSource("PrimitiveAttributes.g.cs", Attributes)
            .AddSource("EmbeddedAttribute.g.cs", EmbeddedAttribute)
            .AddSource("Input.cs", source)
@@ -190,7 +192,8 @@ internal static class AnalyzerTestSources
                                  .RemoveAllSyntaxTrees()
                                  .AddSyntaxTrees(trees)
                                  .AddReferences(GeneratedCodeReferences.Where(r => !known.Contains(r.Display)));
-        _ = CSharpGeneratorDriver.Create([new DomainPrimitiveGenerator().AsSourceGenerator()], parseOptions: parseOptions)
+        // The regular expression generator implements the [GeneratedRegex] members a fix writes.
+        _ = CSharpGeneratorDriver.Create([new DomainPrimitiveGenerator().AsSourceGenerator(), RegexGenerator.Create().AsSourceGenerator()], parseOptions: parseOptions)
                                  .RunGeneratorsAndUpdateCompilation(compilation, out var output, out var generatorDiagnostics);
         return [.. generatorDiagnostics.Concat(output.GetDiagnostics())
                                        .Where(d => d.Severity == DiagnosticSeverity.Error)

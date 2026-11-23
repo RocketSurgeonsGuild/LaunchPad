@@ -44,12 +44,190 @@ public class RulesAnalyzerTests
         var result = await Analyze<RulesAnalyzer>(
             Usings
           + """
-            [StringPrimitive, Regex("^[A-Z]{2}[0-9]+$"), Regex(@"^\S+$")]
+            [StringPrimitive, Regex("^[A-Z]{2}[0-9]+$", ErrorCode = "CODE"), Regex(@"^\S+$", ErrorMessage = "No spaces.")]
             public readonly partial record struct Code;
             """
         );
 
         await Diagnostics(result).Should().BeEmpty();
+    }
+
+    // LPAD2023: a [Regex] that reports the default error can be a [GeneratedRegex]; one with its own error or an invalid pattern can't, nor
+    // one before a [Regex] with its own error, which a [GeneratedRegex], checked after every [Regex], would come after.
+    [Test]
+    public async Task Should_Suggest_A_GeneratedRegex()
+    {
+        var result = await Analyze<RulesAnalyzer>(
+            Usings
+          + """
+            [StringPrimitive, Regex("^A", ErrorCode = "A"), Regex("^[A-Z]{3}$"), Regex("[a-z")]
+            public readonly partial record struct Code;
+
+            [StrongId<string>, Regex("^ID-[0-9]+$")]
+            public sealed partial record Id;
+
+            [StringPrimitive, Regex("^B"), Regex("^C", ErrorMessage = "C.")]
+            public readonly partial record struct Before;
+            """
+        );
+
+        await Diagnostics(result).Should().BeEquivalentTo(
+            ["LPAD2023: Regex(\"^[A-Z]{3}$\")", "LPAD2004: Regex(\"[a-z\")", "LPAD2023: Regex(\"^ID-[0-9]+$\")"],
+            CollectionOrdering.Matching
+        );
+    }
+
+    // The braces go after the base list, the property isn't named like the type, and a comment after the [Regex] follows the pattern.
+    [Test]
+    public async Task Should_Write_The_GeneratedRegex_Around_The_Declaration()
+    {
+        var result = await Fix<RulesAnalyzer, UseGeneratedRegexCodeFix>(
+            Usings
+          + """
+            public interface IMarker;
+
+            [StringPrimitive]
+            [Regex("^[a-z]+$")] // lower case letters
+            public readonly partial record struct Format : IMarker;
+            """
+        );
+
+        await ( await Fixed<UseGeneratedRegexCodeFix>(result, "Use a [GeneratedRegex]") ).Should().BeEqualTo(
+            """
+            using System.Text.RegularExpressions;
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            public interface IMarker;
+
+            [StringPrimitive]
+            public readonly partial record struct Format : IMarker
+            {
+                [GeneratedRegex("^[a-z]+$", RegexOptions.CultureInvariant, 1000)] // lower case letters
+                private static partial Regex Format2 { get; }
+            }
+            """.ReplaceLineEndings("\n")
+        );
+        await ( await ErrorsAfterFix<UseGeneratedRegexCodeFix>(result, "Use a [GeneratedRegex]") ).Should().BeEmpty();
+    }
+
+    [Test]
+    public async Task Should_Keep_The_Line_Endings_Of_The_Document()
+    {
+        var result = await Fix<RulesAnalyzer, UseGeneratedRegexCodeFix>(
+            ( Usings
+            + """
+              [StringPrimitive, Regex("^[A-Z]{3}$")]
+              public readonly partial record struct Code;
+
+              """ ).ReplaceLineEndings("\r\n")
+        );
+
+        var fixedSource = await Fixed<UseGeneratedRegexCodeFix>(result, "Use a [GeneratedRegex]");
+        await fixedSource.Should().Contain("private static partial Regex Format { get; }");
+        await fixedSource.Replace("\r\n", "", StringComparison.Ordinal).Should().NotContain("\n");
+    }
+
+    [Test]
+    public async Task Should_Replace_A_Regex_With_A_GeneratedRegex_Property()
+    {
+        var result = await Fix<RulesAnalyzer, UseGeneratedRegexCodeFix>(
+            Usings
+          + """
+            /// <summary>A code.</summary>
+            [StringPrimitive, Trim, Regex(@"^[A-Z]{3}$")]
+            public readonly partial record struct Code;
+            """
+        );
+
+        await ( await Fixed<UseGeneratedRegexCodeFix>(result, "Use a [GeneratedRegex]") ).Should().BeEqualTo(
+            """
+            using System.Text.RegularExpressions;
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            /// <summary>A code.</summary>
+            [StringPrimitive, Trim]
+            public readonly partial record struct Code
+            {
+                [GeneratedRegex(@"^[A-Z]{3}$", RegexOptions.CultureInvariant, 1000)]
+                private static partial Regex Format { get; }
+            }
+            """.ReplaceLineEndings("\n")
+        );
+        await ( await ErrorsAfterFix<UseGeneratedRegexCodeFix>(result, "Use a [GeneratedRegex]") ).Should().BeEmpty();
+    }
+
+    // The attribute alone in its list goes with the list, and a name the type uses already is not taken.
+    [Test]
+    public async Task Should_Add_The_GeneratedRegex_To_An_Existing_Body()
+    {
+        var result = await Fix<RulesAnalyzer, UseGeneratedRegexCodeFix>(
+            """
+            using System.Text.RegularExpressions;
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [StringPrimitive]
+            [Regex("^[0-9]+$")]
+            public sealed partial record Digits
+            {
+                public static string Format => "digits";
+            }
+            """
+        );
+
+        await ( await Fixed<UseGeneratedRegexCodeFix>(result, "Use a [GeneratedRegex]") ).Should().BeEqualTo(
+            """
+            using System.Text.RegularExpressions;
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [StringPrimitive]
+            public sealed partial record Digits
+            {
+                public static string Format => "digits";
+
+                [GeneratedRegex("^[0-9]+$", RegexOptions.CultureInvariant, 1000)]
+                private static partial Regex Format2 { get; }
+            }
+            """.ReplaceLineEndings("\n")
+        );
+        await ( await ErrorsAfterFix<UseGeneratedRegexCodeFix>(result, "Use a [GeneratedRegex]") ).Should().BeEmpty();
+    }
+
+    // LPAD2009: a [GeneratedRegex] member is a rule of a string primitive.
+    [Test]
+    public async Task Should_Count_A_GeneratedRegex_Member_As_A_Rule()
+    {
+        var result = await Analyze<RulesAnalyzer>(
+            """
+            using System.Text.RegularExpressions;
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [StringPrimitive]
+            public readonly partial record struct Code
+            {
+                [GeneratedRegex("^[A-Z]{3}$")]
+                private static partial Regex Format { get; }
+            }
+
+            [StrongId<string>]
+            public readonly partial record struct CodeId
+            {
+                [GeneratedRegex("^[A-Z]{3}$")]
+                private static partial Regex Format();
+            }
+            """
+        );
+
+        await Diagnostics(result).Where(z => z.StartsWith("LPAD2009", StringComparison.Ordinal)).Should().BeEmpty();
     }
 
     [Test]
@@ -339,13 +517,13 @@ public class RulesAnalyzerTests
     }
 
     [Test]
-    [Arguments("[MaxLength(10), Regex(\"^[a-z]+$\"), Trim, LowerCase]", "StringPrimitive")]
+    [Arguments("[MaxLength(10), Regex(\"^[a-z]+$\", ErrorCode = \"LOWER\"), Trim, LowerCase]", "StringPrimitive")]
     [Arguments("[MaxLength(10)]", "Email")]
     [Arguments("[PrimitiveRange(0, 10)]", "NumericPrimitive<int>")]
     [Arguments("[PrimitiveRange(\"2020-01-01\", \"2030-01-01\")]", "BirthDate")]
     [Arguments("[PrimitiveRange(\"09:00\", \"17:00\")]", "DatePrimitive(Kind = DatePrimitiveKind.TimeOnly)")]
     [Arguments("[PrimitiveRange(0.5, 99.5)]", "Percentage")]
-    [Arguments("[MaxLength(10), Regex(\"^[A-Z]+$\")]", "StrongId<string>")]
+    [Arguments("[MaxLength(10), Regex(\"^[A-Z]+$\", ErrorCode = \"CODE\")]", "StrongId<string>")]
     [Arguments("[PrimitiveRange(1, 1000)]", "StrongId<int>")]
     [Arguments("[CustomValidator<Sample.Check>]", "NumericPrimitive<decimal>")]
     [Arguments("[Normalize<Sample.Check>, NotEmpty]", "StringPrimitive")]
@@ -493,7 +671,7 @@ public class MissingValidationTests
     [Test]
     [Arguments("[StringPrimitive, NotEmpty]")]
     [Arguments("[StringPrimitive, MaxLength(10)]")]
-    [Arguments("[StringPrimitive, Regex(\"^a$\")]")]
+    [Arguments("[StringPrimitive, Regex(\"^a$\", ErrorCode = \"A\")]")]
     [Arguments("[StringPrimitive, CustomValidator<Sample.Check>]")]
     [Arguments("[Email]")]
     [Arguments("[CountryCode]")]
@@ -507,7 +685,7 @@ public class MissingValidationTests
     [Arguments("[StrongId<System.Guid>]")]
     [Arguments("[StrongId<int>]")]
     [Arguments("[StrongId<string>, MaxLength(32)]")]
-    [Arguments("[StrongId<string>, Regex(\"^[A-Z]+$\")]")]
+    [Arguments("[StrongId<string>, Regex(\"^[A-Z]+$\", ErrorCode = \"CODE\")]")]
     [Arguments("[SmartEnum<int>]")]
     [Arguments("[ValueObject]")]
     public async Task Should_Accept_A_Primitive_With_Rules(string attributes)

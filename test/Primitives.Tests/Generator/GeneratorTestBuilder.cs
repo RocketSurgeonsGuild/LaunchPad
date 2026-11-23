@@ -47,8 +47,16 @@ internal static class GeneratorTestBuilder
           .Where(static z => Path.GetDirectoryName(z) == Path.GetDirectoryName(typeof(object).Assembly.Location)),
     ];
 
-    public static Task<GeneratorTestResults> Generate(string source, bool nodaTime = false) =>
-        Create(nodaTime).AddSources("#nullable enable\n" + source).Build().GenerateAsync(TestContext.Current!.Execution.CancellationToken);
+    /// <summary>
+    ///     Runs the generator on <paramref name="source" />; with <paramref name="regex" /> the regular expression generator too, which implements
+    ///     the <c>[GeneratedRegex]</c> members of the source (its output is left out of the snapshot).
+    /// </summary>
+    public static Task<GeneratorTestResults> Generate(string source, bool nodaTime = false, bool regex = false)
+    {
+        var builder = Create(nodaTime);
+        if (regex) builder = builder.WithGenerator(RegexGenerator.Type).IgnoreOutputFile("RegexGenerator.g.cs");
+        return builder.AddSources("#nullable enable\n" + source).Build().GenerateAsync(TestContext.Current!.Execution.CancellationToken);
+    }
 
     /// <summary>
     ///     Checks that what the generator wrote compiles without an error or a warning: the snapshot shows the errors only.

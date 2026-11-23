@@ -39,6 +39,43 @@ public class DuplicatePrimitiveAnalyzerTests
               );
     }
 
+    // A [GeneratedRegex] member is a rule: its pattern and options count, its name doesn't.
+    [Test]
+    public async Task Should_Compare_The_GeneratedRegex_Members()
+    {
+        var result = await Analyze<DuplicatePrimitiveAnalyzer>(
+            """
+            using System.Text.RegularExpressions;
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [StringPrimitive, Trim]
+            public readonly partial record struct Sku
+            {
+                [GeneratedRegex("^[A-Z]{3}$")]
+                private static partial Regex Format { get; }
+            }
+
+            [StringPrimitive, Trim]
+            public readonly partial record struct PostCode
+            {
+                [GeneratedRegex("^[0-9]{5}$")]
+                private static partial Regex Format { get; }
+            }
+
+            [StringPrimitive, Trim]
+            public readonly partial record struct Ticker
+            {
+                [GeneratedRegex("^[A-Z]{3}$")]
+                private static partial Regex Symbol();
+            }
+            """
+        );
+
+        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2013: Ticker"], CollectionOrdering.Matching);
+    }
+
     [Test]
     [Arguments("[StringPrimitive, MinLength(5)]", "[MinLength(5), StringPrimitive]")]
     [Arguments("[DatePrimitive(PastOnly = true, Kind = DatePrimitiveKind.DateOnly)]", "[DatePrimitive(Kind = DatePrimitiveKind.DateOnly, PastOnly = true)]")]

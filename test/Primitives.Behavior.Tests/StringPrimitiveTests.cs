@@ -1,4 +1,5 @@
 using Rocket.Surgery.LaunchPad.Primitives;
+using Rocket.Surgery.LaunchPad.Primitives.Advanced;
 
 using static Primitives.Behavior.Tests.PrimitiveAssert;
 
@@ -78,6 +79,36 @@ public class StringPrimitiveTests
         var shortWord = await Rejects<Word, string>("ab", "TOO_SHORT");
         await shortWord.Message.Should().BeEqualTo("Three or more.");
         await Accepts<Word, string>("abc");
+    }
+
+    [Test]
+    public async Task Should_Check_The_GeneratedRegex_Members()
+    {
+        await Accepts<SkuCode, string>(" abc-1234 ", "ABC-1234");
+        await Rejects<SkuCode, string>("1BC-1234", "FORMAT");
+        var format = await Rejects<SkuCode, string>("ABC-12", "FORMAT");
+        await format.Message.Should().BeEqualTo("SkuCode has an invalid format.");
+        await Rejects<SkuCode, string>("ABC-1233", "FORMAT");
+
+        await SkuCode.Description.Patterns.Should().BeEquivalentTo(["^[A-Z]", @"^[A-Z]{3}-\d{4}$", "[02468]$"], CollectionOrdering.Matching);
+    }
+
+    // The kinds match the [GeneratedRegex] patterns of Primitives, which describe them.
+    [Test]
+    public async Task Should_Describe_The_Kinds_By_Their_Patterns()
+    {
+        await EmailAddress.Description.Patterns.Should().BeEquivalentTo([PrimitivePatterns.Email.ToString()]);
+        await PhoneNumber.Description.Patterns.Should().BeEquivalentTo([PrimitivePatterns.Phone.ToString()]);
+        await ArticleSlug.Description.Patterns.Should().BeEquivalentTo([PrimitivePatterns.Slug.ToString()]);
+        await Language.Description.Patterns.Should().BeEquivalentTo([PrimitivePatterns.LanguageCode.ToString()]);
+        await UserName.Description.Patterns.Should().BeEquivalentTo([PrimitivePatterns.Username.ToString()]);
+        await ThemeColor.Description.Patterns.Should().BeEquivalentTo([PrimitivePatterns.HexColor.ToString()]);
+        await ClientIp.Description.Patterns.Should().BeEquivalentTo([PrimitivePatterns.IPAddress.ToString()]);
+        await DeviceMac.Description.Patterns.Should().BeEquivalentTo([PrimitivePatterns.MacAddress.ToString()]);
+        await BankAccount.Description.Patterns.Should().BeEquivalentTo([PrimitivePatterns.Iban.ToString()]);
+        await BookIsbn.Description.Patterns.Should().BeEquivalentTo([PrimitivePatterns.Isbn.ToString()]);
+        await VehicleVin.Description.Patterns.Should().BeEquivalentTo([PrimitivePatterns.Vin.ToString()]);
+        await PrimitivePatterns.Email.MatchTimeout.Should().BeEqualTo(TimeSpan.FromSeconds(1));
     }
 
     [Test]

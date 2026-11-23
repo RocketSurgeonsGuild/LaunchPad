@@ -4,6 +4,8 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 
+using Rocket.Surgery.LaunchPad.Primitives.Analyzers.Model;
+
 namespace Rocket.Surgery.LaunchPad.Primitives.Analyzers.Analyzers;
 
 /// <summary>
@@ -62,12 +64,15 @@ public sealed class DuplicatePrimitiveAnalyzer : DiagnosticAnalyzer
 
     /// <summary>
     ///     The kind and the rules of a domain primitive, with their arguments, in an order that doesn't depend on how they are written. Two
-    ///     primitives with the same signature check the same things. Whether it is a struct or a class doesn't count.
+    ///     primitives with the same signature check the same things. Whether it is a struct or a class doesn't count, nor the names of their
+    ///     <c>[GeneratedRegex]</c> members.
     /// </summary>
     internal static string Signature(PrimitiveDeclaration primitive) =>
         string.Join(
             "|",
             new[] { primitive.Attribute }.Concat(primitive.Rules)
+                                         // A [GeneratedRegex] member is a rule too.
+                                         .Concat(GeneratedRegexes.Members(primitive.Type).Select(z => z.Attribute))
                                          .Select(Describe)
                                          .OrderBy(s => s, StringComparer.Ordinal)
         );
