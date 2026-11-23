@@ -83,12 +83,12 @@ lists what the SDK adds for each technology.
 | Rocket.Surgery.LaunchPad.ZeroAlloc.HotChocolate                                   | not published yet                                                       | ZeroAlloc.Mediator validation failures as GraphQL errors              |
 | Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor                                         | not published yet                                                       | A `ZeroAllocValidator` component for Blazor forms                     |
 
-### Strong types
+### Domain primitives
 
-| Package                                                 | NuGet                                         | What it does                                                                                       |
-| ------------------------------------------------------- | --------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| [Rocket.Surgery.LaunchPad.Primitives][nuget-primitives] | [![nuget-primitives-badge]][nuget-primitives] | Ready-made strong types on SuperStrong, with OpenAPI, HotChocolate and EF Core joints as templates |
-| Rocket.Surgery.LaunchPad.Primitives.Analyzers           | not published yet                             | The strong type registry generator Primitives depends on                                           |
+| Package                                                 | NuGet                                         | What it does                                                                                                                                 |
+| ------------------------------------------------------- | --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Rocket.Surgery.LaunchPad.Primitives][nuget-primitives] | [![nuget-primitives-badge]][nuget-primitives] | Domain primitives, strong IDs, smart enums and value objects, with OpenAPI, HotChocolate, EF Core and OpenTelemetry joints as templates       |
+| Rocket.Surgery.LaunchPad.Primitives.Analyzers           | not published yet                             | The domain primitive generator, analyzers and code fixes Primitives depends on; a port of dotnet-domain-primitives (MIT)                     |
 
 ## Contributing
 
