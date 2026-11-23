@@ -13,16 +13,6 @@ namespace Rocket.Surgery.LaunchPad.Primitives.Descriptions;
 [PublicAPI]
 public abstract class DomainPrimitiveDescription
 {
-    /// <summary>
-    ///     Describes a domain primitive.
-    /// </summary>
-    /// <typeparam name="TPrimitive">The domain primitive.</typeparam>
-    /// <typeparam name="TValue">Its value.</typeparam>
-    /// <returns>The description.</returns>
-    public static DomainPrimitiveDescription<TPrimitive, TValue> Create<TPrimitive, TValue>()
-        where TPrimitive : IDomainPrimitive<TPrimitive, TValue>
-        where TValue : notnull => new();
-
     private protected DomainPrimitiveDescription() { }
 
     /// <summary>
@@ -114,7 +104,10 @@ public sealed class DomainPrimitiveDescription<TPrimitive, TValue> : DomainPrimi
     where TPrimitive : IDomainPrimitive<TPrimitive, TValue>
     where TValue : notnull
 {
-    internal DomainPrimitiveDescription() { }
+    /// <summary>
+    ///     Creates the description; the Primitives generator writes one for every domain primitive.
+    /// </summary>
+    public DomainPrimitiveDescription() { }
 
     /// <inheritdoc />
     public override Type Type => typeof(TPrimitive);

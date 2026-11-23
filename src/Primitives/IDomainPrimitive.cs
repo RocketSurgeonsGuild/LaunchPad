@@ -1,3 +1,5 @@
+using Rocket.Surgery.LaunchPad.Primitives.Descriptions;
+
 namespace Rocket.Surgery.LaunchPad.Primitives;
 
 /// <summary>
@@ -36,6 +38,11 @@ public interface IDomainPrimitive<TSelf, TValue> : IDomainPrimitive<TSelf>
     TValue Value { get; }
 
     /// <summary>
+    ///     What an integration needs to know about the domain primitive: its value and the constraints of its rules.
+    /// </summary>
+    abstract static DomainPrimitiveDescription<TSelf, TValue> Description { get; }
+
+    /// <summary>
     ///     Creates the domain primitive from a value, or throws when its rules reject the value.
     /// </summary>
     /// <param name="value">The value.</param>
@@ -58,4 +65,10 @@ public interface IDomainPrimitive<TSelf, TValue> : IDomainPrimitive<TSelf>
 /// <typeparam name="TSelf">The value object.</typeparam>
 [PublicAPI]
 public interface IValueObject<TSelf> : IDomainPrimitive<TSelf>
-    where TSelf : IValueObject<TSelf>;
+    where TSelf : IValueObject<TSelf>
+{
+    /// <summary>
+    ///     What an integration needs to know about the value object: the values it holds.
+    /// </summary>
+    abstract static ValueObjectDescription Description { get; }
+}
