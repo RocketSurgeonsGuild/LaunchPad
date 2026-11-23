@@ -14,7 +14,7 @@ The rules of a latitude in decimal degrees (WGS 84, ISO 6709).
 - Name: `Define`
 - Modifiers: `static`
 - Returns: `StrongTypeDefinition<double>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.974bfd9a73f64517e8a81d86b29393f3cce75778/src/Primitives/StrongTypes/Latitude.cs#L14)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.54628ef221bd1ad09c6ebc55da16ddcb5027f4c7/src/Primitives/StrongTypes/Latitude.cs#L14)
 
 ```csharp
 public sealed class LatitudeRules

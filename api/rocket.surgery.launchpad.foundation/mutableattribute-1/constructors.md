@@ -12,7 +12,7 @@ Makes the partial class it marks a mutable view model of `T`: the generator give
 ## MutableAttribute
 
 - Name: `Constructor`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.974bfd9a73f64517e8a81d86b29393f3cce75778/src/Foundation/MutableAttribute.cs#L22-L27)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.54628ef221bd1ad09c6ebc55da16ddcb5027f4c7/src/Foundation/MutableAttribute.cs#L22-L27)
 
 ```csharp
 public sealed class MutableAttribute<T>
