@@ -3,8 +3,10 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Text;
 
 using Rocket.Surgery.Extensions.Testing.SourceGenerators;
+using Rocket.Surgery.LaunchPad.Primitives.Analyzers;
 using Rocket.Surgery.LaunchPad.Primitives.Analyzers.Analyzers;
 
 namespace Primitives.Tests.Analyzers;
@@ -13,6 +15,13 @@ namespace Primitives.Tests.Analyzers;
 ///     What an analyzer test compiles besides its own source: the attributes the generator writes into a project (read from the analyzer
 ///     assembly, where they are embedded) and the <c>EmbeddedAttribute</c> they carry, which the generator adds the same way.
 /// </summary>
+/// <remarks>
+///     The attributes are added by hand rather than by running the domain primitive generator: the harness builds the workspace the code fixes
+///     run in from the input sources alone, without generators, so a fix's semantic model wouldn't see the attributes and would read every
+///     domain primitive as an error type. The analyzers see what they would before the generator has run, which they handle (they recognise a
+///     domain primitive by its attribute as well as by its interface). <see cref="ErrorsAfterFix{TFix}" /> compiles the fixed code with the
+///     generator instead.
+/// </remarks>
 internal static class AnalyzerTestSources
 {
     public const string EmbeddedAttribute = """
@@ -114,6 +123,113 @@ internal static class AnalyzerTestSources
 
         return [.. texts];
     }
+
+    /// <summary>
+    ///     The errors of the project once every fix titled <paramref name="title" /> is applied (one for each diagnostic it was offered on, merged
+    ///     like a fix all), compiled the way a real build compiles it: with the domain primitive generator instead of the attributes the test adds
+    ///     by hand, so a fix that leaves code the generator's output can't complete fails. Empty when the fixed project compiles.
+    /// </summary>
+    public static async Task<string[]> ErrorsAfterFix<TFix>(GeneratorTestResults results, string title)
+        where TFix : CodeFixProvider
+    {
+        if (!results.CodeFixResults.TryGetValue(typeof(TFix), out var fixes) || fixes.ResolvedFixes.IsEmpty)
+        {
+            throw new InvalidOperationException($"{typeof(TFix).Name} offered no fix.");
+        }
+
+        var actions = fixes.ResolvedFixes.SelectMany(f => f.CodeActions).Where(a => a.CodeAction.Title == title).ToArray();
+        if (actions.Length == 0) throw new InvalidOperationException($"No fix titled '{title}' was offered.");
+
+        var project = fixes.ResolvedFixes[0].Document.Project;
+        var changes = new Dictionary<DocumentId, HashSet<TextChange>>();
+        foreach (var action in actions)
+        {
+            foreach (var operation in await action.CodeAction.GetOperationsAsync(CancellationToken.None))
+            {
+                if (operation is not ApplyChangesOperation apply) continue;
+                foreach (var document in project.Documents)
+                {
+                    if (apply.ChangedSolution.GetDocument(document.Id) is not { } changed) continue;
+                    foreach (var change in await changed.GetTextChangesAsync(document))
+                    {
+                        if (!changes.TryGetValue(document.Id, out var set)) changes[document.Id] = set = [];
+                        set.Add(change);
+                    }
+                }
+            }
+        }
+
+        var parseOptions = (CSharpParseOptions)results.InputCompilation.SyntaxTrees[0].Options;
+        var trees = new List<SyntaxTree> { CSharpSyntaxTree.ParseText(ImplicitUsings, parseOptions, "GlobalUsings.cs") };
+        foreach (var document in project.Documents)
+        {
+            // The generator writes the attributes and the EmbeddedAttribute itself.
+            if (document.Name is "PrimitiveAttributes.g.cs" or "EmbeddedAttribute.g.cs") continue;
+            var text = await document.GetTextAsync();
+            if (changes.TryGetValue(document.Id, out var set))
+            {
+                var ordered = new List<TextChange>(set);
+                ordered.Sort((a, b) => a.Span.Start.CompareTo(b.Span.Start));
+                text = text.WithChanges(ordered);
+            }
+
+            trees.Add(CSharpSyntaxTree.ParseText(text, parseOptions, document.Name));
+        }
+
+        var known = results.InputCompilation.References.Select(r => r.Display).ToHashSet(StringComparer.Ordinal);
+        var compilation = results.InputCompilation
+                                 .RemoveAllSyntaxTrees()
+                                 .AddSyntaxTrees(trees)
+                                 .AddReferences(GeneratedCodeReferences.Where(r => !known.Contains(r.Display)));
+        _ = CSharpGeneratorDriver.Create([new DomainPrimitiveGenerator().AsSourceGenerator()], parseOptions: parseOptions)
+                                 .RunGeneratorsAndUpdateCompilation(compilation, out var output, out var generatorDiagnostics);
+        return [.. generatorDiagnostics.Concat(output.GetDiagnostics())
+                                       .Where(d => d.Severity == DiagnosticSeverity.Error)
+                                       .Select(d => d.ToString())];
+    }
+
+    /// <summary>
+    ///     A project named <paramref name="projectName" /> of <paramref name="source" />, completed by the domain primitive generator, to reference
+    ///     from a test the way an application references a library's domain primitives. Throws when it doesn't compile.
+    /// </summary>
+    public static async Task<GeneratorTestResults> CompileWithGenerator(string projectName, string source)
+    {
+        var results = await GeneratorTestContextBuilder
+                           .Create()
+                           .WithProjectName(projectName)
+                           .WithLanguageVersion(LanguageVersion.Preview)
+                           .AddReferences(typeof(Rocket.Surgery.LaunchPad.Primitives.IDomainPrimitive<>).Assembly)
+                           .AddReferences(GeneratedCodeReferences)
+                           .AddSource("GlobalUsings.cs", ImplicitUsings)
+                           .AddSource(projectName + ".cs", source)
+                           .WithGenerator<DomainPrimitiveGenerator>()
+                           .Build()
+                           .GenerateAsync(CancellationToken.None);
+        var errors = results.FinalDiagnostics.Where(d => d.Severity == DiagnosticSeverity.Error).Select(d => d.ToString()).ToArray();
+        return errors.Length == 0 ? results : throw new InvalidOperationException(string.Join("\n", errors));
+    }
+
+    /// <summary>
+    ///     What the SDK's ImplicitUsings adds, which the generated code needs: it calls <c>AsSpan()</c> without <c>System</c> in scope.
+    /// </summary>
+    private const string ImplicitUsings = "global using System;";
+
+    /// <summary>The assemblies the generated code compiles against besides those the harness adds.</summary>
+    private static readonly MetadataReference[] GeneratedCodeReferences =
+    [
+        .. new[]
+            {
+                typeof(System.Text.Json.JsonSerializer),
+                typeof(System.ComponentModel.TypeConverter),
+                typeof(System.ComponentModel.TypeConverterAttribute),
+                typeof(System.Collections.Frozen.FrozenDictionary),
+                typeof(System.Text.RegularExpressions.Regex),
+                typeof(List<>),
+            }
+           .Select(t => t.Assembly.Location)
+           .Distinct(StringComparer.Ordinal)
+           .Select(location => MetadataReference.CreateFromFile(location)),
+    ];
 
     private static string Describe(Diagnostic diagnostic) =>
         diagnostic switch

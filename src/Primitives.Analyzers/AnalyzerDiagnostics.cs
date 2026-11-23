@@ -14,17 +14,17 @@ internal static class AnalyzerDiagnostics
     /// <summary>How code uses a domain primitive.</summary>
     public const string UsageCategory = "LaunchPad.Primitives.Usage";
 
-    /// <summary>Advice on the design of a domain primitive, Info by default.</summary>
+    /// <summary>Advice on the design of a domain primitive: Info, except LPAD2009 (a domain primitive with no rules), a Warning.</summary>
     public const string DesignCategory = "LaunchPad.Primitives.Design";
 
     public static readonly DiagnosticDescriptor MustBePartial = new(
         "LPAD2001",
         "Domain primitive must be partial",
-        "Domain primitive '{0}' must be declared 'partial' so the generator can complete it",
+        "'{0}' must be declared 'partial' so the generator can complete {1}",
         DeclarationCategory,
         DiagnosticSeverity.Error,
         true,
-        "The generator writes the rest of a domain primitive (Value, Create, TryCreate, conversions, JSON) into another part of the type."
+        "The generator writes the rest of a domain primitive (Value, Create, TryCreate, conversions, JSON) into another part of the type, inside a partial declaration of each type that contains it."
     );
 
     public static readonly DiagnosticDescriptor StructMustBeReadOnly = new(
@@ -185,7 +185,7 @@ internal static class AnalyzerDiagnostics
         DeclarationCategory,
         DiagnosticSeverity.Error,
         true,
-        "The exception Create throws for a rejected value must be a type the project can see that derives from System.Exception and has an accessible constructor taking the message.",
+        "The exception Create throws for a rejected value is named as C# names it (Namespace.Outer.Inner), since the generator writes new global::<name>(message): a type the project can see, in one assembly, that derives from System.Exception and has an accessible constructor taking the message.",
         customTags: WellKnownDiagnosticTags.CompilationEnd
     );
 

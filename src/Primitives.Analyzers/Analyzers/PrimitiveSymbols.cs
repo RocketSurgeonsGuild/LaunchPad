@@ -202,6 +202,44 @@ internal static class PrimitiveSymbols
     }
 
     /// <summary>
+    ///     Whether <paramref name="type" /> is a domain primitive whose value is a string, so that its <c>Value</c> is a string: it implements
+    ///     <c>IDomainPrimitive&lt;TSelf, string&gt;</c> (the generator's part, or a domain primitive of another assembly), or, before the generator
+    ///     has completed it, it is declared as a string kind, a <c>[StrongId&lt;string&gt;]</c> or a <c>[SmartEnum&lt;string&gt;]</c>.
+    /// </summary>
+    public static bool IsStringPrimitive(ITypeSymbol? type)
+    {
+        if (type is not INamedTypeSymbol { TypeKind: TypeKind.Struct or TypeKind.Class } named) return false;
+        foreach (var @interface in named.AllInterfaces)
+        {
+            if (@interface is { Name: "IDomainPrimitive", Arity: 2 } && IsPrimitivesNamespace(@interface.ContainingNamespace))
+            {
+                return @interface.TypeArguments[1].SpecialType == SpecialType.System_String;
+            }
+        }
+
+        return GetDeclaration(named) switch
+        {
+            { Family: PrimitiveFamily.String } => true,
+            { Family: PrimitiveFamily.StrongId or PrimitiveFamily.SmartEnum } declaration => declaration.TypeArgument?.SpecialType == SpecialType.System_String,
+            _ => false,
+        };
+    }
+
+    /// <summary>A per-compilation memo of <see cref="IsStringPrimitive" />.</summary>
+    public static Func<ITypeSymbol?, bool> CreateStringPrimitiveCache()
+    {
+        var cache = new ConcurrentDictionary<ITypeSymbol, bool>(SymbolEqualityComparer.Default);
+        return type => type is not null && cache.GetOrAdd(type, IsStringPrimitive);
+    }
+
+    /// <summary>
+    ///     Whether the compilation can see <c>IDomainPrimitive&lt;TSelf&gt;</c>, which every domain primitive implements: a project that can't has no
+    ///     domain primitive (the generator implements it on the project's own, and the project references Primitives to have them).
+    /// </summary>
+    public static bool SeesDomainPrimitives(Compilation compilation) =>
+        !compilation.GetTypesByMetadataName("Rocket.Surgery.LaunchPad.Primitives.IDomainPrimitive`1").IsEmpty;
+
+    /// <summary>
     ///     The declarations of <paramref name="type" /> the user wrote, not the parts a generator added: those are always right, and would hide the
     ///     modifier a user declaration lacks.
     /// </summary>

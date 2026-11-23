@@ -119,9 +119,29 @@ public class UninitializedStructTests
 
         await Diagnostics(result).Should().BeEquivalentTo(["LPAD2007: default"], CollectionOrdering.Matching);
     }
+
+    // A project that can't see IDomainPrimitive<TSelf> has no domain primitive: nothing is analyzed, even a type with a primitive attribute.
+    [Test]
+    public async Task Should_Ignore_A_Project_That_Does_Not_Reference_Primitives()
+    {
+        var result = await GeneratorTestContextBuilder
+                          .Create()
+                          .WithLanguageVersion(Microsoft.CodeAnalysis.CSharp.LanguageVersion.Preview)
+                          .AddSource("PrimitiveAttributes.g.cs", Attributes)
+                          .AddSource("EmbeddedAttribute.g.cs", EmbeddedAttribute)
+                          .AddSource("Input.cs", Primitives + "public static class Uses { public static UserName Empty() => default; }")
+                          .WithAnalyzer<UsageAnalyzer>()
+                          .Build()
+                          .GenerateAsync(CancellationToken.None);
+
+        await Diagnostics(result).Should().BeEmpty();
+    }
 }
 
-/// <summary>LPAD2010 and LPAD2011: a domain primitive used as a string, and their fix.</summary>
+/// <summary>
+///     LPAD2010 and LPAD2011: a domain primitive of a string used as a string, and their fix, whose output is compiled with the generator (which
+///     writes the Value the fix reads).
+/// </summary>
 public class StringUsageTests
 {
     private const string Primitives = """
@@ -130,15 +150,15 @@ public class StringUsageTests
                                       namespace Sample;
 
                                       [StringPrimitive, NotEmpty]
-                                      public readonly partial record struct UserName
-                                      {
-                                          public string Value => "";
-                                      }
+                                      public readonly partial record struct UserName;
 
                                       [StrongId<string>, MaxLength(10)]
-                                      public sealed partial record Sku
+                                      public sealed partial record Sku;
+
+                                      [SmartEnum<string>]
+                                      public sealed partial record Color
                                       {
-                                          public string Value => "";
+                                          public static readonly Color Red = new("red");
                                       }
 
 
@@ -155,17 +175,23 @@ public class StringUsageTests
                 public static bool Left(UserName name) => "admin" == name;
                 public static bool Right(UserName name) => name != "admin";
                 public static bool Strong(Sku sku) => sku == "A1";
+                public static bool Member(Color color) => color == "red";
             }
             """
         );
 
         await Diagnostics(result)
              .Should()
-             .BeEquivalentTo(["LPAD2010: \"admin\" == name", "LPAD2010: name != \"admin\"", "LPAD2010: sku == \"A1\""], CollectionOrdering.Matching);
+             .BeEquivalentTo(
+                  ["LPAD2010: \"admin\" == name", "LPAD2010: name != \"admin\"", "LPAD2010: sku == \"A1\"", "LPAD2010: color == \"red\""],
+                  CollectionOrdering.Matching
+              );
         var fixedSources = await FixedAll<UseValueCodeFix>(result, "Compare with the domain primitive's Value");
         await fixedSources.Should().Contain(s => s.Contains("public static bool Left(UserName name) => \"admin\" == name.Value;"));
         await fixedSources.Should().Contain(s => s.Contains("public static bool Right(UserName name) => name.Value != \"admin\";"));
         await fixedSources.Should().Contain(s => s.Contains("public static bool Strong(Sku sku) => sku.Value == \"A1\";"));
+        await fixedSources.Should().Contain(s => s.Contains("public static bool Member(Color color) => color.Value == \"red\";"));
+        await ( await ErrorsAfterFix<UseValueCodeFix>(result, "Compare with the domain primitive's Value") ).Should().BeEmpty();
     }
 
     [Test]
@@ -183,6 +209,7 @@ public class StringUsageTests
 
         await ( await Fixed<UseValueCodeFix>(result, "Compare with the domain primitive's Value") ).Should()
                                                                                                     .Contain("=> (name ?? default).Value != \"admin\";");
+        await ( await ErrorsAfterFix<UseValueCodeFix>(result, "Compare with the domain primitive's Value") ).Should().BeEmpty();
     }
 
     [Test]
@@ -247,6 +274,7 @@ public class StringUsageTests
         var fixedSources = await FixedAll<UseValueCodeFix>(result, "Use the domain primitive's Value");
         await fixedSources.Should().Contain(s => s.Contains("private readonly string _field = default(UserName).Value;"));
         await fixedSources.Should().Contain(s => s.Contains("Take2(0, name.Value);"));
+        await ( await ErrorsAfterFix<UseValueCodeFix>(result, "Use the domain primitive's Value") ).Should().BeEmpty();
     }
 
     [Test]
@@ -274,6 +302,108 @@ public class StringUsageTests
         );
 
         await ( await Fixed<UseValueCodeFix>(result, "Use the domain primitive's Value") ).Should().Contain(fixedStatement);
+        await ( await ErrorsAfterFix<UseValueCodeFix>(result, "Use the domain primitive's Value") ).Should().BeEmpty();
+    }
+
+    // Value is a number, a Guid, or there is none (a value object): reading it would not make the code compile, so nothing is reported.
+    [Test]
+    public async Task Should_Ignore_Domain_Primitives_That_Are_Not_Strings()
+    {
+        var result = await Fix<UsageAnalyzer, UseValueCodeFix>(
+            """
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [NumericPrimitive<decimal>, PrimitiveRange(0, 100)]
+            public readonly partial record struct Amount;
+
+            [StrongId<System.Guid>]
+            public readonly partial record struct OrderId;
+
+            [StrongId<int>]
+            public sealed partial record Number;
+
+            [SmartEnum<int>]
+            public sealed partial record Level;
+
+            [ValueObject]
+            public sealed partial record Address
+            {
+                public required string Street { get; init; }
+            }
+
+            public class Uses
+            {
+                public void Run(Amount amount, OrderId order, Number number, Level level, Address address)
+                {
+                    _ = amount == "1";
+                    _ = "2" != order;
+                    _ = number == "3";
+                    _ = level == "4";
+                    _ = address == "5";
+                    string a = amount;
+                    string b;
+                    b = order;
+                    Take(number);
+                    Take(text: address);
+                }
+
+                private static void Take(string text) { }
+            }
+            """
+        );
+
+        await Diagnostics(result).Should().BeEmpty();
+        await FixTitles<UseValueCodeFix>(result).Should().BeEmpty();
+    }
+
+    // A domain primitive of another assembly has lost its attributes: its IDomainPrimitive<TSelf, TValue> says what its value is.
+    [Test]
+    public async Task Should_Read_The_Value_Of_A_Domain_Primitive_Of_A_Referenced_Assembly()
+    {
+        var contracts = await CompileWithGenerator(
+            "Contracts",
+            """
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Contracts;
+
+            [StringPrimitive, NotEmpty]
+            public readonly partial record struct Sku;
+
+            [StrongId<int>]
+            public readonly partial record struct Number;
+
+            [ValueObject]
+            public sealed partial record Address
+            {
+                public required string Street { get; init; }
+            }
+            """
+        );
+
+        var result = await Analyze<UsageAnalyzer>(
+            """
+            namespace Sample;
+
+            public static class Uses
+            {
+                public static void Run(Contracts.Sku sku, Contracts.Number number, Contracts.Address address)
+                {
+                    _ = sku == "A1";
+                    _ = number == "1";
+                    _ = address == "Main Street";
+                    string a = sku;
+                    string b = number;
+                    string c = address;
+                }
+            }
+            """,
+            builder => builder.AddCompilationReferences(contracts)
+        );
+
+        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2010: sku == \"A1\"", "LPAD2011: a = sku"], CollectionOrdering.Matching);
     }
 
     [Test]

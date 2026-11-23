@@ -4,6 +4,8 @@ using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
+using Rocket.Surgery.LaunchPad.Primitives.Analyzers.Model;
+
 namespace Rocket.Surgery.LaunchPad.Primitives.Analyzers.Analyzers;
 
 /// <summary>
@@ -11,11 +13,17 @@ namespace Rocket.Surgery.LaunchPad.Primitives.Analyzers.Analyzers;
 ///     <list type="bullet">
 ///         <item>LPAD2004: the pattern of [Regex] is not a valid regular expression.</item>
 ///         <item>LPAD2005: [LowerCase] and [UpperCase] together.</item>
-///         <item>LPAD2006: a minimum greater than its maximum ([MinLength] and [MaxLength], [Length], [PrimitiveRange], a kind's Min and Max).</item>
+///         <item>
+///             LPAD2006: a minimum greater than its maximum ([MinLength] and [MaxLength], [Length], [PrimitiveRange]), or a bound of the kind (its Min
+///             and Max, or its default) that the generator uses and that conflicts with the other bound.
+///         </item>
 ///         <item>LPAD2009: a [StringPrimitive], [NumericPrimitive&lt;T&gt;], [DatePrimitive] or string [StrongId&lt;string&gt;] with no rule.</item>
 ///         <item>LPAD2020: PastOnly and FutureOnly together, or on a kind that is an amount of time.</item>
 ///         <item>LPAD2021: a NodaTime kind in a project without Rocket.Surgery.LaunchPad.NodaTime.</item>
-///         <item>LPAD2022: a rule that doesn't apply to the kind ([MaxLength] on a number, [PrimitiveRange] on a string, any rule on a smart enum).</item>
+///         <item>
+///             LPAD2022: a rule that doesn't apply to the kind ([MaxLength] on a number, [PrimitiveRange] on a string, any rule on a smart enum), or
+///             the [PrimitiveRange] of numbers on a date or of text on a number.
+///         </item>
 ///     </list>
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
@@ -50,9 +58,6 @@ public sealed class RulesAnalyzer : DiagnosticAnalyzer
         "RegexAttribute",
         "CustomValidatorAttribute"
     );
-
-    /// <summary>The named arguments of the kinds that are a minimum and a maximum.</summary>
-    private static readonly ImmutableArray<(string Min, string Max)> KindBounds = [("Min", "Max"), ("MinLength", "MaxLength"), ("MinYear", "MaxYear")];
 
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -91,9 +96,10 @@ public sealed class RulesAnalyzer : DiagnosticAnalyzer
         var cancellationToken = context.CancellationToken;
 
         AnalyzeKind(context, primitive, seesLaunchPadNodaTime);
+        AnalyzeKindBounds(context, primitive);
 
-        var hasLowerCase = false;
-        var hasUpperCase = false;
+        AttributeData? lowerCase = null;
+        AttributeData? upperCase = null;
         AttributeData? minLength = null;
         AttributeData? maxLength = null;
         AttributeData? firstLength = null;
@@ -103,10 +109,10 @@ public sealed class RulesAnalyzer : DiagnosticAnalyzer
             switch (name)
             {
                 case "LowerCaseAttribute":
-                    hasLowerCase = true;
+                    lowerCase ??= rule;
                     break;
                 case "UpperCaseAttribute":
-                    hasUpperCase = true;
+                    upperCase ??= rule;
                     break;
                 case "RegexAttribute" when rule.ConstructorArguments is [{ Value: string pattern }]:
                     if (InvalidPattern(pattern) is { } problem)
@@ -135,7 +141,7 @@ public sealed class RulesAnalyzer : DiagnosticAnalyzer
                     break;
             }
 
-            if (!Applies(primitive, rule.AttributeClass!, name, out var reason))
+            if (!Applies(primitive, rule, name, out var reason))
             {
                 context.ReportDiagnostic(
                     Diagnostic.Create(
@@ -157,29 +163,30 @@ public sealed class RulesAnalyzer : DiagnosticAnalyzer
             ReportBounds(context, firstLength!, Format(minimum), Format(maximum));
         }
 
-        if (hasLowerCase && hasUpperCase)
+        if (lowerCase is not null && upperCase is not null)
         {
-            context.ReportDiagnostic(Diagnostic.Create(AnalyzerDiagnostics.ConflictingNormalization, type.Locations.FirstOrDefault() ?? Location.None, type.Name));
+            // The two attributes, [LowerCase] then [UpperCase], for the fix that removes one of them.
+            context.ReportDiagnostic(
+                Diagnostic.Create(
+                    AnalyzerDiagnostics.ConflictingNormalization,
+                    type.Locations.FirstOrDefault() ?? Location.None,
+                    [
+                        PrimitiveSymbols.AttributeLocation(lowerCase, type, cancellationToken),
+                        PrimitiveSymbols.AttributeLocation(upperCase, type, cancellationToken),
+                    ],
+                    type.Name
+                )
+            );
         }
 
         AnalyzeMissingValidation(context, primitive, notEmptyByDefault);
     }
 
-    /// <summary>The arguments of the primitive attribute itself: bounds (LPAD2006), PastOnly and FutureOnly (LPAD2020), a NodaTime kind (LPAD2021).</summary>
+    /// <summary>The arguments of the primitive attribute itself: PastOnly and FutureOnly (LPAD2020), a NodaTime kind (LPAD2021).</summary>
     private static void AnalyzeKind(SymbolAnalysisContext context, PrimitiveDeclaration primitive, bool seesLaunchPadNodaTime)
     {
         var attribute = primitive.Attribute;
         var location = PrimitiveSymbols.AttributeLocation(attribute, primitive.Type, context.CancellationToken);
-        foreach (var (minName, maxName) in KindBounds)
-        {
-            if (PrimitiveSymbols.NamedArgument(attribute, minName) is { } min
-             && PrimitiveSymbols.NamedArgument(attribute, maxName) is { } max
-             && CompareBounds(min.Value, max.Value) > 0)
-            {
-                ReportBounds(context, attribute, Format(min.Value), Format(max.Value));
-            }
-        }
-
         var kind = PrimitiveSymbols.NamedArgument(attribute, "Kind") is { Value: int value } kindArgument && kindArgument.Type?.Name == "DatePrimitiveKind"
             ? value
             : (int?)null;
@@ -212,6 +219,52 @@ public sealed class RulesAnalyzer : DiagnosticAnalyzer
              ?? kind.Value.ToString(CultureInfo.InvariantCulture);
             context.ReportDiagnostic(Diagnostic.Create(AnalyzerDiagnostics.NodaTimeWithoutLaunchPadNodaTime, location, primitive.Type.Name, kindName));
         }
+    }
+
+    /// <summary>
+    ///     LPAD2006 on the bounds the kind sets (<see cref="KindDefaults" />), as the generator reads them: a range the kind sets only when no
+    ///     [PrimitiveRange] does, a length bound only when no length rule does. Reported on the kind's attribute when one of the two bounds comes
+    ///     from the kind; two bounds from the rules are the rules' own check.
+    /// </summary>
+    private static void AnalyzeKindBounds(SymbolAnalysisContext context, PrimitiveDeclaration primitive)
+    {
+        var kind = primitive.KindName;
+        if (!primitive.Rules.Any(r => r.AttributeClass!.OriginalDefinition.Name == "PrimitiveRangeAttribute")
+         && KindDefaults.Range(kind, primitive.Attribute) is ({ } min, { } max)
+         && min > max)
+        {
+            ReportBounds(context, primitive.Attribute, Format(min), Format(max));
+            return;
+        }
+
+        var (kindMin, kindMax) = KindDefaults.Length(kind, primitive.Attribute);
+        if (kindMin is null && kindMax is null) return;
+        var (ruleMin, ruleMax) = RuleLength(primitive.Rules);
+        if (( ruleMin ?? kindMin ) is { } minLength
+         && ( ruleMax ?? kindMax ) is { } maxLength
+         && minLength > maxLength
+         && ( ruleMin is null || ruleMax is null ))
+        {
+            ReportBounds(context, primitive.Attribute, Format(minLength), Format(maxLength));
+        }
+    }
+
+    /// <summary>The length the rules set, as the generator reads them: [ExactLength], or [Length] then [MinLength] and [MaxLength] over it.</summary>
+    private static (int? Min, int? Max) RuleLength(ImmutableArray<AttributeData> rules)
+    {
+        AttributeData? Rule(string name) => rules.FirstOrDefault(r => r.AttributeClass!.OriginalDefinition.Name == name);
+
+        if (Rule("ExactLengthAttribute") is { ConstructorArguments: [{ Value: int exact }] }) return (exact, exact);
+        int? min = null, max = null;
+        if (Rule("LengthAttribute") is { ConstructorArguments: [{ Value: int lengthMin }, { Value: int lengthMax }] })
+        {
+            min = lengthMin;
+            max = lengthMax;
+        }
+
+        if (Rule("MinLengthAttribute") is { ConstructorArguments: [{ Value: int minLength }] }) min = minLength;
+        if (Rule("MaxLengthAttribute") is { ConstructorArguments: [{ Value: int maxLength }] }) max = maxLength;
+        return (min, max);
     }
 
     /// <summary>LPAD2009: a kind that supplies no rules of its own, and no rule declared.</summary>
@@ -275,7 +328,7 @@ public sealed class RulesAnalyzer : DiagnosticAnalyzer
         primitive.Rules.Any(r => PrimitiveSymbols.IsValidationAttribute(r.AttributeClass) || r.AttributeClass!.OriginalDefinition.Name == "CustomValidatorAttribute");
 
     /// <summary>Whether the rule applies to the kind of the domain primitive; when it doesn't, why, to end the message.</summary>
-    private static bool Applies(PrimitiveDeclaration primitive, INamedTypeSymbol rule, string name, out string reason)
+    private static bool Applies(PrimitiveDeclaration primitive, AttributeData attribute, string name, out string reason)
     {
         reason = "";
         var value = ValueOf(primitive);
@@ -288,7 +341,7 @@ public sealed class RulesAnalyzer : DiagnosticAnalyzer
             return false;
         }
 
-        if (PrimitiveSymbols.IsTypedRuleAttribute(rule)) return true;
+        if (PrimitiveSymbols.IsTypedRuleAttribute(attribute.AttributeClass)) return true;
         if (StringRules.Contains(name))
         {
             if (value == RuleTarget.String) return true;
@@ -298,9 +351,28 @@ public sealed class RulesAnalyzer : DiagnosticAnalyzer
 
         if (name == "PrimitiveRangeAttribute")
         {
-            if (value == RuleTarget.Comparable) return true;
-            reason = $"a {Describe(primitive)}, and the rule applies to a number, a date or a time";
-            return false;
+            if (value != RuleTarget.Comparable)
+            {
+                reason = $"a {Describe(primitive)}, and the rule applies to a number, a date or a time";
+                return false;
+            }
+
+            // The generator reads the bounds of a date as text and those of a number as numbers: the other overload sets no bound, or one that
+            // fails when the type is first used.
+            var isText = attribute.AttributeConstructor?.Parameters is [{ Type.SpecialType: SpecialType.System_String }, ..];
+            if (primitive.Family == PrimitiveFamily.Date && !isText)
+            {
+                reason = $"a {Describe(primitive)}, whose bounds are ISO 8601 text: use [PrimitiveRange(\"min\", \"max\")]";
+                return false;
+            }
+
+            if (primitive.Family != PrimitiveFamily.Date && isText)
+            {
+                reason = $"a {Describe(primitive)}, whose bounds are numbers: use [PrimitiveRange(min, max)]";
+                return false;
+            }
+
+            return true;
         }
 
         // A rule written after this analyzer.

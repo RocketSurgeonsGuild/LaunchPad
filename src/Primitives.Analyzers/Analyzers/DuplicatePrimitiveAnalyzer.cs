@@ -7,8 +7,9 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Rocket.Surgery.LaunchPad.Primitives.Analyzers.Analyzers;
 
 /// <summary>
-///     LPAD2013: two domain primitives of the compilation with the same kind and the same rules, which may be one concept written twice. Smart
-///     enums and value objects are left out: their members, not their attributes, say what they are.
+///     LPAD2013: two domain primitives of the compilation with the same kind and the same rules, which may be one concept written twice. Strong
+///     IDs are left out: they are meant to be distinct types of the same shape (an OrderId and a CustomerId are both a Guid), so that one can't
+///     be given for the other. Smart enums and value objects are left out too: their members, not their attributes, say what they are.
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public sealed class DuplicatePrimitiveAnalyzer : DiagnosticAnalyzer
@@ -29,7 +30,7 @@ public sealed class DuplicatePrimitiveAnalyzer : DiagnosticAnalyzer
                     c =>
                     {
                         if (c.Symbol is not INamedTypeSymbol type || PrimitiveSymbols.GetDeclaration(type) is not { } primitive) return;
-                        if (primitive.Family is PrimitiveFamily.SmartEnum or PrimitiveFamily.ValueObject) return;
+                        if (primitive.Family is PrimitiveFamily.StrongId or PrimitiveFamily.SmartEnum or PrimitiveFamily.ValueObject) return;
                         if (PrimitiveSymbols.IsGenerated(type, c.CancellationToken)) return;
                         primitives.Add((type, Signature(primitive)));
                     },

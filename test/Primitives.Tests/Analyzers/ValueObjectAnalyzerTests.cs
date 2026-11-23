@@ -1,4 +1,5 @@
 using Rocket.Surgery.LaunchPad.Primitives.Analyzers.Analyzers;
+using Rocket.Surgery.LaunchPad.Primitives.Analyzers.CodeFixes;
 
 using static Primitives.Tests.Analyzers.AnalyzerTestSources;
 
@@ -33,6 +34,55 @@ public class ValueObjectAnalyzerTests
 
         await Diagnostics(result).Should().BeEquivalentTo(["LPAD2008: Street", "LPAD2008: Name"], CollectionOrdering.Matching);
         await Messages(result, "LPAD2008").Should().Contain("Property 'Street' of value object 'Address' must use 'init' instead of 'set'");
+    }
+
+    [Test]
+    public async Task Should_Fix_A_Setter_By_Making_It_Init()
+    {
+        var result = await Fix<ValueObjectAnalyzer, UseInitCodeFix>(
+            """
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [ValueObject]
+            public sealed partial record Address
+            {
+                public required string Street { get; set; }
+                public string City { get; private set; } = "";
+                public string Note
+                {
+                    get => field;
+                    set => field = value.Trim();
+                } = "";
+            }
+            """
+        );
+
+        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2008: Street", "LPAD2008: City", "LPAD2008: Note"], CollectionOrdering.Matching);
+        var fixedSources = await FixedAll<UseInitCodeFix>(result, "Use 'init' instead of 'set'");
+        await fixedSources.Should().Contain(s => s.Contains("public required string Street { get; init; }"));
+        await fixedSources.Should().Contain(s => s.Contains("public string City { get; private init; } = \"\";"));
+        await fixedSources.Should().Contain(s => s.Contains("init => field = value.Trim();"));
+        await ( await ErrorsAfterFix<UseInitCodeFix>(result, "Use 'init' instead of 'set'") ).Should().BeEmpty();
+    }
+
+    // A property of a record's parameter has no accessor to change.
+    [Test]
+    public async Task Should_Not_Fix_A_Property_Declared_By_A_Parameter()
+    {
+        var result = await Fix<ValueObjectAnalyzer, UseInitCodeFix>(
+            """
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [ValueObject]
+            public partial record struct Point(int X, int Y);
+            """
+        );
+
+        await FixTitles<UseInitCodeFix>(result).Should().BeEmpty();
     }
 
     [Test]

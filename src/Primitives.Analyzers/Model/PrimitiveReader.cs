@@ -374,15 +374,17 @@ internal static class PrimitiveReader
         string? registry = null;
         var kindCheck = Error(null, "FORMAT", kindError);
 
-        int NamedInt(string name, int fallback) => Named(primitive, name) is { Value: int v } ? v : fallback;
         void Pattern(string pattern) => regexes.Insert(0, new(pattern, kindCheck));
 
+        // The length the kind sets (its MinLength and MaxLength, or its defaults), where no rule sets it.
+        var (kindMin, kindMax) = KindDefaults.Length(kind, primitive);
+        min ??= kindMin;
+        max ??= kindMax;
         switch (kind)
         {
             case "Email":
                 trim = lower = true;
                 notEmpty ??= Error(null, "EMPTY", kindError);
-                max ??= NamedInt("MaxLength", 320);
                 Pattern(
                     """^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"""
                 );
@@ -402,34 +404,25 @@ internal static class PrimitiveReader
             case "Slug":
                 trim = lower = true;
                 notEmpty ??= Error(null, "EMPTY", kindError);
-                max ??= NamedInt("MaxLength", 200);
                 Pattern("""^[a-z0-9]+(-[a-z0-9]+)*$""");
                 break;
             case "CountryCode":
                 trim = upper = true;
-                min ??= 2;
-                max ??= 2;
                 exact = min == max;
                 registry = "Country";
                 break;
             case "LanguageCode":
                 trim = lower = true;
-                min ??= 2;
-                max ??= 2;
                 exact = min == max;
                 Pattern("""^[a-z]{2}$""");
                 break;
             case "CurrencyCode":
                 trim = upper = true;
-                min ??= 3;
-                max ??= 3;
                 exact = min == max;
                 registry = "Currency";
                 break;
             case "Username":
                 trim = true;
-                min ??= NamedInt("MinLength", 3);
-                max ??= NamedInt("MaxLength", 50);
                 Pattern("""^[a-zA-Z0-9._-]+$""");
                 break;
             case "PasswordHash":
@@ -494,8 +487,6 @@ internal static class PrimitiveReader
 
     private static RangeRule? ReadRange(string kind, AttributeData primitive, AttributeData[] rules, Check? kindError, ValueTypeInfo value)
     {
-        double? NamedDouble(string name, double fallback) => Named(primitive, name) is { Value: { } v } ? Convert.ToDouble(v, CultureInfo.InvariantCulture) : fallback;
-
         double? min = null, max = null;
         string? stringMin = null, stringMax = null;
         bool minExclusive = false, maxExclusive = false;
@@ -519,28 +510,7 @@ internal static class PrimitiveReader
         }
         else
         {
-            (min, max) = kind switch
-            {
-                "Percentage" => (NamedDouble("Min", 0), NamedDouble("Max", 100)),
-                "Latitude" => (-90d, 90d),
-                "Longitude" => (-180d, 180d),
-                "Age" => (NamedDouble("Min", 0), NamedDouble("Max", 150)),
-                "Weight" => (NamedDouble("Min", 0), NamedDouble("Max", 1000)),
-                "Height" => (NamedDouble("Min", 0), NamedDouble("Max", 300)),
-                "Distance" => (NamedDouble("Min", 0), NamedDouble("Max", double.MaxValue)),
-                "Temperature" => (NamedDouble("Min", -273.15), NamedDouble("Max", double.MaxValue)),
-                "Score" => (NamedDouble("Min", 0), NamedDouble("Max", 100)),
-                "Quantity" => (NamedDouble("Min", 0), NamedDouble("Max", int.MaxValue)),
-                "Price" => (NamedDouble("Min", 0), NamedDouble("Max", double.MaxValue)),
-                "TaxRate" or "Discount" => (NamedDouble("Min", 0), NamedDouble("Max", 100)),
-                "Rating" => (NamedDouble("Min", 0), NamedDouble("Max", 5)),
-                "Money" => (NamedDouble("Min", double.MinValue), NamedDouble("Max", double.MaxValue)),
-                "Month" => (1d, 12d),
-                "Quarter" => (1d, 4d),
-                "Week" => (1d, Named(primitive, "IsoWeekNumbering") is { Value: false } ? 54d : 53d),
-                "FiscalYear" => (NamedDouble("MinYear", 1900), NamedDouble("MaxYear", 9999)),
-                _ => (null, null),
-            };
+            (min, max) = KindDefaults.Range(kind, primitive);
         }
 
         var minExpression = stringMin is not null ? Parse(stringMin, value) : min is { } m ? Literal(m, value, true) : null;
@@ -561,9 +531,9 @@ internal static class PrimitiveReader
     private static string? Parse(string text, ValueTypeInfo value)
     {
         var literal = Literal(text);
-        return  value.NodaPattern is { } pattern 
-            ?  $"{pattern}.Parse({literal}).Value" 
-            :  value.IsParsable ? $"{value.Display}.Parse({literal}, global::System.Globalization.CultureInfo.InvariantCulture)" : null;
+        return value.NodaPattern is { } pattern
+            ? $"{pattern}.Parse({literal}).Value"
+            : value.IsParsable ? $"{value.Display}.Parse({literal}, global::System.Globalization.CultureInfo.InvariantCulture)" : null;
     }
 
     /// <summary>

@@ -5,7 +5,7 @@
 
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
-LPAD2001 | LaunchPad.Primitives.Declaration | Error | DeclarationAnalyzer, domain primitive must be partial (DP0001)
+LPAD2001 | LaunchPad.Primitives.Declaration | Error | DeclarationAnalyzer, domain primitive and the types that contain it must be partial (DP0001)
 LPAD2002 | LaunchPad.Primitives.Declaration | Error | DeclarationAnalyzer, struct domain primitive must be readonly (DP0002)
 LPAD2003 | LaunchPad.Primitives.Declaration | Error | DeclarationAnalyzer, domain primitive must be a record (DP0003)
 LPAD2004 | LaunchPad.Primitives.Declaration | Error | RulesAnalyzer, invalid regular expression (DP0004)
