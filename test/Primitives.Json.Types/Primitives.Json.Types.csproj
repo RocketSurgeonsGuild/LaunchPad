@@ -11,6 +11,8 @@
         <IsTestSupportProject>true</IsTestSupportProject>
         <!-- test/Directory.Build.props marks everything under test/ as a test project; this one is a library. -->
         <IsTestProject>false</IsTestProject>
+        <!-- The test types (linked from Primitives.Behavior.Tests) include domain primitives without rules on purpose (LPAD2009). -->
+        <NoWarn>$(NoWarn);LPAD2009</NoWarn>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\src\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />

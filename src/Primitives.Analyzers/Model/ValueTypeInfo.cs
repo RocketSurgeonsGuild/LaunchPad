@@ -109,24 +109,18 @@ internal sealed record ValueTypeInfo(
         );
     }
 
-    private static ValueCategory Categorize(ITypeSymbol type)
+    // A switch over the symbol, not over an enum or a chain of ifs: the formatter would rewrite either into an ever longer conditional.
+    private static ValueCategory Categorize(ITypeSymbol type) => type switch
     {
-        return  type.SpecialType == SpecialType.System_String 
-            ?  ValueCategory.String 
-            :  type.SpecialType is >= SpecialType.System_SByte and <= SpecialType.System_Double
-            ? ValueCategory.Number
-            : type.ContainingNamespace?.ToDisplayString() == "NodaTime"
-            ? ValueCategory.NodaTime
-            : type.ContainingNamespace?.ToDisplayString() != "System"
-            ? ValueCategory.Other
-            : type.MetadataName switch
-            {
-                "Guid" => ValueCategory.Guid,
-                "Half" or "Int128" or "UInt128" => ValueCategory.Number,
-                "DateOnly" or "TimeOnly" or "DateTimeOffset" => ValueCategory.Bcl,
-                _ => ValueCategory.Other,
-            };
-    }
+        { SpecialType: SpecialType.System_String } => ValueCategory.String,
+        { SpecialType: >= SpecialType.System_SByte and <= SpecialType.System_Double } => ValueCategory.Number,
+        { ContainingNamespace: { Name: "NodaTime", ContainingNamespace.IsGlobalNamespace: true } } => ValueCategory.NodaTime,
+        { ContainingNamespace: not { Name: "System", ContainingNamespace.IsGlobalNamespace: true } } => ValueCategory.Other,
+        { MetadataName: "Guid" } => ValueCategory.Guid,
+        { MetadataName: "Half" or "Int128" or "UInt128" } => ValueCategory.Number,
+        { MetadataName: "DateOnly" or "TimeOnly" or "DateTimeOffset" } => ValueCategory.Bcl,
+        _ => ValueCategory.Other,
+    };
 
     // By name, not GetTypeByMetadataName: that lookup is ambiguous (and can throw) when a referenced assembly carries a copy of the
     // interface, as polyfills do.
