@@ -50,6 +50,46 @@ public class ValueObjectTests
     }
 }
 
+public class NestedPrimitiveTests
+{
+    [Test]
+    public async Task Should_Reject_A_Struct_Primitive_Without_A_Value()
+    {
+        // default(Country) holds no country code: the value object can't hold it, as it couldn't be written or read back
+        await Address.TryCreate("1 Main St", null, default, null, out var result, out var error).Should().BeFalse();
+        await result.IsDefault.Should().BeTrue();
+        await error.Code.Should().BeEqualTo("INVARIANT");
+        await error.Message.Should().BeEqualTo("Address.Country must have a value.");
+        var exception = await PrimitiveAssert.Throws<DomainPrimitiveValidationException>(() => Address.Create("x", null, default, null));
+        await exception!.Error.Code.Should().BeEqualTo("INVARIANT");
+    }
+
+    [Test]
+    public async Task Should_Reject_A_Null_Class_Primitive()
+    {
+        await Household.TryCreate(null!, CountryClass.Create("GB"), out var result, out var family).Should().BeFalse();
+        await result.Should().BeNull();
+        await family.Code.Should().BeEqualTo("INVARIANT");
+        await family.Message.Should().BeEqualTo("Household.Family must have a value.");
+        await Household.TryCreate(LastName.Create("Lovelace"), null!, out _, out var country).Should().BeFalse();
+        await country.Message.Should().BeEqualTo("Household.Country must have a value.");
+        await PrimitiveAssert.Throws<DomainPrimitiveValidationException>(() => Household.Create(null!, null!));
+        await Household.Create(LastName.Create("Lovelace"), CountryClass.Create("GB")).Family.Should().BeEqualTo(LastName.Create("Lovelace"));
+    }
+
+    [Test]
+    public async Task Should_Accept_A_Nullable_Primitive_Left_Null()
+    {
+        // struct (EmailAddress?, Country?) and class (LastName?) domain primitives that are nullable may be left out
+        var contact = Contact.Create("Ada", null, null, null, new DateOnly(2020, 1, 2), null);
+
+        await contact.Email.Should().BeNull();
+        await contact.Family.Should().BeNull();
+        await contact.Country.Should().BeNull();
+        await Address.Create("1 Main St", null, Country.Create("US"), null).City.Should().BeNull();
+    }
+}
+
 public class MoneyTests
 {
     [Test]

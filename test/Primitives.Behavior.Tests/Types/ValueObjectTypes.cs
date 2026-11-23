@@ -55,3 +55,19 @@ public readonly partial record struct WorkShiftTime;
 
 [TimeRange(Kind = DatePrimitiveKind.LocalTime, ErrorMessage = "A shift ends after it starts.")]
 public sealed partial record Shift;
+
+// A class value object whose domain primitives are classes, neither of them nullable: a null one is missing.
+[ValueObject]
+public sealed partial record Household
+{
+    public required LastName Family { get; init; }
+    public required CountryClass Country { get; init; }
+}
+
+// A struct value object of plain values only: its default value (row 0, column 0) is a value like any other.
+[ValueObject]
+public readonly partial record struct GridCell
+{
+    public int Row { get; init; }
+    public int Column { get; init; }
+}
