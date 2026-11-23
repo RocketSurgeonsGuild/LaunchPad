@@ -10,13 +10,15 @@ namespace Primitives.Behavior.Tests;
 
 /// <summary>
 ///     The System.Text.Json converters the generator writes. <see cref="Options" /> has no reflection based resolver: each domain primitive's
-///     metadata is made from its converter alone (<see cref="ConverterResolver" />), and a NodaTime value goes through the options' own NodaTime
-///     converters, which ConfigureNodaTimeForLaunchPad adds, so the converters read and write without reflection, as in a trimmed or native AOT
-///     application (ADR-0007). Collections and plain objects need the reflection based resolver of <see cref="ReflectionOptions" />.
+///     metadata is made from an instance of its converter alone (<see cref="ConverterResolver" />), and a NodaTime value goes through the
+///     options' own NodaTime converters, which ConfigureNodaTimeForLaunchPad adds, so the values these tests read and write go through no
+///     reflection based metadata, as in a trimmed or native AOT application (ADR-0007). Collections and plain objects need the reflection based
+///     resolver of <see cref="ReflectionOptions" />.
 /// </summary>
 /// <remarks>
 ///     Not a source generated JsonSerializerContext: the System.Text.Json generator doesn't see the [JsonConverter] attribute the Primitives
 ///     generator writes in the same project (generators don't see each other's output), so it would describe a domain primitive as an object.
+///     Primitives.Json.Tests proves the source generated context of an application that references the domain primitives' assembly.
 /// </remarks>
 public class JsonTests
 {
@@ -131,6 +133,56 @@ public class JsonTests
     }
 
     [Test]
+    public async Task Should_Fail_To_Read_A_Value_Object_Without_A_Domain_Primitive_It_Requires()
+    {
+        // the country is a non-nullable domain primitive: left out, it has no value
+        var missing = await FailsToRead<Address>("""{"street":"1 Main St"}""");
+        await missing!.Message.Should().BeEqualTo("[INVARIANT] Address.Country must have a value.");
+        // null, for a domain primitive that isn't nullable, is a value its own rules reject
+        var nulled = await FailsToRead<Address>("""{"street":"1 Main St","country":null}""");
+        await nulled!.Message.Should().BeEqualTo("[NULL_INPUT] Country must not be null.");
+        // a class value object: a class domain primitive left out, or null
+        var family = await FailsToRead<Household>("""{"country":"GB"}""");
+        await family!.Message.Should().BeEqualTo("[INVARIANT] Household.Family must have a value.");
+        await FailsToRead<Household>("""{"family":null,"country":"GB"}""");
+        await RoundTrips(Household.Create(LastName.Create("Lovelace"), CountryClass.Create("GB")), """{"family":"Lovelace","country":"GB"}""");
+    }
+
+    [Test]
+    public async Task Should_Read_A_Nullable_Domain_Primitive_Left_Out_As_Null()
+    {
+        var contact = JsonSerializer.Deserialize<Contact>("""{"name":"Ada","since":"2020-01-02"}""", Options)!;
+
+        await contact.Email.Should().BeNull();
+        await contact.Family.Should().BeNull();
+        await contact.Country.Should().BeNull();
+        await contact.Birthday.Should().BeNull();
+        await RoundTrips(contact, """{"name":"Ada","email":null,"family":null,"country":null,"since":"2020-01-02","birthday":null}""");
+    }
+
+    [Test]
+    public async Task Should_Write_A_Default_Struct_Value_Object_As_Its_Values()
+    {
+        // midnight to midnight is a range like any other, and so is the default value of a value object of plain values
+        await RoundTrips(WorkShiftTime.Create(TimeOnly.MinValue, TimeOnly.MinValue), """{"start":"00:00:00","end":"00:00:00"}""");
+        await JsonSerializer.Serialize(default(WorkShiftTime), Options).Should().BeEqualTo("""{"start":"00:00:00","end":"00:00:00"}""");
+        await RoundTrips(GridCell.Create(0, 0), """{"row":0,"column":0}""");
+        await RoundTrips(default(GridCell), """{"row":0,"column":0}""");
+        await RoundTrips(GridCell.Create(2, 3), """{"row":2,"column":3}""");
+    }
+
+    [Test]
+    public async Task Should_Write_Null_For_A_Default_Struct_Value_Object_That_Holds_A_Domain_Primitive()
+    {
+        // default(Address) holds a Country without a value, and default(GeoPoint) a Latitude and a Longitude without one: neither can be
+        // written as its values, so each is null, which reads back as the default value
+        await JsonSerializer.Serialize(default(Address), Options).Should().BeEqualTo("null");
+        await JsonSerializer.Serialize(default(GeoPoint), Options).Should().BeEqualTo("null");
+        await JsonSerializer.Deserialize<Address>("null", Options).IsDefault.Should().BeTrue();
+        await JsonSerializer.Deserialize<GeoPoint>("null", Options).IsDefault.Should().BeTrue();
+    }
+
+    [Test]
     public async Task Should_Write_The_Kinds_Of_Value_Objects()
     {
         await RoundTrips(Cash.Create(10.5m, "usd"), """{"amount":10.5,"currency":"USD"}""");
@@ -225,7 +277,7 @@ public sealed record OrderDocument
 
 /// <summary>
 ///     Describes each domain primitive by the converter the generator wrote for it, and nothing else: options with only this resolver (and the
-///     NodaTime one) can't fall back to reflection.
+///     NodaTime one) have no reflection based metadata to fall back to.
 /// </summary>
 internal sealed class ConverterResolver : IJsonTypeInfoResolver
 {
@@ -233,45 +285,45 @@ internal sealed class ConverterResolver : IJsonTypeInfoResolver
 
     static ConverterResolver()
     {
-        Add<FirstName>();
-        Add<LastName>();
-        Add<EmailAddress>();
-        Add<Score>();
-        Add<Points>();
-        Add<CompletionRate>();
-        Add<Distance>();
-        Add<CenturyDay>();
-        Add<OfficeHour>();
-        Add<CustomerId>();
-        Add<OrderNumber>();
-        Add<OrderStatus>();
-        Add<Role>();
-        Add<Address>();
-        Add<Contact>();
-        Add<GeoPoint>();
-        Add<Cash>();
-        Add<Dollars>();
-        Add<Stay>();
-        Add<Semester>();
-        Add<WorkShiftTime>();
-        Add<Shift>();
-        Add<RecordedAt>();
-        Add<ReportDay>();
-        Add<AlarmTime>();
-        Add<Term>();
-        Add<Elapsed>();
+        Add(new FirstName.FirstNameJsonConverter());
+        Add(new LastName.LastNameJsonConverter());
+        Add(new EmailAddress.EmailAddressJsonConverter());
+        Add(new Score.ScoreJsonConverter());
+        Add(new Points.PointsJsonConverter());
+        Add(new CompletionRate.CompletionRateJsonConverter());
+        Add(new Distance.DistanceJsonConverter());
+        Add(new CenturyDay.CenturyDayJsonConverter());
+        Add(new OfficeHour.OfficeHourJsonConverter());
+        Add(new CustomerId.CustomerIdJsonConverter());
+        Add(new OrderNumber.OrderNumberJsonConverter());
+        Add(new OrderStatus.OrderStatusJsonConverter());
+        Add(new Role.RoleJsonConverter());
+        Add(new Address.AddressJsonConverter());
+        Add(new Contact.ContactJsonConverter());
+        Add(new GeoPoint.GeoPointJsonConverter());
+        Add(new Household.HouseholdJsonConverter());
+        Add(new GridCell.GridCellJsonConverter());
+        Add(new CountryClass.CountryClassJsonConverter());
+        Add(new Cash.CashJsonConverter());
+        Add(new Dollars.DollarsJsonConverter());
+        Add(new Stay.StayJsonConverter());
+        Add(new Semester.SemesterJsonConverter());
+        Add(new WorkShiftTime.WorkShiftTimeJsonConverter());
+        Add(new Shift.ShiftJsonConverter());
+        Add(new RecordedAt.RecordedAtJsonConverter());
+        Add(new ReportDay.ReportDayJsonConverter());
+        Add(new AlarmTime.AlarmTimeJsonConverter());
+        Add(new Term.TermJsonConverter());
+        Add(new Elapsed.ElapsedJsonConverter());
         Factories[typeof(Score?)] = static options => JsonMetadataServices.CreateValueInfo<Score?>(
             options,
             JsonMetadataServices.GetNullableConverter(options.GetTypeInfo<Score>())
         );
     }
 
-    // The converter is found once through the type's [JsonConverter] attribute, as an accessible converter would be named in generated code.
-    private static void Add<T>()
-    {
-        var converter = (JsonConverter<T>)JsonSerializerOptions.Default.GetConverter(typeof(T));
-        Factories[typeof(T)] = options => JsonMetadataServices.CreateValueInfo<T>(options, converter);
-    }
+    // The converter the type's [JsonConverter] attribute names, created as the source generated context of an application creates it: by its
+    // name, not by reading the attribute.
+    private static void Add<T>(JsonConverter<T> converter) => Factories[typeof(T)] = options => JsonMetadataServices.CreateValueInfo<T>(options, converter);
 
     public JsonTypeInfo? GetTypeInfo(Type type, JsonSerializerOptions options) => Factories.TryGetValue(type, out var factory) ? factory(options) : null;
 }

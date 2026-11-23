@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <!--
+        The source generated JsonSerializerContext of an application (PrimitivesJsonContext) describes domain primitives declared in an assembly
+        it references (Primitives.Json.Types), and reads and writes every kind through the converters the Primitives generator wrote there, with
+        no reflection: reflection based serialization is turned off for the whole test application.
+    -->
+    <PropertyGroup>
+        <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
+        <IsPackable>false</IsPackable>
+        <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Primitives.Json.Types\Primitives.Json.Types.csproj" />
+        <ProjectReference Include="..\..\src\NodaTime\Rocket.Surgery.LaunchPad.NodaTime.csproj" />
+        <PackageReference Include="NodaTime" />
+    </ItemGroup>
+</Project>
