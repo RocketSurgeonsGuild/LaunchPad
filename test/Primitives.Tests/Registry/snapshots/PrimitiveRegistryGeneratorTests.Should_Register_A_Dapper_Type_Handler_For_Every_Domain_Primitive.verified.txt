@@ -1,0 +1,6 @@
+﻿{
+  FinalDiagnostics: [],
+  GeneratorDiagnostics: {
+    Primitives.Tests.Generator.PrimitiveGenerators: []
+  }
+}

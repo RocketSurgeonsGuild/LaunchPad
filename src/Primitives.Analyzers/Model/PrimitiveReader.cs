@@ -87,6 +87,14 @@ internal static class PrimitiveReader
         // The shape is the analyzers' (LPAD2001-LPAD2003, LPAD2019): a type that is not a partial record is left alone.
         if (!declaration.Modifiers.Any(SyntaxKind.PartialKeyword)) return (null, diagnostics.ToImmutable());
 
+        // The converters are named in attributes on the type, and an attribute can't name a type nested in a generic type (CS0416).
+        for (var containing = type.ContainingType; containing is not null; containing = containing.ContainingType)
+        {
+            if (!containing.IsGenericType) continue;
+            diagnostics.Add(DiagnosticInfo.Create("LPAD2103", location, type.Name, $"a domain primitive can't be nested in a generic type ({containing.Name})"));
+            return (null, diagnostics.ToImmutable());
+        }
+
         var attributeClass = primitive.AttributeClass!;
         var kind = KindOf(attributeClass);
         var isStruct = type.IsValueType;
@@ -561,9 +569,9 @@ internal static class PrimitiveReader
     private static string? Parse(string text, ValueTypeInfo value)
     {
         var literal = Literal(text);
-        return  value.NodaPattern is { } pattern 
-            ?  $"{pattern}.Parse({literal}).Value" 
-            :  value.IsParsable ? $"{value.Display}.Parse({literal}, global::System.Globalization.CultureInfo.InvariantCulture)" : null;
+        return value.NodaPattern is { } pattern
+            ? $"{pattern}.Parse({literal}).Value"
+            : value.IsParsable ? $"{value.Display}.Parse({literal}, global::System.Globalization.CultureInfo.InvariantCulture)" : null;
     }
 
     /// <summary>

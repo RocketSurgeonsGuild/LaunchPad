@@ -57,6 +57,7 @@ internal static class SmartEnumEmitter
         writer.Line();
         writer.Line("/// <summary>The codes of the errors this smart enum reports.</summary>");
         writer.Open("public static class Errors");
+        writer.Line("/// <summary>The code <c>UNKNOWN_MEMBER</c>.</summary>");
         writer.Line("public const string UnknownMember = \"UNKNOWN_MEMBER\";");
         writer.Close();
         writer.Line();

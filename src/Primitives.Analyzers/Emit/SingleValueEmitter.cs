@@ -78,10 +78,11 @@ internal static class SingleValueEmitter
 
     private static ClockInfo? Clock(PrimitiveModel model)
     {
-        if (model.Dates is not { } dates || !( dates.PastOnly || dates.FutureOnly || dates.MaxAge is not null )) return null;
-        return  Now(model.Value!, "clock") is null 
+        return  model.Dates is not { } dates || !( dates.PastOnly || dates.FutureOnly || dates.MaxAge is not null ) 
             ?   null  
-            :   model.Value!.IsNodaTime
+            :   Now(model.Value!, "clock") is null
+            ? null
+            : model.Value!.IsNodaTime
             ? new("global::NodaTime.IClock", "clock", "global::NodaTime.SystemClock.Instance")
             : new("global::System.TimeProvider", "timeProvider", "global::System.TimeProvider.System");
     }
@@ -195,7 +196,7 @@ internal static class SingleValueEmitter
 
         if (model.Range is { } range) codes.Add(range.Error.Code);
         if (model.Dates is { } dates) codes.Add(dates.Error.Code);
-        if (model.Value.IsFloatingPoint) codes.Add("RANGE");
+        if (model.Value.IsFloatingPoint) codes.Add(model.Range?.Error.Code ?? "RANGE");
         if (model.Scale is not null) codes.Add("SCALE");
         if (model.Shape == PrimitiveShape.StrongId && model.RejectEmpty) codes.Add("EMPTY");
 
@@ -203,6 +204,7 @@ internal static class SingleValueEmitter
         writer.Open("public static class Errors");
         foreach (var code in codes)
         {
+            writer.Line($"/// <summary>The code <c>{code}</c>.</summary>");
             writer.Line($"public const string {ConstantName(code)} = {Names.Literal(code)};");
         }
 
@@ -677,6 +679,9 @@ internal static class SingleValueEmitter
     {
         { IsString: true } => value,
         { NodaPattern: { } pattern } => $"{pattern}.Format({value})",
+        // DateOnly, TimeOnly and DateTimeOffset in ISO 8601, which parses back to the same value (the invariant culture's general format
+        // drops the seconds of a TimeOnly and the fraction of a DateTimeOffset).
+        { Category: ValueCategory.Bcl } => $"{value}.ToString(\"O\", {Names.Invariant})",
         { IsFormattable: true } => $"{value}.ToString(null, {Names.Invariant})",
         _ => $"{value}.ToString()",
     };
@@ -716,7 +721,7 @@ internal static class SingleValueEmitter
         else
         {
             writer.Line("var text = ToString(format.Length == 0 ? null : format.ToString(), provider);");
-            writer.Line("if (text.AsSpan().TryCopyTo(destination))");
+            writer.Line("if (global::System.MemoryExtensions.AsSpan(text).TryCopyTo(destination))");
             writer.Open();
             writer.Line("charsWritten = text.Length;");
             writer.Line("return true;");
@@ -840,12 +845,13 @@ internal static class SingleValueEmitter
     {
         var t = model.Name;
         var vt = model.Value!.Display;
-        writer.Line("// Every result is checked again by the rules.");
-        if (( operations & 1 ) != 0) writer.Line($"public static {t} operator +({t} left, {t} right) => Create(checked(({vt})(left.Value + right.Value)));");
-        if (( operations & 2 ) != 0) writer.Line($"public static {t} operator -({t} left, {t} right) => Create(checked(({vt})(left.Value - right.Value)));");
-        if (( operations & 4 ) != 0) writer.Line($"public static {t} operator *({t} left, {vt} right) => Create(checked(({vt})(left.Value * right)));");
-        if (( operations & 8 ) != 0) writer.Line($"public static {t} operator /({t} left, {vt} right) => Create(checked(({vt})(left.Value / right)));");
-        if (( operations & 16 ) != 0) writer.Line($"public static {t} operator -({t} value) => Create(checked(({vt})(-value.Value)));");
+        // Every result is checked again by the rules.
+        const string summary = "/// <summary>Computes the value and creates the result, which throws when the rules reject it.</summary>";
+        if (( operations & 1 ) != 0) writer.Line(summary).Line($"public static {t} operator +({t} left, {t} right) => Create(checked(({vt})(left.Value + right.Value)));");
+        if (( operations & 2 ) != 0) writer.Line(summary).Line($"public static {t} operator -({t} left, {t} right) => Create(checked(({vt})(left.Value - right.Value)));");
+        if (( operations & 4 ) != 0) writer.Line(summary).Line($"public static {t} operator *({t} left, {vt} right) => Create(checked(({vt})(left.Value * right)));");
+        if (( operations & 8 ) != 0) writer.Line(summary).Line($"public static {t} operator /({t} left, {vt} right) => Create(checked(({vt})(left.Value / right)));");
+        if (( operations & 16 ) != 0) writer.Line(summary).Line($"public static {t} operator -({t} value) => Create(checked(({vt})(-value.Value)));");
         writer.Line();
     }
 
@@ -857,7 +863,7 @@ internal static class SingleValueEmitter
         writer.Line($"private sealed class {t}TypeConverter : global::System.ComponentModel.TypeConverter");
         writer.Open();
         writer.Line("public override bool CanConvertFrom(global::System.ComponentModel.ITypeDescriptorContext? context, global::System.Type sourceType) =>");
-        writer.Line($"    sourceType == typeof(string) || sourceType == typeof({vt}) || base.CanConvertFrom(context, sourceType);");
+        writer.Line($"    sourceType == typeof(string) || {( v.IsString ? "" : $"sourceType == typeof({vt}) || " )}base.CanConvertFrom(context, sourceType);");
         writer.Line();
         writer.Line(
             "public override object? ConvertFrom(global::System.ComponentModel.ITypeDescriptorContext? context, global::System.Globalization.CultureInfo? culture, object value) => value switch"
@@ -869,7 +875,7 @@ internal static class SingleValueEmitter
         writer.Close(";");
         writer.Line();
         writer.Line("public override bool CanConvertTo(global::System.ComponentModel.ITypeDescriptorContext? context, global::System.Type? destinationType) =>");
-        writer.Line($"    destinationType == typeof(string) || destinationType == typeof({vt}) || base.CanConvertTo(context, destinationType);");
+        writer.Line($"    destinationType == typeof(string) || {( v.IsString ? "" : $"destinationType == typeof({vt}) || " )}base.CanConvertTo(context, destinationType);");
         writer.Line();
         writer.Line(
             "public override object? ConvertTo(global::System.ComponentModel.ITypeDescriptorContext? context, global::System.Globalization.CultureInfo? culture, object? value, global::System.Type destinationType)"
@@ -878,7 +884,7 @@ internal static class SingleValueEmitter
         writer.Line($"if (value is {t} primitive)");
         writer.Open();
         writer.Line("if (destinationType == typeof(string)) return primitive.ToString();");
-        writer.Line($"if (destinationType == typeof({vt})) return primitive.Value;");
+        if (!v.IsString) writer.Line($"if (destinationType == typeof({vt})) return primitive.Value;");
         writer.Close();
         writer.Line();
         writer.Line("return base.ConvertTo(context, culture, value, destinationType);");
