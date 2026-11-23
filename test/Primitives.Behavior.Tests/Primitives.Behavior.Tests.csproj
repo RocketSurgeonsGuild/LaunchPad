@@ -6,6 +6,8 @@
     <PropertyGroup>
         <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
         <IsPackable>false</IsPackable>
+        <!-- LPAD2007 (default or new() of a struct domain primitive): the tests create default instances on purpose, to prove how they behave. -->
+        <NoWarn>$(NoWarn);LPAD2007</NoWarn>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\src\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />

@@ -42,8 +42,9 @@ public class DataGenerationJointTests() : LoggerTest<TestRecord>(TestRecord.Crea
     {
         var context = await DovetailContext.FromAsync(Imports.Joints().Set(DovetailHostType.Live), TestContext.CancellationToken);
         var services = await ApplyServicesAsync(context);
-        // An application stores the strong IDs through the Entity Framework joint of LaunchPad.Primitives, which this test project gets for
-        // its unit test host only (Sample.Core.Tests.csproj): the live host here configures the database the same way.
+        // An application stores the strong IDs through the Entity Framework joint of LaunchPad.Primitives. Sample.Core.Tests.csproj writes that
+        // joint into this test project, and Dovetail exports a test project's own joints for the unit test host only, so it doesn't run for the
+        // live host: the live host here configures the database the same way itself.
         LaunchPadPrimitives.ConfigureDbContexts(services);
         return services.BuildServiceProvider();
     }
