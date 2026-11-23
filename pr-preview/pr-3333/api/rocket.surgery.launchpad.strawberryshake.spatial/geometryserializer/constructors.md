@@ -13,7 +13,7 @@ General purpose Geometry Serializer
 ## GeometrySerializer(IOptions<JsonSerializerOptions>)
 
 - Name: `Constructor(IOptions<JsonSerializerOptions>)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3333-merge.Sha.836b758fb89040b6cc85ed7817191956e959bc1f/src/StrawberryShake.Spatial/GeometrySerializer.cs#L16-L18)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3333-merge.Sha.cfa1160619bf896bca17572106e5b103a6adcde3/src/StrawberryShake.Spatial/GeometrySerializer.cs#L16-L18)
 
 Construct a new GeometrySerializer
 

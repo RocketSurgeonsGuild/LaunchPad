@@ -1,9 +1,9 @@
 # Rocket.Surgery.LaunchPad.AspNetCore.Mvc
 
 - Package: `Rocket.Surgery.LaunchPad.AspNetCore.Mvc`
-- Version: `2.0.1-pr.1284`
+- Version: `2.0.1-pr.1286`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3333-merge.Sha.836b758fb89040b6cc85ed7817191956e959bc1f/src/AspNetCore.Mvc)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3333-merge.Sha.cfa1160619bf896bca17572106e5b103a6adcde3/src/AspNetCore.Mvc)
 - NuGet: [Rocket.Surgery.LaunchPad.AspNetCore.Mvc](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.AspNetCore.Mvc)
 
 ## Namespaces

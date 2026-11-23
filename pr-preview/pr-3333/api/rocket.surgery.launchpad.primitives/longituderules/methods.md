@@ -14,7 +14,7 @@ The rules of a longitude in decimal degrees (WGS 84, ISO 6709).
 - Name: `Define`
 - Modifiers: `static`
 - Returns: `StrongTypeDefinition<double>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3333-merge.Sha.836b758fb89040b6cc85ed7817191956e959bc1f/src/Primitives/StrongTypes/Longitude.cs#L14)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3333-merge.Sha.cfa1160619bf896bca17572106e5b103a6adcde3/src/Primitives/StrongTypes/Longitude.cs#L14)
 
 ```csharp
 public sealed class LongitudeRules

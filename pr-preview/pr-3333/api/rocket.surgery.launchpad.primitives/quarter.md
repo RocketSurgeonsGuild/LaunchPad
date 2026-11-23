@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3333/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-pr.1284`
+- Version: `2.0.1-pr.1286`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3333-merge.Sha.836b758fb89040b6cc85ed7817191956e959bc1f/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Quarter.g.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3333-merge.Sha.cfa1160619bf896bca17572106e5b103a6adcde3/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Quarter.g.cs)
 - Implements: `IStrongType<Quarter, int>`, `IComparable<Quarter>`, `IConvertible`, `IEquatable<Quarter>`, `IFormattable`, `IParsable<Quarter>`, `ISpanFormattable`, `ISpanParsable<Quarter>`, `IUtf8SpanFormattable`, `IUtf8SpanParsable<Quarter>`, `IComparisonOperators<Quarter, Quarter, bool>`, `IEqualityOperators<Quarter, Quarter, bool>`
 
 A quarter of the year, valid under [QuarterRules](/LaunchPad/pr-preview/pr-3333/api/rocket.surgery.launchpad.primitives/quarterrules.md).

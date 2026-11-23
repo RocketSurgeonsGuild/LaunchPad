@@ -15,7 +15,7 @@ A converter for
 - Name: `CreateConverter(Type, JsonSerializerOptions)`
 - Modifiers: `override`
 - Returns: `JsonConverter`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3333-merge.Sha.836b758fb89040b6cc85ed7817191956e959bc1f/src/Spatial/WktConverterFactory.cs#L77-L80)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3333-merge.Sha.cfa1160619bf896bca17572106e5b103a6adcde3/src/Spatial/WktConverterFactory.cs#L77-L80)
 
 Creates a converter for a specified type.
 
