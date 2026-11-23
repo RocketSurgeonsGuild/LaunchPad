@@ -105,7 +105,8 @@ any other host `partial`; LPAD1010 has a code fix that adds the modifiers.
   `[OperationHost(Group = "...")]` to choose another.
 - The **route** is `RoutePrefix / group / path`. The prefix defaults to `api`. The path is REST style: the verb prefix and the group noun are
   dropped from the operation name, and `{id}` comes first when the request has an `Id`. Tokens get the constraint of their member's
-  type (`{id:guid}` for a `Guid`, or for a strongly typed id whose `Value` is one); a `Route` you write is used as written.
+  type (`{id:guid}` for a `Guid`, or for a [strong ID](../../concepts/domain-primitives/#strong-ids) or any other type whose `Value` is one); a
+  `Route` you write is used as written.
 
 | Operation (group `rockets`) | Verb and route                         | Success |
 | --------------------------- | -------------------------------------- | ------- |
@@ -327,7 +328,8 @@ builder.Services.AddGraphQLServer().AddQueryType().AddMutationType().AddRocketMu
 - GET and DELETE take the other members from the query string; complex members there are LPAD1005. POST, PUT and PATCH take the whole
   request as the JSON body, and route values are applied on top (`request with { Id = id }` for records).
 - Route, query and header values must be parsable: primitives, enums, `Guid`, date and time types, or anything with `IParsable<T>` or a
-  static `TryParse` (LPAD1007). Strongly typed IDs work when they provide one.
+  static `TryParse` (LPAD1007). [Domain primitives](../../concepts/domain-primitives/) of one value, strong IDs among them, and smart
+  enums implement `IParsable<T>`, so they bind.
 - `[ApiQuery]`, `[ApiHeader]`, `[ApiBody]`, `[ApiService]` and `[ApiIgnore]` on a member override the defaults; ASP.NET Core's `[FromRoute]`
   and friends are honoured too.
 
