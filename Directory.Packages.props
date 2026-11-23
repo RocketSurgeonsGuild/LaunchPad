@@ -44,9 +44,9 @@
         <PackageVersion Include="Polyfill" Version="12.0.0" />
         <PackageVersion Include="SuperStrong.Types" Version="1.0.1" />
 
-        <PackageVersion Include="ZeroAlloc.Mediator" Version="6.7.3" />
-        <PackageVersion Include="ZeroAlloc.Mediator.Generator" Version="6.7.3" />
-        <PackageVersion Include="ZeroAlloc.Mediator.Validation" Version="6.7.3" />
+        <PackageVersion Include="ZeroAlloc.Mediator" Version="7.0.1" />
+        <PackageVersion Include="ZeroAlloc.Mediator.Generator" Version="7.0.1" />
+        <PackageVersion Include="ZeroAlloc.Mediator.Validation" Version="7.0.1" />
         <!-- Maps proto messages to and from requests and responses on proto-first gRPC hosts (approved 2026-11-08). -->
         <PackageVersion Include="ZeroAlloc.Mapping" Version="1.7.1" />
         <PackageVersion Include="ZeroAlloc.Validation" Version="2.6.1" />
