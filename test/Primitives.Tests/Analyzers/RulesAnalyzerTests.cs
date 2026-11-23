@@ -147,6 +147,9 @@ public class RulesAnalyzerTests
     [Arguments("[Username(MaxLength = 4), MinLength(5)]", "Username(MaxLength = 4)")]
     [Arguments("[Email(MaxLength = 3), MinLength(5)]", "Email(MaxLength = 3)")]
     [Arguments("[CountryCode, MinLength(3)]", "CountryCode")]
+    // A minimum length against the project's maximum length, 4096 by default, where neither a rule nor the kind sets one.
+    [Arguments("[StringPrimitive, MinLength(5000)]", "MinLength(5000)")]
+    [Arguments("[StrongId<string>, MinLength(5000)]", "MinLength(5000)")]
     public async Task Should_Report_A_Minimum_Greater_Than_Its_Maximum(string attributes, string reported)
     {
         var result = await Analyze<RulesAnalyzer>(
@@ -177,6 +180,9 @@ public class RulesAnalyzerTests
     [Arguments("[Username(MinLength = 20, MaxLength = 3), Length(1, 10)]")]
     [Arguments("[CountryCode, ExactLength(3)]")]
     [Arguments("[CountryCode, Length(3, 3)]")]
+    [Arguments("[StringPrimitive, MinLength(4096)]")]
+    [Arguments("[StringPrimitive, MinLength(5000), MaxLength(6000)]")]
+    [Arguments("[Email, MinLength(300)]")]
     public async Task Should_Accept_Bounds_In_Order(string attributes)
     {
         var result = await Analyze<RulesAnalyzer>(
@@ -194,6 +200,10 @@ public class RulesAnalyzerTests
     [Arguments("[Age(Min = 200)]", "The minimum (200) is greater than the maximum (150), so no value is valid")]
     [Arguments("[Temperature(Max = -300)]", "The minimum (-273.15) is greater than the maximum (-300), so no value is valid")]
     [Arguments("[CountryCode, MinLength(3)]", "The minimum (3) is greater than the maximum (2), so no value is valid")]
+    [Arguments(
+        "[StringPrimitive, MinLength(5000)]",
+        "The minimum (5000) is greater than the maximum (4096, the project's LaunchPadPrimitivesMaxLength), so no value is valid"
+    )]
     public async Task Should_Report_The_Default_A_Bound_Conflicts_With(string attributes, string message)
     {
         var result = await Analyze<RulesAnalyzer>(
@@ -205,6 +215,41 @@ public class RulesAnalyzerTests
         );
 
         await Messages(result, "LPAD2006").Should().BeEquivalentTo([message], CollectionOrdering.Matching);
+    }
+
+    [Test]
+    [Arguments("100", "[StringPrimitive, MinLength(200)]", true)]
+    [Arguments("10000", "[StringPrimitive, MinLength(5000)]", false)]
+    public async Task Should_Read_The_Maximum_Length_The_Project_Sets(string maxLength, string attributes, bool reported)
+    {
+        var result = await Analyze<RulesAnalyzer>(
+            Usings
+          + $$"""
+              {{attributes}}
+              public readonly partial record struct Bounded;
+              """,
+            builder => builder.AddGlobalOption("build_property.LaunchPadPrimitivesMaxLength", maxLength)
+        );
+
+        string[] expected = reported ? ["LPAD2006: MinLength(200)"] : [];
+        await Diagnostics(result).Should().BeEquivalentTo(expected, CollectionOrdering.Matching);
+    }
+
+    // The generator reads the range of [Money] from its Min and Max alone: a [PrimitiveRange] doesn't apply to it (LPAD2022) and doesn't hide them.
+    [Test]
+    public async Task Should_Report_The_Bounds_Of_Money_With_A_PrimitiveRange()
+    {
+        var result = await Analyze<RulesAnalyzer>(
+            Usings
+          + """
+            [Money(Min = 10, Max = 5), PrimitiveRange(0, 100)]
+            public sealed partial record Bounded;
+            """
+        );
+
+        await Diagnostics(result)
+             .Should()
+             .BeEquivalentTo(["LPAD2006: Money(Min = 10, Max = 5)", "LPAD2022: PrimitiveRange(0, 100)"], CollectionOrdering.Matching);
     }
 
     [Test]

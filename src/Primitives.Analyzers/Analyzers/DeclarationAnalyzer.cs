@@ -82,11 +82,12 @@ public sealed class DeclarationAnalyzer : DiagnosticAnalyzer
     /// <summary>
     ///     LPAD2001 on a type that contains a domain primitive, however deeply: the generator writes the primitive's part inside a <c>partial</c>
     ///     declaration of each of its containing types, which doesn't compile when one isn't partial. Reported on each declaration the user wrote
-    ///     without <c>partial</c>, once for the type whatever number of domain primitives it contains.
+    ///     without <c>partial</c>, once for the type whatever number of domain primitives it contains. Not reported on a domain primitive that
+    ///     contains another: its own LPAD2001 or LPAD2003 already asks for <c>partial</c>.
     /// </summary>
     private static void AnalyzeContainingType(SymbolAnalysisContext context, INamedTypeSymbol type)
     {
-        if (type.GetTypeMembers().IsEmpty || FirstNestedPrimitive(type) is not { } nested) return;
+        if (type.GetTypeMembers().IsEmpty || PrimitiveSymbols.GetDeclaration(type) is not null || FirstNestedPrimitive(type) is not { } nested) return;
         var properties = ImmutableDictionary<string, string?>.Empty.Add(ContainingTypeProperty, "true");
         foreach (var declaration in PrimitiveSymbols.UserDeclarations(type, context.CancellationToken))
         {

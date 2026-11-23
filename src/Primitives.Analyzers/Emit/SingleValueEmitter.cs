@@ -78,10 +78,11 @@ internal static class SingleValueEmitter
 
     private static ClockInfo? Clock(PrimitiveModel model)
     {
-        if (model.Dates is not { } dates || !( dates.PastOnly || dates.FutureOnly || dates.MaxAge is not null )) return null;
-        return  Now(model.Value!, "clock") is null 
+        return  model.Dates is not { } dates || !( dates.PastOnly || dates.FutureOnly || dates.MaxAge is not null ) 
             ?   null  
-            :   model.Value!.IsNodaTime
+            :   Now(model.Value!, "clock") is null
+            ? null
+            : model.Value!.IsNodaTime
             ? new("global::NodaTime.IClock", "clock", "global::NodaTime.SystemClock.Instance")
             : new("global::System.TimeProvider", "timeProvider", "global::System.TimeProvider.System");
     }
@@ -716,7 +717,7 @@ internal static class SingleValueEmitter
         else
         {
             writer.Line("var text = ToString(format.Length == 0 ? null : format.ToString(), provider);");
-            writer.Line("if (text.AsSpan().TryCopyTo(destination))");
+            writer.Line("if (global::System.MemoryExtensions.AsSpan(text).TryCopyTo(destination))");
             writer.Open();
             writer.Line("charsWritten = text.Length;");
             writer.Line("return true;");

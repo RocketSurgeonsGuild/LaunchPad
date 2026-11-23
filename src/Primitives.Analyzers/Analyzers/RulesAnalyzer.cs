@@ -15,7 +15,7 @@ namespace Rocket.Surgery.LaunchPad.Primitives.Analyzers.Analyzers;
 ///         <item>LPAD2005: [LowerCase] and [UpperCase] together.</item>
 ///         <item>
 ///             LPAD2006: a minimum greater than its maximum ([MinLength] and [MaxLength], [Length], [PrimitiveRange]), or a bound of the kind (its Min
-///             and Max, or its default) that the generator uses and that conflicts with the other bound.
+///             and Max, or its default) or the project's LaunchPadPrimitivesMaxLength that the generator uses and that conflicts with the other bound.
 ///         </item>
 ///         <item>LPAD2009: a [StringPrimitive], [NumericPrimitive&lt;T&gt;], [DatePrimitive] or string [StrongId&lt;string&gt;] with no rule.</item>
 ///         <item>LPAD2020: PastOnly and FutureOnly together, or on a kind that is an amount of time.</item>
@@ -81,22 +81,24 @@ public sealed class RulesAnalyzer : DiagnosticAnalyzer
             {
                 var notEmptyByDefault = start.Options.AnalyzerConfigOptionsProvider.GlobalOptions.TryGetValue(PrimitiveSymbols.NotEmptyProperty, out var notEmpty)
                  && string.Equals(notEmpty.Trim(), "true", StringComparison.OrdinalIgnoreCase);
+                // The longest string the generator accepts where neither a rule nor the kind sets a maximum.
+                var projectMaxLength = PrimitiveSettings.Read(start.Options.AnalyzerConfigOptionsProvider.GlobalOptions).MaxLength;
                 var compilation = start.Compilation;
                 var seesLaunchPadNodaTime = compilation.AssemblyName == PrimitiveSymbols.LaunchPadNodaTimeAssembly
                  || compilation.ReferencedAssemblyNames.Any(a => a.Name == PrimitiveSymbols.LaunchPadNodaTimeAssembly);
-                start.RegisterSymbolAction(c => Analyze(c, notEmptyByDefault, seesLaunchPadNodaTime), SymbolKind.NamedType);
+                start.RegisterSymbolAction(c => Analyze(c, notEmptyByDefault, seesLaunchPadNodaTime, projectMaxLength), SymbolKind.NamedType);
             }
         );
     }
 
-    private static void Analyze(SymbolAnalysisContext context, bool notEmptyByDefault, bool seesLaunchPadNodaTime)
+    private static void Analyze(SymbolAnalysisContext context, bool notEmptyByDefault, bool seesLaunchPadNodaTime, int projectMaxLength)
     {
         if (context.Symbol is not INamedTypeSymbol type || PrimitiveSymbols.GetDeclaration(type) is not { } primitive) return;
         if (PrimitiveSymbols.IsGenerated(type, context.CancellationToken)) return;
         var cancellationToken = context.CancellationToken;
 
         AnalyzeKind(context, primitive, seesLaunchPadNodaTime);
-        AnalyzeKindBounds(context, primitive);
+        AnalyzeKindBounds(context, primitive, projectMaxLength);
 
         AttributeData? lowerCase = null;
         AttributeData? upperCase = null;
@@ -222,30 +224,50 @@ public sealed class RulesAnalyzer : DiagnosticAnalyzer
     }
 
     /// <summary>
-    ///     LPAD2006 on the bounds the kind sets (<see cref="KindDefaults" />), as the generator reads them: a range the kind sets only when no
-    ///     [PrimitiveRange] does, a length bound only when no length rule does. Reported on the kind's attribute when one of the two bounds comes
-    ///     from the kind; two bounds from the rules are the rules' own check.
+    ///     LPAD2006 on the bounds the kind sets (<see cref="KindDefaults" />) and the project's maximum length, as the generator reads them:
+    ///     <list type="bullet">
+    ///         <item>
+    ///             a range the kind sets only when no [PrimitiveRange] does, except [Money], whose Min and Max are always its range (a
+    ///             [PrimitiveRange] doesn't apply to it, LPAD2022);
+    ///         </item>
+    ///         <item>a length bound only when no length rule does;</item>
+    ///         <item>
+    ///             the project's <c>LaunchPadPrimitivesMaxLength</c> (4096 by default) as the maximum of a string when neither a rule nor the kind
+    ///             sets one.
+    ///         </item>
+    ///     </list>
+    ///     Reported on the kind's attribute when the kind sets one of the two bounds, on the [MinLength] when the maximum is the project's; two
+    ///     bounds from the rules are the rules' own check.
     /// </summary>
-    private static void AnalyzeKindBounds(SymbolAnalysisContext context, PrimitiveDeclaration primitive)
+    private static void AnalyzeKindBounds(SymbolAnalysisContext context, PrimitiveDeclaration primitive, int projectMaxLength)
     {
         var kind = primitive.KindName;
-        if (!primitive.Rules.Any(r => r.AttributeClass!.OriginalDefinition.Name == "PrimitiveRangeAttribute")
-         && KindDefaults.Range(kind, primitive.Attribute) is ({ } min, { } max)
-         && min > max)
+        var rangeFromKind = kind == "Money" || !primitive.Rules.Any(r => r.AttributeClass!.OriginalDefinition.Name == "PrimitiveRangeAttribute");
+        if (rangeFromKind && KindDefaults.Range(kind, primitive.Attribute) is ({ } min, { } max) && min > max)
         {
             ReportBounds(context, primitive.Attribute, Format(min), Format(max));
             return;
         }
 
+        if (ValueOf(primitive) != RuleTarget.String) return;
         var (kindMin, kindMax) = KindDefaults.Length(kind, primitive.Attribute);
-        if (kindMin is null && kindMax is null) return;
         var (ruleMin, ruleMax) = RuleLength(primitive.Rules);
-        if (( ruleMin ?? kindMin ) is { } minLength
-         && ( ruleMax ?? kindMax ) is { } maxLength
-         && minLength > maxLength
-         && ( ruleMin is null || ruleMax is null ))
+        if (( ruleMin ?? kindMin ) is not { } minLength) return;
+        if (( ruleMax ?? kindMax ) is { } maxLength)
         {
-            ReportBounds(context, primitive.Attribute, Format(minLength), Format(maxLength));
+            if (minLength > maxLength && ( ruleMin is null || ruleMax is null ))
+            {
+                ReportBounds(context, primitive.Attribute, Format(minLength), Format(maxLength));
+            }
+
+            return;
+        }
+
+        // Only a [MinLength] sets the minimum here: [Length] and [ExactLength] set the maximum too, and a kind with a minimum has a maximum.
+        if (minLength > projectMaxLength
+         && primitive.Rules.FirstOrDefault(r => r.AttributeClass!.OriginalDefinition.Name == "MinLengthAttribute") is { } minRule)
+        {
+            ReportBounds(context, minRule, Format(minLength), $"{Format(projectMaxLength)}, the project's LaunchPadPrimitivesMaxLength");
         }
     }
 
