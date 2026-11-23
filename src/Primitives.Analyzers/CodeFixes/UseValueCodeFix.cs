@@ -66,8 +66,8 @@ public sealed class UseValueCodeFix : CodeFixProvider
         var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
         var model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
         if (root is null || model is null) return document;
-        var left = PrimitiveSymbols.IsDomainPrimitive(model.GetTypeInfo(comparison.Left, cancellationToken).Type);
-        var right = PrimitiveSymbols.IsDomainPrimitive(model.GetTypeInfo(comparison.Right, cancellationToken).Type);
+        var left = PrimitiveSymbols.IsStringPrimitive(model.GetTypeInfo(comparison.Left, cancellationToken).Type);
+        var right = PrimitiveSymbols.IsStringPrimitive(model.GetTypeInfo(comparison.Right, cancellationToken).Type);
         var updated = comparison.WithLeft(left ? ReadValue(comparison.Left) : comparison.Left).WithRight(right ? ReadValue(comparison.Right) : comparison.Right);
         return document.WithSyntaxRoot(root.ReplaceNode(comparison, updated));
     }

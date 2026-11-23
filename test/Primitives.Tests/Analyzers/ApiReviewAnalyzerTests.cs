@@ -42,6 +42,7 @@ public class ApiReviewAnalyzerTests
             }
             """
         );
+        await ( await ErrorsAfterFix<AddDocumentationCodeFix>(result, "Add XML documentation") ).Should().BeEmpty();
     }
 
     [Test]
@@ -65,6 +66,7 @@ public class ApiReviewAnalyzerTests
         );
 
         await ( await Fixed<AddDocumentationCodeFix>(result, "Add XML documentation") ).Should().Contain(documented);
+        await ( await ErrorsAfterFix<AddDocumentationCodeFix>(result, "Add XML documentation") ).Should().BeEmpty();
     }
 
     [Test]
@@ -121,10 +123,10 @@ public class ApiReviewAnalyzerTests
             public sealed partial record UserName
             {
                 /// <summary>Makes one.</summary>
-                public static UserName Build(int length) => new();
+                public static UserName Build(int length) => Create(new string('a', length));
 
                 /// <summary>Makes one.</summary>
-                public static UserName Parse(string value, int length) => new();
+                public static UserName Parse(string value, int length) => Create(value[..length]);
 
                 /// <summary>Not a factory.</summary>
                 public static int Count(UserName name) => 0;
@@ -143,8 +145,10 @@ public class ApiReviewAnalyzerTests
         await Diagnostics(result).Should().BeEquivalentTo(["LPAD2016: Build"], CollectionOrdering.Matching);
         await FixTitles<RenameFactoryCodeFix>(result).Should().BeEquivalentTo(["Rename to 'Create'", "Rename to 'Parse'"], CollectionOrdering.Any);
         var renamed = await Fixed<RenameFactoryCodeFix>(result, "Rename to 'Create'");
-        await renamed.Should().Contain("public static UserName Create(int length) => new();");
+        await renamed.Should().Contain("public static UserName Create(int length) => Create(new string('a', length));");
         await renamed.Should().Contain("public static UserName Run() => UserName.Create(3);");
+        await ( await ErrorsAfterFix<RenameFactoryCodeFix>(result, "Rename to 'Create'") ).Should().BeEmpty();
+        await ( await ErrorsAfterFix<RenameFactoryCodeFix>(result, "Rename to 'Parse'") ).Should().BeEmpty();
     }
 
     // The generated Create(TValue) takes the name for the same parameters, so the fix offers only what doesn't collide.

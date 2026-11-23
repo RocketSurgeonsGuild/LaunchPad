@@ -4,7 +4,7 @@ using static Primitives.Tests.Analyzers.AnalyzerTestSources;
 
 namespace Primitives.Tests.Analyzers;
 
-/// <summary>LPAD2013: two domain primitives with the same kind and rules.</summary>
+/// <summary>LPAD2013: two domain primitives with the same kind and rules; strong IDs, smart enums and value objects are left out.</summary>
 public class DuplicatePrimitiveAnalyzerTests
 {
     private const string Usings = """
@@ -43,7 +43,6 @@ public class DuplicatePrimitiveAnalyzerTests
     [Arguments("[StringPrimitive, MinLength(5)]", "[MinLength(5), StringPrimitive]")]
     [Arguments("[DatePrimitive(PastOnly = true, Kind = DatePrimitiveKind.DateOnly)]", "[DatePrimitive(Kind = DatePrimitiveKind.DateOnly, PastOnly = true)]")]
     [Arguments("[Email]", "[Email]")]
-    [Arguments("[StrongId<System.Guid>]", "[StrongId<System.Guid>]")]
     [Arguments("[Url(AllowedSchemes = new[] { \"https\" })]", "[Url(AllowedSchemes = new[] { \"https\" })]")]
     public async Task Should_Report_Primitives_Written_Differently_With_The_Same_Rules(string first, string second)
     {
@@ -68,7 +67,11 @@ public class DuplicatePrimitiveAnalyzerTests
     [Arguments("[StrongId<System.Guid>]", "[StrongId<System.Guid>(GuidVersion = 4)]")]
     [Arguments("[ValueObject]", "[ValueObject]")]
     [Arguments("[SmartEnum<int>]", "[SmartEnum<int>]")]
-    public async Task Should_Accept_Primitives_That_Differ_Or_Are_Defined_By_Their_Members(string first, string second)
+    // Strong IDs are distinct types of the same shape on purpose: an OrderId and a CustomerId are both a Guid.
+    [Arguments("[StrongId<System.Guid>]", "[StrongId<System.Guid>]")]
+    [Arguments("[StrongId<int>]", "[StrongId<int>]")]
+    [Arguments("[StrongId<string>, MaxLength(32)]", "[StrongId<string>, MaxLength(32)]")]
+    public async Task Should_Accept_Primitives_That_Differ_Are_Strong_Ids_Or_Are_Defined_By_Their_Members(string first, string second)
     {
         var result = await Analyze<DuplicatePrimitiveAnalyzer>(
             Usings

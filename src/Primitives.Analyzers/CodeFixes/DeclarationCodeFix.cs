@@ -6,11 +6,15 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
+using Rocket.Surgery.LaunchPad.Primitives.Analyzers.Analyzers;
+
 namespace Rocket.Surgery.LaunchPad.Primitives.Analyzers.CodeFixes;
 
 /// <summary>
-///     Fixes how a domain primitive is declared: adds <c>partial</c> (LPAD2001), <c>readonly</c> (LPAD2002) or <c>sealed</c> (LPAD2019), and turns
-///     a struct or a class into a record (LPAD2003): a <c>readonly partial record struct</c>, or for a class a <c>sealed partial record</c> too.
+///     Fixes how a domain primitive is declared: adds <c>partial</c> to it or to a type that contains it (LPAD2001), <c>readonly</c> (LPAD2002) or
+///     <c>sealed</c> (LPAD2019), and turns a struct or a class into a record (LPAD2003): a <c>readonly partial record struct</c>, or for a class a
+///     <c>sealed partial record</c> too. A type declared in several places is one type: the fixes that would leave its declarations disagreeing
+///     (LPAD2003, the kind of type; LPAD2019, abstract or static on another part) change every declaration the user wrote, in every file.
 /// </summary>
 [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(DeclarationCodeFix))]
 [Shared]
@@ -40,28 +44,39 @@ public sealed class DeclarationCodeFix : CodeFixProvider
             switch (diagnostic.Id)
             {
                 case "LPAD2001":
-                    Register(context, diagnostic, "Make the domain primitive partial", root, declaration, d => ModifierEditor.Add(d, SyntaxKind.PartialKeyword));
+                    Register(
+                        context,
+                        diagnostic,
+                        diagnostic.Properties.ContainsKey(DeclarationAnalyzer.ContainingTypeProperty) ? "Make the containing type partial" : "Make the domain primitive partial",
+                        root,
+                        declaration,
+                        d => ModifierEditor.Add(d, SyntaxKind.PartialKeyword)
+                    );
                     break;
                 case "LPAD2002":
                     Register(context, diagnostic, "Make the domain primitive readonly", root, declaration, d => ModifierEditor.Add(d, SyntaxKind.ReadOnlyKeyword));
                     break;
                 case "LPAD2019":
-                    Register(
+                    // sealed on one declaration seals the type, but abstract or static on any other one would contradict it.
+                    RegisterOnEveryPart(
                         context,
                         diagnostic,
                         "Make the domain primitive sealed",
-                        root,
                         declaration,
-                        d => ModifierEditor.Add(ModifierEditor.Remove(d, SyntaxKind.AbstractKeyword, SyntaxKind.StaticKeyword), SyntaxKind.SealedKeyword)
+                        (d, isReported) =>
+                        {
+                            var updated = ModifierEditor.Remove(d, SyntaxKind.AbstractKeyword, SyntaxKind.StaticKeyword);
+                            return isReported ? ModifierEditor.Add(updated, SyntaxKind.SealedKeyword) : updated;
+                        }
                     );
                     break;
                 case "LPAD2003":
                     if (declaration is ClassDeclarationSyntax)
                     {
-                        Register(context, diagnostic, "Convert to a sealed partial record", root, declaration, d => ToRecord(d, isStruct: false));
+                        RegisterOnEveryPart(context, diagnostic, "Convert to a sealed partial record", declaration, (d, isReported) => ToRecord(d, isStruct: false, isReported));
                     }
 
-                    Register(context, diagnostic, "Convert to a readonly partial record struct", root, declaration, d => ToRecord(d, isStruct: true));
+                    RegisterOnEveryPart(context, diagnostic, "Convert to a readonly partial record struct", declaration, (d, isReported) => ToRecord(d, isStruct: true, isReported));
                     break;
                 default:
                     break;
@@ -83,26 +98,57 @@ public sealed class DeclarationCodeFix : CodeFixProvider
         );
 
     /// <summary>
-    ///     The declaration as a record: a <c>readonly partial record struct</c> or a <c>sealed partial record</c>, keeping its attributes,
-    ///     accessibility, type parameters, primary constructor, base list and members.
+    ///     Registers a fix that rewrites every declaration of the type the user wrote, in whichever document it is; <c>isReported</c> is true for
+    ///     the declaration the diagnostic is on, which takes the modifiers one declaration is enough to carry.
     /// </summary>
-    internal static RecordDeclarationSyntax ToRecord(TypeDeclarationSyntax declaration, bool isStruct)
+    private static void RegisterOnEveryPart(
+        CodeFixContext context,
+        Diagnostic diagnostic,
+        string title,
+        TypeDeclarationSyntax reported,
+        Func<TypeDeclarationSyntax, bool, TypeDeclarationSyntax> fix
+    ) =>
+        context.RegisterCodeFix(CodeAction.Create(title, ct => FixEveryPartAsync(context.Document, reported, fix, ct), title), diagnostic);
+
+    private static async Task<Solution> FixEveryPartAsync(
+        Document document,
+        TypeDeclarationSyntax reported,
+        Func<TypeDeclarationSyntax, bool, TypeDeclarationSyntax> fix,
+        CancellationToken cancellationToken
+    )
     {
-        var updated = isStruct
-            ? ModifierEditor.Add(
-                ModifierEditor.Add(
-                    ModifierEditor.Remove(declaration, SyntaxKind.SealedKeyword, SyntaxKind.AbstractKeyword, SyntaxKind.StaticKeyword, SyntaxKind.RefKeyword),
-                    SyntaxKind.ReadOnlyKeyword
-                ),
-                SyntaxKind.PartialKeyword
-            )
-            : ModifierEditor.Add(
-                ModifierEditor.Add(
-                    ModifierEditor.Remove(declaration, SyntaxKind.ReadOnlyKeyword, SyntaxKind.AbstractKeyword, SyntaxKind.StaticKeyword, SyntaxKind.RefKeyword),
-                    SyntaxKind.SealedKeyword
-                ),
-                SyntaxKind.PartialKeyword
-            );
+        var solution = document.Project.Solution;
+        var model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+        var declarations = model?.GetDeclaredSymbol(reported, cancellationToken) is { } type
+            ? PrimitiveSymbols.UserDeclarations(type, cancellationToken)
+            : [reported];
+        if (!declarations.Contains(reported)) declarations = declarations.Add(reported);
+        foreach (var group in declarations.GroupBy(d => d.SyntaxTree))
+        {
+            if (solution.GetDocument(group.Key) is not { } part) continue;
+            var root = await group.Key.GetRootAsync(cancellationToken).ConfigureAwait(false);
+            var updated = root.ReplaceNodes(group, (original, _) => fix(original, original == reported));
+            solution = solution.WithDocumentSyntaxRoot(part.Id, updated);
+        }
+
+        return solution;
+    }
+
+    /// <summary>
+    ///     The declaration as a record: a <c>readonly partial record struct</c> or a <c>sealed partial record</c>, keeping its attributes,
+    ///     accessibility, type parameters, primary constructor, base list and members. Another declaration of the same type
+    ///     (<paramref name="addModifier" /> false) becomes a <c>partial record struct</c> or <c>partial record</c>: one <c>readonly</c> or
+    ///     <c>sealed</c> is enough for the type.
+    /// </summary>
+    internal static RecordDeclarationSyntax ToRecord(TypeDeclarationSyntax declaration, bool isStruct, bool addModifier = true)
+    {
+        var removed = isStruct
+            ? ModifierEditor.Remove(declaration, SyntaxKind.SealedKeyword, SyntaxKind.AbstractKeyword, SyntaxKind.StaticKeyword, SyntaxKind.RefKeyword)
+            : ModifierEditor.Remove(declaration, SyntaxKind.ReadOnlyKeyword, SyntaxKind.AbstractKeyword, SyntaxKind.StaticKeyword, SyntaxKind.RefKeyword);
+        var updated = ModifierEditor.Add(
+            addModifier ? ModifierEditor.Add(removed, isStruct ? SyntaxKind.ReadOnlyKeyword : SyntaxKind.SealedKeyword) : removed,
+            SyntaxKind.PartialKeyword
+        );
 
         var keyword = updated.Keyword;
         var recordKeyword = SyntaxFactory.Token(keyword.LeadingTrivia, SyntaxKind.RecordKeyword, isStruct ? SyntaxFactory.TriviaList(SyntaxFactory.Space) : keyword.TrailingTrivia);

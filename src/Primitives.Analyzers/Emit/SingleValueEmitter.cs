@@ -76,16 +76,12 @@ internal static class SingleValueEmitter
     /// </summary>
     private sealed record ClockInfo(string Type, string Name, string Default);
 
-    private static ClockInfo? Clock(PrimitiveModel model)
-    {
-        return model.Dates is not { } dates || !( dates.PastOnly || dates.FutureOnly || dates.MaxAge is not null )
-            ? null
-            : Now(model.Value!, "clock") is null
+    private static ClockInfo? Clock(PrimitiveModel model) =>
+        model.Dates is not { } dates || !( dates.PastOnly || dates.FutureOnly || dates.MaxAge is not null ) || Now(model.Value!, "clock") is null
             ? null
             : model.Value!.IsNodaTime
-            ? new("global::NodaTime.IClock", "clock", "global::NodaTime.SystemClock.Instance")
-            : new("global::System.TimeProvider", "timeProvider", "global::System.TimeProvider.System");
-    }
+                ? new("global::NodaTime.IClock", "clock", "global::NodaTime.SystemClock.Instance")
+                : new("global::System.TimeProvider", "timeProvider", "global::System.TimeProvider.System");
 
     /// <summary>
     ///     "Now" as a value of the primitive's type (ordered the way <see cref="ValueTypeInfo.Ordered" /> orders it), or null when the type has

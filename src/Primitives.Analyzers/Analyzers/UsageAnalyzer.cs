@@ -10,9 +10,12 @@ namespace Rocket.Surgery.LaunchPad.Primitives.Analyzers.Analyzers;
 ///     Checks how code uses domain primitives, of this project or of the assemblies it references.
 ///     <list type="bullet">
 ///         <item>LPAD2007: <c>new T()</c>, <c>new()</c>, <c>default(T)</c> or <c>default</c> make a struct domain primitive without its rules.</item>
-///         <item>LPAD2010: a string compared with <c>==</c> or <c>!=</c> to a domain primitive.</item>
-///         <item>LPAD2011: a domain primitive given where a string is expected (a string variable, field or parameter).</item>
+///         <item>LPAD2010: a string compared with <c>==</c> or <c>!=</c> to a domain primitive of a string.</item>
+///         <item>LPAD2011: a domain primitive of a string given where a string is expected (a string variable, field or parameter).</item>
 ///     </list>
+///     LPAD2010 and LPAD2011 are about a domain primitive whose value is a string, so that its <c>Value</c> is what the code meant: a number, a
+///     Guid or a value object compared with a string is a different mistake, which its <c>Value</c> wouldn't fix. Nothing is checked in a
+///     project that can't see <c>IDomainPrimitive&lt;TSelf&gt;</c>, which has no domain primitive.
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public sealed class UsageAnalyzer : DiagnosticAnalyzer
@@ -33,13 +36,15 @@ public sealed class UsageAnalyzer : DiagnosticAnalyzer
         context.RegisterCompilationStartAction(
             start =>
             {
+                if (!PrimitiveSymbols.SeesDomainPrimitives(start.Compilation)) return;
                 var isPrimitive = PrimitiveSymbols.CreateDomainPrimitiveCache();
+                var isStringPrimitive = PrimitiveSymbols.CreateStringPrimitiveCache();
                 start.RegisterSyntaxNodeAction(c => AnalyzeObjectCreation(c, isPrimitive), SyntaxKind.ObjectCreationExpression, SyntaxKind.ImplicitObjectCreationExpression);
                 start.RegisterSyntaxNodeAction(c => AnalyzeDefault(c, isPrimitive), SyntaxKind.DefaultExpression, SyntaxKind.DefaultLiteralExpression);
-                start.RegisterSyntaxNodeAction(c => AnalyzeComparison(c, isPrimitive), SyntaxKind.EqualsExpression, SyntaxKind.NotEqualsExpression);
-                start.RegisterSyntaxNodeAction(c => AnalyzeAssignment(c, isPrimitive), SyntaxKind.SimpleAssignmentExpression);
-                start.RegisterSyntaxNodeAction(c => AnalyzeVariable(c, isPrimitive), SyntaxKind.VariableDeclarator);
-                start.RegisterSyntaxNodeAction(c => AnalyzeArgument(c, isPrimitive), SyntaxKind.Argument);
+                start.RegisterSyntaxNodeAction(c => AnalyzeComparison(c, isStringPrimitive), SyntaxKind.EqualsExpression, SyntaxKind.NotEqualsExpression);
+                start.RegisterSyntaxNodeAction(c => AnalyzeAssignment(c, isStringPrimitive), SyntaxKind.SimpleAssignmentExpression);
+                start.RegisterSyntaxNodeAction(c => AnalyzeVariable(c, isStringPrimitive), SyntaxKind.VariableDeclarator);
+                start.RegisterSyntaxNodeAction(c => AnalyzeArgument(c, isStringPrimitive), SyntaxKind.Argument);
             }
         );
     }
@@ -103,6 +108,9 @@ public sealed class UsageAnalyzer : DiagnosticAnalyzer
     {
         var argument = (ArgumentSyntax)context.Node;
         if (argument.Parent is not BaseArgumentListSyntax { Parent: { } invocation } list) return;
+        // Most arguments aren't domain primitives: their type is cheaper to read than the call's overloads.
+        var source = context.SemanticModel.GetTypeInfo(argument.Expression, context.CancellationToken).Type;
+        if (!isPrimitive(source)) return;
         var symbolInfo = context.SemanticModel.GetSymbolInfo(invocation, context.CancellationToken);
         // With no conversion to string the call doesn't bind: its candidates still say what the parameter is.
         var method = symbolInfo.Symbol as IMethodSymbol
@@ -110,7 +118,8 @@ public sealed class UsageAnalyzer : DiagnosticAnalyzer
         if (method is null) return;
         var parameter = Parameter(method, list, argument);
         if (parameter is null) return;
-        ReportStringFromPrimitive(context, argument, parameter.Type, argument.Expression, isPrimitive);
+        if (!IsString(parameter.Type)) return;
+        context.ReportDiagnostic(Diagnostic.Create(AnalyzerDiagnostics.StringAssignedFromPrimitive, argument.GetLocation(), source!.Name));
     }
 
     private static IParameterSymbol? Parameter(IMethodSymbol method, BaseArgumentListSyntax list, ArgumentSyntax argument)

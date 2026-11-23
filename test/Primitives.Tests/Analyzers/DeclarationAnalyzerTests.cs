@@ -7,7 +7,10 @@ using static Primitives.Tests.Analyzers.AnalyzerTestSources;
 
 namespace Primitives.Tests.Analyzers;
 
-/// <summary>LPAD2001 (partial), LPAD2002 (readonly), LPAD2003 (record), LPAD2012 (public constructor) and LPAD2019 (sealed), with their fixes.</summary>
+/// <summary>
+///     LPAD2001 (partial, and the types that contain it), LPAD2002 (readonly), LPAD2003 (record), LPAD2012 (public constructor) and LPAD2019
+///     (sealed), with their fixes. Every fixed project is compiled with the generator.
+/// </summary>
 public class DeclarationAnalyzerTests
 {
     [Test]
@@ -59,6 +62,7 @@ public class DeclarationAnalyzerTests
             public readonly partial record struct UserName;
             """
         );
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Make the domain primitive partial") ).Should().BeEmpty();
     }
 
     [Test]
@@ -77,6 +81,7 @@ public class DeclarationAnalyzerTests
 
         await Diagnostics(result).Should().BeEquivalentTo(["LPAD2001: EmailAddress"], CollectionOrdering.Matching);
         await ( await Fixed<DeclarationCodeFix>(result, "Make the domain primitive partial") ).Should().Contain("public sealed partial record EmailAddress;");
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Make the domain primitive partial") ).Should().BeEmpty();
     }
 
     // The attribute is found by what it derives from, however it is written.
@@ -120,6 +125,7 @@ public class DeclarationAnalyzerTests
 
         await Diagnostics(result).Should().BeEquivalentTo(["LPAD2002: UserName"], CollectionOrdering.Matching);
         await ( await Fixed<DeclarationCodeFix>(result, "Make the domain primitive readonly") ).Should().Contain("public readonly partial record struct UserName;");
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Make the domain primitive readonly") ).Should().BeEmpty();
     }
 
     [Test]
@@ -139,6 +145,11 @@ public class DeclarationAnalyzerTests
         await Diagnostics(result).Should().BeEquivalentTo(["LPAD2001: UserName", "LPAD2002: UserName"], CollectionOrdering.Matching);
         await ( await Fixed<DeclarationCodeFix>(result, "Make the domain primitive readonly") ).Should().Contain("\nreadonly record struct UserName;");
         await ( await Fixed<DeclarationCodeFix>(result, "Make the domain primitive partial") ).Should().Contain("\npartial record struct UserName;");
+        // Without partial, the generator doesn't complete the domain primitive; with it, it writes the readonly part.
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Make the domain primitive readonly") )
+           .Should()
+           .Contain("The generator did not complete the domain primitive 'Sample.UserName'.");
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Make the domain primitive partial") ).Should().BeEmpty();
     }
 
     // The generated part is always right, so it must not hide what the user's declaration lacks.
@@ -185,6 +196,7 @@ public class DeclarationAnalyzerTests
         await Diagnostics(result).Should().BeEquivalentTo(["LPAD2019: UserName"], CollectionOrdering.Matching);
         var fixedSource = await Fixed<DeclarationCodeFix>(result, "Make the domain primitive sealed");
         await fixedSource.Should().Contain("public sealed partial record UserName;");
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Make the domain primitive sealed") ).Should().BeEmpty();
     }
 
     [Test]
@@ -202,6 +214,7 @@ public class DeclarationAnalyzerTests
         );
 
         await ( await Fixed<DeclarationCodeFix>(result, "Make the domain primitive sealed") ).Should().Contain("public sealed partial record Code;");
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Make the domain primitive sealed") ).Should().BeEmpty();
     }
 
     [Test]
@@ -237,6 +250,7 @@ public class DeclarationAnalyzerTests
             }
             """
         );
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Convert to a readonly partial record struct") ).Should().BeEmpty();
     }
 
     [Test]
@@ -259,6 +273,8 @@ public class DeclarationAnalyzerTests
              .BeEquivalentTo(["Convert to a sealed partial record", "Convert to a readonly partial record struct"], CollectionOrdering.Any);
         await ( await Fixed<DeclarationCodeFix>(result, "Convert to a sealed partial record") ).Should().Contain("[StringPrimitive, NotEmpty]\nsealed partial record UserName { }");
         await ( await Fixed<DeclarationCodeFix>(result, "Convert to a readonly partial record struct") ).Should().Contain("[StringPrimitive, NotEmpty]\nreadonly partial record struct UserName { }");
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Convert to a sealed partial record") ).Should().BeEmpty();
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Convert to a readonly partial record struct") ).Should().BeEmpty();
     }
 
     [Test]
@@ -270,16 +286,85 @@ public class DeclarationAnalyzerTests
 
             namespace Sample;
 
-            [StringPrimitive, NotEmpty]
-            public sealed class UserName : System.IComparable<UserName>
+            public interface ILabelled
             {
-                public int CompareTo(UserName? other) => 0;
+                string Label { get; }
+            }
+
+            [StringPrimitive, NotEmpty]
+            public sealed class UserName : ILabelled
+            {
+                public string Label => "user";
             }
             """
         );
 
-        await ( await Fixed<DeclarationCodeFix>(result, "Convert to a sealed partial record") ).Should().Contain("public sealed partial record UserName : System.IComparable<UserName>");
-        await ( await Fixed<DeclarationCodeFix>(result, "Convert to a readonly partial record struct") ).Should().Contain("public readonly partial record struct UserName : System.IComparable<UserName>");
+        await ( await Fixed<DeclarationCodeFix>(result, "Convert to a sealed partial record") ).Should().Contain("public sealed partial record UserName : ILabelled");
+        await ( await Fixed<DeclarationCodeFix>(result, "Convert to a readonly partial record struct") ).Should().Contain("public readonly partial record struct UserName : ILabelled");
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Convert to a sealed partial record") ).Should().BeEmpty();
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Convert to a readonly partial record struct") ).Should().BeEmpty();
+    }
+
+    // A type declared in several files is one type: converting one declaration would leave the others a class (CS0261).
+    [Test]
+    public async Task Should_Convert_Every_Declaration_Of_A_Type_Declared_In_Several_Files()
+    {
+        var result = await Fix<DeclarationAnalyzer, DeclarationCodeFix>(
+            """
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [StringPrimitive, NotEmpty]
+            public partial class UserName;
+            """,
+            builder => builder.AddSource(
+                "UserName.Label.cs",
+                """
+                namespace Sample;
+
+                public partial class UserName
+                {
+                    public string Label => "user";
+                }
+                """
+            )
+        );
+
+        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2003: UserName"], CollectionOrdering.Matching);
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Convert to a sealed partial record") ).Should().BeEmpty();
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Convert to a readonly partial record struct") ).Should().BeEmpty();
+        await ( await Fixed<DeclarationCodeFix>(result, "Convert to a sealed partial record") ).Should().Contain("public sealed partial record UserName;");
+    }
+
+    // sealed on one declaration seals the type, but abstract on another one would contradict it.
+    [Test]
+    public async Task Should_Remove_Abstract_From_Every_Declaration_When_Sealing()
+    {
+        var result = await Fix<DeclarationAnalyzer, DeclarationCodeFix>(
+            """
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [StringPrimitive, NotEmpty]
+            public partial record UserName;
+            """,
+            builder => builder.AddSource(
+                "UserName.Label.cs",
+                """
+                namespace Sample;
+
+                public abstract partial record UserName
+                {
+                    public string Label => "user";
+                }
+                """
+            )
+        );
+
+        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2019: UserName"], CollectionOrdering.Matching);
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Make the domain primitive sealed") ).Should().BeEmpty();
     }
 
     [Test]
@@ -297,15 +382,123 @@ public class DeclarationAnalyzerTests
             [StringPrimitive, NotEmpty]
             public sealed partial record DisplayName;
 
-            [StringPrimitive, NotEmpty]
-            internal readonly partial record struct Nested
+            internal static partial class Container
             {
-                private Nested(string value) { }
+                public partial record Inner
+                {
+                    [StringPrimitive, NotEmpty]
+                    internal readonly partial record struct Nested
+                    {
+                        public int Length => 0;
+                    }
+                }
             }
             """
         );
 
         await Diagnostics(result).Should().BeEmpty();
+    }
+
+    // The generator writes the part of a nested domain primitive inside a partial declaration of each type that contains it (CS0260 otherwise).
+    [Test]
+    public async Task Should_Report_A_Type_That_Contains_A_Domain_Primitive_And_Is_Not_Partial()
+    {
+        var result = await Fix<DeclarationAnalyzer, DeclarationCodeFix>(
+            """
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            public static class Outer
+            {
+                public partial record Middle
+                {
+                    public sealed class Inner
+                    {
+                        [StringPrimitive, NotEmpty]
+                        public readonly partial record struct Code;
+
+                        [Email]
+                        public sealed partial record Address;
+                    }
+                }
+            }
+
+            public static class Unrelated
+            {
+                public sealed class Plain;
+            }
+            """
+        );
+
+        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2001: Outer", "LPAD2001: Inner"], CollectionOrdering.Matching);
+        await Messages(result, "LPAD2001")
+             .Should()
+             .BeEquivalentTo(
+                  [
+                      "'Outer' must be declared 'partial' so the generator can complete the domain primitive 'Code' it contains",
+                      "'Inner' must be declared 'partial' so the generator can complete the domain primitive 'Code' it contains",
+                  ],
+                  CollectionOrdering.Any
+              );
+        await FixTitles<DeclarationCodeFix>(result).Should().BeEquivalentTo(["Make the containing type partial"], CollectionOrdering.Matching);
+        var fixedSources = await FixedAll<DeclarationCodeFix>(result, "Make the containing type partial");
+        await fixedSources.Should().Contain(s => s.Contains("public static partial class Outer"));
+        await fixedSources.Should().Contain(s => s.Contains("public sealed partial class Inner"));
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Make the containing type partial") ).Should().BeEmpty();
+    }
+
+    // A domain primitive that contains another is reported once, for itself: its fix makes it partial, which completes both.
+    [Test]
+    public async Task Should_Report_A_Domain_Primitive_That_Contains_Another_Only_For_Itself()
+    {
+        var result = await Fix<DeclarationAnalyzer, DeclarationCodeFix>(
+            """
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [ValueObject]
+            public sealed record Address
+            {
+                public required City Town { get; init; }
+
+                [StringPrimitive, NotEmpty]
+                public readonly partial record struct City;
+            }
+
+            [ValueObject]
+            public sealed class Contact
+            {
+                public required Name FullName { get; init; }
+
+                [StringPrimitive, NotEmpty]
+                public readonly partial record struct Name;
+            }
+            """
+        );
+
+        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2001: Address", "LPAD2003: Contact"], CollectionOrdering.Matching);
+        await Messages(result, "LPAD2001").Should().BeEquivalentTo(["'Address' must be declared 'partial' so the generator can complete it"], CollectionOrdering.Matching);
+        await FixTitles<DeclarationCodeFix>(result).Should().NotContain("Make the containing type partial");
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Make the domain primitive partial", "Convert to a sealed partial record") ).Should().BeEmpty();
+    }
+
+    [Test]
+    public async Task Should_Report_The_Domain_Primitive_With_Its_Own_Message()
+    {
+        var result = await Analyze<DeclarationAnalyzer>(
+            """
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [StringPrimitive, NotEmpty]
+            public readonly record struct UserName;
+            """
+        );
+
+        await Messages(result, "LPAD2001").Should().BeEquivalentTo(["'UserName' must be declared 'partial' so the generator can complete it"], CollectionOrdering.Matching);
     }
 
     [Test]
@@ -382,6 +575,69 @@ public class DeclarationAnalyzerTests
         );
 
         await Diagnostics(result).Should().BeEquivalentTo(["LPAD2012: OrderId", "LPAD2012: EmailAddress"], CollectionOrdering.Matching);
+    }
+
+    [Test]
+    public async Task Should_Fix_A_Public_Constructor_By_Making_It_Private()
+    {
+        var result = await Fix<DeclarationAnalyzer, MakeConstructorPrivateCodeFix>(
+            """
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [Email]
+            public sealed partial record EmailAddress
+            {
+                /// <summary>A comment that stays.</summary>
+                public EmailAddress(int length) { }
+            }
+            """
+        );
+
+        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2012: EmailAddress"], CollectionOrdering.Matching);
+        await ( await Fixed<MakeConstructorPrivateCodeFix>(result, "Make the constructor private") )
+             .Should()
+             .Contain("    /// <summary>A comment that stays.</summary>\n    private EmailAddress(int length) { }");
+        await ( await ErrorsAfterFix<MakeConstructorPrivateCodeFix>(result, "Make the constructor private") ).Should().BeEmpty();
+    }
+
+    // The primary constructor of a positional record can't be made private; a constructor with the parameters of the generator's is a
+    // duplicate whatever its accessibility.
+    [Test]
+    public async Task Should_Not_Fix_A_Constructor_That_Cannot_Be_Made_Private()
+    {
+        var result = await Fix<DeclarationAnalyzer, MakeConstructorPrivateCodeFix>(
+            """
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [StringPrimitive, NotEmpty]
+            public readonly partial record struct UserName(string Value);
+
+            [StrongId<System.Guid>]
+            public readonly partial record struct OrderId
+            {
+                public OrderId(System.Guid value) { }
+            }
+            """,
+            builder => builder.AddSource(
+                "OrderId.g.cs",
+                """
+                // <auto-generated />
+                namespace Sample;
+
+                public readonly partial record struct OrderId
+                {
+                    private OrderId(System.Guid value) { }
+                }
+                """
+            )
+        );
+
+        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2012: UserName", "LPAD2012: OrderId"], CollectionOrdering.Matching);
+        await FixTitles<MakeConstructorPrivateCodeFix>(result).Should().BeEmpty();
     }
 
     [Test]

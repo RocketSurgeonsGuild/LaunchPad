@@ -327,14 +327,14 @@ public readonly partial record struct ShippedAt;
 
 ## Settings
 
-| MSBuild property                           | Default     | What it does                                                                                                                                          |
-| ------------------------------------------ | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `LaunchPadPrimitivesTrim`                  | `false`     | Trims every string domain primitive.                                                                                                                  |
-| `LaunchPadPrimitivesNotEmpty`              | `false`     | Rejects an empty or blank value for every string domain primitive.                                                                                    |
-| `LaunchPadPrimitivesMaxLength`             | `4096`      | The longest a string domain primitive may be when its rules set no length.                                                                            |
-| `LaunchPadPrimitivesExceptionType`         |             | The full name of the exception `Create` throws instead of `DomainPrimitiveValidationException`. It needs a public constructor that takes the message. |
-| `LaunchPadPrimitivesOpenApiRepresentation` | `Component` | `Component`: a schema named after the domain primitive. `Inline`: the value's schema in place.                                                        |
-| `LaunchPadPrimitivesGraphQLRepresentation` | `Value`     | `Value`: the scalar of the value (`ID` for a strong ID). `Named`: a scalar named after the domain primitive.                                          |
+| MSBuild property                           | Default     | What it does                                                                                                                                                                                                                   |
+| ------------------------------------------ | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `LaunchPadPrimitivesTrim`                  | `false`     | Trims every string domain primitive.                                                                                                                                                                                           |
+| `LaunchPadPrimitivesNotEmpty`              | `false`     | Rejects an empty or blank value for every string domain primitive.                                                                                                                                                             |
+| `LaunchPadPrimitivesMaxLength`             | `4096`      | The longest a string domain primitive may be when its rules set no length.                                                                                                                                                     |
+| `LaunchPadPrimitivesExceptionType`         |             | The full name of the exception `Create` throws instead of `DomainPrimitiveValidationException`, a nested type written `Outer.Inner`; not a generic type. It needs a constructor the project can access that takes the message. |
+| `LaunchPadPrimitivesOpenApiRepresentation` | `Component` | `Component`: a schema named after the domain primitive. `Inline`: the value's schema in place.                                                                                                                                 |
+| `LaunchPadPrimitivesGraphQLRepresentation` | `Value`     | `Value`: the scalar of the value (`ID` for a strong ID). `Named`: a scalar named after the domain primitive.                                                                                                                   |
 
 ```xml
 <PropertyGroup>
@@ -384,33 +384,33 @@ references OpenTelemetry the generator writes `AddLaunchPadPrimitivesInstrumenta
 
 ## Analyzers
 
-| ID       | Severity | Reports                                                                                                           |
-| -------- | -------- | ----------------------------------------------------------------------------------------------------------------- |
-| LPAD2001 | Error    | A domain primitive that isn't `partial` (code fix).                                                               |
-| LPAD2002 | Error    | A struct domain primitive that isn't `readonly` (code fix).                                                       |
-| LPAD2003 | Error    | A domain primitive that isn't a record (code fix).                                                                |
-| LPAD2004 | Error    | An invalid `[Regex]` pattern.                                                                                     |
-| LPAD2005 | Error    | Both `[LowerCase]` and `[UpperCase]`.                                                                             |
-| LPAD2006 | Error    | A minimum greater than the maximum.                                                                               |
-| LPAD2007 | Warning  | `default` or `new()` of a struct domain primitive, which bypasses its rules.                                      |
-| LPAD2008 | Error    | A value object property without `init`.                                                                           |
-| LPAD2009 | Warning  | A domain primitive without rules (code fix).                                                                      |
-| LPAD2010 | Warning  | A string compared with a domain primitive using `==` (code fix).                                                  |
-| LPAD2011 | Warning  | A domain primitive assigned to a `string` (code fix).                                                             |
-| LPAD2012 | Warning  | A public constructor, which bypasses the rules.                                                                   |
-| LPAD2013 | Info     | Two domain primitives with the same rules.                                                                        |
-| LPAD2014 | Info     | A domain primitive with more public members than recommended.                                                     |
-| LPAD2015 | Info     | A public member of a domain primitive without XML documentation (code fix).                                       |
-| LPAD2016 | Info     | A factory method not named `Create`, `TryCreate`, `Parse` or `TryParse` (code fix).                               |
-| LPAD2017 | Error    | A `LaunchPadPrimitivesExceptionType` that isn't an exception with a public constructor taking a message.          |
-| LPAD2018 | Warning  | A value object property that is a mutable collection or an array.                                                 |
-| LPAD2019 | Error    | `PastOnly` or `FutureOnly` on a `Duration`, `Period`, `Offset` or `AnnualDate`.                                   |
-| LPAD2020 | Error    | A class domain primitive that isn't `sealed` (code fix).                                                          |
-| LPAD2021 | Error    | `GuidVersion` on a strong ID that isn't of a `Guid`.                                                              |
-| LPAD2022 | Warning  | A NodaTime domain primitive in a project that doesn't reference `Rocket.Surgery.LaunchPad.NodaTime`.              |
-| LPAD2101 | Error    | A value type the primitive attribute doesn't support (a strong ID of a `double`, say).                            |
-| LPAD2102 | Error    | More than one primitive attribute on a type.                                                                      |
-| LPAD2103 | Error    | An invalid attribute argument, such as a `GuidVersion` other than 4 or 7, or a `Kind` the attribute doesn't take. |
+| ID       | Severity | Reports                                                                                                                                                                           |
+| -------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| LPAD2001 | Error    | A domain primitive that isn't `partial`, or a type that contains one and isn't `partial` (code fix).                                                                              |
+| LPAD2002 | Error    | A struct domain primitive that isn't `readonly` (code fix).                                                                                                                       |
+| LPAD2003 | Error    | A domain primitive that isn't a record (code fix).                                                                                                                                |
+| LPAD2004 | Error    | An invalid `[Regex]` pattern.                                                                                                                                                     |
+| LPAD2005 | Error    | Both `[LowerCase]` and `[UpperCase]` (code fix).                                                                                                                                  |
+| LPAD2006 | Error    | A minimum greater than the maximum: in the rules, in the bounds or defaults of the kind, or above `LaunchPadPrimitivesMaxLength`.                                                 |
+| LPAD2007 | Warning  | `default` or `new()` of a struct domain primitive, which bypasses its rules.                                                                                                      |
+| LPAD2008 | Error    | A value object property without `init` (code fix, unless the property is set after the value object is created).                                                                  |
+| LPAD2009 | Warning  | A domain primitive without rules (code fix for a string primitive).                                                                                                               |
+| LPAD2010 | Warning  | A string compared using `==` with a domain primitive whose value is a string (code fix).                                                                                          |
+| LPAD2011 | Warning  | A domain primitive whose value is a string assigned to a `string` (code fix).                                                                                                     |
+| LPAD2012 | Warning  | A public constructor, which bypasses the rules (code fix).                                                                                                                        |
+| LPAD2013 | Info     | Two domain primitives, other than strong IDs, with the same kind and rules.                                                                                                       |
+| LPAD2014 | Info     | A domain primitive with more public members than recommended.                                                                                                                     |
+| LPAD2015 | Info     | A public member of a domain primitive without XML documentation (code fix).                                                                                                       |
+| LPAD2016 | Info     | A factory method not named `Create`, `TryCreate`, `Parse` or `TryParse` (code fix).                                                                                               |
+| LPAD2017 | Error    | A `LaunchPadPrimitivesExceptionType` the project can't find, can't access or finds in two references, or that isn't an exception with an accessible constructor taking a message. |
+| LPAD2018 | Warning  | A value object property that is a mutable collection or an array.                                                                                                                 |
+| LPAD2019 | Error    | A class domain primitive that isn't `sealed` (code fix).                                                                                                                          |
+| LPAD2020 | Error    | `PastOnly` and `FutureOnly` together, or either one on a `Duration`, `Period`, `Offset` or `AnnualDate`.                                                                          |
+| LPAD2021 | Warning  | A NodaTime domain primitive in a project that doesn't reference `Rocket.Surgery.LaunchPad.NodaTime`.                                                                              |
+| LPAD2022 | Warning  | A rule that doesn't apply to the kind (a length on a number, any rule on a smart enum or a value object), or a `[PrimitiveRange]` of numbers on a date or of text on a number.    |
+| LPAD2101 | Error    | A value type the primitive attribute doesn't support (a strong ID of a `double`, say).                                                                                            |
+| LPAD2102 | Error    | More than one primitive attribute on a type.                                                                                                                                      |
+| LPAD2103 | Error    | An invalid attribute argument, such as a `GuidVersion` other than 4 or 7, or a `Kind` the attribute doesn't take.                                                                 |
 
 ## Credits
 
