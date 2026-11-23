@@ -31,13 +31,9 @@ internal static class PrimitiveEmitter
                 ValueObjectEmitter.Emit(writer, model);
                 break;
             case PrimitiveShape.String:
-                break;
             case PrimitiveShape.Numeric:
-                break;
             case PrimitiveShape.Date:
-                break;
             case PrimitiveShape.StrongId:
-                break;
             default:
                 SingleValueEmitter.Emit(writer, model);
                 break;

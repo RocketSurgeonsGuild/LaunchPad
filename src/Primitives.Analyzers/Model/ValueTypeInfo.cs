@@ -72,60 +72,29 @@ internal sealed record ValueTypeInfo(
     /// </summary>
     public bool IsOrdered => IsComparable || IsNodaTime && MetadataName is "OffsetDateTime" or "ZonedDateTime";
 
+    // A table, not a switch: the formatter would fill a switch over SpecialType with throwing arms (IDE0072).
+    private static readonly Dictionary<SpecialType, string> Keywords = new()
+    {
+        [SpecialType.System_String] = "string",
+        [SpecialType.System_Boolean] = "bool",
+        [SpecialType.System_Byte] = "byte",
+        [SpecialType.System_SByte] = "sbyte",
+        [SpecialType.System_Int16] = "short",
+        [SpecialType.System_UInt16] = "ushort",
+        [SpecialType.System_Int32] = "int",
+        [SpecialType.System_UInt32] = "uint",
+        [SpecialType.System_Int64] = "long",
+        [SpecialType.System_UInt64] = "ulong",
+        [SpecialType.System_Single] = "float",
+        [SpecialType.System_Double] = "double",
+        [SpecialType.System_Decimal] = "decimal",
+    };
+
     public static ValueTypeInfo From(ITypeSymbol type, Compilation compilation)
     {
+        _ = compilation;
         var category = Categorize(type);
-        var display = type.SpecialType switch
-        {
-            SpecialType.System_String => "string",
-            SpecialType.System_Boolean => "bool",
-            SpecialType.System_Byte => "byte",
-            SpecialType.System_SByte => "sbyte",
-            SpecialType.System_Int16 => "short",
-            SpecialType.System_UInt16 => "ushort",
-            SpecialType.System_Int32 => "int",
-            SpecialType.System_UInt32 => "uint",
-            SpecialType.System_Int64 => "long",
-            SpecialType.System_UInt64 => "ulong",
-            SpecialType.System_Single => "float",
-            SpecialType.System_Double => "double",
-            SpecialType.System_Decimal => "decimal",
-            SpecialType.None => throw new NotImplementedException(),
-            SpecialType.System_Object => throw new NotImplementedException(),
-            SpecialType.System_Enum => throw new NotImplementedException(),
-            SpecialType.System_MulticastDelegate => throw new NotImplementedException(),
-            SpecialType.System_Delegate => throw new NotImplementedException(),
-            SpecialType.System_ValueType => throw new NotImplementedException(),
-            SpecialType.System_Void => throw new NotImplementedException(),
-            SpecialType.System_Char => throw new NotImplementedException(),
-            SpecialType.System_IntPtr => throw new NotImplementedException(),
-            SpecialType.System_UIntPtr => throw new NotImplementedException(),
-            SpecialType.System_Array => throw new NotImplementedException(),
-            SpecialType.System_Collections_IEnumerable => throw new NotImplementedException(),
-            SpecialType.System_Collections_Generic_IEnumerable_T => throw new NotImplementedException(),
-            SpecialType.System_Collections_Generic_IList_T => throw new NotImplementedException(),
-            SpecialType.System_Collections_Generic_ICollection_T => throw new NotImplementedException(),
-            SpecialType.System_Collections_IEnumerator => throw new NotImplementedException(),
-            SpecialType.System_Collections_Generic_IEnumerator_T => throw new NotImplementedException(),
-            SpecialType.System_Collections_Generic_IReadOnlyList_T => throw new NotImplementedException(),
-            SpecialType.System_Collections_Generic_IReadOnlyCollection_T => throw new NotImplementedException(),
-            SpecialType.System_Nullable_T => throw new NotImplementedException(),
-            SpecialType.System_DateTime => throw new NotImplementedException(),
-            SpecialType.System_Runtime_CompilerServices_IsVolatile => throw new NotImplementedException(),
-            SpecialType.System_IDisposable => throw new NotImplementedException(),
-            SpecialType.System_TypedReference => throw new NotImplementedException(),
-            SpecialType.System_ArgIterator => throw new NotImplementedException(),
-            SpecialType.System_RuntimeArgumentHandle => throw new NotImplementedException(),
-            SpecialType.System_RuntimeFieldHandle => throw new NotImplementedException(),
-            SpecialType.System_RuntimeMethodHandle => throw new NotImplementedException(),
-            SpecialType.System_RuntimeTypeHandle => throw new NotImplementedException(),
-            SpecialType.System_IAsyncResult => throw new NotImplementedException(),
-            SpecialType.System_AsyncCallback => throw new NotImplementedException(),
-            SpecialType.System_Runtime_CompilerServices_RuntimeFeature => throw new NotImplementedException(),
-            SpecialType.System_Runtime_CompilerServices_PreserveBaseOverridesAttribute => throw new NotImplementedException(),
-            SpecialType.System_Runtime_CompilerServices_InlineArrayAttribute => throw new NotImplementedException(),
-            _ => type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-        };
+        var display = Keywords.TryGetValue(type.SpecialType, out var keyword) ? keyword : type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
         return new(
             display,
             type.MetadataName,
@@ -144,24 +113,30 @@ internal sealed record ValueTypeInfo(
     {
         if (type.SpecialType == SpecialType.System_String) return ValueCategory.String;
         if (type.SpecialType is >= SpecialType.System_SByte and <= SpecialType.System_Double) return ValueCategory.Number;
-        if (type.ContainingNamespace?.ToDisplayString() == "NodaTime") return ValueCategory.NodaTime;
-        return  type.ContainingNamespace?.ToDisplayString() != "System" 
-            ?  ValueCategory.Other 
-            :  type.MetadataName switch
-        {
-            "Guid" => ValueCategory.Guid,
-            "Half" or "Int128" or "UInt128" => ValueCategory.Number,
-            "DateOnly" or "TimeOnly" or "DateTimeOffset" => ValueCategory.Bcl,
-            _ => ValueCategory.Other,
-        };
+        return  type.ContainingNamespace?.ToDisplayString() == "NodaTime" 
+            ?  ValueCategory.NodaTime 
+            :  type.ContainingNamespace?.ToDisplayString() != "System"
+            ? ValueCategory.Other
+            : type.MetadataName switch
+            {
+                "Guid" => ValueCategory.Guid,
+                "Half" or "Int128" or "UInt128" => ValueCategory.Number,
+                "DateOnly" or "TimeOnly" or "DateTimeOffset" => ValueCategory.Bcl,
+                _ => ValueCategory.Other,
+            };
     }
 
+    // By name, not GetTypeByMetadataName: that lookup is ambiguous (and can throw) when a referenced assembly carries a copy of the
+    // interface, as polyfills do.
     private static bool Implements(ITypeSymbol type, Compilation compilation, string metadataName, bool generic)
     {
-        if (compilation.GetTypeByMetadataName(metadataName) is not { } target) return false;
+        var dot = metadataName.LastIndexOf('.');
+        var ns = metadataName[..dot];
+        var name = metadataName[( dot + 1 )..];
         foreach (var candidate in type.AllInterfaces)
         {
-            if (!SymbolEqualityComparer.Default.Equals(candidate.OriginalDefinition, target)) continue;
+            var definition = candidate.OriginalDefinition;
+            if (definition.MetadataName != name || definition.ContainingNamespace?.ToDisplayString() != ns) continue;
             if (!generic || candidate.TypeArguments.Length == 1 && SymbolEqualityComparer.Default.Equals(candidate.TypeArguments[0], type)) return true;
         }
 

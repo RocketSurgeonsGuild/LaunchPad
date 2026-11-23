@@ -545,9 +545,9 @@ internal static class PrimitiveReader
 
         var minExpression = stringMin is not null ? Parse(stringMin, value) : min is { } m ? Literal(m, value, true) : null;
         var maxExpression = stringMax is not null ? Parse(stringMax, value) : max is { } n ? Literal(n, value, false) : null;
-        return  minExpression is null && maxExpression is null 
-            ?   null  
-            :   new(
+        return minExpression is null && maxExpression is null
+            ? null
+            : new(
             minExpression,
             maxExpression,
             minExpression is null ? null : stringMin ?? min!.Value.ToString("R", CultureInfo.InvariantCulture),
@@ -561,8 +561,9 @@ internal static class PrimitiveReader
     private static string? Parse(string text, ValueTypeInfo value)
     {
         var literal = Literal(text);
-        if (value.NodaPattern is { } pattern) return $"{pattern}.Parse({literal}).Value";
-        return  value.IsParsable  ?  $"{value.Display}.Parse({literal}, global::System.Globalization.CultureInfo.InvariantCulture)"  :   null;
+        return  value.NodaPattern is { } pattern 
+            ?  $"{pattern}.Parse({literal}).Value" 
+            :  value.IsParsable ? $"{value.Display}.Parse({literal}, global::System.Globalization.CultureInfo.InvariantCulture)" : null;
     }
 
     /// <summary>
@@ -691,8 +692,8 @@ internal static class PrimitiveReader
             PrimitiveShape.Numeric => attribute.IsGenericType ? attribute.TypeArguments[0] : NumericKindValue(kind, compilation),
             PrimitiveShape.StrongId or PrimitiveShape.SmartEnum => attribute.TypeArguments[0],
             PrimitiveShape.Date => DateKindValue(Named(primitive, "Kind") is { Value: int k } ? k : 0, compilation),
-            PrimitiveShape.ValueObject => throw new NotImplementedException(),
-            null => throw new NotImplementedException(),
+            PrimitiveShape.ValueObject => null,
+            null => null,
             _ => null,
         };
     }
