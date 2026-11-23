@@ -181,6 +181,8 @@
         <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.21.0" />
         <PackageVersion Include="Alba" Version="9.0.0" />
         <PackageVersion Include="Bogus" Version="35.6.5" />
+        <PackageVersion Include="CsCheck" Version="5.0.1" />
+        <PackageVersion Include="Dapper" Version="2.1.89" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Testing.TUnit" Version="11.0.1" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Testing.SourceGenerators" Version="11.0.1" />
         <PackageVersion Include="TUnit" Version="1.87.12" />
