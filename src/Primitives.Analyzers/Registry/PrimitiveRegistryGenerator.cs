@@ -103,7 +103,7 @@ public sealed class PrimitiveRegistryGenerator : IIncrementalGenerator
 
             if (PrimitiveReader.PrimitiveValueOf(type, compilation) is not { } value) continue;
             var isStrongId = IsStrongId(type);
-            primitives.Add(new(name, ValueTypeInfo.From(value, compilation).Display, isStrongId && value.MetadataName == "Guid", isStrongId));
+            primitives.Add(new(name, ValueTypeInfo.From(value).Display, isStrongId && value.MetadataName == "Guid", isStrongId));
         }
 
         var dbContexts = new List<string>();

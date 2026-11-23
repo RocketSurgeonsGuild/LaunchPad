@@ -146,7 +146,7 @@ internal static class PrimitiveReader
             return (null, diagnostics.ToImmutable());
         }
 
-        var value = valueType is null ? null : ValueTypeInfo.From(valueType, compilation);
+        var value = valueType is null ? null : ValueTypeInfo.From(valueType);
         if (value is { Category: ValueCategory.Other } && shape is not PrimitiveShape.SmartEnum)
         {
             diagnostics.Add(DiagnosticInfo.Create("LPAD2101", location, type.Name, valueType!.ToDisplayString(), "the value must be a string, a number, a Guid, a date or time, or a NodaTime type"));
@@ -197,7 +197,7 @@ internal static class PrimitiveReader
         var range = shape is PrimitiveShape.Numeric or PrimitiveShape.Date or PrimitiveShape.StrongId && !value!.IsString
             ? ReadRange(kind, primitive, rules, kindError, value!)
             : kind == "Money"
-                ? ReadRange(kind, primitive, [], kindError, ValueTypeInfo.From(compilation.GetSpecialType(SpecialType.System_Decimal), compilation))
+                ? ReadRange(kind, primitive, [], kindError, ValueTypeInfo.From(compilation.GetSpecialType(SpecialType.System_Decimal)))
                 : null;
         var dates = shape == PrimitiveShape.Date ? ReadDateRules(kind, primitive, kindError) : null;
         var scale = kind == "Rating" ? Named(primitive, "Scale") is { Value: int s } ? s : 1 : (int?)null;
@@ -609,7 +609,7 @@ internal static class PrimitiveReader
                 name,
                 memberType.ToDisplayString(annotated),
                 ValueOf(memberType, compilation),
-                PrimitiveValueOf(memberType, compilation) is { } primitiveValue ? ValueTypeInfo.From(primitiveValue, compilation) : null,
+                PrimitiveValueOf(memberType, compilation) is { } primitiveValue ? ValueTypeInfo.From(primitiveValue) : null,
                 memberType.NullableAnnotation == NullableAnnotation.Annotated || isNullableValueType,
                 memberType.WithNullableAnnotation(NullableAnnotation.NotAnnotated).ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
                 underlying.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
@@ -651,7 +651,7 @@ internal static class PrimitiveReader
     private static ValueTypeInfo? ValueOf(ITypeSymbol type, Compilation compilation)
     {
         var underlying = type is INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Nullable_T } nullable ? nullable.TypeArguments[0] : type;
-        var info = ValueTypeInfo.From(underlying, compilation);
+        var info = ValueTypeInfo.From(underlying);
         return info.Category == ValueCategory.Other ? null : info;
     }
 

@@ -90,22 +90,21 @@ internal sealed record ValueTypeInfo(
         [SpecialType.System_Decimal] = "decimal",
     };
 
-    public static ValueTypeInfo From(ITypeSymbol type, Compilation compilation)
+    public static ValueTypeInfo From(ITypeSymbol type)
     {
-        _ = compilation;
         var category = Categorize(type);
         var display = Keywords.TryGetValue(type.SpecialType, out var keyword) ? keyword : type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
         return new(
             display,
             type.MetadataName,
             category,
-            Implements(type, compilation, "System.IComparable`1", true),
-            Implements(type, compilation, "System.IParsable`1", true),
-            Implements(type, compilation, "System.ISpanParsable`1", true),
-            Implements(type, compilation, "System.IUtf8SpanParsable`1", true),
-            Implements(type, compilation, "System.IFormattable", false),
-            Implements(type, compilation, "System.ISpanFormattable", false),
-            Implements(type, compilation, "System.IUtf8SpanFormattable", false)
+            Implements(type, "System.IComparable`1", true),
+            Implements(type, "System.IParsable`1", true),
+            Implements(type, "System.ISpanParsable`1", true),
+            Implements(type, "System.IUtf8SpanParsable`1", true),
+            Implements(type, "System.IFormattable", false),
+            Implements(type, "System.ISpanFormattable", false),
+            Implements(type, "System.IUtf8SpanFormattable", false)
         );
     }
 
@@ -124,7 +123,7 @@ internal sealed record ValueTypeInfo(
 
     // By name, not GetTypeByMetadataName: that lookup is ambiguous (and can throw) when a referenced assembly carries a copy of the
     // interface, as polyfills do.
-    private static bool Implements(ITypeSymbol type, Compilation compilation, string metadataName, bool generic)
+    private static bool Implements(ITypeSymbol type, string metadataName, bool generic)
     {
         var dot = metadataName.LastIndexOf('.');
         var ns = metadataName[..dot];
