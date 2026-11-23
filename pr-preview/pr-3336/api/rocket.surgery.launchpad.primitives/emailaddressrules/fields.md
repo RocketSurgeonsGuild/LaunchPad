@@ -14,7 +14,7 @@ The rules of an email address: an RFC 5322 `addr-spec` in the form RFC 5321 deli
 - Name: `MaxLength`
 - Modifiers: `static` `const`
 - Returns: `int`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.11f685f6c8c4739a5c9c37bdc0dec7baf7e3894e/src/Primitives/StrongTypes/EmailAddress.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.28f891b4cf6958b8ac5addf5a93485615fecf518/src/Primitives/StrongTypes/EmailAddress.cs)
 
 The longest email address RFC 5321 can deliver to.
 
@@ -29,7 +29,7 @@ public const static int MaxLength
 - Name: `MaxLocalPartLength`
 - Modifiers: `static` `const`
 - Returns: `int`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.11f685f6c8c4739a5c9c37bdc0dec7baf7e3894e/src/Primitives/StrongTypes/EmailAddress.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.28f891b4cf6958b8ac5addf5a93485615fecf518/src/Primitives/StrongTypes/EmailAddress.cs)
 
 The longest local part RFC 5321 allows.
 

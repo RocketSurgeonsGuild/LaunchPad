@@ -14,7 +14,7 @@ Lists a type of this assembly that crosses the wire as JSON, for the JSON contex
 - Name: `Type`
 - Modifiers: `get`
 - Returns: `Type`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.11f685f6c8c4739a5c9c37bdc0dec7baf7e3894e/src/Foundation/JsonContextTypeAttribute.cs#L24)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.28f891b4cf6958b8ac5addf5a93485615fecf518/src/Foundation/JsonContextTypeAttribute.cs#L24)
 
 The type.
 
@@ -29,7 +29,7 @@ public Type Type { get; }
 - Name: `TypeInfoPropertyName`
 - Modifiers: `nullable` `get; set`
 - Returns: `string?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.11f685f6c8c4739a5c9c37bdc0dec7baf7e3894e/src/Foundation/JsonContextTypeAttribute.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.28f891b4cf6958b8ac5addf5a93485615fecf518/src/Foundation/JsonContextTypeAttribute.cs)
 
 The name of the type's property on the generated context. The build picks a unique name from the type's name when it isn't set.
 

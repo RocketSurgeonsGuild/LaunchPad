@@ -14,7 +14,7 @@ The rules of an IP address in its canonical text form: IPv4 dotted decimal ( `19
 - Name: `Define`
 - Modifiers: `static`
 - Returns: `StrongTypeDefinition<string>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.11f685f6c8c4739a5c9c37bdc0dec7baf7e3894e/src/Primitives/StrongTypes/IpAddress.cs#L25-L27)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.28f891b4cf6958b8ac5addf5a93485615fecf518/src/Primitives/StrongTypes/IpAddress.cs#L25-L27)
 
 ```csharp
 public sealed class IpAddressRules

@@ -15,7 +15,7 @@ Shared base class for NodaTime string serializers
 - Name: `Parse(string)`
 - Modifiers: `override`
 - Returns: `TRuntime`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.11f685f6c8c4739a5c9c37bdc0dec7baf7e3894e/src/NodaTime.StrawberryShake/NodaTimeStringScalarSerializer.cs#L17)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.28f891b4cf6958b8ac5addf5a93485615fecf518/src/NodaTime.StrawberryShake/NodaTimeStringScalarSerializer.cs#L17)
 
 Parses the serialized value to the runtime representation.
 

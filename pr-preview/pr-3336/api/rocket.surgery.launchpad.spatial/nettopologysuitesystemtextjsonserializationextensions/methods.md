@@ -15,7 +15,7 @@ Extensions for NetTopologySuite
 - Name: `ConfigureGeoJsonForLaunchPad(JsonSerializerOptions, GeometryFactory?)`
 - Modifiers: `extension`
 - Returns: `JsonSerializerOptions`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.11f685f6c8c4739a5c9c37bdc0dec7baf7e3894e/src/Spatial/NetTopologySuiteSystemTextJsonSerializationExtensions.cs#L34-L43)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.28f891b4cf6958b8ac5addf5a93485615fecf518/src/Spatial/NetTopologySuiteSystemTextJsonSerializationExtensions.cs#L34-L43)
 
 Configure System.Text.Json with defaults for launchpad
 
@@ -44,7 +44,7 @@ public static class NetTopologySuiteSystemTextJsonSerializationExtensions
 - Name: `ConfigureWellKnownTextForLaunchPad(JsonSerializerOptions, GeometryFactory?)`
 - Modifiers: `extension`
 - Returns: `JsonSerializerOptions`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.11f685f6c8c4739a5c9c37bdc0dec7baf7e3894e/src/Spatial/NetTopologySuiteSystemTextJsonSerializationExtensions.cs#L54-L63)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.28f891b4cf6958b8ac5addf5a93485615fecf518/src/Spatial/NetTopologySuiteSystemTextJsonSerializationExtensions.cs#L54-L63)
 
 Configure System.Text.Json with defaults for launchpad
 

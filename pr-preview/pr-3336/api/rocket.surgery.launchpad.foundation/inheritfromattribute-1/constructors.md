@@ -12,7 +12,7 @@ Allows you copy the properties of the another class or interface, and include a 
 ## InheritFromAttribute
 
 - Name: `Constructor`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.11f685f6c8c4739a5c9c37bdc0dec7baf7e3894e/src/Foundation/InheritFromAttribute.cs#L17-L22)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.28f891b4cf6958b8ac5addf5a93485615fecf518/src/Foundation/InheritFromAttribute.cs#L17-L22)
 
 Create the inherit from attribute
 

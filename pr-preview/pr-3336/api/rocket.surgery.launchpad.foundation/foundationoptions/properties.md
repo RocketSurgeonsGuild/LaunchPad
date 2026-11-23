@@ -14,7 +14,7 @@ Common foundation options
 - Name: `RegisterValidationOptionsAsHealthChecks`
 - Modifiers: `nullable` `get; set`
 - Returns: `bool?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.11f685f6c8c4739a5c9c37bdc0dec7baf7e3894e/src/Foundation/FoundationOptions.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.28f891b4cf6958b8ac5addf5a93485615fecf518/src/Foundation/FoundationOptions.cs)
 
 Validation options are registered as health checks instead of throwing and stopping application startup
 
@@ -29,7 +29,7 @@ public bool? RegisterValidationOptionsAsHealthChecks { get; set; }
 - Name: `ValidatorLifetime`
 - Modifiers: `get; set`
 - Returns: `ServiceLifetime`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.11f685f6c8c4739a5c9c37bdc0dec7baf7e3894e/src/Foundation/FoundationOptions.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.28f891b4cf6958b8ac5addf5a93485615fecf518/src/Foundation/FoundationOptions.cs)
 
 The Validator lifetime
 

@@ -13,7 +13,7 @@ Registers MVC Core, the MVC API explorer and the application parts for every ass
 ## Register(IDovetailContext, IServiceCollection)
 
 - Name: `Register(IDovetailContext, IServiceCollection)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.11f685f6c8c4739a5c9c37bdc0dec7baf7e3894e/src/AspNetCore.Mvc/Joints/MvcJoint.cs#L39-L52)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.28f891b4cf6958b8ac5addf5a93485615fecf518/src/AspNetCore.Mvc/Joints/MvcJoint.cs#L39-L52)
 
 Registers the MVC services, and adds the application parts found through the Specular provider in the context.
 

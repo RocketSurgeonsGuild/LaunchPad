@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3336/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-pr.1284`
+- Version: `2.0.1-pr.1285`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.11f685f6c8c4739a5c9c37bdc0dec7baf7e3894e/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Latitude.g.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.28f891b4cf6958b8ac5addf5a93485615fecf518/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Latitude.g.cs)
 - Implements: `IStrongType<Latitude, double>`, `IComparable<Latitude>`, `IConvertible`, `IEquatable<Latitude>`, `IFormattable`, `IParsable<Latitude>`, `ISpanFormattable`, `ISpanParsable<Latitude>`, `IUtf8SpanFormattable`, `IUtf8SpanParsable<Latitude>`, `IComparisonOperators<Latitude, Latitude, bool>`, `IEqualityOperators<Latitude, Latitude, bool>`
 
 A latitude in decimal degrees, valid under [LatitudeRules](/LaunchPad/pr-preview/pr-3336/api/rocket.surgery.launchpad.primitives/latituderules.md).
