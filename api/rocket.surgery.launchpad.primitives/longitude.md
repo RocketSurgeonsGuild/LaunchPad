@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-beta.449`
+- Version: `2.0.1-beta.450`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.54628ef221bd1ad09c6ebc55da16ddcb5027f4c7/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Longitude.g.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.3640aa07ca8e6f10c5cf6a8d0dc8eb625c18c367/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Longitude.g.cs)
 - Implements: `IStrongType<Longitude, double>`, `IComparable<Longitude>`, `IConvertible`, `IEquatable<Longitude>`, `IFormattable`, `IParsable<Longitude>`, `ISpanFormattable`, `ISpanParsable<Longitude>`, `IUtf8SpanFormattable`, `IUtf8SpanParsable<Longitude>`, `IComparisonOperators<Longitude, Longitude, bool>`, `IEqualityOperators<Longitude, Longitude, bool>`
 
 A longitude in decimal degrees, valid under [LongitudeRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/longituderules.md).
