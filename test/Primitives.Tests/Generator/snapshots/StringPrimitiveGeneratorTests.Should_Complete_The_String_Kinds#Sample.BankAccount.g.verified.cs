@@ -59,7 +59,7 @@ namespace Sample
             public const string NullInput = "NULL_INPUT";
         }
 
-        private static readonly global::System.Text.RegularExpressions.Regex Pattern0 = new("^[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}$", global::System.Text.RegularExpressions.RegexOptions.CultureInvariant | global::System.Text.RegularExpressions.RegexOptions.Compiled, global::System.TimeSpan.FromMilliseconds(100));
+        private static readonly global::System.Text.RegularExpressions.Regex Pattern0 = new("^[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}$", global::System.Text.RegularExpressions.RegexOptions.CultureInvariant, global::System.TimeSpan.FromSeconds(1));
 
         private static global::System.Exception Fail(global::Rocket.Surgery.LaunchPad.Primitives.PrimitiveError error) =>
             new global::Rocket.Surgery.LaunchPad.Primitives.DomainPrimitiveValidationException(error);

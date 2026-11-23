@@ -218,16 +218,20 @@ internal static class SingleValueEmitter
     private static void Regexes(SourceWriter writer, PrimitiveModel model)
     {
         if (model.Strings is not { } strings) return;
-        const string options = "global::System.Text.RegularExpressions.RegexOptions.CultureInvariant | global::System.Text.RegularExpressions.RegexOptions.Compiled";
+        // Interpreted, not RegexOptions.Compiled: compiling a pattern is JIT work its first match pays inside the timeout, and native AOT
+        // interprets every pattern anyway. The values are short, so the interpreter takes microseconds. The timeout is wall-clock time,
+        // so it is a second rather than a few milliseconds: it bounds a runaway pattern without rejecting a valid value on a busy machine.
+        const string options = "global::System.Text.RegularExpressions.RegexOptions.CultureInvariant";
+        const string timeout = "global::System.TimeSpan.FromSeconds(1)";
         for (var i = 0; i < strings.Regexes.Length; i++)
         {
             writer.Line(
-                $"private static readonly global::System.Text.RegularExpressions.Regex Pattern{i} = new({Names.Literal(strings.Regexes[i].Pattern)}, {options}, global::System.TimeSpan.FromMilliseconds(100));"
+                $"private static readonly global::System.Text.RegularExpressions.Regex Pattern{i} = new({Names.Literal(strings.Regexes[i].Pattern)}, {options}, {timeout});"
             );
         }
 
         if (strings.NormalizeWhitespace)
-            writer.Line($"private static readonly global::System.Text.RegularExpressions.Regex WhiteSpace = new(@\"\\s+\", {options}, global::System.TimeSpan.FromMilliseconds(100));");
+            writer.Line($"private static readonly global::System.Text.RegularExpressions.Regex WhiteSpace = new(@\"\\s+\", {options}, {timeout});");
         if (strings.Regexes.Length > 0 || strings.NormalizeWhitespace) writer.Line();
     }
 

@@ -106,10 +106,10 @@ built-in normalizations and before any `[Normalize<T>]`, a string is normalized 
 `INVALID_UNICODE`. A string far longer than its maximum length is rejected before it is normalized, so a huge value costs nothing to
 reject.
 
-A pattern, of `[Regex]` or of a primitive kind, is compiled once into a static `Regex` with `RegexOptions.CultureInvariant |
-RegexOptions.Compiled` and a 100 ms timeout; a match that times out rejects the value. It isn't a `[GeneratedRegex]`: the regular
-expression generator is a source generator too, and one source generator doesn't see what another writes, so a `[GeneratedRegex]`
-partial method the Primitives generator wrote would never be implemented.
+A pattern, of `[Regex]` or of a primitive kind, is built once into a static `Regex` with `RegexOptions.CultureInvariant` and a one
+second timeout; a match that times out rejects the value. The pattern is interpreted, as native AOT interprets every pattern, rather than
+compiled. It isn't a `[GeneratedRegex]`: the regular expression generator is a source generator too, and one source generator doesn't
+see what another writes, so a `[GeneratedRegex]` partial method the Primitives generator wrote would never be implemented.
 
 Every check but `[CustomValidator<T>]` has `ErrorCode` and `ErrorMessage` too; a custom validator returns its own `PrimitiveError`. A
 normalizer and a custom validator are static, so nothing is allocated or resolved to run them:

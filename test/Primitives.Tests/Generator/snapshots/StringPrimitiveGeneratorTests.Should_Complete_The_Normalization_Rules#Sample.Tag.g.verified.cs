@@ -57,7 +57,7 @@ namespace Sample
             public const string Size = "SIZE";
         }
 
-        private static readonly global::System.Text.RegularExpressions.Regex WhiteSpace = new(@"\s+", global::System.Text.RegularExpressions.RegexOptions.CultureInvariant | global::System.Text.RegularExpressions.RegexOptions.Compiled, global::System.TimeSpan.FromMilliseconds(100));
+        private static readonly global::System.Text.RegularExpressions.Regex WhiteSpace = new(@"\s+", global::System.Text.RegularExpressions.RegexOptions.CultureInvariant, global::System.TimeSpan.FromSeconds(1));
 
         private static global::System.Exception Fail(global::Rocket.Surgery.LaunchPad.Primitives.PrimitiveError error) =>
             new global::Rocket.Surgery.LaunchPad.Primitives.DomainPrimitiveValidationException(error);
