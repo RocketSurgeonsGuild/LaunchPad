@@ -10,7 +10,7 @@ public readonly partial record struct Address
     public Country Country { get; init; }
     public int? Floor { get; init; }
 
-    static partial void Validate(ref Address value, ref PrimitiveError error)
+    static void Validate(ref Address value, ref PrimitiveError error)
     {
         if (string.IsNullOrWhiteSpace(value.Street)) error = new("INVARIANT", "Street cannot be empty.");
         else if (value.Floor < 0) error = new("FLOOR", "Floor cannot be negative.");
