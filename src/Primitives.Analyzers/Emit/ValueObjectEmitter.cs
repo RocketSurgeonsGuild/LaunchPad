@@ -34,9 +34,10 @@ internal static class ValueObjectEmitter
         writer.Line();
         writer.Line("/// <summary>The codes of the errors this value object reports.</summary>");
         writer.Open("public static class Errors");
+        writer.Line("/// <summary>The code <c>INVARIANT</c>.</summary>");
         writer.Line("public const string Invariant = \"INVARIANT\";");
-        if (model.Kind == "Money") writer.Line("public const string Currency = \"CURRENCY\";");
-        if (model.Range is not null || model.Kind is "DateRange" or "TimeRange") writer.Line("public const string Range = \"RANGE\";");
+        if (model.Kind == "Money") writer.Line("/// <summary>The code <c>CURRENCY</c>.</summary>").Line("public const string Currency = \"CURRENCY\";");
+        if (model.Range is not null || model.Kind is "DateRange" or "TimeRange") writer.Line("/// <summary>The code <c>RANGE</c>.</summary>").Line("public const string Range = \"RANGE\";");
         writer.Close();
         writer.Line();
         writer.Line("/// <summary>");
@@ -160,14 +161,16 @@ internal static class ValueObjectEmitter
                 writer.Line("    ? left.Currency");
                 writer.Line("    : throw new global::System.InvalidOperationException($\"Amounts in {left.Currency} and {right.Currency} can't be combined or compared.\");");
                 writer.Line();
-                writer.Line("// Every result is checked again by the rules.");
-                writer.Line($"public static {t} operator +({t} left, {t} right) => Create(left.Amount + right.Amount, SameCurrency(left, right));");
-                writer.Line($"public static {t} operator -({t} left, {t} right) => Create(left.Amount - right.Amount, SameCurrency(left, right));");
-                writer.Line($"public static {t} operator *({t} left, decimal right) => Create(left.Amount * right, left.Currency);");
-                writer.Line($"public static {t} operator /({t} left, decimal right) => Create(left.Amount / right, left.Currency);");
+                // Every result is checked again by the rules.
+                const string arithmetic = "/// <summary>Computes the amount and creates the result, which throws when the amounts are in different currencies or the rules reject it.</summary>";
+                const string comparison = "/// <summary>Compares the amounts, which throws when they are in different currencies.</summary>";
+                writer.Line(arithmetic).Line($"public static {t} operator +({t} left, {t} right) => Create(left.Amount + right.Amount, SameCurrency(left, right));");
+                writer.Line(arithmetic).Line($"public static {t} operator -({t} left, {t} right) => Create(left.Amount - right.Amount, SameCurrency(left, right));");
+                writer.Line(arithmetic).Line($"public static {t} operator *({t} left, decimal right) => Create(left.Amount * right, left.Currency);");
+                writer.Line(arithmetic).Line($"public static {t} operator /({t} left, decimal right) => Create(left.Amount / right, left.Currency);");
                 foreach (var op in new[] { "<", "<=", ">", ">=" })
                 {
-                    writer.Line($"public static bool operator {op}({t} left, {t} right) => SameCurrency(left, right) is not null && left.Amount {op} right.Amount;");
+                    writer.Line(comparison).Line($"public static bool operator {op}({t} left, {t} right) => SameCurrency(left, right) is not null && left.Amount {op} right.Amount;");
                 }
 
                 writer.Line();
@@ -214,9 +217,10 @@ internal static class ValueObjectEmitter
 
     private static string Read(MemberInfo member)
     {
-        return  member.PrimitiveValue is { } primitive 
-            ?  $"{member.Underlying}.Create({PrimitiveEmitter.ReadJson(primitive)})" 
-            :  member.Value is { } value
+        // A nested domain primitive that rejects the value fails the read like the value object's own rules do: with a JsonException.
+        return member.PrimitiveValue is { } primitive
+            ? $"{member.Underlying}.TryCreate({PrimitiveEmitter.ReadJson(primitive)}, out var {member.Name}Read, out var {member.Name}Error) ? {member.Name}Read : throw new {Names.Json}.JsonException($\"[{{{member.Name}Error.Code}}] {{{member.Name}Error.Message}}\")"
+            : member.Value is { } value
             ? PrimitiveEmitter.ReadJson(value)
             : $"{Names.Json}.JsonSerializer.Deserialize(ref reader, ({Names.JsonMetadata}.JsonTypeInfo<{member.TypeOf}>)options.GetTypeInfo(typeof({member.TypeOf})))!";
     }
@@ -224,9 +228,9 @@ internal static class ValueObjectEmitter
     private static string Write(MemberInfo member, string expression)
     {
         var value = member.IsNullableValueType ? expression + ".Value" : expression;
-        return  member.PrimitiveValue is { } primitive 
-            ?  PrimitiveEmitter.WriteJson(primitive, value + ".Value") 
-            :  member.Value is { } info
+        return member.PrimitiveValue is { } primitive
+            ? PrimitiveEmitter.WriteJson(primitive, value + ".Value")
+            : member.Value is { } info
             ? PrimitiveEmitter.WriteJson(info, value)
             : $"{Names.Json}.JsonSerializer.Serialize(writer, {expression}, ({Names.JsonMetadata}.JsonTypeInfo<{member.TypeOf}>)options.GetTypeInfo(typeof({member.TypeOf})));";
     }
@@ -237,6 +241,8 @@ internal static class ValueObjectEmitter
         var members = model.Members;
         writer.Line("// Written as an object of its values, named by the options' naming policy (camel case when there is none).");
         // Public, so the JSON context of an application (System.Text.Json's source generator) can create it from another assembly.
+        writer.Line("/// <summary>The System.Text.Json converter of the domain primitive.</summary>");
+        writer.Line("[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]");
         writer.Line($"public sealed class {t}JsonConverter : {Names.Json}.Serialization.JsonConverter<{t}>");
         writer.Open();
         writer.Line($"private static string Name({Names.Json}.JsonSerializerOptions options, string name, string camelCase) => options.PropertyNamingPolicy?.ConvertName(name) ?? camelCase;");
@@ -263,7 +269,9 @@ internal static class ValueObjectEmitter
             );
             writer.Line(
                 member.IsNullable
-                    ? $"    {member.Parameter} = reader.TokenType == {Names.Json}.JsonTokenType.Null ? default : {Read(member)};"
+                    // default of the member's own type: a bare default would take the type of the value read, so a null read for an int?
+                    // would be 0 and for a struct domain primitive its default value.
+                    ? $"    {member.Parameter} = reader.TokenType == {Names.Json}.JsonTokenType.Null ? default({member.Type}) : {Read(member)};"
                     : $"    {member.Parameter} = {Read(member)};"
             );
             first = false;

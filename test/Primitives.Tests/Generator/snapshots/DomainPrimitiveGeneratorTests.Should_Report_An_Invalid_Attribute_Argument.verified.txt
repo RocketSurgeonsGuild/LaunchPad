@@ -1,0 +1,128 @@
+﻿{
+  FinalDiagnostics: [
+    {
+      Id: LPAD2103,
+      Title: Invalid attribute argument,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (12,38)-(12,46),
+      MessageFormat: {0}: {1},
+      Message: LegacyId: GuidVersion applies only to a strong ID of a Guid,
+      Category: LaunchPad.Primitives
+    },
+    {
+      Id: LPAD2103,
+      Title: Invalid attribute argument,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (15,38)-(15,42),
+      MessageFormat: {0}: {1},
+      Message: Stay: [DateRange]'s Kind is DateOnly or LocalDate,
+      Category: LaunchPad.Primitives
+    },
+    {
+      Id: LPAD2103,
+      Title: Invalid attribute argument,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (20,42)-(20,48),
+      MessageFormat: {0}: {1},
+      Message: Amount: a [Money] can't be named Amount, the name of one of its values,
+      Category: LaunchPad.Primitives
+    },
+    {
+      Id: LPAD2103,
+      Title: Invalid attribute argument,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (26,33)-(26,39),
+      MessageFormat: {0}: {1},
+      Message: PageId: a domain primitive can't be nested in a generic type (Page),
+      Category: LaunchPad.Primitives
+    },
+    {
+      Id: LPAD2103,
+      Title: Invalid attribute argument,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (6,38)-(6,42),
+      MessageFormat: {0}: {1},
+      Message: Born: [BirthDate] is a date: its Kind is DateOnly or LocalDate,
+      Category: LaunchPad.Primitives
+    },
+    {
+      Id: LPAD2103,
+      Title: Invalid attribute argument,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (9,38)-(9,45),
+      MessageFormat: {0}: {1},
+      Message: OrderId: GuidVersion is 4 or 7, not 5,
+      Category: LaunchPad.Primitives
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Primitives.Analyzers.DomainPrimitiveGenerator: [
+      {
+        Id: LPAD2103,
+        Title: Invalid attribute argument,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input0.cs: (12,38)-(12,46),
+        MessageFormat: {0}: {1},
+        Message: LegacyId: GuidVersion applies only to a strong ID of a Guid,
+        Category: LaunchPad.Primitives
+      },
+      {
+        Id: LPAD2103,
+        Title: Invalid attribute argument,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input0.cs: (15,38)-(15,42),
+        MessageFormat: {0}: {1},
+        Message: Stay: [DateRange]'s Kind is DateOnly or LocalDate,
+        Category: LaunchPad.Primitives
+      },
+      {
+        Id: LPAD2103,
+        Title: Invalid attribute argument,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input0.cs: (20,42)-(20,48),
+        MessageFormat: {0}: {1},
+        Message: Amount: a [Money] can't be named Amount, the name of one of its values,
+        Category: LaunchPad.Primitives
+      },
+      {
+        Id: LPAD2103,
+        Title: Invalid attribute argument,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input0.cs: (26,33)-(26,39),
+        MessageFormat: {0}: {1},
+        Message: PageId: a domain primitive can't be nested in a generic type (Page),
+        Category: LaunchPad.Primitives
+      },
+      {
+        Id: LPAD2103,
+        Title: Invalid attribute argument,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input0.cs: (6,38)-(6,42),
+        MessageFormat: {0}: {1},
+        Message: Born: [BirthDate] is a date: its Kind is DateOnly or LocalDate,
+        Category: LaunchPad.Primitives
+      },
+      {
+        Id: LPAD2103,
+        Title: Invalid attribute argument,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input0.cs: (9,38)-(9,45),
+        MessageFormat: {0}: {1},
+        Message: OrderId: GuidVersion is 4 or 7, not 5,
+        Category: LaunchPad.Primitives
+      }
+    ]
+  }
+}

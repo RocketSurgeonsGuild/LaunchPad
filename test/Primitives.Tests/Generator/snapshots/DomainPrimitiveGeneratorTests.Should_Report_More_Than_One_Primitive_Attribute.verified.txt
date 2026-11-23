@@ -1,0 +1,28 @@
+﻿{
+  FinalDiagnostics: [
+    {
+      Id: LPAD2102,
+      Title: More than one primitive attribute,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (6,38)-(6,45),
+      MessageFormat: {0} has more than one primitive attribute ({1}); a domain primitive has exactly one kind,
+      Message: Contact has more than one primitive attribute (Email, Slug); a domain primitive has exactly one kind,
+      Category: LaunchPad.Primitives
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Primitives.Analyzers.DomainPrimitiveGenerator: [
+      {
+        Id: LPAD2102,
+        Title: More than one primitive attribute,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input0.cs: (6,38)-(6,45),
+        MessageFormat: {0} has more than one primitive attribute ({1}); a domain primitive has exactly one kind,
+        Message: Contact has more than one primitive attribute (Email, Slug); a domain primitive has exactly one kind,
+        Category: LaunchPad.Primitives
+      }
+    ]
+  }
+}

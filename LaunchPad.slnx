@@ -125,6 +125,7 @@
     <Project Path="test/Hosting.Tests/Hosting.Tests.csproj" />
     <Project Path="test/NodaTime.Graphql.Tests/NodaTime.Graphql.Tests.csproj" />
     <Project Path="test/NodaTime.Tests/NodaTime.Tests.csproj" />
+    <Project Path="test/Primitives.Behavior.Tests/Primitives.Behavior.Tests.csproj" />
     <Project Path="test/Primitives.Tests/Primitives.Tests.csproj" />
     <Project Path="test/EntityFramework.Tests/EntityFramework.Tests.csproj" />
     <Project Path="test/NodaTime.Serilog.Tests/NodaTime.Serilog.Tests.csproj" />

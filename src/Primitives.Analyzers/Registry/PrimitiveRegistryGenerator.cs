@@ -89,8 +89,10 @@ public sealed class PrimitiveRegistryGenerator : IIncrementalGenerator
         var valueObjects = new List<string>();
         foreach (var type in Types(compilation, Library, cancellationToken))
         {
-            // A record struct of a referenced assembly isn't a record to Roslyn (nothing in metadata marks it as one), so a struct is enough.
-            if (type is not { IsGenericType: false, IsFileLocal: false } || !type.IsRecord && type.TypeKind != TypeKind.Struct) continue;
+            // A type of this compilation is a domain primitive only when it is a record (the generator leaves anything else alone). A record
+            // struct of a referenced assembly isn't a record in metadata (only a record class has a <Clone>$ to tell), so there the interfaces decide.
+            if (type is not { IsGenericType: false, IsFileLocal: false, TypeKind: TypeKind.Class or TypeKind.Struct }) continue;
+            if (!type.IsRecord && SymbolEqualityComparer.Default.Equals(type.ContainingAssembly, compilation.Assembly)) continue;
             if (!compilation.IsSymbolAccessibleWithin(type, compilation.Assembly)) continue;
             var name = type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
             if (IsValueObject(type))
@@ -138,14 +140,11 @@ public sealed class PrimitiveRegistryGenerator : IIncrementalGenerator
 
     private static bool IsValueObject(INamedTypeSymbol type)
     {
-        return   type.AllInterfaces.Any(static z => z is { Name: "IValueObject", TypeArguments.Length: 1 } && z.ContainingNamespace?.ToDisplayString() == Library)  ||  type.GetAttributes().FirstOrDefault(static z => PrimitiveReader.IsPrimitiveAttribute(z.AttributeClass)) is { AttributeClass: { } attribute }
-            && PrimitiveReader.KindOf(attribute) is "ValueObject" or "Money" or "DateRange" or "TimeRange"  ;
+        return type.AllInterfaces.Any(static z => z is { Name: "IValueObject", TypeArguments.Length: 1 } && z.ContainingNamespace?.ToDisplayString() == Library) || type.GetAttributes().FirstOrDefault(static z => PrimitiveReader.IsPrimitiveAttribute(z.AttributeClass)) is { AttributeClass: { } attribute }
+            && PrimitiveReader.KindOf(attribute) is "ValueObject" or "Money" or "DateRange" or "TimeRange";
     }
 
-    private static bool IsStrongId(INamedTypeSymbol type)
-    {
-        return   type.AllInterfaces.Any(static z => z is { Name: "IStrongId", TypeArguments.Length: 2 } && z.ContainingNamespace?.ToDisplayString() == Library)  ||  type.GetAttributes().Any(static z => PrimitiveReader.IsPrimitiveAttribute(z.AttributeClass) && PrimitiveReader.KindOf(z.AttributeClass!) == "StrongId")  ;
-    }
+    private static bool IsStrongId(INamedTypeSymbol type) => type.AllInterfaces.Any(static z => z is { Name: "IStrongId", TypeArguments.Length: 2 } && z.ContainingNamespace?.ToDisplayString() == Library) || type.GetAttributes().Any(static z => PrimitiveReader.IsPrimitiveAttribute(z.AttributeClass) && PrimitiveReader.KindOf(z.AttributeClass!) == "StrongId");
 
     // The types of the compilation, and of every referenced assembly that references the library (by its assembly name).
     private static IEnumerable<INamedTypeSymbol> Types(Compilation compilation, string library, CancellationToken cancellationToken)
@@ -334,6 +333,9 @@ public sealed class PrimitiveRegistryGenerator : IIncrementalGenerator
         writer.Line("global::System.DateTime date when typeof(TValue) == typeof(global::System.DateOnly) => (TValue)(object)global::System.DateOnly.FromDateTime(date),");
         writer.Line("global::System.DateTime time when typeof(TValue) == typeof(global::System.TimeOnly) => (TValue)(object)global::System.TimeOnly.FromDateTime(time),");
         writer.Line("global::System.TimeSpan span when typeof(TValue) == typeof(global::System.TimeOnly) => (TValue)(object)global::System.TimeOnly.FromTimeSpan(span),");
+        // A provider that stores dates and times as text (SQLite) reads them back as strings.
+        writer.Line("string text when typeof(TValue) == typeof(global::System.DateOnly) => (TValue)(object)global::System.DateOnly.Parse(text, global::System.Globalization.CultureInfo.InvariantCulture),");
+        writer.Line("string text when typeof(TValue) == typeof(global::System.TimeOnly) => (TValue)(object)global::System.TimeOnly.Parse(text, global::System.Globalization.CultureInfo.InvariantCulture),");
         writer.Line("global::System.DateTime moment when typeof(TValue) == typeof(global::System.DateTimeOffset) => (TValue)(object)new global::System.DateTimeOffset(global::System.DateTime.SpecifyKind(moment, global::System.DateTimeKind.Utc)),");
         writer.Line("string text when typeof(TValue) == typeof(global::System.DateTimeOffset) => (TValue)(object)global::System.DateTimeOffset.Parse(text, global::System.Globalization.CultureInfo.InvariantCulture),");
         writer.Line("global::System.IConvertible convertible => (TValue)convertible.ToType(typeof(TValue), global::System.Globalization.CultureInfo.InvariantCulture),");

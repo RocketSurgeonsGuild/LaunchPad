@@ -57,6 +57,7 @@ internal static class SmartEnumEmitter
         writer.Line();
         writer.Line("/// <summary>The codes of the errors this smart enum reports.</summary>");
         writer.Open("public static class Errors");
+        writer.Line("/// <summary>The code <c>UNKNOWN_MEMBER</c>.</summary>");
         writer.Line("public const string UnknownMember = \"UNKNOWN_MEMBER\";");
         writer.Close();
         writer.Line();
@@ -260,6 +261,8 @@ internal static class SmartEnumEmitter
         var v = model.Value!;
         writer.Line("// A member is written as its name in camel case, and read by its name (in any case) or its value.");
         // Public, so the JSON context of an application (System.Text.Json's source generator) can create it from another assembly.
+        writer.Line("/// <summary>The System.Text.Json converter of the domain primitive.</summary>");
+        writer.Line("[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]");
         writer.Line($"public sealed class {t}JsonConverter : {Names.Json}.Serialization.JsonConverter<{t}>");
         writer.Open();
         writer.Line($"public override {t} Read(ref {Names.Json}.Utf8JsonReader reader, global::System.Type typeToConvert, {Names.Json}.JsonSerializerOptions options)");
