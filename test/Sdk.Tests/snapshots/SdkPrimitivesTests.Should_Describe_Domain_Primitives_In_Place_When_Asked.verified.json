@@ -15,18 +15,19 @@
         "in": "query",
         "required": true,
         "schema": {
-          "maxLength": 254,
-          "pattern": "^[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\\.)+[A-Za-z](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?$",
+          "maxLength": 320,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$",
           "type": "string",
           "format": "email"
         }
       },
       {
-        "name": "rating",
+        "name": "points",
         "in": "query",
         "schema": {
-          "maximum": 5,
-          "minimum": 1,
+          "maximum": 1000,
+          "minimum": 0,
           "pattern": "^-?(?:0|[1-9]\\d*)$",
           "type": [
             "integer",
@@ -36,7 +37,7 @@
         }
       }
     ],
-    "/customers/{id}/rating": [
+    "/customers/{id}/tier": [
       {
         "name": "id",
         "in": "path",
@@ -50,88 +51,30 @@
         "name": "country",
         "in": "query",
         "schema": {
-          "pattern": "^[A-Z]{2}$",
+          "maxLength": 2,
+          "minLength": 2,
           "type": "string"
         }
       }
     ]
   },
   "schemas": {
-    "Customer": {
+    "Address": {
       "required": [
-        "id",
-        "email",
-        "country",
-        "rating",
-        "balance"
+        "street",
+        "city"
       ],
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string",
-          "format": "uuid"
-        },
-        "email": {
-          "maxLength": 254,
-          "pattern": "^[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\\.)+[A-Za-z](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?$",
-          "type": "string",
-          "format": "email"
-        },
-        "country": {
-          "pattern": "^[A-Z]{2}$",
+        "street": {
           "type": "string"
         },
-        "rating": {
-          "maximum": 5,
-          "minimum": 1,
-          "pattern": "^-?(?:0|[1-9]\\d*)$",
-          "type": [
-            "integer",
-            "string"
-          ],
-          "format": "int32"
-        },
-        "balance": {
-          "$ref": "#/components/schemas/Money"
-        },
-        "membership": {
-          "oneOf": [
-            {
-              "type": "null"
-            },
-            {
-              "$ref": "#/components/schemas/DateRange"
-            }
-          ]
-        },
-        "handle": {
-          "maxLength": 100,
-          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-          "type": [
-            "null",
-            "string"
-          ]
+        "city": {
+          "type": "string"
         }
       }
     },
-    "DateRange": {
-      "required": [
-        "start",
-        "end"
-      ],
-      "type": "object",
-      "properties": {
-        "start": {
-          "type": "string",
-          "format": "date"
-        },
-        "end": {
-          "type": "string",
-          "format": "date"
-        }
-      }
-    },
-    "Money": {
+    "Balance": {
       "required": [
         "amount",
         "currency"
@@ -147,8 +90,94 @@
           "format": "double"
         },
         "currency": {
-          "pattern": "^[A-Z]{3}$",
           "type": "string"
+        }
+      }
+    },
+    "Customer": {
+      "required": [
+        "email",
+        "tier"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "email": {
+          "maxLength": 320,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$",
+          "type": "string",
+          "format": "email"
+        },
+        "country": {
+          "maxLength": 2,
+          "minLength": 2,
+          "type": "string"
+        },
+        "points": {
+          "maximum": 1000,
+          "minimum": 0,
+          "pattern": "^-?(?:0|[1-9]\\d*)$",
+          "type": [
+            "integer",
+            "string"
+          ],
+          "format": "int32"
+        },
+        "tier": {
+          "enum": [
+            "gold",
+            "standard"
+          ],
+          "type": "string"
+        },
+        "address": {
+          "$ref": "#/components/schemas/Address"
+        },
+        "balance": {
+          "$ref": "#/components/schemas/Balance"
+        },
+        "membership": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/components/schemas/Membership"
+            }
+          ]
+        },
+        "handle": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "type": [
+            "null",
+            "string"
+          ]
+        }
+      }
+    },
+    "Membership": {
+      "required": [
+        "start",
+        "end"
+      ],
+      "type": [
+        "null",
+        "object"
+      ],
+      "properties": {
+        "start": {
+          "type": "string",
+          "format": "date"
+        },
+        "end": {
+          "type": "string",
+          "format": "date"
         }
       }
     }

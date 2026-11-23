@@ -78,10 +78,11 @@ internal static class SingleValueEmitter
 
     private static ClockInfo? Clock(PrimitiveModel model)
     {
-        if (model.Dates is not { } dates || !( dates.PastOnly || dates.FutureOnly || dates.MaxAge is not null )) return null;
-        return  Now(model.Value!, "clock") is null 
+        return  model.Dates is not { } dates || !( dates.PastOnly || dates.FutureOnly || dates.MaxAge is not null ) 
             ?   null  
-            :   model.Value!.IsNodaTime
+            :   Now(model.Value!, "clock") is null
+            ? null
+            : model.Value!.IsNodaTime
             ? new("global::NodaTime.IClock", "clock", "global::NodaTime.SystemClock.Instance")
             : new("global::System.TimeProvider", "timeProvider", "global::System.TimeProvider.System");
     }
@@ -716,7 +717,7 @@ internal static class SingleValueEmitter
         else
         {
             writer.Line("var text = ToString(format.Length == 0 ? null : format.ToString(), provider);");
-            writer.Line("if (text.AsSpan().TryCopyTo(destination))");
+            writer.Line("if (global::System.MemoryExtensions.AsSpan(text).TryCopyTo(destination))");
             writer.Open();
             writer.Line("charsWritten = text.Length;");
             writer.Line("return true;");
@@ -891,7 +892,11 @@ internal static class SingleValueEmitter
     {
         var t = model.Name;
         var v = model.Value!;
-        writer.Line($"private sealed class {t}JsonConverter : {Names.Json}.Serialization.JsonConverter<{t}>");
+        // Public, so the JSON source generator of a project that serializes the domain primitive can create it (it reads the
+        // converter from the attribute and can only instantiate one it can see).
+        writer.Line("/// <summary>The JSON converter of the domain primitive, which the JsonConverter attribute names.</summary>");
+        writer.Line("[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]");
+        writer.Line($"public sealed class {t}JsonConverter : {Names.Json}.Serialization.JsonConverter<{t}>");
         writer.Open();
         writer.Line($"public override {t} Read(ref {Names.Json}.Utf8JsonReader reader, global::System.Type typeToConvert, {Names.Json}.JsonSerializerOptions options)");
         writer.Open();

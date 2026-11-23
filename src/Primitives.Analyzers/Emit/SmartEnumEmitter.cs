@@ -259,7 +259,11 @@ internal static class SmartEnumEmitter
         var t = model.Name;
         var v = model.Value!;
         writer.Line("// A member is written as its name in camel case, and read by its name (in any case) or its value.");
-        writer.Line($"private sealed class {t}JsonConverter : {Names.Json}.Serialization.JsonConverter<{t}>");
+        // Public, so the JSON source generator of a project that serializes the domain primitive can create it (it reads the
+        // converter from the attribute and can only instantiate one it can see).
+        writer.Line("/// <summary>The JSON converter of the domain primitive, which the JsonConverter attribute names.</summary>");
+        writer.Line("[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]");
+        writer.Line($"public sealed class {t}JsonConverter : {Names.Json}.Serialization.JsonConverter<{t}>");
         writer.Open();
         writer.Line($"public override {t} Read(ref {Names.Json}.Utf8JsonReader reader, global::System.Type typeToConvert, {Names.Json}.JsonSerializerOptions options)");
         writer.Open();

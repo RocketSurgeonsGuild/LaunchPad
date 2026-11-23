@@ -89,7 +89,10 @@ public sealed class PrimitiveRegistryGenerator : IIncrementalGenerator
         var valueObjects = new List<string>();
         foreach (var type in Types(compilation, Library, cancellationToken))
         {
-            if (type is not { IsGenericType: false, IsFileLocal: false, IsRecord: true }) continue;
+            // A record struct read from a referenced assembly isn't a record to Roslyn (metadata only marks a record class, by its clone
+            // method), so a struct of a reference is kept whatever IsRecord says, and found by the interfaces it implements.
+            if (type is not { IsGenericType: false, IsFileLocal: false }) continue;
+            if (!type.IsRecord && !( type.IsValueType && type.DeclaringSyntaxReferences.IsEmpty )) continue;
             if (!compilation.IsSymbolAccessibleWithin(type, compilation.Assembly)) continue;
             var name = type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
             if (IsValueObject(type))
@@ -137,17 +140,13 @@ public sealed class PrimitiveRegistryGenerator : IIncrementalGenerator
 
     private static bool IsValueObject(INamedTypeSymbol type)
     {
-        return  type.AllInterfaces.Any(static z => z is { Name: "IValueObject", TypeArguments.Length: 1 } && z.ContainingNamespace?.ToDisplayString() == Library) 
-            ?  true 
-            :  type.GetAttributes().FirstOrDefault(static z => PrimitiveReader.IsPrimitiveAttribute(z.AttributeClass)) is { AttributeClass: { } attribute }
-            && PrimitiveReader.KindOf(attribute) is "ValueObject" or "Money" or "DateRange" or "TimeRange";
+        return   type.AllInterfaces.Any(static z => z is { Name: "IValueObject", TypeArguments.Length: 1 } && z.ContainingNamespace?.ToDisplayString() == Library)  ||  type.GetAttributes().FirstOrDefault(static z => PrimitiveReader.IsPrimitiveAttribute(z.AttributeClass)) is { AttributeClass: { } attribute }
+            && PrimitiveReader.KindOf(attribute) is "ValueObject" or "Money" or "DateRange" or "TimeRange"  ;
     }
 
     private static bool IsStrongId(INamedTypeSymbol type)
     {
-        return  type.AllInterfaces.Any(static z => z is { Name: "IStrongId", TypeArguments.Length: 2 } && z.ContainingNamespace?.ToDisplayString() == Library) 
-            ?  true 
-            :  type.GetAttributes().Any(static z => PrimitiveReader.IsPrimitiveAttribute(z.AttributeClass) && PrimitiveReader.KindOf(z.AttributeClass!) == "StrongId");
+        return   type.AllInterfaces.Any(static z => z is { Name: "IStrongId", TypeArguments.Length: 2 } && z.ContainingNamespace?.ToDisplayString() == Library)  ||  type.GetAttributes().Any(static z => PrimitiveReader.IsPrimitiveAttribute(z.AttributeClass) && PrimitiveReader.KindOf(z.AttributeClass!) == "StrongId")  ;
     }
 
     // The types of the compilation, and of every referenced assembly that references the library (by its assembly name).

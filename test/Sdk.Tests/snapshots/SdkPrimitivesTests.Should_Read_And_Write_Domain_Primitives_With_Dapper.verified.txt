@@ -1,0 +1,5 @@
+﻿Stored: (6F9619FF-8B86-D011-B42D-00CF4FC964FF, ada@example.com, GB, 40, 2)
+Row: True ada@example.com GB 40 Gold (null)
+Value: Gold
+Ids: True
+Broken: DataException: [RANGE] LoyaltyPoints must be at most 1000. Got 5000.

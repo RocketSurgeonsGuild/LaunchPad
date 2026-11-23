@@ -18,14 +18,14 @@
         }
       },
       {
-        "name": "rating",
+        "name": "points",
         "in": "query",
         "schema": {
           "type": "string"
         }
       }
     ],
-    "/customers/{id}/rating": [
+    "/customers/{id}/tier": [
       {
         "name": "id",
         "in": "path",
@@ -44,15 +44,13 @@
     ]
   },
   "schemas": {
-    "CountryCode": {},
-    "CurrencyCode": {},
+    "Address": {},
+    "Balance": {},
+    "Country": {},
     "Customer": {
       "required": [
-        "id",
         "email",
-        "country",
-        "rating",
-        "balance"
+        "tier"
       ],
       "type": "object",
       "properties": {
@@ -63,13 +61,19 @@
           "$ref": "#/components/schemas/CustomerEmail"
         },
         "country": {
-          "$ref": "#/components/schemas/CountryCode"
+          "$ref": "#/components/schemas/Country"
         },
-        "rating": {
-          "$ref": "#/components/schemas/Rating"
+        "points": {
+          "$ref": "#/components/schemas/LoyaltyPoints"
+        },
+        "tier": {
+          "$ref": "#/components/schemas/CustomerTier"
+        },
+        "address": {
+          "$ref": "#/components/schemas/Address"
         },
         "balance": {
-          "$ref": "#/components/schemas/Money"
+          "$ref": "#/components/schemas/Balance"
         },
         "membership": {
           "oneOf": [
@@ -77,7 +81,7 @@
               "type": "null"
             },
             {
-              "$ref": "#/components/schemas/DateRange"
+              "$ref": "#/components/schemas/Membership"
             }
           ]
         },
@@ -87,7 +91,7 @@
               "type": "null"
             },
             {
-              "$ref": "#/components/schemas/Slug"
+              "$ref": "#/components/schemas/Handle"
             }
           ]
         }
@@ -95,44 +99,9 @@
     },
     "CustomerEmail": {},
     "CustomerId": {},
-    "DateRange": {
-      "required": [
-        "start",
-        "end"
-      ],
-      "type": "object",
-      "properties": {
-        "start": {
-          "type": "string",
-          "format": "date"
-        },
-        "end": {
-          "type": "string",
-          "format": "date"
-        }
-      }
-    },
-    "Money": {
-      "required": [
-        "amount",
-        "currency"
-      ],
-      "type": "object",
-      "properties": {
-        "amount": {
-          "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-          "type": [
-            "number",
-            "string"
-          ],
-          "format": "double"
-        },
-        "currency": {
-          "$ref": "#/components/schemas/CurrencyCode"
-        }
-      }
-    },
-    "Rating": {},
-    "Slug": {}
+    "CustomerTier": {},
+    "Handle": {},
+    "LoyaltyPoints": {},
+    "Membership": {}
   }
 }
