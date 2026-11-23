@@ -62,19 +62,20 @@ configuration first and from the environment after.
 
 ## The Primitives templates
 
-| Joint                                     | Written when the project references   | Host models                                    |
-| ----------------------------------------- | ------------------------------------- | ---------------------------------------------- |
-| `LaunchPadPrimitives` (the registry)      | `Rocket.Surgery.LaunchPad.Primitives` | generic host, ASP.NET Core, Blazor WebAssembly |
-| `LaunchPadPrimitivesOpenApiJoint`         | `Microsoft.AspNetCore.OpenApi`        | ASP.NET Core                                   |
-| `LaunchPadPrimitivesHotChocolateJoint`    | `HotChocolate.Types`                  | generic host, ASP.NET Core                     |
-| `LaunchPadPrimitivesEntityFrameworkJoint` | `Microsoft.EntityFrameworkCore`       | generic host, ASP.NET Core                     |
-| `LaunchPadPrimitivesInstrumentationJoint` | `Joinery.Dovetail.OpenTelemetry`      | generic host, ASP.NET Core, Blazor WebAssembly |
+| Joint                                     | Written when the project references                                                         | Host models                                    |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| `LaunchPadPrimitives` (the registry)      | `Rocket.Surgery.LaunchPad.Primitives`                                                       | generic host, ASP.NET Core, Blazor WebAssembly |
+| `LaunchPadPrimitivesOpenApiJoint`         | `Rocket.Surgery.LaunchPad.Primitives` and `Microsoft.AspNetCore.OpenApi`                    | ASP.NET Core                                   |
+| `LaunchPadPrimitivesHotChocolateJoint`    | `Rocket.Surgery.LaunchPad.Primitives` and `HotChocolate.Types`                              | generic host, ASP.NET Core                     |
+| `LaunchPadPrimitivesEntityFrameworkJoint` | `Rocket.Surgery.LaunchPad.Primitives` and `Microsoft.EntityFrameworkCore`                   | generic host, ASP.NET Core                     |
+| `LaunchPadPrimitivesInstrumentationJoint` | `Rocket.Surgery.LaunchPad.Primitives`, `Joinery.Dovetail.OpenTelemetry` and `OpenTelemetry` | generic host, ASP.NET Core, Blazor WebAssembly |
 
-`LaunchPadPrimitives` is the registry the other Joints read, which Primitives' source generator fills in with every domain primitive
-the application declares or references, and its rules. The EF Core Joint applies the value converters the generator writes for each
-domain primitive to every `DbContext`, and the instrumentation Joint calls the `AddLaunchPadPrimitivesInstrumentation()` the generator
-writes when the application references OpenTelemetry. Dapper needs no Joint: the generator registers its type handlers in a module
-initializer.
+`LaunchPadPrimitives` is the registry the other Joints read, which Primitives' registry generator fills in with every domain primitive
+the application declares or references, and its rules. The EF Core Joint configures every `DbContext` with the value converters the
+registry generator writes for each domain primitive, maps value objects as complex properties and generates the keys that are strong IDs
+of a `Guid`; the instrumentation Joint calls the `AddLaunchPadPrimitivesInstrumentation()` the registry generator writes when the
+application references OpenTelemetry. Dapper needs no Joint: the registry generator registers its type handlers in a module initializer.
+See [domain primitives](../domain-primitives/#in-openapi-graphql-ef-core-and-dapper).
 
 ## Templates or packages
 

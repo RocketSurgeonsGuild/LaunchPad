@@ -14,4 +14,6 @@ The mediator-agnostic API generators ship as one package, `Rocket.Surgery.Launch
 
 ## Amendment (2026-11-10): Primitives ships its Joints as templates
 
+Since [ADR 0011](0011-primitives-is-a-port-of-dotnet-domain-primitives.md), Primitives is the domain primitives package: its templates describe domain primitives, to OpenTelemetry as well as to OpenAPI, HotChocolate and EF Core. The decision stands; the text below is kept as it was decided.
+
 `Rocket.Surgery.LaunchPad.Primitives`, the strong types package, ships the Joints that describe strong types to OpenAPI, HotChocolate and EF Core as templates, not as integration packages, so it depends on none of those libraries ([ADR 0008](0008-primitives-is-an-independent-strong-types-package.md)).
