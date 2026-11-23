@@ -111,11 +111,13 @@ internal sealed record ValueTypeInfo(
 
     private static ValueCategory Categorize(ITypeSymbol type)
     {
-        if (type.SpecialType == SpecialType.System_String) return ValueCategory.String;
-        if (type.SpecialType is >= SpecialType.System_SByte and <= SpecialType.System_Double) return ValueCategory.Number;
-        return  type.ContainingNamespace?.ToDisplayString() == "NodaTime" 
-            ?  ValueCategory.NodaTime 
-            :  type.ContainingNamespace?.ToDisplayString() != "System"
+        return  type.SpecialType == SpecialType.System_String 
+            ?  ValueCategory.String 
+            :  type.SpecialType is >= SpecialType.System_SByte and <= SpecialType.System_Double
+            ? ValueCategory.Number
+            : type.ContainingNamespace?.ToDisplayString() == "NodaTime"
+            ? ValueCategory.NodaTime
+            : type.ContainingNamespace?.ToDisplayString() != "System"
             ? ValueCategory.Other
             : type.MetadataName switch
             {
