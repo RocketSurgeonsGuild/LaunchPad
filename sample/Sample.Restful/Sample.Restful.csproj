@@ -12,7 +12,7 @@
         <ProjectReference Include="..\..\src\ZeroAlloc.AspNetCore\Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore.csproj" />
         <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
         <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
-        <!-- a direct reference, so the Primitives joints (the strong IDs in Entity Framework, GraphQL and OpenAPI) are written into the application -->
+        <!-- a direct reference, so the Primitives joints (the strong IDs in Entity Framework and OpenAPI, and the domain primitive metrics) are written into the application -->
         <ProjectReference Include="..\..\src\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />
         <!-- writes the OpenAPI document at build (OpenApiGenerateDocumentsOnBuild), which the sample tests generate their client from -->
         <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" PrivateAssets="all" />

@@ -14,8 +14,8 @@
         The strong IDs of Sample.Core are domain primitives, which an application stores through the Entity Framework joint of
         LaunchPad.Primitives. These tests bring their own database instead of the application's, and a test project is no host, so it gets
         none of the Primitives templates: it takes the registry and the Entity Framework joint itself, with the generator that fills the
-        registry in. The joint configures the database of the unit test host; DataGenerationJointTests, which runs the live host, calls
-        LaunchPadPrimitives.ConfigureDbContexts itself.
+        registry in. Dovetail exports a test project's own joints for the unit test host only, so the joint configures the database of the
+        unit test host; DataGenerationJointTests, which runs the live host, calls LaunchPadPrimitives.ConfigureDbContexts itself.
     -->
     <ItemGroup>
         <ProjectReference

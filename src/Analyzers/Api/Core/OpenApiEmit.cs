@@ -567,7 +567,7 @@ namespace __NAMESPACE__
 
     /// <summary>
     ///     States a ZeroAlloc.Validation rule in the schema of a request member: a property of the request body's schema, or a route, query or
-    ///     header parameter. A member the operation doesn't describe, or whose schema is a shared reference (a strong type), is left alone.
+    ///     header parameter. A member the operation doesn't describe, or whose schema is a shared reference (a domain primitive), is left alone.
     /// </summary>
     [global::Microsoft.CodeAnalysis.EmbeddedAttribute]
     internal readonly struct ApiSchemaRule

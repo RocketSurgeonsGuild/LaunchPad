@@ -17,7 +17,7 @@
         <ProjectReference Include="..\..\src\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
         <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
         <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
-        <!-- a direct reference, so the Primitives joints (the strong IDs in Entity Framework, GraphQL and OpenAPI) are written into the application -->
+        <!-- a direct reference, so the Primitives joints (the strong IDs in Entity Framework, and the domain primitive metrics) are written into the application -->
         <ProjectReference Include="..\..\src\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />
         <PackageReference Include="ConsoleAppFramework" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers" />
         <PackageReference Include="Joinery.Dovetail.DryIoc" />

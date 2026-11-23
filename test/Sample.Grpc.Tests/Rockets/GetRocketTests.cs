@@ -1,3 +1,5 @@
+using Grpc.Core;
+
 using Microsoft.Extensions.DependencyInjection;
 
 using Sample.Core.Domain;
@@ -37,5 +39,22 @@ public class GetRocketTests : WebAppFixtureTest
 
         await response.Type.Should().BeEqualTo(GrpcRocketType.Falcon9);
         await response.Sn.Should().BeEqualTo("12345678901234");
+    }
+
+    // A missing or malformed ID maps to the default ID, and the empty Guid is read like any other (RejectEmpty = false): the IsAssigned rule of
+    // the operation rejects both, before the handler looks the ID up.
+    [Test]
+    [Arguments("")]
+    [Arguments("not-a-guid")]
+    [Arguments("00000000-0000-0000-0000-000000000000")]
+    public async Task Should_Reject_An_Unassigned_Id(string id)
+    {
+        var client = new R.RocketsClient(AlbaHost.CreateGrpcChannel());
+
+        Func<Task> a = async () => await client.GetRocketsAsync(new GetRocketRequest { Id = id }, cancellationToken: TestContext.CancellationToken);
+
+        var e = await a.Should().Throw<RpcException>();
+        await e.Status.StatusCode.Should().BeEqualTo(StatusCode.InvalidArgument);
+        await e.Message.Should().Contain(nameof(GetRocketRequest.Id));
     }
 }
