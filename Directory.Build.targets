@@ -34,13 +34,14 @@
     -->
     <Import Project="$(MSBuildThisFileDirectory)src/AspNetCore/build/Rocket.Surgery.LaunchPad.AspNetCore.props" />
     <!--
-        The templates of LaunchPad.Primitives, for the same reason: written into a project with a direct reference to Primitives that meets the
-        template's other gates (src/Primitives/build/Rocket.Surgery.LaunchPad.Primitives.Templates.targets). Only the templates: the rest of
-        Primitives' targets is for the projects that reference the package.
+        The targets of LaunchPad.Primitives, for the same reason: the generator settings (CompilerVisibleProperty), the NodaTime members of
+        DatePrimitiveKind, and the templates, written into a project with a direct reference to Primitives that meets the template's other gates
+        (src/Primitives/build/Rocket.Surgery.LaunchPad.Primitives.Templates.targets). The settings are read only by the Primitives generator, so
+        they change nothing in a project that doesn't reference Primitives.
     -->
     <Import
-        Project="$(MSBuildThisFileDirectory)src/Primitives/build/Rocket.Surgery.LaunchPad.Primitives.Templates.targets"
-        Condition="'$(_LaunchPadPrimitivesTemplatesImported)' != 'true'"
+        Project="$(MSBuildThisFileDirectory)src/Primitives/build/Rocket.Surgery.LaunchPad.Primitives.targets"
+        Condition="'$(_LaunchPadPrimitivesTargetsImported)' != 'true'"
     />
     <!--
         The templates of LaunchPad.Foundation, for the same reason: written into a project that references Foundation and meets the template's
