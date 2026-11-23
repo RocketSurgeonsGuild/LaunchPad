@@ -23,7 +23,7 @@ public class UpdateLaunchRecordTests : GraphQlWebAppFixtureTest
             var clk = scope.ServiceProvider.GetRequiredService<IClock>();
             var rocket = new ReadyRocket
             {
-                Id = RocketId.New(),
+                Id = RocketId.Create(),
                 Type = CoreRocketType.Falcon9,
                 SerialNumber = "12345678901234"
             };
@@ -46,16 +46,16 @@ public class UpdateLaunchRecordTests : GraphQlWebAppFixtureTest
         await client.UpdateLaunchRecord.ExecuteAsync(
             new EditLaunchRecordRequest
             {
-                Id = record.Id.Value,
+                Id = record.Id.ToString(),
                 Partner = "partner",
                 Payload = "geo-fence-ftl",
-                RocketId = record.RocketId.Value,
+                RocketId = record.RocketId.ToString(),
                 ScheduledLaunchDate = OffsetDateTime.FromDateTimeOffset(launchDate),
                 PayloadWeightKg = 200,
             }, TestContext.CancellationToken
         );
 
-        var response = await client.GetLaunchRecord.ExecuteAsync(record.Id.Value, TestContext.CancellationToken);
+        var response = await client.GetLaunchRecord.ExecuteAsync(record.Id.ToString(), TestContext.CancellationToken);
         response.EnsureNoErrors();
 
         await response.Data!.LaunchRecords!.Nodes![0].ScheduledLaunchDate.ToDateTimeOffset().Should().BeEqualTo(launchDate);

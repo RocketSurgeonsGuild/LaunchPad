@@ -30,7 +30,7 @@ public class GetRocketTests : GraphQlWebAppFixtureTest
             rocket = seeded.Id;
         }
 
-        var response = await client.GetRocket.ExecuteAsync(rocket.Value, cancellationToken: TestContext.CancellationToken);
+        var response = await client.GetRocket.ExecuteAsync(rocket.ToString(), cancellationToken: TestContext.CancellationToken);
         response.EnsureNoErrors();
 
         await response.Data!.Rockets!.Nodes![0].Type.Should().BeEqualTo(GraphQlRocketType.Falcon9);

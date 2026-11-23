@@ -25,7 +25,7 @@ public static partial class GetRocket
     [Validate]
     public readonly record struct Request([property: JsonRequired, Must(nameof(Request.IsAssigned))] RocketId Id) : IRequest<Result>
     {
-        internal bool IsAssigned(RocketId id) => id != default;
+        internal bool IsAssigned(RocketId id) => !id.IsDefault && id.Value != Guid.Empty;
     }
 
     /// <summary>What the operation answers: the rocket, or not found.</summary>

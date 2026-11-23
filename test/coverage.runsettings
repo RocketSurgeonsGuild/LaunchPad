@@ -150,8 +150,6 @@
                 <ModulePath>.*[\\/]StrawberryShake\.Core\.dll</ModulePath>
                 <ModulePath>.*[\\/]StrawberryShake\.Server\.dll</ModulePath>
                 <ModulePath>.*[\\/]StrawberryShake\.Transport\.Http\.dll</ModulePath>
-                <ModulePath>.*[\\/]StronglyTypedId\.dll</ModulePath>
-                <ModulePath>.*[\\/]StronglyTypedId\.Templates\.dll</ModulePath>
                 <ModulePath>.*[\\/]Swashbuckle\.AspNetCore\.ReDoc\.dll</ModulePath>
                 <ModulePath>.*[\\/]Swashbuckle\.AspNetCore\.SwaggerUI\.dll</ModulePath>
                 <ModulePath>.*[\\/]System\.Net\.Http\.Json\.dll</ModulePath>

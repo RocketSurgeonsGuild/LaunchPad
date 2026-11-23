@@ -22,7 +22,7 @@ public class CreateRocketTests() : GraphQlWebAppFixtureTest(LogEventLevel.Inform
         );
 
         response.EnsureNoErrors();
-        await response.Data!.CreateRocket.Id.Should().NotBeEqualTo(Guid.Empty);
+        await Guid.Parse(response.Data!.CreateRocket.Id).Should().NotBeEqualTo(Guid.Empty);
     }
 
     [Test]

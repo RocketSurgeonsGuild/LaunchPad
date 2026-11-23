@@ -70,9 +70,9 @@ public static partial class EditLaunchRecord
         [Must(nameof(IsAssigned))]
         public RocketId RocketId { get; init; } // TODO: Make generator that can be used to create a writable view model
 
-        internal bool IsAssigned(LaunchRecordId id) => id != default;
+        internal bool IsAssigned(LaunchRecordId id) => !id.IsDefault && id.Value != Guid.Empty;
 
-        internal bool IsAssigned(RocketId id) => id != default;
+        internal bool IsAssigned(RocketId id) => !id.IsDefault && id.Value != Guid.Empty;
     }
 
     /// <summary>

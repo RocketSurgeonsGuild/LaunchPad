@@ -28,7 +28,7 @@ public class GetLaunchRecordTests : WebAppFixtureTest
             var clock = scope.ServiceProvider.GetRequiredService<IClock>();
             var rocket = new ReadyRocket
             {
-                Id = RocketId.New(),
+                Id = RocketId.Create(),
                 Type = CoreRocketType.Falcon9,
                 SerialNumber = "12345678901234",
             };

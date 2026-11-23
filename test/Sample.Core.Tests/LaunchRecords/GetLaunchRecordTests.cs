@@ -21,7 +21,7 @@ public class GetLaunchRecordTests() : HandleTestHostBase(LogEventLevel.Verbose)
             var clock = seedScope.ServiceProvider.GetRequiredService<IClock>();
             var rocket = new ReadyRocket
             {
-                Id = RocketId.New(),
+                Id = RocketId.Create(),
                 Type = RocketType.Falcon9,
                 SerialNumber = "12345678901234",
             };
@@ -58,7 +58,7 @@ public class GetLaunchRecordTests() : HandleTestHostBase(LogEventLevel.Verbose)
         await using var scope = ServiceProvider.CreateAsyncScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        var result = await mediator.Send(new GetLaunchRecord.Request(LaunchRecordId.New()), TestContext.CancellationToken);
+        var result = await mediator.Send(new GetLaunchRecord.Request(LaunchRecordId.Create()), TestContext.CancellationToken);
 
         await result.Value.Should().BeOfType(typeof(NotFound));
     }

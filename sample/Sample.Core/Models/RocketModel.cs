@@ -1,16 +1,16 @@
-﻿using Riok.Mapperly.Abstractions;
+using Riok.Mapperly.Abstractions;
+using Rocket.Surgery.LaunchPad.Primitives;
 using Sample.Core.Domain;
-using StronglyTypedIds;
 
 namespace Sample.Core.Models;
 
 /// <summary>
 ///     Unique Id of a rocket
 /// </summary>
-#pragma warning disable CA1036
-[StronglyTypedId(Template.Guid, "guid-efcore")]
-public partial struct RocketId { }
-#pragma warning restore CA1036
+// The empty ID is read like any other, as the samples' clients send it in the bodies whose ID the route gives: the operations' validators
+// reject it (IsAssigned).
+[StrongId<Guid>(RejectEmpty = false)]
+public readonly partial record struct RocketId;
 
 /// <summary>
 ///     The details of a given rocket

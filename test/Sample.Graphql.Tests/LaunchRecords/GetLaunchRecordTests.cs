@@ -24,7 +24,7 @@ public class GetLaunchRecordTests : GraphQlWebAppFixtureTest
             var clock = scope.ServiceProvider.GetRequiredService<IClock>();
             var rocket = new ReadyRocket
             {
-                Id = RocketId.New(),
+                Id = RocketId.Create(),
                 Type = CoreRocketType.Falcon9,
                 SerialNumber = "12345678901234"
             };
@@ -43,7 +43,7 @@ public class GetLaunchRecordTests : GraphQlWebAppFixtureTest
             await context.SaveChangesAsync(TestContext.CancellationToken);
         }
 
-        var response = await client.GetLaunchRecord.ExecuteAsync(record.Id.Value,
+        var response = await client.GetLaunchRecord.ExecuteAsync(record.Id.ToString(),
             cancellationToken: TestContext.CancellationToken);
         response.EnsureNoErrors();
 

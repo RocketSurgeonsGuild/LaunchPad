@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Rocket.Surgery.LaunchPad.EntityFramework;
 using Sample.Core.Models;
 
 namespace Sample.Core.Domain;
@@ -22,9 +21,6 @@ public class ReadyRocket // : IReadyRocket
         public void Configure(EntityTypeBuilder<ReadyRocket> builder)
         {
             builder.HasKey(x => x.Id);
-            builder.Property(z => z.Id)
-                   .ValueGeneratedOnAdd()
-                   .HasValueGenerator(StronglyTypedIdValueGenerator.Create(RocketId.New));
             builder.ToTable("Rockets");
         }
     }

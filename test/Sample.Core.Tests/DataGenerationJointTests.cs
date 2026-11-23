@@ -6,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+using Rocket.Surgery.LaunchPad.Primitives.Generated;
+
 using Sample.Core.Domain;
 
 namespace Sample.Core.Tests;
@@ -39,7 +41,11 @@ public class DataGenerationJointTests() : LoggerTest<TestRecord>(TestRecord.Crea
     private async Task<ServiceProvider> CreateLiveProvider()
     {
         var context = await DovetailContext.FromAsync(Imports.Joints().Set(DovetailHostType.Live), TestContext.CancellationToken);
-        return ( await ApplyServicesAsync(context) ).BuildServiceProvider();
+        var services = await ApplyServicesAsync(context);
+        // An application stores the strong IDs through the Entity Framework joint of LaunchPad.Primitives, which this test project gets for
+        // its unit test host only (Sample.Core.Tests.csproj): the live host here configures the database the same way.
+        LaunchPadPrimitives.ConfigureDbContexts(services);
+        return services.BuildServiceProvider();
     }
 
     private async Task<ServiceCollection> ApplyServicesAsync(IDovetailContext context)

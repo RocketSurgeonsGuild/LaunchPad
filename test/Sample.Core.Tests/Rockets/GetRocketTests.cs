@@ -43,7 +43,7 @@ public class GetRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
         await using var scope = ServiceProvider.CreateAsyncScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        var result = await mediator.Send(new GetRocket.Request(RocketId.New()), TestContext.CancellationToken);
+        var result = await mediator.Send(new GetRocket.Request(RocketId.Create()), TestContext.CancellationToken);
 
         await result.Value.Should().BeOfType(typeof(NotFound));
     }

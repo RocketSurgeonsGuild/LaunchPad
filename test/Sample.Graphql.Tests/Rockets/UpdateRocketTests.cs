@@ -20,7 +20,7 @@ public class UpdateRocketTests : GraphQlWebAppFixtureTest
         var u = await client.UpdateRocket.ExecuteAsync(
             new()
             {
-                Id = rocket.Id.Value,
+                Id = rocket.Id.ToString(),
                 Type = GraphQlRocketType.FalconHeavy,
                 SerialNumber = new string([.. rocket.SerialNumber.Reverse()]),
             },
@@ -39,7 +39,7 @@ public class UpdateRocketTests : GraphQlWebAppFixtureTest
         var u = await client.PatchRocket.ExecuteAsync(
             new()
             {
-                Id = rocket.Id.Value,
+                Id = rocket.Id.ToString(),
                 SerialNumber = "123456789012345",
             },
             cancellationToken: TestContext.CancellationToken
@@ -59,7 +59,7 @@ public class UpdateRocketTests : GraphQlWebAppFixtureTest
         var u = await client.PatchRocket.ExecuteAsync(
             new()
             {
-                Id = rocket.Id.Value,
+                Id = rocket.Id.ToString(),
                 SerialNumber = null,
             },
             cancellationToken: TestContext.CancellationToken
@@ -77,7 +77,7 @@ public class UpdateRocketTests : GraphQlWebAppFixtureTest
         var u = await client.PatchRocket.ExecuteAsync(
             new()
             {
-                Id = rocket.Id.Value,
+                Id = rocket.Id.ToString(),
                 Type = GraphQlRocketType.FalconHeavy,
             },
             TestContext.CancellationToken
@@ -109,7 +109,7 @@ public class UpdateRocketTests : GraphQlWebAppFixtureTest
             (
                 new()
                 {
-                    Id = faker.Random.Guid(),
+                    Id = faker.Random.Guid().ToString(),
                     Type = GraphQlRocketType.Falcon9,
                 },
                 nameof(EditRocketRequest.SerialNumber)
@@ -117,7 +117,7 @@ public class UpdateRocketTests : GraphQlWebAppFixtureTest
             (
                 new()
                 {
-                    Id = faker.Random.Guid(),
+                    Id = faker.Random.Guid().ToString(),
                     SerialNumber = faker.Random.String2(0, 9),
                     Type = GraphQlRocketType.FalconHeavy,
                 },
@@ -126,7 +126,7 @@ public class UpdateRocketTests : GraphQlWebAppFixtureTest
             (
                 new()
                 {
-                    Id = faker.Random.Guid(),
+                    Id = faker.Random.Guid().ToString(),
                     SerialNumber = faker.Random.String2(600, 800),
                     Type = GraphQlRocketType.AtlasV,
                 },
@@ -135,7 +135,7 @@ public class UpdateRocketTests : GraphQlWebAppFixtureTest
             (
                 new()
                 {
-                    Id = faker.Random.Guid(),
+                    Id = faker.Random.Guid().ToString(),
                     SerialNumber = faker.Random.String2(11),
                 },
                 nameof(EditRocketRequest.Type)
