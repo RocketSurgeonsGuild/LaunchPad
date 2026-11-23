@@ -211,6 +211,12 @@ internal static class PrimitiveReader
             return (null, diagnostics.ToImmutable());
         }
 
+        if (kind == "ValueObject" && members.Length == 0)
+        {
+            diagnostics.Add(DiagnosticInfo.Create("LPAD2103", location, type.Name, "a [ValueObject] holds at least one value: declare its values as init properties"));
+            return (null, diagnostics.ToImmutable());
+        }
+
         if (kind is "DateRange" or "TimeRange" && members.Length == 0)
         {
             diagnostics.Add(
