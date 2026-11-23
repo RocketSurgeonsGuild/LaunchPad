@@ -136,7 +136,7 @@ default) when neither its rules nor its kind set a maximum length.
 A primitive kind is an attribute in place of `[StringPrimitive]`, `[NumericPrimitive<T>]` or `[DatePrimitive]`: it chooses the type of
 the value and brings its rules. Its options are set per type.
 
-### Text
+### Text kinds
 
 | Kind             | Rules                                                                                                                                      | Options                            |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------- |
@@ -156,7 +156,7 @@ the value and brings its rules. Its options are set per type.
 | `[ISBN]`         | The shape of an ISBN-10 or ISBN-13, trimmed, with or without hyphens or spaces. The check digit isn't verified.                            |                                    |
 | `[VIN]`          | 17 letters and digits, without `I`, `O` and `Q`, trimmed and upper case. The check digit isn't verified.                                   |                                    |
 
-### Numbers
+### Number kinds
 
 | Kind            | Value     | Rules                                                          | Options                            |
 | --------------- | --------- | -------------------------------------------------------------- | ---------------------------------- |
@@ -182,7 +182,7 @@ the value and brings its rules. Its options are set per type.
 A domain primitive of a `float`, a `double` or a `Half`, of a numeric kind or of `[NumericPrimitive<T>]`, also rejects NaN and the
 infinities.
 
-### Dates
+### Date kinds
 
 | Kind               | Value                                 | Rules                                        | Options                 |
 | ------------------ | ------------------------------------- | -------------------------------------------- | ----------------------- |
@@ -192,7 +192,7 @@ infinities.
 
 A `Kind` other than `DateOnly` or `LocalDate` on one of these is LPAD2103.
 
-### Value objects
+### Value object kinds
 
 | Kind          | Members                                                  | Rules                                                                | Options                                                   |
 | ------------- | -------------------------------------------------------- | -------------------------------------------------------------------- | --------------------------------------------------------- |
