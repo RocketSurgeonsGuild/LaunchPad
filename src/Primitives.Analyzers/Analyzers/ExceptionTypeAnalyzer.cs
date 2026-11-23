@@ -4,10 +4,6 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Rocket.Surgery.LaunchPad.Primitives.Analyzers.Analyzers;
 
-// RS1038: the code fixes in this assembly need Workspaces, which the command-line compiler doesn't load; it creates only the analyzers,
-// which don't use it.
-#pragma warning disable RS1038
-
 /// <summary>
 ///     LPAD2017: the exception the project's <c>LaunchPadPrimitivesExceptionType</c> names, which the generated <c>Create</c> throws for a
 ///     rejected value, must exist, derive from <see cref="Exception" /> and have a constructor that takes the message. Checked once, when the

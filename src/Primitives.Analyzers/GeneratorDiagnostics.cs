@@ -8,7 +8,7 @@ namespace Rocket.Surgery.LaunchPad.Primitives.Analyzers;
 /// </summary>
 internal static class GeneratorDiagnostics
 {
-    public static DiagnosticDescriptor UnsupportedValueType { get; } = new(
+    public static readonly DiagnosticDescriptor UnsupportedValueType = new(
         "LPAD2101",
         "Unsupported value type",
         "{0} can't hold a {1}: {2}",
@@ -17,7 +17,7 @@ internal static class GeneratorDiagnostics
         true
     );
 
-    public static DiagnosticDescriptor MoreThanOnePrimitiveAttribute { get; } = new(
+    public static readonly DiagnosticDescriptor MoreThanOnePrimitiveAttribute = new(
         "LPAD2102",
         "More than one primitive attribute",
         "{0} has more than one primitive attribute ({1}); a domain primitive has exactly one kind",
@@ -26,7 +26,7 @@ internal static class GeneratorDiagnostics
         true
     );
 
-    public static DiagnosticDescriptor InvalidAttributeArgument { get; } = new(
+    public static readonly DiagnosticDescriptor InvalidAttributeArgument = new(
         "LPAD2103",
         "Invalid attribute argument",
         "{0}: {1}",

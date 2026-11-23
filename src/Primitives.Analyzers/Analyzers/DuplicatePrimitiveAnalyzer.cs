@@ -6,10 +6,6 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Rocket.Surgery.LaunchPad.Primitives.Analyzers.Analyzers;
 
-// RS1038: the code fixes in this assembly need Workspaces, which the command-line compiler doesn't load; it creates only the analyzers,
-// which don't use it.
-#pragma warning disable RS1038
-
 /// <summary>
 ///     LPAD2013: two domain primitives of the compilation with the same kind and the same rules, which may be one concept written twice. Smart
 ///     enums and value objects are left out: their members, not their attributes, say what they are.

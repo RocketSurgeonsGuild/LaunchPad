@@ -6,10 +6,6 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Rocket.Surgery.LaunchPad.Primitives.Analyzers.Analyzers;
 
-// RS1038: the code fixes in this assembly need Workspaces, which the command-line compiler doesn't load; it creates only the analyzers,
-// which don't use it.
-#pragma warning disable RS1038
-
 /// <summary>
 ///     Checks the attributes of a domain primitive: its rules and the arguments of its kind.
 ///     <list type="bullet">

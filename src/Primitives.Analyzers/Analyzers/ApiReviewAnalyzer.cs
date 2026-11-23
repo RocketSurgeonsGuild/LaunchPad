@@ -6,10 +6,6 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Rocket.Surgery.LaunchPad.Primitives.Analyzers.Analyzers;
 
-// RS1038: the code fixes in this assembly need Workspaces, which the command-line compiler doesn't load; it creates only the analyzers,
-// which don't use it.
-#pragma warning disable RS1038
-
 /// <summary>
 ///     Reviews the public members a user adds to a domain primitive (the generated ones don't count): how many there are (LPAD2014), that they
 ///     are documented (LPAD2015), and how a factory method is named (LPAD2016). All three are Info by default.

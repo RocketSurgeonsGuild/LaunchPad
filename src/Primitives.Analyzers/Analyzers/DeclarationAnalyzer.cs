@@ -5,10 +5,6 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Rocket.Surgery.LaunchPad.Primitives.Analyzers.Analyzers;
 
-// RS1038: the code fixes in this assembly need Workspaces, which the command-line compiler doesn't load; it creates only the analyzers,
-// which don't use it.
-#pragma warning disable RS1038
-
 /// <summary>
 ///     Checks how a domain primitive is declared: a record (LPAD2003), partial (LPAD2001), readonly when it is a struct (LPAD2002), sealed when it
 ///     is a class (LPAD2019), and without a public constructor that skips its rules (LPAD2012). Only the declarations the user wrote are read.
