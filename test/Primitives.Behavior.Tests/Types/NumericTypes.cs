@@ -1,3 +1,5 @@
+using Rocket.Surgery.LaunchPad.Primitives;
+
 namespace Primitives.Behavior.Tests;
 
 [NumericPrimitive<int>, PrimitiveRange(0, 100)]
