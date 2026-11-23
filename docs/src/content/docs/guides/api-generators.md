@@ -447,9 +447,9 @@ document is built.
 
     A rule with `When` or `Unless` holds only sometimes and is left out, as are rules a schema can't state (`[Must]`, `[ValidateWith]`, custom
     and async rules, `[PrecisionScale]`, `[Equal]`, `[NotEqual]`, `[Null]`, `[Empty]`). The rules constrain the request type's schema in the
-    components, so every operation that carries the type shows them. A member whose schema is a shared reference (a strong type) keeps it.
+    components, so every operation that carries the type shows them. A member whose schema is a shared reference (a domain primitive) keeps it.
 
-Strong types are described by the Primitives package's own transformer (see [strong types](../../concepts/strong-types/)). LaunchPad's
+Domain primitives are described by the Primitives package's own transformer (see [domain primitives](../../concepts/domain-primitives/)). LaunchPad's
 OpenAPI filters for hand-written endpoints (`OpenApiJoint`: operation ids, parameter names, the 201 header, the 401/403 header, media types)
 skip generated endpoints, which carry `GeneratedCodeAttribute` metadata with the tool `Rocket.Surgery.LaunchPad.Api`.
 
