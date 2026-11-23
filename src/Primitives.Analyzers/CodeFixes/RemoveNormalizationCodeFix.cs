@@ -42,9 +42,9 @@ public sealed class RemoveNormalizationCodeFix : CodeFixProvider
     {
         if (solution.GetDocument(location.SourceTree) is not { } document) return solution;
         var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-        return  root?.FindNode(location.SourceSpan).FirstAncestorOrSelf<AttributeSyntax>() is not { Parent: AttributeListSyntax list } attribute 
+        return root?.FindNode(location.SourceSpan).FirstAncestorOrSelf<AttributeSyntax>() is not { Parent: AttributeListSyntax list } attribute
             ? solution
-            :  solution.WithDocumentSyntaxRoot(document.Id, RemoveAttribute(root, list, attribute));
+            : solution.WithDocumentSyntaxRoot(document.Id, RemoveAttribute(root, list, attribute));
     }
 
     /// <summary>
