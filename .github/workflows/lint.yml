@@ -50,8 +50,12 @@ jobs:
             # dotnet format only loads analyzers that are already built. The generators are a project reference, so unbuilt
             # they emit nothing: the attributes and partial-method declarations they generate are missing, and IDE0005 and the
             # CS0759 fix then delete the `using Rocket.Surgery.LaunchPad.Api;` directives and `partial` hooks that need them.
+            # The same goes for the domain primitive generator: unbuilt, `[StrongId<Guid>]` and the other attributes it writes
+            # vanish, and the formatter deletes `using Rocket.Surgery.LaunchPad.Primitives;` and the `partial` of `Validate`.
             - name: 🔧 Build the generators
-              run: dotnet build src/Analyzers/Rocket.Surgery.LaunchPad.Analyzers.csproj
+              run: |
+                  dotnet build src/Analyzers/Rocket.Surgery.LaunchPad.Analyzers.csproj
+                  dotnet build src/Primitives.Analyzers/Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj
             # merge_group: hard gate only — no autofix in the merge queue.
             - name: 🧹 Lint (hk check) — merge_group
               if: github.event_name == 'merge_group'
