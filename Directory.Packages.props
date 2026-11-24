@@ -12,7 +12,7 @@
         <RsgSdk_MicrosoftCodeAnalysisAnalyzers_Version>5.12.0</RsgSdk_MicrosoftCodeAnalysisAnalyzers_Version>
     </PropertyGroup>
     <ItemGroup>
-        <GlobalPackageReference Include="Rocket.Surgery.AssemblyInfo" Version="2026.11.6" />
+        <GlobalPackageReference Include="Rocket.Surgery.AssemblyInfo" Version="2026.11.7" />
     </ItemGroup>
     <ItemGroup>
 
