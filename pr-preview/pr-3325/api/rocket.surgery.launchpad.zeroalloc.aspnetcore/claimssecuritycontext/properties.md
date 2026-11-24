@@ -14,7 +14,7 @@ A `Claims.ClaimsPrincipal` as a security context.
 - Name: `Claims`
 - Modifiers: `get`
 - Returns: `IReadOnlyDictionary<string, string>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.AspNetCore/Authorization/HttpSecurityContext.cs#L61)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.f437060a172d9ddbe85bd230d99084b8367a7c51/src/ZeroAlloc.AspNetCore/Authorization/HttpSecurityContext.cs#L61)
 
 ```csharp
 public IReadOnlyDictionary<string, string> Claims { get; }
@@ -27,7 +27,7 @@ public IReadOnlyDictionary<string, string> Claims { get; }
 - Name: `Id`
 - Modifiers: `get`
 - Returns: `string`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.AspNetCore/Authorization/HttpSecurityContext.cs#L55)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.f437060a172d9ddbe85bd230d99084b8367a7c51/src/ZeroAlloc.AspNetCore/Authorization/HttpSecurityContext.cs#L55)
 
 ```csharp
 public string Id { get; }
@@ -40,7 +40,7 @@ public string Id { get; }
 - Name: `Roles`
 - Modifiers: `get`
 - Returns: `IReadOnlySet<string>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.AspNetCore/Authorization/HttpSecurityContext.cs#L58)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.f437060a172d9ddbe85bd230d99084b8367a7c51/src/ZeroAlloc.AspNetCore/Authorization/HttpSecurityContext.cs#L58)
 
 ```csharp
 public IReadOnlySet<string> Roles { get; }

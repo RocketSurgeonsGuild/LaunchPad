@@ -14,7 +14,7 @@ One requirement of a request: a single policy (a `[RequirePolicy]`), or several 
 - Name: `Policies`
 - Modifiers: `get`
 - Returns: [IReadOnlyList<PolicyRequirement>](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/policyrequirement.md)
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.Authorization/RequestAuthorizationPlan.cs#L56)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.f437060a172d9ddbe85bd230d99084b8367a7c51/src/ZeroAlloc.Authorization/RequestAuthorizationPlan.cs#L56)
 
 The policies, any one of which is enough.
 
@@ -29,7 +29,7 @@ public IReadOnlyList<PolicyRequirement> Policies { get; }
 - Name: `ScopeAlternatives`
 - Modifiers: `get`
 - Returns: `IReadOnlyList<IReadOnlyList<string>>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.Authorization/RequestAuthorizationPlan.cs#L59)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.f437060a172d9ddbe85bd230d99084b8367a7c51/src/ZeroAlloc.Authorization/RequestAuthorizationPlan.cs#L59)
 
 The scopes that satisfy the group, as alternatives: those of each of its policies.
 

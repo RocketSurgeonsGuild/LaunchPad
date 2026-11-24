@@ -13,7 +13,7 @@ On a `[Policy]` class: scopes of which the policy requires the caller to have at
 ## RequireAnyScopeAttribute(string[])
 
 - Name: `Constructor(string[])`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.Authorization/ScopeAttributes.cs#L28-L31)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.f437060a172d9ddbe85bd230d99084b8367a7c51/src/ZeroAlloc.Authorization/ScopeAttributes.cs#L28-L31)
 
 On a `[Policy]` class: scopes of which the policy requires the caller to have at least one. See [RequireScopeAttribute](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/requirescopeattribute.md).
 

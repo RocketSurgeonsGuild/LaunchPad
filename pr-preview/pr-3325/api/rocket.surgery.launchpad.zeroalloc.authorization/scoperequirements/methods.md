@@ -15,7 +15,7 @@ Checks the scopes of a caller: what the `EvaluateAsync` LaunchPad writes for a p
 - Name: `Evaluate(ISecurityContext, ScopeRequirement[])`
 - Modifiers: `static`
 - Returns: `UnitResult<AuthorizationFailure>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.Authorization/ScopeRequirements.cs#L53-L60)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.f437060a172d9ddbe85bd230d99084b8367a7c51/src/ZeroAlloc.Authorization/ScopeRequirements.cs#L53-L60)
 
 Whether the caller satisfies every requirement; otherwise a failure with [ScopeRequirements.MissingScopeCode](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/scoperequirements/fields.md#missingscopecode) that names the scopes of the first requirement the caller doesn't satisfy.
 
@@ -46,7 +46,7 @@ public static class ScopeRequirements
 - Name: `Granted(ISecurityContext)`
 - Modifiers: `static`
 - Returns: `IReadOnlySet<string>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.Authorization/ScopeRequirements.cs#L39-L42)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.f437060a172d9ddbe85bd230d99084b8367a7c51/src/ZeroAlloc.Authorization/ScopeRequirements.cs#L39-L42)
 
 The scopes the caller has.
 

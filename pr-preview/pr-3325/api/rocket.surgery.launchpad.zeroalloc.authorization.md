@@ -1,9 +1,9 @@
 # Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization
 
 - Package: `Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization`
-- Version: `2.0.1-pr.1298`
+- Version: `2.0.1-pr.1304`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.Authorization)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3325-merge.Sha.f437060a172d9ddbe85bd230d99084b8367a7c51/src/ZeroAlloc.Authorization)
 - NuGet: [Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization)
 
 ## Namespaces

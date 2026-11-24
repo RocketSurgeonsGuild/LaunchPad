@@ -120,8 +120,9 @@ only in an application that uses them; `Rocket.Surgery.LaunchPad.AspNetCore` alo
 `HotChocolate.Data` (filtering, sorting, projections) and `GreenDonut` declare nothing, and a native AOT server fails at startup unless
 `HotChocolate.Types` is kept from trimming
 ([ChilliCream/graphql-platform#10566](https://github.com/ChilliCream/graphql-platform/issues/10566)). `Rocket.Surgery.LaunchPad.HotChocolate`
-uses `HotChocolate.Data` for its strongly typed id filters, so it doesn't claim `IsAotCompatible`. `ConfigureStronglyTypedId` itself uses no
-reflection.
+uses `HotChocolate.Data` to name nested filter and sort types, so it doesn't claim `IsAotCompatible`. Strong IDs need nothing from it:
+the [Primitives HotChocolate Joint](../../concepts/domain-primitives/#in-openapi-graphql-ef-core-and-dapper) makes each one an `ID`
+scalar (by default) from a registry written at build time.
 
 **GeoJSON features.** `Rocket.Surgery.LaunchPad.Spatial` adds NetTopologySuite.IO.GeoJSON4STJ's converters. Its geometry converters are AOT
 safe; its converters for `IFeature`, `FeatureCollection` and `IAttributesTable` serialize the id, the attributes and the geometry with

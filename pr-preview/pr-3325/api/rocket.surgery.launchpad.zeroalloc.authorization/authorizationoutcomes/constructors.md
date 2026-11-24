@@ -12,7 +12,7 @@ What each policy decided for the current call, by policy name and arguments. The
 ## AuthorizationOutcomes
 
 - Name: `Constructor`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.Authorization/AuthorizationOutcomes.cs#L12)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.f437060a172d9ddbe85bd230d99084b8367a7c51/src/ZeroAlloc.Authorization/AuthorizationOutcomes.cs#L12)
 
 ```csharp
 public sealed class AuthorizationOutcomes

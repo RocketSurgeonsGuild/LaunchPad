@@ -14,7 +14,7 @@ Decides a request's plan for the caller of a call, policy by policy, recording e
 - Name: `Caller`
 - Modifiers: `get`
 - Returns: `ISecurityContext`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.Authorization/RequestAuthorizer.cs#L38)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.f437060a172d9ddbe85bd230d99084b8367a7c51/src/ZeroAlloc.Authorization/RequestAuthorizer.cs#L38)
 
 The caller of this call; anonymous when the application registered no `Authorization.ISecurityContext`.
 

@@ -138,7 +138,8 @@ gRPC method and (camelCased) the GraphQL field, so it’s also the method name i
 <code dir="auto">[OperationHost(Group = "...")]</code> to choose another.</li>
 <li>The <strong>route</strong> is <code dir="auto">RoutePrefix / group / path</code>. The prefix defaults to <code dir="auto">api</code>. The path is REST style: the verb prefix and the group noun are
 dropped from the operation name, and <code dir="auto">{id}</code> comes first when the request has an <code dir="auto">Id</code>. Tokens get the constraint of their member’s
-type (<code dir="auto">{id:guid}</code> for a <code dir="auto">Guid</code>, or for a strongly typed id whose <code dir="auto">Value</code> is one); a <code dir="auto">Route</code> you write is used as written.</li>
+type (<code dir="auto">{id:guid}</code> for a <code dir="auto">Guid</code>, or for a <a href="../../concepts/domain-primitives/#strong-ids">strong ID</a> or any other type whose <code dir="auto">Value</code> is one); a
+<code dir="auto">Route</code> you write is used as written.</li>
 </ul>
 
 
@@ -337,7 +338,8 @@ route is LPAD1004.</li>
 <li>GET and DELETE take the other members from the query string; complex members there are LPAD1005. POST, PUT and PATCH take the whole
 request as the JSON body, and route values are applied on top (<code dir="auto">request with { Id = id }</code> for records).</li>
 <li>Route, query and header values must be parsable: primitives, enums, <code dir="auto">Guid</code>, date and time types, or anything with <code dir="auto">IParsable&#x3C;T></code> or a
-static <code dir="auto">TryParse</code> (LPAD1007). Strongly typed IDs work when they provide one.</li>
+static <code dir="auto">TryParse</code> (LPAD1007). <a href="../../concepts/domain-primitives/">Domain primitives</a> of one value, strong IDs among them, and smart
+enums implement <code dir="auto">IParsable&#x3C;T></code>, so they bind.</li>
 <li><code dir="auto">[ApiQuery]</code>, <code dir="auto">[ApiHeader]</code>, <code dir="auto">[ApiBody]</code>, <code dir="auto">[ApiService]</code> and <code dir="auto">[ApiIgnore]</code> on a member override the defaults; ASP.NET Core’s <code dir="auto">[FromRoute]</code>
 and friends are honoured too.</li>
 </ul>
@@ -530,10 +532,10 @@ schema or the route, query and header parameters:</p>
 <table><thead><tr><th>Rule</th><th>Schema</th></tr></thead><tbody><tr><td><code dir="auto">[NotNull]</code></td><td>required</td></tr><tr><td><code dir="auto">[NotEmpty]</code></td><td>required, <code dir="auto">minLength: 1</code> (<code dir="auto">minItems: 1</code>)</td></tr><tr><td><code dir="auto">[MinLength]</code>, <code dir="auto">[MaxLength]</code>, <code dir="auto">[Length]</code></td><td><code dir="auto">minLength</code>/<code dir="auto">maxLength</code> (items for a list)</td></tr><tr><td><code dir="auto">[InclusiveBetween]</code>, <code dir="auto">[GreaterThanOrEqualTo]</code>, <code dir="auto">[LessThanOrEqualTo]</code></td><td><code dir="auto">minimum</code>/<code dir="auto">maximum</code></td></tr><tr><td><code dir="auto">[ExclusiveBetween]</code>, <code dir="auto">[GreaterThan]</code>, <code dir="auto">[LessThan]</code></td><td><code dir="auto">exclusiveMinimum</code>/<code dir="auto">exclusiveMaximum</code></td></tr><tr><td><code dir="auto">[Matches]</code></td><td><code dir="auto">pattern</code></td></tr><tr><td><code dir="auto">[EmailAddress]</code></td><td><code dir="auto">format: email</code></td></tr><tr><td><code dir="auto">[IsEnumName(typeof(E))]</code></td><td><code dir="auto">enum</code> of <code dir="auto">E</code>’s names</td></tr></tbody></table>
 <p>A rule with <code dir="auto">When</code> or <code dir="auto">Unless</code> holds only sometimes and is left out, as are rules a schema can’t state (<code dir="auto">[Must]</code>, <code dir="auto">[ValidateWith]</code>, custom
 and async rules, <code dir="auto">[PrecisionScale]</code>, <code dir="auto">[Equal]</code>, <code dir="auto">[NotEqual]</code>, <code dir="auto">[Null]</code>, <code dir="auto">[Empty]</code>). The rules constrain the request type’s schema in the
-components, so every operation that carries the type shows them. A member whose schema is a shared reference (a strong type) keeps it.</p>
+components, so every operation that carries the type shows them. A member whose schema is a shared reference (a domain primitive) keeps it.</p>
 </li>
 </ul>
-<p>Strong types are described by the Primitives package’s own transformer (see <a href="../../concepts/strong-types/">strong types</a>). LaunchPad’s
+<p>Domain primitives are described by the Primitives package’s own transformer (see <a href="../../concepts/domain-primitives/">domain primitives</a>). LaunchPad’s
 OpenAPI filters for hand-written endpoints (<code dir="auto">OpenApiJoint</code>: operation ids, parameter names, the 201 header, the 401/403 header, media types)
 skip generated endpoints, which carry <code dir="auto">GeneratedCodeAttribute</code> metadata with the tool <code dir="auto">Rocket.Surgery.LaunchPad.Api</code>.</p>
 <div class="sl-heading-wrapper level-h2"><h2 id="generating-clients">Generating clients</h2><a class="sl-anchor-link" href="#generating-clients"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Generating clients”</span></a></div>

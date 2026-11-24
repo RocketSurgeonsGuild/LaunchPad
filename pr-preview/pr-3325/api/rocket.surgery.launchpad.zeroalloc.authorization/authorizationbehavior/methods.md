@@ -15,7 +15,7 @@ The ZeroAlloc.Mediator pipeline behavior that checks a request's policies before
 - Name: `CheckStream(TRequest, IServiceProvider?, CancellationToken)`
 - Modifiers: `static`
 - Returns: `ValueTask`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.Authorization/AuthorizationBehavior.cs#L86-L89)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.f437060a172d9ddbe85bd230d99084b8367a7c51/src/ZeroAlloc.Authorization/AuthorizationBehavior.cs#L86-L89)
 
 Checks a stream request's policies before its handler runs; a denial throws [AuthorizationDeniedException](/LaunchPad/pr-preview/pr-3325/api/rocket.surgery.launchpad.zeroalloc.authorization/authorizationdeniedexception.md).
 
@@ -49,7 +49,7 @@ public sealed class AuthorizationBehavior
 - Name: `Handle(TRequest, CancellationToken, Func<TRequest, CancellationToken, ValueTask<TResponse>>)`
 - Modifiers: `static`
 - Returns: `ValueTask<TResponse>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.Authorization/AuthorizationBehavior.cs#L55-L57)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.f437060a172d9ddbe85bd230d99084b8367a7c51/src/ZeroAlloc.Authorization/AuthorizationBehavior.cs#L55-L57)
 
 What ZeroAlloc.Mediator's static `Mediator` class calls, which dispatches with no services: its generator writes the call for every behavior, so the overload has to be there. LaunchPad doesn't support that way of dispatching: a request with a policy is refused, and any other request passes on.
 
@@ -82,7 +82,7 @@ public sealed class AuthorizationBehavior
 - Name: `Handle(TRequest, IServiceProvider, CancellationToken, Func<TRequest, CancellationToken, ValueTask<TResponse>>)`
 - Modifiers: `static`
 - Returns: `ValueTask<TResponse>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.Authorization/AuthorizationBehavior.cs#L75-L76)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.f437060a172d9ddbe85bd230d99084b8367a7c51/src/ZeroAlloc.Authorization/AuthorizationBehavior.cs#L75-L76)
 
 Checks the request's policies with the services of the request being dispatched.
 

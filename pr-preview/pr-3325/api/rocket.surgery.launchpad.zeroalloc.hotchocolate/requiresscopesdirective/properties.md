@@ -14,7 +14,7 @@ The `@requiresScopes` directive of a field: the scopes a caller needs, as altern
 - Name: `Scopes`
 - Modifiers: `get`
 - Returns: `IReadOnlyList<IReadOnlyList<string>>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.HotChocolate/Authorization/ScopeDirectives.cs#L17)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.f437060a172d9ddbe85bd230d99084b8367a7c51/src/ZeroAlloc.HotChocolate/Authorization/ScopeDirectives.cs#L17)
 
 The alternatives: the outer list is OR, each inner list is AND.
 

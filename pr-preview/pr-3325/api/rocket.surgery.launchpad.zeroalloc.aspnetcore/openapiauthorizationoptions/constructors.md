@@ -12,7 +12,7 @@ How the scopes of an operation's policies are described in the OpenAPI document.
 ## OpenApiAuthorizationOptions
 
 - Name: `Constructor`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.1b696446ea1fb50dee983bcac42661335aad175b/src/ZeroAlloc.AspNetCore/Authorization/OpenApiAuthorization.cs#L19-L28)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3325-merge.Sha.f437060a172d9ddbe85bd230d99084b8367a7c51/src/ZeroAlloc.AspNetCore/Authorization/OpenApiAuthorization.cs#L19-L28)
 
 ```csharp
 public sealed class OpenApiAuthorizationOptions

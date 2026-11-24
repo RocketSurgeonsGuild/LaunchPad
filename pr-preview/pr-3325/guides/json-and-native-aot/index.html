@@ -211,8 +211,9 @@ only in an application that uses them; <code dir="auto">Rocket.Surgery.LaunchPad
 <code dir="auto">HotChocolate.Data</code> (filtering, sorting, projections) and <code dir="auto">GreenDonut</code> declare nothing, and a native AOT server fails at startup unless
 <code dir="auto">HotChocolate.Types</code> is kept from trimming
 (<a href="https://github.com/ChilliCream/graphql-platform/issues/10566">ChilliCream/graphql-platform#10566</a>). <code dir="auto">Rocket.Surgery.LaunchPad.HotChocolate</code>
-uses <code dir="auto">HotChocolate.Data</code> for its strongly typed id filters, so it doesn’t claim <code dir="auto">IsAotCompatible</code>. <code dir="auto">ConfigureStronglyTypedId</code> itself uses no
-reflection.</p>
+uses <code dir="auto">HotChocolate.Data</code> to name nested filter and sort types, so it doesn’t claim <code dir="auto">IsAotCompatible</code>. Strong IDs need nothing from it:
+the <a href="../../concepts/domain-primitives/#in-openapi-graphql-ef-core-and-dapper">Primitives HotChocolate Joint</a> makes each one an <code dir="auto">ID</code>
+scalar (by default) from a registry written at build time.</p>
 <p><strong>GeoJSON features.</strong> <code dir="auto">Rocket.Surgery.LaunchPad.Spatial</code> adds NetTopologySuite.IO.GeoJSON4STJ’s converters. Its geometry converters are AOT
 safe; its converters for <code dir="auto">IFeature</code>, <code dir="auto">FeatureCollection</code> and <code dir="auto">IAttributesTable</code> serialize the id, the attributes and the geometry with
 <code dir="auto">JsonSerializer</code> by their runtime type, so a native AOT publish warns (IL2104, IL3053 for <code dir="auto">NetTopologySuite.IO.GeoJSON4STJ</code>). Under native AOT
