@@ -15,7 +15,7 @@ Builds the `JsonSerializerOptions.TypeInfoResolverChain` of a `Json.JsonSerializ
 - Name: `AddTypeInfoResolvers(JsonSerializerOptions, IEnumerable<JsonTypeInfoResolverRegistration>)`
 - Modifiers: `extension`
 - Returns: `JsonSerializerOptions`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.d457558b817469f413055201c091b86e2edbfa9a/src/Foundation/LaunchPadJsonSerializerOptionsExtensions.cs#L25-L42)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.b3468f8f7f271d2dc63ee1d3333c2bcdd48e93a2/src/Foundation/LaunchPadJsonSerializerOptionsExtensions.cs#L25-L42)
 
 Puts the resolvers in front of the options' `JsonSerializerOptions.TypeInfoResolverChain`, ordered by [JsonTypeInfoResolverRegistration.Order](/LaunchPad/pr-preview/pr-3337/api/rocket.surgery.launchpad.foundation/jsontypeinforesolverregistration/properties.md#order).
 

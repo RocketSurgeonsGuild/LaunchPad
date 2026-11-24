@@ -14,7 +14,7 @@ Adds a type interceptor to be aware of nested types and ensure that they get nam
 
 - Name: `OnBeforeCompleteName(ITypeCompletionContext, TypeSystemConfiguration)`
 - Modifiers: `override`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.d457558b817469f413055201c091b86e2edbfa9a/src/HotChocolate/NestedTypeNameTypeInterceptor.cs#L16-L36)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.b3468f8f7f271d2dc63ee1d3333c2bcdd48e93a2/src/HotChocolate/NestedTypeNameTypeInterceptor.cs#L16-L36)
 
 This event is called before the type name is assigned.
 

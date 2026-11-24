@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.ZeroAlloc.HotChocolate](/LaunchPad/pr-preview/pr-3337/api/rocket.surgery.launchpad.zeroalloc.hotchocolate.md)
-- Version: `2.0.1-pr.1328`
+- Version: `2.0.1-pr.1329`
 - Namespace: `Rocket.Surgery.LaunchPad.HotChocolate.Joints`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.d457558b817469f413055201c091b86e2edbfa9a/src/ZeroAlloc.HotChocolate/Joints/ZeroAllocHotChocolateJoint.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.b3468f8f7f271d2dc63ee1d3333c2bcdd48e93a2/src/ZeroAlloc.HotChocolate/Joints/ZeroAllocHotChocolateJoint.cs)
 - Implements: `IDovetailJoint`, `IServiceJoint`
 
 Reports each failure of a request the ZeroAlloc mediator rejected as a GraphQL `VALIDATION` error. Implements the `Joints.IServiceJoint`

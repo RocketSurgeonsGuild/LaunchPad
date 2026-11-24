@@ -14,7 +14,7 @@ What an integration needs to know about one value object: the type and the value
 - Name: `Members`
 - Modifiers: `get; init`
 - Returns: [IReadOnlyList<ValueObjectMemberDescription>](/LaunchPad/pr-preview/pr-3337/api/rocket.surgery.launchpad.primitives/valueobjectmemberdescription.md)
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.d457558b817469f413055201c091b86e2edbfa9a/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.b3468f8f7f271d2dc63ee1d3333c2bcdd48e93a2/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
 
 The values it holds, with their types, in declaration order: what an integration describes the value object with, as its own JSON converter writes it, so the serializer's metadata says nothing of its values.
 
@@ -29,7 +29,7 @@ public IReadOnlyList<ValueObjectMemberDescription> Members { get; init; }
 - Name: `Properties`
 - Modifiers: `get; init`
 - Returns: `IReadOnlyList<string>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.d457558b817469f413055201c091b86e2edbfa9a/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.b3468f8f7f271d2dc63ee1d3333c2bcdd48e93a2/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
 
 The names of the values it holds.
 
@@ -44,7 +44,7 @@ public IReadOnlyList<string> Properties { get; init; }
 - Name: `Type`
 - Modifiers: `get; init`
 - Returns: `Type`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.d457558b817469f413055201c091b86e2edbfa9a/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.b3468f8f7f271d2dc63ee1d3333c2bcdd48e93a2/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
 
 The value object.
 

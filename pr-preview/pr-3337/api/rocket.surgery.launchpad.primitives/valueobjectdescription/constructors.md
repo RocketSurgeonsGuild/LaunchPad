@@ -13,7 +13,7 @@ What an integration needs to know about one value object: the type and the value
 ## ValueObjectDescription(Type, IReadOnlyList<string>)
 
 - Name: `Constructor(Type, IReadOnlyList<string>)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.d457558b817469f413055201c091b86e2edbfa9a/src/Primitives/Descriptions/DomainPrimitiveDescription.cs#L151-L157)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.b3468f8f7f271d2dc63ee1d3333c2bcdd48e93a2/src/Primitives/Descriptions/DomainPrimitiveDescription.cs#L151-L157)
 
 What an integration needs to know about one value object: the type and the values it holds, in declaration order.
 
