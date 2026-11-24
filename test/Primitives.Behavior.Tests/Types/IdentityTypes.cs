@@ -40,16 +40,6 @@ public sealed partial record Role
 }
 
 [SmartEnum<int>]
-public sealed partial record Stage
-{
-    public static readonly Stage Draft = new(1);
-    public static readonly Stage Done = new(2);
-
-    // Matches a member while the type is initialized.
-    public static readonly IReadOnlyList<Stage> Terminal = [.. All.Where(static stage => stage is Cases.Done)];
-}
-
-[SmartEnum<int>]
 public sealed partial record Priority
 {
     public static readonly Priority Low = new(1);

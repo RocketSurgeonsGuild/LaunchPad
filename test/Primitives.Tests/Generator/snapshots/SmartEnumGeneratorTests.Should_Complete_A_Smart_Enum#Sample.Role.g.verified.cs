@@ -12,10 +12,8 @@ namespace Sample
     [global::System.Diagnostics.DebuggerDisplay("{ToString(),nq}")]
     [global::System.Text.Json.Serialization.JsonConverter(typeof(Role.RoleJsonConverter))]
     [global::System.ComponentModel.TypeConverter(typeof(Role.RoleTypeConverter))]
-    [global::System.Runtime.CompilerServices.Union]
     sealed partial record Role :
         global::Rocket.Surgery.LaunchPad.Primitives.IDomainPrimitive<Role, string>,
-        Role.IUnionMembers,
         global::System.IParsable<Role>,
         global::System.IFormattable
     {
@@ -109,49 +107,28 @@ namespace Sample
             return false;
         }
 
-        /// <summary>The case type of each member, for C# 15's patterns: <c>value switch { Role.Cases.Admin => … }</c> must handle every member.</summary>
-        #pragma warning disable CS8981
-        public static class Cases
+        /// <summary>The result of the function for this member.</summary>
+        public TResult Match<TResult>(global::System.Func<TResult> whenAdmin, global::System.Func<TResult> whenUser)
         {
-            /// <summary>The case of <see cref="Role.Admin" />.</summary>
-            public sealed class Admin
-            {
-                internal Admin() { }
-            }
-
-            /// <summary>The case of <see cref="Role.User" />.</summary>
-            public sealed class User
-            {
-                internal User() { }
-            }
-        }
-        #pragma warning restore CS8981
-
-        private static object[]? _cases;
-
-        /// <summary>The members C# 15 reads this smart enum through as a union of <see cref="Cases" />'s case types.</summary>
-        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
-        public interface IUnionMembers
-        {
-            /// <summary>The member <see cref="Role.Admin" />.</summary>
-            public static Role Create(Cases.Admin value) => Role.Admin;
-
-            /// <summary>The member <see cref="Role.User" />.</summary>
-            public static Role Create(Cases.User value) => Role.User;
-
-            /// <summary>The case type of the member, or null for none.</summary>
-            public object? Value { get; }
+            if (global::System.Collections.Generic.EqualityComparer<string>.Default.Equals(_value, Admin._value)) return whenAdmin();
+            if (global::System.Collections.Generic.EqualityComparer<string>.Default.Equals(_value, User._value)) return whenUser();
+            throw new global::System.InvalidOperationException($"{this} is not a member of Role.");
         }
 
-        object? IUnionMembers.Value
+        /// <summary>The result of the function for this member, given the member.</summary>
+        public TResult Map<TResult>(global::System.Func<Role, TResult> whenAdmin, global::System.Func<Role, TResult> whenUser)
         {
-            get
-            {
-                var cases = _cases ??= [new Cases.Admin(), new Cases.User()];
-                if (global::System.Collections.Generic.EqualityComparer<string>.Default.Equals(_value, Admin._value)) return cases[0];
-                if (global::System.Collections.Generic.EqualityComparer<string>.Default.Equals(_value, User._value)) return cases[1];
-                return null;
-            }
+            if (global::System.Collections.Generic.EqualityComparer<string>.Default.Equals(_value, Admin._value)) return whenAdmin(this);
+            if (global::System.Collections.Generic.EqualityComparer<string>.Default.Equals(_value, User._value)) return whenUser(this);
+            throw new global::System.InvalidOperationException($"{this} is not a member of Role.");
+        }
+
+        /// <summary>Runs the action for this member.</summary>
+        public void Switch(global::System.Action whenAdmin, global::System.Action whenUser)
+        {
+            if (global::System.Collections.Generic.EqualityComparer<string>.Default.Equals(_value, Admin._value)) { whenAdmin(); return; }
+            if (global::System.Collections.Generic.EqualityComparer<string>.Default.Equals(_value, User._value)) { whenUser(); return; }
+            throw new global::System.InvalidOperationException($"{this} is not a member of Role.");
         }
 
         /// <inheritdoc />

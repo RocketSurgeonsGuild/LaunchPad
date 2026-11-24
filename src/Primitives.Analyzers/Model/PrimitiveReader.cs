@@ -1,11 +1,11 @@
 using System.Collections.Immutable;
 using System.Globalization;
 using System.Text;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Rocket.Surgery.LaunchPad.Primitives.Analyzers.Emit;
 
 namespace Rocket.Surgery.LaunchPad.Primitives.Analyzers.Model;
 
@@ -235,29 +235,6 @@ internal static class PrimitiveReader
                   .Select(f => f.Name)
                   .ToEquatableArray()
             : EquatableArray<string>.Empty;
-        // The union members of a smart enum are a nested class and a nested interface with these names (SmartEnumEmitter.Union).
-        if (shape == PrimitiveShape.SmartEnum)
-        {
-            if (type.Name is SmartEnumEmitter.CasesClass or SmartEnumEmitter.UnionMembers)
-            {
-                diagnostics.Add(DiagnosticInfo.Create("LPAD2104", location, type.Name, type.Name));
-                return (null, diagnostics.ToImmutable());
-            }
-
-            if (type.GetMembers().FirstOrDefault(m => m.Name is SmartEnumEmitter.CasesClass or SmartEnumEmitter.UnionMembers) is { } taken)
-            {
-                diagnostics.Add(DiagnosticInfo.Create("LPAD2104", taken.Locations.FirstOrDefault() ?? location, type.Name, taken.Name));
-                return (null, diagnostics.ToImmutable());
-            }
-
-            // Each member is a case of the union, matched by its value: two members of one value would make one of their cases unreachable.
-            if (SharedValue(type, compilation, cancellationToken) is var (first, second, sharedLocation))
-            {
-                diagnostics.Add(DiagnosticInfo.Create("LPAD2105", sharedLocation ?? location, type.Name, first, second));
-                return (null, diagnostics.ToImmutable());
-            }
-        }
-
         var currency = kind == "Money" && primitive.ConstructorArguments is [{ Value: string pinned }] ? pinned.Trim().ToUpperInvariant() : null;
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -629,34 +606,6 @@ internal static class PrimitiveReader
         int? maxAge = kind == "BirthDate" ? Named(primitive, "MaxAge") is { Value: int age } ? age : 150 : null;
         var weekdays = kind == "BusinessDate" && Named(primitive, "AllowWeekends") is not { Value: true };
         return new(past, future, maxAge, weekdays, Error(null, "TEMPORAL", kindError));
-    }
-
-    // Two members of a smart enum made with the same constant value (new(1) twice), and where the second is. Members made from values that
-    // aren't constants can't be compared here.
-    private static (string First, string Second, Location? Location)? SharedValue(INamedTypeSymbol type, Compilation compilation, CancellationToken cancellationToken)
-    {
-        var seen = new Dictionary<object, string>();
-        foreach (var field in type.GetMembers().OfType<IFieldSymbol>())
-        {
-            if (field is not { IsStatic: true, IsReadOnly: true, DeclaredAccessibility: Accessibility.Public } || !SymbolEqualityComparer.Default.Equals(field.Type, type)) continue;
-            foreach (var reference in field.DeclaringSyntaxReferences)
-            {
-                if (reference.GetSyntax(cancellationToken) is not VariableDeclaratorSyntax
-                    {
-                        Initializer.Value: BaseObjectCreationExpressionSyntax { ArgumentList.Arguments: [var argument] },
-                    } declarator)
-                {
-                    continue;
-                }
-
-                var constant = compilation.GetSemanticModel(declarator.SyntaxTree).GetConstantValue(argument.Expression, cancellationToken);
-                if (!constant.HasValue || constant.Value is null) continue;
-                if (seen.TryGetValue(constant.Value, out var first)) return (first, field.Name, declarator.Identifier.GetLocation());
-                seen[constant.Value] = field.Name;
-            }
-        }
-
-        return null;
     }
 
     private static EquatableArray<MemberInfo> ReadMembers(INamedTypeSymbol type, string kind, AttributeData primitive, Compilation compilation)

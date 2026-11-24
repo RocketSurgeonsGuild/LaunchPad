@@ -31,5 +31,3 @@ LPAD2023 | LaunchPad.Primitives.Design | Info | RulesAnalyzer, use a [GeneratedR
 LPAD2101 | LaunchPad.Primitives | Error | GeneratorDiagnostics, the value type a domain primitive can't hold
 LPAD2102 | LaunchPad.Primitives | Error | GeneratorDiagnostics, more than one primitive attribute on a type
 LPAD2103 | LaunchPad.Primitives | Error | GeneratorDiagnostics, an invalid attribute argument
-LPAD2104 | LaunchPad.Primitives | Error | GeneratorDiagnostics, a smart enum or one of its members named Cases or IUnionMembers
-LPAD2105 | LaunchPad.Primitives | Error | GeneratorDiagnostics, smart enum members that share a value

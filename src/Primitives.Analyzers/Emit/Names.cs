@@ -22,16 +22,6 @@ internal static class Names
 
     public static string Literal(string value) => PrimitiveReader.Literal(value);
 
-    /// <summary>
-    ///     A name as C# code: with <c>@</c> when it is a keyword or a contextual keyword (a member named <c>@class</c>, or <c>file</c>, which
-    ///     a type can't be named without it).
-    /// </summary>
-    public static string Identifier(string name) =>
-        Microsoft.CodeAnalysis.CSharp.SyntaxFacts.GetKeywordKind(name) != Microsoft.CodeAnalysis.CSharp.SyntaxKind.None
-     || Microsoft.CodeAnalysis.CSharp.SyntaxFacts.GetContextualKeywordKind(name) != Microsoft.CodeAnalysis.CSharp.SyntaxKind.None
-            ? "@" + name
-            : name;
-
     public static string NewError(string code, string message) => $"new {Error}({Literal(code)}, {message})";
 
     /// <summary>

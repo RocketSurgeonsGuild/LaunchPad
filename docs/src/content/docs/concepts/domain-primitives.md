@@ -336,9 +336,9 @@ constructor the generator writes, `new(value)`. A member's name is the name of i
 - `FromValue` and `TryFromValue`, which find a member by its value, and `Create` and `TryCreate`, which do the same and report
   `UNKNOWN_MEMBER` (`Errors.UnknownMember`) when no member has the value. `FromName` and `TryFromName` find a member by its name,
   optionally ignoring case; `FromName` throws `UNKNOWN_MEMBER` too.
-- `Cases`, a class with one type per member named after it, which makes the smart enum a C# 15 union of those types: a `switch`
-  expression over a smart enum with them must handle every member, and the compiler warns (CS8509) about one that doesn't, so adding a
-  member flags every switch expression that misses it. A switch statement isn't checked.
+- `Match`, which takes one function per member and returns what the one for this member returns; `Map`, the same with functions that
+  are given the member; and `Switch`, which takes one action per member and runs the one for this member. Each has a parameter per
+  member, so adding a member breaks every call that doesn't handle it.
 - `Parse` and `TryParse` (`IParsable<TSelf>`), which take a name in any case or a value, and `ToString` (`IFormattable`), which is the
   name.
 - An explicit conversion to its value, but none from it: `FromValue` says what happens when no member has it.
@@ -355,29 +355,9 @@ public readonly partial record struct OrderStatus
     public static readonly OrderStatus Shipped = new(2);
 }
 
-var label = status switch
-{
-    OrderStatus.Cases.Pending => "Waiting",
-    OrderStatus.Cases.Shipped => "On its way",
-};
+var label = status.Match(whenPending: () => "Waiting", whenShipped: () => "On its way");
+status.Switch(whenPending: () => Remind(order), whenShipped: () => Track(order));
 ```
-
-The union is a custom union whose members are on a nested `IUnionMembers` interface, so the smart enum keeps its own `Value`. Being a
-union changes what a pattern over a smart enum means: it applies to the member's case, as for any union.
-
-- `status is OrderStatus.Cases.Pending` tests the member, and a case converts back to its member (`OrderStatus s = pending;`).
-- A pattern of the smart enum's own type, or of an interface it implements, is an error (CS8121): `maybe is OrderStatus status` on an
-  `OrderStatus?` becomes `maybe is { } status`.
-- The `default` of a struct smart enum is no case: it matches `null` (`is null` is true, though `IsDefault` and `HasValue` say the same
-  as before), and falls through an exhaustive switch at runtime as the `default` of a native union does.
-- Only the `public static readonly` fields are members. Another value the smart enum makes with its constructor matches no case, and
-  `null`.
-- The IDE's "add missing cases" fix (IDE0072) doesn't see that a switch over the cases is exhaustive, and adds a discard arm that would hide
-  a missing member: suppress IDE0072 where you switch over a smart enum.
-
-A smart enum can't be named `Cases` or `IUnionMembers`, or have a member of either name (LPAD2104), and two of its members can't be made
-with the same constant value (LPAD2105). A smart enum has no public case constructors, so a handler that returns one returns a value, not a
-[union response](../../guides/api-generators/#union-responses).
 
 ### Value objects
 
@@ -522,7 +502,7 @@ sets up includes domain primitives with no code.
 ## Analyzers
 
 LPAD2001 to LPAD2024 are analyzers. LPAD2024 is LaunchPad's own analyzer, which every LaunchPad application runs, as Primitives' analyzers
-don't run in an application that only gets Primitives through a library. LPAD2101 to LPAD2105 are reported by the generator itself: they
+don't run in an application that only gets Primitives through a library. LPAD2101 to LPAD2103 are reported by the generator itself: they
 are declarations it has to refuse to complete as written, so it is the generator that finds them.
 
 | ID       | Severity | Reports                                                                                                                                                                                                                                                                                 |
@@ -554,8 +534,6 @@ are declarations it has to refuse to complete as written, so it is the generator
 | LPAD2101 | Error    | A value type the primitive attribute doesn't support (a strong ID of a `double`, say), or a date `Kind` whose type the project doesn't reference.                                                                                                                                       |
 | LPAD2102 | Error    | More than one primitive attribute on a type.                                                                                                                                                                                                                                            |
 | LPAD2103 | Error    | An invalid attribute argument: a `GuidVersion` other than 4 or 7, `GuidVersion` on a strong ID that isn't of a `Guid`, a `Kind` the attribute doesn't take, a domain primitive nested in a generic type, or a `[Money]`, `[DateRange]` or `[TimeRange]` named like one of its values.   |
-| LPAD2104 | Error    | A smart enum named `Cases` or `IUnionMembers`, or with a member of either name: the names of its union's members.                                                                                                                                                                       |
-| LPAD2105 | Error    | Two members of a smart enum made with the same constant value: each member is a case of its own, found by its value.                                                                                                                                                                    |
 
 ## Credits
 

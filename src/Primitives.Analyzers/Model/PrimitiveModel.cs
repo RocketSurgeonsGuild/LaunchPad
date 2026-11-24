@@ -36,11 +36,6 @@ internal sealed record PrimitiveModel(
     public string Self => Name;
 
     public string ValueDisplay => Value?.Display ?? "object";
-
-    /// <summary>
-    ///     A smart enum with members, written as a C# 15 union of one case type per member (a union needs at least one case).
-    /// </summary>
-    public bool IsUnion => Shape == PrimitiveShape.SmartEnum && EnumMembers.Length > 0;
 }
 
 internal enum PrimitiveShape
