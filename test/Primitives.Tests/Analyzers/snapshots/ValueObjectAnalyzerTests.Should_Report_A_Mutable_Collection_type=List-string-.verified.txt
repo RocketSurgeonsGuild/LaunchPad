@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2018,
+      Severity: Warning,
+      Location: Input.cs: (8,20)-(8,32),
+      Source: List<string>,
+      Message: Property 'Items' of value object 'Basket' is a 'List<string>', which can be changed after the value object is created; use an immutable collection
+    }
+  ]
+}

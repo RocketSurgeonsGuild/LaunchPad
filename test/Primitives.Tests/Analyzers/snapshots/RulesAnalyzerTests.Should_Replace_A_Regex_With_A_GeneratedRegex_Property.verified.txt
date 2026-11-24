@@ -1,0 +1,35 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2023,
+      Severity: Info,
+      Location: Input.cs: (5,24)-(5,44),
+      Source: Regex(@"^[A-Z]{3}$"),
+      Message: The pattern of [Regex] on 'Code' is built at run time and interpreted: declare it as a [GeneratedRegex] member of the domain primitive
+    }
+  ],
+  CodeFixes: [
+    {
+      Diagnostic: LPAD2023 Input.cs: (5,24)-(5,44),
+      Title: Use a [GeneratedRegex],
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using System.Text.RegularExpressions;
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+/// <summary>A code.</summary>
+[StringPrimitive, Trim]
+public readonly partial record struct Code
+{
+    [GeneratedRegex(@"^[A-Z]{3}$", RegexOptions.CultureInvariant, 1000)]
+    private static partial Regex Format { get; }
+}
+        }
+      ]
+    }
+  ]
+}

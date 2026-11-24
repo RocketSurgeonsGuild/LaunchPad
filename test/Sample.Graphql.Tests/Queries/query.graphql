@@ -31,7 +31,7 @@ query GetFilteredLaunchRecords($rocketType: RocketType!) {
         }
     }
 }
-query GetLaunchRecord($id: UUID) {
+query GetLaunchRecord($id: ID) {
     launchRecords(where: { id: { eq: $id } }, first: 1) {
         nodes {
             id
@@ -75,7 +75,7 @@ query GetFilteredRockets($rocketType: RocketType) {
     }
 }
 
-query GetRocket($id: UUID) {
+query GetRocket($id: ID) {
     rockets(where: { id: { eq: $id } }, first: 1) {
         nodes {
             id

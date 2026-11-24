@@ -1,0 +1,18 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2020,
+      Severity: Error,
+      Location: Input.cs: (4,1)-(4,66),
+      Source: DatePrimitive(Kind = DatePrimitiveKind.Duration, PastOnly = true),
+      Message: Domain primitive 'Span' sets PastOnly on the Duration kind, which is not a point in time
+    },
+    {
+      Id: LPAD2021,
+      Severity: Warning,
+      Location: Input.cs: (4,1)-(4,66),
+      Source: DatePrimitive(Kind = DatePrimitiveKind.Duration, PastOnly = true),
+      Message: Domain primitive 'Span' wraps NodaTime's Duration, but the project does not reference Rocket.Surgery.LaunchPad.NodaTime, whose JSON converters its JSON converter uses
+    }
+  ]
+}

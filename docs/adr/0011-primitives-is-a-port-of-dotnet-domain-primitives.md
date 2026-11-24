@@ -1,0 +1,75 @@
+# Primitives is a port of dotnet-domain-primitives
+
+_Supersedes the choice of SuperStrong in [ADR-0008](0008-primitives-is-an-independent-strong-types-package.md). The rest of ADR-0008 stands: Primitives is optional, depends on no other LaunchPad package, an application opts in by referencing it, its Joints ship as templates, and its analyzer package is an exception to [ADR-0004](0004-one-generator-assembly.md)._
+
+`Rocket.Surgery.LaunchPad.Primitives` is a port of [dotnet-domain-primitives](https://github.com/ericksonlopezf/dotnet-domain-primitives) (EricksonLopez.DomainPrimitives 3.0.0, MIT), copied into the repository and reshaped to LaunchPad's conventions, in place of SuperStrong. An application declares its own **domain primitives** (`readonly partial record struct` or `sealed partial record`) with one attribute that says what kind they are: a string, a number, a date, a strong ID, a smart enum, a value object, or one of about forty **primitive kinds** (email address, currency code, latitude, money, ...). The Primitives generator writes the rest. The runtime package holds only the interfaces the generated code implements (`IDomainPrimitive<TSelf, TValue>` for one value, `IStrongId<TSelf, TValue>` for a strong ID, `IValueObject<TSelf>` for a value object, `INormalizer<T>`, `ICustomValidator<T>`), `PrimitiveError`, `DomainPrimitiveValidationException` and the collection helpers in `Rocket.Surgery.LaunchPad.Primitives`, and what the generated code and the templates use in namespaces of their own: `PrimitiveBuilder` in `.Advanced`, the instrumentation (`DomainPrimitivesInstrumentation`) in `.Diagnostics`, the descriptions the integrations read in `.Descriptions`, and the ISO 3166 and ISO 4217 code lists in `.Registries`. Every generator, analyzer and code fix is in its one analyzer package, `Rocket.Surgery.LaunchPad.Primitives.Analyzers`. The upstream license is in `THIRD-PARTY-NOTICES.md` and packed into both packages.
+
+ADR-0008 rejected the upstream packages for two reasons, and copying the source removes both. Its 3.0.0 packages put the source generator where NuGet doesn't run it; LaunchPad builds the generator into its own analyzer package, which NuGet does run. Its OpenAPI support is a Swashbuckle filter; LaunchPad describes domain primitives to `Microsoft.AspNetCore.OpenApi` with the Joint template it already had for strong types, and to HotChocolate, EF Core and Dapper the same way, from a registry the generator writes. In exchange LaunchPad gets what SuperStrong lacked: values are normalized (trimmed, lower or upper case) before they are checked, analyzers with code fixes catch a wrong declaration in the editor, there are smart enums, value objects and NodaTime dates, and the generated types implement the parsing and formatting interfaces of the BCL.
+
+## The attributes are written as source
+
+The attributes are not compiled into any assembly. The generator writes them into every project that references Primitives, as `internal` classes marked `[Conditional("CodeGeneration")]` and `[Embedded]`:
+
+- `[Conditional("CodeGeneration")]` keeps them out of the compiled assembly, so they are never part of an assembly's public surface. A domain primitive in a referenced assembly is found by the interface the generator implements (`IDomainPrimitive<TSelf, TValue>`, or `IValueObject<TSelf>` for a value object), not by its attributes; that is how the registry sees the domain primitives of the application's libraries.
+- `[Embedded]` keeps the copy one assembly gets from clashing with the copy of an assembly it references through `InternalsVisibleTo`.
+- Written as source, the attributes can depend on the project: the NodaTime members of `DatePrimitiveKind` exist only in a project that references NodaTime, so a date primitive can't name a NodaTime type the project can't compile. The generator writes the attributes before it sees the project's references, so the members are kept behind `#if LAUNCHPAD_PRIMITIVES_NODATIME`, which the `_LaunchPadPrimitivesNodaTime` target of the package's targets defines when NodaTime is among the resolved references.
+- The runtime package carries no attributes and no enums for them, and doesn't change when a kind is added.
+
+The kinds form a C# 15 closed hierarchy. `PrimitiveAttribute` is a `closed` class, and every kind derives from it (the generic ones, `NumericPrimitive<T>`, `StrongId<T>` and `SmartEnum<T>`, through an abstract middle layer, because a generic class can't derive from a closed class without using its type parameters in the base). `closed` only keeps direct subtypes in the declaring assembly, and the attributes are compiled into the application itself, so it doesn't stop an application from declaring a kind of its own; what the closed hierarchy gives is a fixed, known set of kinds, which the generator and the analyzers recognize by name (they run on netstandard2.0 and can't use the application's hierarchy). "Exactly one primitive attribute per type" is a check on one base class: `AllowMultiple` applies per attribute class, so it doesn't stop `[Email][Money]` by itself. The rules (`[MinLength]`, `[Regex]`, `[Trim]`, `[Normalize<T>]`, ...) are a second closed hierarchy under `PrimitiveRuleAttribute`, so each rule keeps its own `AllowMultiple` (`[Regex]` repeats; `[MinLength]` doesn't).
+
+## Record classes as well as record structs
+
+Upstream's ADR-018 rejected class-based primitives: a class allocates, its immutability is a convention the generator can't enforce, it adds ways around validation (`Activator.CreateInstance`, reflection-based JSON) and complicates trimming. LaunchPad accepts `sealed partial record` as well as `readonly partial record struct`, because its integrations reach places where a struct's `default` is a problem: an optional column, an optional GraphQL argument or a missing JSON property is naturally `null`, and a struct's `default` is a value that has never been validated. A class has no `default` instance, so it needs no `IsDefault` and no guard on `Value`; `null` means "no value" and nullable annotations track it. The other objections don't apply in LaunchPad: a record class with `init` members and no public constructor is as immutable as the struct (the analyzers require `sealed` and `partial`), and LaunchPad never creates instances through reflection ([ADR-0007](0007-no-json-reflection.md)): every converter, value converter and type handler is generated. The allocation is the application's choice, per type; a struct is still the form to reach for first.
+
+## The ready-made types are gone
+
+Primitives no longer ships types such as `EmailAddress`, `CurrencyCode`, `DateRange` or `Money`. Each is now a primitive kind, applied to a type the application declares: `[Email] public readonly partial record struct CustomerEmail;`. The application's domain names its own concepts (a billing email and a login email are two types, not one shared `EmailAddress`), the names in its OpenAPI document and GraphQL schema are its own, and no LaunchPad type ends up in its public contracts. The kind's options (lengths, ranges, the currency of `[Money("USD")]`) are set per type instead of being fixed by a type LaunchPad chose. And Primitives stays a package of interfaces, with nothing to version when a standard changes.
+
+## What was left out
+
+- **Newtonsoft.Json**: LaunchPad reads and writes JSON only with System.Text.Json and only through generated metadata ([ADR-0007](0007-no-json-reflection.md)). The generated converters never fall back to reflection.
+- **Swashbuckle**: LaunchPad uses `Microsoft.AspNetCore.OpenApi`, through the OpenAPI template.
+- **The MVC model binder**: the generated `TypeConverter` and `IParsable<TSelf>` already bind route, query and form values.
+- **The Testing package**: LaunchPad's tests run on TUnit with its own assertions.
+- **`DateTime`**: `DatePrimitiveKind` keeps `DateOnly`, `TimeOnly` and `DateTimeOffset` (and the NodaTime types), which say what they hold; a `DateTime` doesn't say whether it is local, UTC or unspecified.
+- **`DomainPrimitivesDefaultsAttribute`**: its settings are MSBuild properties (`LaunchPadPrimitivesTrim`, `LaunchPadPrimitivesNotEmpty`, `LaunchPadPrimitivesMaxLength`, `LaunchPadPrimitivesExceptionType`, and the OpenAPI and GraphQL representations), the way every other LaunchPad setting is made, and visible to every generator and template.
+- **The `DiagnosticListener` and the static event**: the generated `Create` and `TryCreate` record counters (`domain_primitive.validation.success`, `.failure` and `.creation`) on a `Meter`, and a rejected value adds an event to the current activity of an `ActivitySource`, both named `Rocket.Surgery.LaunchPad.Primitives`. When the application references OpenTelemetry the registry generator writes `AddLaunchPadPrimitivesInstrumentation()`, and the `LaunchPadPrimitivesInstrumentationJoint` template calls it.
+- **The framework `#if`s**, in the source and in generated code: LaunchPad targets .NET 11 only ([ADR-0010](0010-net11-only-and-native-unions.md)). The one `#if` left is `LAUNCHPAD_PRIMITIVES_NODATIME` in the attribute source, which isn't about a framework: it is how `DatePrimitiveKind` gets its NodaTime members only in a project that references NodaTime (see above).
+- **The integration packages** (EF Core, Dapper, OpenAPI, ASP.NET Core): their code is written into the application by the generator or by a template, so Primitives depends on none of those libraries.
+
+## Considered Options
+
+- **Stay on SuperStrong.** Rejected: it checks values without normalizing them, has no smart enums, value objects or NodaTime dates, and its rules are a builder that the OpenAPI and HotChocolate templates had to read back through a description type.
+- **Reference the upstream packages.** Rejected for the reasons in ADR-0008; the generator still wouldn't run from NuGet, and LaunchPad would carry Newtonsoft and Swashbuckle support it can't use.
+- **Compile the attributes into Primitives.** Rejected: they would be part of every application's public surface, the NodaTime members of `DatePrimitiveKind` would need NodaTime in Primitives, and cross-assembly discovery would read attributes from metadata instead of an interface the generated code implements anyway.
+- **Keep the ready-made types beside the kinds.** Rejected: two ways to get an email address, one of which puts a LaunchPad type into the application's domain and contracts.
+- **Structs only, as upstream decided.** Rejected for the reasons above.
+
+## Consequences
+
+- An application that used the strong types rewrites each declaration: `EmailAddress` becomes a type of the application's with `[Email]`, `From` becomes `Create`, and `LaunchPadStrongType*Representation` becomes `LaunchPadPrimitives*Representation`. The `Rocket.Surgery.LaunchPad.StrongTypes` namespace is gone.
+- The upstream analyzers DP0001 to DP0018 are LPAD2001 to LPAD2018, LaunchPad's own analyzers continue from LPAD2019, and the generator's diagnostics are LPAD2101 and up. More than one primitive attribute on a type (LPAD2102) and an invalid `GuidVersion` (LPAD2103: not 4 or 7, or set on a strong ID that isn't of a `Guid`) are generator diagnostics, not analyzers, because the generator has to refuse those declarations anyway: it reports what it can't complete rather than generating something wrong and leaving the analyzers to explain it. The duplicate-logic, API-budget, XML-documentation and factory-naming rules are Info by default.
+- The templates are renamed (`LaunchPadPrimitives` for the registry and `LaunchPadPrimitives*Joint`) and reference `Rocket.Surgery.LaunchPad.Primitives` instead of `SuperStrong.Types`.
+- The samples' strong IDs are `[StrongId<Guid>]` domain primitives, and LaunchPad's StronglyTypedId helpers (`ConfigureStronglyTypedId`, `StronglyTypedIdValueGenerator`) are gone.
+- Fixes and features from upstream are not picked up automatically; they are ported by hand, and the copy is LaunchPad's to maintain.
+
+## Amendment, 2026-11-23: a smart enum can be a closed class
+
+A smart enum can be a C# 15 `closed partial class` as well as a `readonly partial record struct`, and can no longer be a record class. In
+the closed form each member is made with `new` of a class of its own, named after the member with an underscore
+(`Pending = new Pending_(...)`), nested in the smart enum and written by the generator, which takes the member's value and then the data every member
+carries; a member can override the smart enum's behaviour in its own part of that class. Because only the smart enum's assembly can derive
+from a closed class, a switch expression over the member classes must handle every member (CS8509). That does the work of `Match`, `Map`
+and `Switch`, so a closed smart enum doesn't get them, and as a class has no `default` it has no `IsDefault` either. The generator reports
+a member not made with a class of its own (LPAD2104) and two members with the same value (LPAD2105).
+
+The record struct form stays as it was, `Match`, `Map`, `Switch` and `IsDefault` included, and its members can carry data as well:
+each is made with `new(...)`, its value first and then its data, read as for the closed form. It doesn't allocate, and a smart enum whose
+members differ only in their name, value and data doesn't need a class for each. Nothing can derive from a struct, so it has no member
+classes, and a switch over its members isn't checked for every one of them. Its data are fields of the application's declaration and its
+value a field of the generated part, whose order C# doesn't define (CS0282); Primitives' analyzers suppress that warning (LPADSPR2001), as
+nothing depends on the layout of a smart enum. The generator reports two of its members with the same value (LPAD2105) too. A record
+class smart enum has neither advantage: it allocates, and as it is sealed its members can't have classes of their own. So it is
+LPAD2003, and the generator leaves it alone. The rest of this decision stands; the text above is kept as it was decided, so where it
+says a domain primitive is a `readonly partial record struct` or a `sealed partial record`, a smart enum is a `closed partial class` or a
+`readonly partial record struct`.

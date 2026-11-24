@@ -1,0 +1,49 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2011,
+      Severity: Warning,
+      Location: Input.cs: (20,13)-(20,23),
+      Source: text: name,
+      Message: Domain primitive 'UserName' is used as a string; use its Value
+    }
+  ],
+  CodeFixes: [
+    {
+      Diagnostic: LPAD2011 Input.cs: (20,13)-(20,23),
+      Title: Use the domain primitive's Value,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[StringPrimitive, NotEmpty]
+public readonly partial record struct UserName;
+
+[StrongId<string>, MaxLength(10)]
+public sealed partial record Sku;
+
+[SmartEnum<string>]
+public closed partial class Color
+{
+    public static readonly Color Red = new Red_("red");
+}
+
+public class Uses
+{
+    public void Run(UserName name)
+    {
+        Take(text: name.Value);
+    }
+
+    private static UserName? Get() => null;
+    private static void Take(string text) { }
+}
+        }
+      ]
+    }
+  ]
+}

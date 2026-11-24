@@ -40,7 +40,7 @@ public class RemoveLaunchRecordsTests() : HandleTestHostBase(LogEventLevel.Verbo
     [Test]
     public async Task Should_Not_Be_Authorized_On_Given_Record()
     {
-        var id = new LaunchRecordId(new("bad361de-a6d5-425a-9cf6-f9b2dd236be6"));
+        var id = LaunchRecordId.Create(new("bad361de-a6d5-425a-9cf6-f9b2dd236be6"));
         await using (var seedScope = ServiceProvider.CreateAsyncScope())
         {
             var context = seedScope.ServiceProvider.GetRequiredService<RocketDbContext>();

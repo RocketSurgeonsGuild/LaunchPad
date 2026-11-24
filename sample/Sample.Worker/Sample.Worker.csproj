@@ -19,5 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
     <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
+    <!-- a direct reference, so the Primitives joints (the strong IDs in Entity Framework, and the domain primitive metrics) are written into the application -->
+    <ProjectReference Include="..\..\src\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />
   </ItemGroup>
 </Project>

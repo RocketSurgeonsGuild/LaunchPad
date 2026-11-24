@@ -1,0 +1,18 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2007,
+      Severity: Warning,
+      Location: Input.cs: (20,16)-(20,30),
+      Source: default(Level),
+      Message: This makes an uninitialized 'Level' that no rule has checked; use Level.Create or Level.TryCreate
+    },
+    {
+      Id: LPAD2007,
+      Severity: Warning,
+      Location: Input.cs: (21,18)-(21,23),
+      Source: new(),
+      Message: This makes an uninitialized 'Level' that no rule has checked; use Level.Create or Level.TryCreate
+    }
+  ]
+}

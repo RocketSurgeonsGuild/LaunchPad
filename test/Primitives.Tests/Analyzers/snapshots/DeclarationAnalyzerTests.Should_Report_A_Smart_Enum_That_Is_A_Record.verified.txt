@@ -1,0 +1,132 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2003,
+      Severity: Error,
+      Location: Input.cs: (5,29)-(5,34),
+      Source: Level,
+      Message: Domain primitive 'Level' must be declared as a 'closed partial class' or a 'readonly partial record struct', as a smart enum is
+    },
+    {
+      Id: LPAD2003,
+      Severity: Error,
+      Location: Input.cs: (12,29)-(12,33),
+      Source: Role,
+      Message: Domain primitive 'Role' must be declared as a 'closed partial class' or a 'readonly partial record struct', as a smart enum is
+    }
+  ],
+  CodeFixes: [
+    {
+      Diagnostic: LPAD2003 Input.cs: (12,29)-(12,33),
+      Title: Convert to a closed partial class,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[SmartEnum<int>]
+public sealed partial record Level
+{
+    public static readonly Level Low = new(1), Medium = new Level(2);
+    public static Level High { get; } = new(3);
+}
+
+[SmartEnum<string>]
+public closed partial class Role
+{
+    public static readonly Role Admin = new Admin_("admin", 10);
+
+    public int Rank { get; }
+}
+        }
+      ]
+    },
+    {
+      Diagnostic: LPAD2003 Input.cs: (12,29)-(12,33),
+      Title: Convert to a readonly partial record struct,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[SmartEnum<int>]
+public sealed partial record Level
+{
+    public static readonly Level Low = new(1), Medium = new Level(2);
+    public static Level High { get; } = new(3);
+}
+
+[SmartEnum<string>]
+public readonly partial record struct Role
+{
+    public static readonly Role Admin = new("admin", 10);
+
+    public int Rank { get; }
+}
+        }
+      ]
+    },
+    {
+      Diagnostic: LPAD2003 Input.cs: (5,29)-(5,34),
+      Title: Convert to a closed partial class,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[SmartEnum<int>]
+public closed partial class Level
+{
+    public static readonly Level Low = new Low_(1), Medium = new Medium_(2);
+    public static Level High { get; } = new High_(3);
+}
+
+[SmartEnum<string>]
+public closed partial record Role
+{
+    public static readonly Role Admin = new Admin_("admin", 10);
+
+    public int Rank { get; }
+}
+        }
+      ]
+    },
+    {
+      Diagnostic: LPAD2003 Input.cs: (5,29)-(5,34),
+      Title: Convert to a readonly partial record struct,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[SmartEnum<int>]
+public readonly partial record struct Level
+{
+    public static readonly Level Low = new(1), Medium = new Level(2);
+    public static Level High { get; } = new(3);
+}
+
+[SmartEnum<string>]
+public closed partial record Role
+{
+    public static readonly Role Admin = new Admin_("admin", 10);
+
+    public int Rank { get; }
+}
+        }
+      ]
+    }
+  ]
+}

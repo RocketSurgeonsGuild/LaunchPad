@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Rocket.Surgery.LaunchPad.EntityFramework;
 using Sample.Core.Models;
 
 namespace Sample.Core.Domain;
@@ -20,13 +19,7 @@ public class LaunchRecord // : ILaunchRecord
 
     private class EntityConfiguration : IEntityTypeConfiguration<LaunchRecord>
     {
-        public void Configure(EntityTypeBuilder<LaunchRecord> builder)
-        {
-            builder.HasKey(x => x.Id);
-            builder.Property(z => z.Id)
-                   .ValueGeneratedOnAdd()
-                   .HasValueGenerator(StronglyTypedIdValueGenerator.Create(LaunchRecordId.New));
-        }
+        public void Configure(EntityTypeBuilder<LaunchRecord> builder) => builder.HasKey(x => x.Id);
     }
 }
 

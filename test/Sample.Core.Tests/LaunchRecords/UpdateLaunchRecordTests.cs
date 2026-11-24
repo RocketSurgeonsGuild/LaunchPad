@@ -18,7 +18,7 @@ public class UpdateLaunchRecordTests() : HandleTestHostBase(LogEventLevel.Verbos
         await using var scope = ServiceProvider.CreateAsyncScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        var result = await mediator.Send(new EditLaunchRecord.PatchRequest(LaunchRecordId.New()).ResetChanges(), TestContext.CancellationToken);
+        var result = await mediator.Send(new EditLaunchRecord.PatchRequest(LaunchRecordId.Create()).ResetChanges(), TestContext.CancellationToken);
 
         await result.Value.Should().BeOfType(typeof(NotFound));
     }
@@ -33,7 +33,7 @@ public class UpdateLaunchRecordTests() : HandleTestHostBase(LogEventLevel.Verbos
             var clock = seedScope.ServiceProvider.GetRequiredService<IClock>();
             var rocket = new ReadyRocket
             {
-                Id = RocketId.New(),
+                Id = RocketId.Create(),
                 Type = RocketType.Falcon9,
                 SerialNumber = "12345678901234",
             };

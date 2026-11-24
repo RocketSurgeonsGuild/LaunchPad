@@ -25,7 +25,7 @@ public static partial class DeleteLaunchRecord
     [Validate]
     public readonly record struct Request([property: JsonRequired, Must(nameof(Request.IsAssigned))] LaunchRecordId Id) : IRequest<Result>
     {
-        internal bool IsAssigned(LaunchRecordId id) => id != default;
+        internal bool IsAssigned(LaunchRecordId id) => !id.IsDefault && id.Value != Guid.Empty;
     }
 
     /// <summary>What the operation answers: nothing, not found, or forbidden.</summary>
@@ -42,7 +42,7 @@ public static partial class DeleteLaunchRecord
             }
 
             // contrived for testing
-            if (rocket.Id == new LaunchRecordId(new("bad361de-a6d5-425a-9cf6-f9b2dd236be6")))
+            if (rocket.Id == LaunchRecordId.Create(new("bad361de-a6d5-425a-9cf6-f9b2dd236be6")))
                 return new Forbidden("Unable to operate on given record");
 
             dbContext.Remove(rocket);

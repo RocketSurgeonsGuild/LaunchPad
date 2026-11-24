@@ -1,0 +1,18 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2021,
+      Severity: Warning,
+      Location: Input.cs: (4,1)-(4,65),
+      Source: DatePrimitive(Kind = DatePrimitiveKind.Instant, PastOnly = true),
+      Message: Domain primitive 'HappenedAt' wraps NodaTime's Instant, but the project does not reference Rocket.Surgery.LaunchPad.NodaTime, whose JSON converters its JSON converter uses
+    },
+    {
+      Id: LPAD2021,
+      Severity: Warning,
+      Location: Input.cs: (7,1)-(7,46),
+      Source: DateRange(Kind = DatePrimitiveKind.LocalDate),
+      Message: Domain primitive 'Stay' wraps NodaTime's LocalDate, but the project does not reference Rocket.Surgery.LaunchPad.NodaTime, whose JSON converters its JSON converter uses
+    }
+  ]
+}

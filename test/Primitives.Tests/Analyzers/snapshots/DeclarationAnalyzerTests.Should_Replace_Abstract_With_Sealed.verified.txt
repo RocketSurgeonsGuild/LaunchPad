@@ -1,0 +1,29 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2019,
+      Severity: Error,
+      Location: Input.cs: (5,31)-(5,35),
+      Source: Code,
+      Message: Domain primitive 'Code' is a record class and must be declared 'sealed'
+    }
+  ],
+  CodeFixes: [
+    {
+      Diagnostic: LPAD2019 Input.cs: (5,31)-(5,35),
+      Title: Make the domain primitive sealed,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[StringPrimitive, MaxLength(10)]
+public sealed partial record Code;
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+﻿schema {
+  query: Query
+}
+
+type Query {
+  customer(id: ID!, country: String!): Customer!
+}
+
+type Address {
+  street: String!
+  city: String!
+}
+
+type Balance {
+  amount: Decimal!
+  currency: String!
+}
+
+type Customer {
+  id: ID!
+  email: String!
+  country: String!
+  points: Int!
+  tier: Int!
+  channel: String!
+  address: Address!
+  balance: Balance!
+  membership: Membership
+  handle: String
+  rating: Decimal!
+}
+
+type Membership {
+  start: LocalDate!
+  end: LocalDate!
+}
+
+"The `Decimal` scalar type represents a decimal floating-point number with high precision."
+scalar Decimal
+  @specifiedBy(url: "https://scalars.graphql.org/chillicream/decimal.html")
+
+"The `LocalDate` scalar type represents a date without time or time zone information."
+scalar LocalDate
+  @specifiedBy(url: "https://scalars.graphql.org/chillicream/local-date.html")
+
+{
+  "data": {
+    "customer": {
+      "id": "6f9619ff-8b86-d011-b42d-00cf4fc964ff",
+      "email": "ada@example.com",
+      "country": "GB",
+      "points": 40,
+      "tier": 2,
+      "channel": "phone",
+      "address": {
+        "street": "12 St James's Square",
+        "city": "London"
+      },
+      "balance": {
+        "amount": 12.5,
+        "currency": "GBP"
+      },
+      "membership": {
+        "start": "2026-01-01",
+        "end": "2026-12-31"
+      },
+      "handle": "ada-lovelace",
+      "rating": 4.5
+    }
+  }
+}
+
+{
+  "errors": [
+    {
+      "message": "[FORMAT] Country must be an ISO 3166-1 alpha-2 country code. Got 'ZZ'. (Parameter 'value')",
+      "path": [
+        "customer"
+      ],
+      "extensions": {
+        "code": "HC0001",
+        "coordinate": "Query.customer(country:)",
+        "inputPath": [
+          "country"
+        ]
+      }
+    }
+  ],
+  "data": null
+}

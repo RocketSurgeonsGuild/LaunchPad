@@ -1,0 +1,314 @@
+﻿{
+  "parameters": {
+    "/bookings/{id}": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/CustomerId"
+        }
+      }
+    ],
+    "/customers/{id}": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/CustomerId"
+        }
+      },
+      {
+        "name": "email",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/CustomerEmail"
+        }
+      },
+      {
+        "name": "points",
+        "in": "query",
+        "schema": {
+          "$ref": "#/components/schemas/LoyaltyPoints"
+        }
+      }
+    ],
+    "/customers/{id}/tier": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/CustomerId"
+        }
+      },
+      {
+        "name": "country",
+        "in": "query",
+        "schema": {
+          "$ref": "#/components/schemas/Country"
+        }
+      }
+    ]
+  },
+  "schemas": {
+    "Address": {
+      "required": [
+        "street",
+        "city"
+      ],
+      "type": "object",
+      "properties": {
+        "street": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        }
+      }
+    },
+    "Balance": {
+      "required": [
+        "amount",
+        "currency"
+      ],
+      "type": "object",
+      "properties": {
+        "amount": {
+          "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+          "type": [
+            "number",
+            "string"
+          ],
+          "format": "double"
+        },
+        "currency": {
+          "type": "string"
+        }
+      }
+    },
+    "Booking": {
+      "required": [
+        "id",
+        "contact",
+        "stay"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/components/schemas/CustomerId"
+        },
+        "contact": {
+          "$ref": "#/components/schemas/Contact"
+        },
+        "stay": {
+          "$ref": "#/components/schemas/Stay"
+        }
+      }
+    },
+    "Contact": {
+      "required": [
+        "email",
+        "channel"
+      ],
+      "type": "object",
+      "properties": {
+        "email": {
+          "$ref": "#/components/schemas/CustomerEmail"
+        },
+        "phone": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "since": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "format": "date"
+        },
+        "handle": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/components/schemas/Handle"
+            }
+          ]
+        },
+        "tier": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/components/schemas/CustomerTier"
+            }
+          ]
+        },
+        "channel": {
+          "$ref": "#/components/schemas/ContactChannel"
+        }
+      }
+    },
+    "ContactChannel": {
+      "enum": [
+        "mail",
+        "phone"
+      ],
+      "type": "string"
+    },
+    "Country": {
+      "maxLength": 2,
+      "minLength": 2,
+      "type": "string"
+    },
+    "Customer": {
+      "required": [
+        "email",
+        "tier"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/components/schemas/CustomerId"
+        },
+        "email": {
+          "$ref": "#/components/schemas/CustomerEmail"
+        },
+        "country": {
+          "$ref": "#/components/schemas/Country"
+        },
+        "points": {
+          "$ref": "#/components/schemas/LoyaltyPoints"
+        },
+        "tier": {
+          "$ref": "#/components/schemas/CustomerTier"
+        },
+        "channel": {
+          "$ref": "#/components/schemas/ContactChannel"
+        },
+        "address": {
+          "$ref": "#/components/schemas/Address"
+        },
+        "balance": {
+          "$ref": "#/components/schemas/Balance"
+        },
+        "membership": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/components/schemas/Membership"
+            }
+          ]
+        },
+        "handle": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/components/schemas/Handle"
+            }
+          ]
+        },
+        "rating": {
+          "$ref": "#/components/schemas/Stars"
+        }
+      }
+    },
+    "CustomerEmail": {
+      "maxLength": 320,
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$",
+      "type": "string",
+      "format": "email"
+    },
+    "CustomerId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "CustomerTier": {
+      "enum": [
+        "gold",
+        "standard"
+      ],
+      "type": "string"
+    },
+    "Handle": {
+      "maxLength": 200,
+      "minLength": 1,
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "type": "string"
+    },
+    "LoyaltyPoints": {
+      "maximum": 1000,
+      "minimum": 0,
+      "pattern": "^-?(?:0|[1-9]\\d*)$",
+      "type": [
+        "integer",
+        "string"
+      ],
+      "format": "int32"
+    },
+    "Membership": {
+      "required": [
+        "start",
+        "end"
+      ],
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "string",
+          "format": "date"
+        },
+        "end": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "Stars": {
+      "maximum": 5,
+      "minimum": 0,
+      "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+      "type": [
+        "number",
+        "string"
+      ],
+      "format": "double"
+    },
+    "Stay": {
+      "required": [
+        "start",
+        "end"
+      ],
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "string",
+          "format": "date"
+        },
+        "end": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    }
+  },
+  "wire": {
+    "email": "ada@example.com",
+    "phone": null,
+    "since": null,
+    "handle": null,
+    "tier": "gold",
+    "channel": "phone"
+  }
+}

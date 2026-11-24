@@ -4,13 +4,29 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\src\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />
-        <!-- The strong type registry generator, referenced as an assembly so StrongTypeRegistryGeneratorTests can run it on its own compilations. -->
+        <!-- The Primitives generators and analyzers, referenced as an assembly so the tests can run them on their own compilations. -->
         <ProjectReference Include="..\..\src\Primitives.Analyzers\Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj" />
+        <!-- LaunchPad's analyzer, for LPAD2024, which it reports in an application that doesn't reference Primitives itself. -->
+        <ProjectReference Include="..\..\src\Analyzers\Rocket.Surgery.LaunchPad.Analyzers.csproj" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.Common" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.Features" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" PrivateAssets="all" />
         <PackageReference Include="Rocket.Surgery.Extensions.Testing.SourceGenerators" />
         <PackageReference Include="Verify.SourceGenerators" />
+        <!-- What the test compilations reference: the generator writes NodaTime kinds, Dapper type handlers, the OpenTelemetry extensions and
+             the EF Core value converters only when these resolve. None of them is used by the tests themselves. -->
+        <PackageReference Include="NodaTime" />
+        <PackageReference Include="Dapper" />
+        <PackageReference Include="OpenTelemetry" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    </ItemGroup>
+    <ItemGroup>
+        <!-- The analyzer assembly carries Polyfill's internal copy of the attribute, which it shows to this project (InternalsVisibleTo). -->
+        <Using Remove="System.Diagnostics.CodeAnalysis.NotNullAttribute" />
+    </ItemGroup>
+    <ItemGroup>
+        <!-- The analyzer assembly's internals (InternalsVisibleTo) include Polyfill's NotNullAttribute, which the global alias would make ambiguous. -->
+        <Using Remove="System.Diagnostics.CodeAnalysis.NotNullAttribute" />
     </ItemGroup>
 </Project>

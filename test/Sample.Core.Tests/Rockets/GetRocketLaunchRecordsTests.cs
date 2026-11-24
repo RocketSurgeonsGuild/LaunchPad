@@ -17,7 +17,7 @@ public class GetRocketLaunchRecordsTests() : HandleTestHostBase(LogEventLevel.Ve
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
         var items = await mediator
-                         .CreateStream(new GetRocketLaunchRecords.Request { Id = RocketId.New(), }, TestContext.CancellationToken)
+                         .CreateStream(new GetRocketLaunchRecords.Request { Id = RocketId.Create(), }, TestContext.CancellationToken)
                          .ToListAsync(TestContext.CancellationToken);
 
         var item = await items.Should().HaveSingleItem();

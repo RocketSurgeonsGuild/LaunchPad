@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <!--
+        The domain primitives of Primitives.Behavior.Tests (its Types/ folder), compiled into a library of their own and completed by the
+        Primitives generator here, so that Primitives.Json.Tests can describe them in a source generated JsonSerializerContext from another
+        assembly, as an application does with the domain primitives of a library it references. In the assembly that declares them that can't
+        work: the System.Text.Json generator doesn't see the [JsonConverter] attribute the Primitives generator writes.
+    -->
+    <PropertyGroup>
+        <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
+        <IsPackable>false</IsPackable>
+        <IsTestSupportProject>true</IsTestSupportProject>
+        <!-- test/Directory.Build.props marks everything under test/ as a test project; this one is a library. -->
+        <IsTestProject>false</IsTestProject>
+        <!-- The test types (linked from Primitives.Behavior.Tests) include domain primitives without rules on purpose (LPAD2009). -->
+        <NoWarn>$(NoWarn);LPAD2009</NoWarn>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />
+        <ProjectReference
+            Include="..\..\src\Primitives.Analyzers\Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj"
+            OutputItemType="Analyzer"
+            ReferenceOutputAssembly="false"
+        />
+        <ProjectReference Include="..\..\src\NodaTime\Rocket.Surgery.LaunchPad.NodaTime.csproj" />
+        <PackageReference Include="NodaTime" />
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="..\Primitives.Behavior.Tests\Types\*.cs" Link="Types\%(Filename)%(Extension)" />
+    </ItemGroup>
+</Project>

@@ -27,7 +27,7 @@ public static partial class GetLaunchRecord
     [Validate]
     public readonly record struct Request([property: JsonRequired, Must(nameof(Request.IsAssigned))] LaunchRecordId Id) : IRequest<Result>
     {
-        internal bool IsAssigned(LaunchRecordId id) => id != default;
+        internal bool IsAssigned(LaunchRecordId id) => !id.IsDefault && id.Value != Guid.Empty;
     }
 
     /// <summary>What the operation answers: the launch record, or not found.</summary>

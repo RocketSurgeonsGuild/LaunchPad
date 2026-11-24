@@ -1,0 +1,311 @@
+﻿{
+  "parameters": {
+    "/bookings/{id}": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    ],
+    "/customers/{id}": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      {
+        "name": "email",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "maxLength": 320,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$",
+          "type": "string",
+          "format": "email"
+        }
+      },
+      {
+        "name": "points",
+        "in": "query",
+        "schema": {
+          "maximum": 1000,
+          "minimum": 0,
+          "pattern": "^-?(?:0|[1-9]\\d*)$",
+          "type": [
+            "integer",
+            "string"
+          ],
+          "format": "int32"
+        }
+      }
+    ],
+    "/customers/{id}/tier": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      {
+        "name": "country",
+        "in": "query",
+        "schema": {
+          "maxLength": 2,
+          "minLength": 2,
+          "type": "string"
+        }
+      }
+    ]
+  },
+  "schemas": {
+    "Address": {
+      "required": [
+        "street",
+        "city"
+      ],
+      "type": "object",
+      "properties": {
+        "street": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        }
+      }
+    },
+    "Balance": {
+      "required": [
+        "amount",
+        "currency"
+      ],
+      "type": "object",
+      "properties": {
+        "amount": {
+          "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+          "type": [
+            "number",
+            "string"
+          ],
+          "format": "double"
+        },
+        "currency": {
+          "type": "string"
+        }
+      }
+    },
+    "Booking": {
+      "required": [
+        "id",
+        "contact",
+        "stay"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "contact": {
+          "$ref": "#/components/schemas/Contact"
+        },
+        "stay": {
+          "$ref": "#/components/schemas/Stay"
+        }
+      }
+    },
+    "Contact": {
+      "required": [
+        "email",
+        "channel"
+      ],
+      "type": "object",
+      "properties": {
+        "email": {
+          "maxLength": 320,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$",
+          "type": "string",
+          "format": "email"
+        },
+        "phone": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "since": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "format": "date"
+        },
+        "handle": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "tier": {
+          "enum": [
+            "gold",
+            "standard",
+            null
+          ],
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "channel": {
+          "enum": [
+            "mail",
+            "phone"
+          ],
+          "type": "string"
+        }
+      }
+    },
+    "Customer": {
+      "required": [
+        "email",
+        "tier"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "email": {
+          "maxLength": 320,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$",
+          "type": "string",
+          "format": "email"
+        },
+        "country": {
+          "maxLength": 2,
+          "minLength": 2,
+          "type": "string"
+        },
+        "points": {
+          "maximum": 1000,
+          "minimum": 0,
+          "pattern": "^-?(?:0|[1-9]\\d*)$",
+          "type": [
+            "integer",
+            "string"
+          ],
+          "format": "int32"
+        },
+        "tier": {
+          "enum": [
+            "gold",
+            "standard"
+          ],
+          "type": "string"
+        },
+        "channel": {
+          "enum": [
+            "mail",
+            "phone"
+          ],
+          "type": "string"
+        },
+        "address": {
+          "$ref": "#/components/schemas/Address"
+        },
+        "balance": {
+          "$ref": "#/components/schemas/Balance"
+        },
+        "membership": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/components/schemas/Membership"
+            }
+          ]
+        },
+        "handle": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "rating": {
+          "maximum": 5,
+          "minimum": 0,
+          "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+          "type": [
+            "number",
+            "string"
+          ],
+          "format": "double"
+        }
+      }
+    },
+    "Membership": {
+      "required": [
+        "start",
+        "end"
+      ],
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "string",
+          "format": "date"
+        },
+        "end": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "Stay": {
+      "required": [
+        "start",
+        "end"
+      ],
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "string",
+          "format": "date"
+        },
+        "end": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    }
+  },
+  "wire": {
+    "email": "ada@example.com",
+    "phone": null,
+    "since": null,
+    "handle": null,
+    "tier": "gold",
+    "channel": "phone"
+  }
+}

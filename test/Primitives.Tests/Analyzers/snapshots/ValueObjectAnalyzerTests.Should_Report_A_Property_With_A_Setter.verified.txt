@@ -1,0 +1,18 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2008,
+      Severity: Error,
+      Location: Input.cs: (7,18)-(7,24),
+      Source: Street,
+      Message: Property 'Street' of value object 'Address' must use 'init' instead of 'set'
+    },
+    {
+      Id: LPAD2008,
+      Severity: Error,
+      Location: Input.cs: (14,27)-(14,31),
+      Source: Name,
+      Message: Property 'Name' of value object 'Contact' must use 'init' instead of 'set'
+    }
+  ]
+}

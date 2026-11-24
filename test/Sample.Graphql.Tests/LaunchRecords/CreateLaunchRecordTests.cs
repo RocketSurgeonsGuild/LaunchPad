@@ -36,7 +36,7 @@ public class CreateLaunchRecordTests : GraphQlWebAppFixtureTest
             {
                 Partner = "partner",
                 Payload = "geo-fence-ftl",
-                RocketId = rocket.Id.Value,
+                RocketId = rocket.Id.ToString(),
                 ScheduledLaunchDate = clock.GetCurrentInstant().WithOffset(Offset.Zero),
                 PayloadWeightKg = 100,
             },
@@ -44,6 +44,6 @@ public class CreateLaunchRecordTests : GraphQlWebAppFixtureTest
         );
         response.EnsureNoErrors();
 
-        await response.Data!.CreateLaunchRecord.Id.Should().NotBeEqualTo(Guid.Empty);
+        await Guid.Parse(response.Data!.CreateLaunchRecord.Id).Should().NotBeEqualTo(Guid.Empty);
     }
 }

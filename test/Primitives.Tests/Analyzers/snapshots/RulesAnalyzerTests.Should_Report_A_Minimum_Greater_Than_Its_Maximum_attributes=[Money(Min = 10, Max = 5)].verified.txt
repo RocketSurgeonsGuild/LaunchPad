@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2006,
+      Severity: Error,
+      Location: Input.cs: (4,1)-(4,25),
+      Source: Money(Min = 10, Max = 5),
+      Message: The minimum (10) is greater than the maximum (5), so no value is valid
+    }
+  ]
+}

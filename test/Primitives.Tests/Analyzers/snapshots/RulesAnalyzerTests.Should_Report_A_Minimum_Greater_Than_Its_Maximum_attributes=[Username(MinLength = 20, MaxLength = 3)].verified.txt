@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2006,
+      Severity: Error,
+      Location: Input.cs: (4,1)-(4,40),
+      Source: Username(MinLength = 20, MaxLength = 3),
+      Message: The minimum (20) is greater than the maximum (3), so no value is valid
+    }
+  ]
+}

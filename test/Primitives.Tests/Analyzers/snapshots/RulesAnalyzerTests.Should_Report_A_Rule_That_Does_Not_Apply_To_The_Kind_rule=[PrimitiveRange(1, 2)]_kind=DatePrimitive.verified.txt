@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2022,
+      Severity: Warning,
+      Location: Input.cs: (7,1)-(7,21),
+      Source: PrimitiveRange(1, 2),
+      Message: [PrimitiveRange] does not apply to 'Target', a date primitive, whose bounds are ISO 8601 text: use [PrimitiveRange("min", "max")]
+    }
+  ]
+}

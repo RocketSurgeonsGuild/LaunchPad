@@ -1,0 +1,16 @@
+﻿{
+  Within: {
+    Diagnostics: []
+  },
+  Over: {
+    Diagnostics: [
+      {
+        Id: LPAD2014,
+        Severity: Info,
+        Location: Input.cs: (5,38)-(5,44),
+        Source: Target,
+        Message: Domain primitive 'Target' declares 16 public members, more than the 15 a domain primitive of its kind should need
+      }
+    ]
+  }
+}

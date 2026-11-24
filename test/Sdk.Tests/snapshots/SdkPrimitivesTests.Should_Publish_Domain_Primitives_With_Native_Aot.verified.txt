@@ -1,0 +1,10 @@
+﻿Strong ID: 0198d6a4-1c2b-7000-8000-000000000001 7 False EMPTY
+Email: ada@example.com False FORMAT
+Number: 42 False RANGE
+Thrown: DomainPrimitiveValidationException
+Smart enum: Shipped 2 On its way shipped
+Struct smart enum: Courier 2 DHL courier True
+Money: 15.25 USD
+Date range: 2026-01-01/2026-01-03 True False
+JSON: {"Id":"0198d6a4-1c2b-7000-8000-000000000001","Email":"ada@example.com","Points":40,"Status":"shipped","Carrier":"courier","Address":{"street":"12 St James\u0027s Square","city":"London"},"Total":{"amount":12.5,"currency":"GBP"},"Delivery":{"start":"2026-01-01","end":"2026-01-03"}}
+Read back: True

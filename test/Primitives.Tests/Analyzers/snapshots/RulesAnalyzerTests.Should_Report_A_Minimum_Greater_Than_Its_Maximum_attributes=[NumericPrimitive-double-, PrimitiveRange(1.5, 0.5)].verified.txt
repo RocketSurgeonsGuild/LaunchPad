@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2006,
+      Severity: Error,
+      Location: Input.cs: (4,27)-(4,51),
+      Source: PrimitiveRange(1.5, 0.5),
+      Message: The minimum (1.5) is greater than the maximum (0.5), so no value is valid
+    }
+  ]
+}

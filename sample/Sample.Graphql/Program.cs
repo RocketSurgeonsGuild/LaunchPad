@@ -2,9 +2,6 @@ using HotChocolate;
 using HotChocolate.Configuration;
 
 using Rocket.Surgery.LaunchPad.AspNetCore;
-using Rocket.Surgery.LaunchPad.HotChocolate;
-
-using Sample.Core.Models;
 using Sample.Graphql;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,8 +14,6 @@ builder
    .AddSorting()
    .AddFiltering()
    .AddProjections()
-   .ConfigureStronglyTypedId<RocketId, Guid, UuidType>(id => id.Value, value => new(value))
-   .ConfigureStronglyTypedId<LaunchRecordId, Guid, UuidType>(id => id.Value, value => new(value))
    // HotChocolate's spatial types with a GeoJSON Geometry scalar that covers every geometry, GeometryCollection included
    .AddGeoJsonSpatialTypes()
    .AddSpatialFiltering()

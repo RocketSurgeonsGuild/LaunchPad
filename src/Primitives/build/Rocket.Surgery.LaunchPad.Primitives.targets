@@ -1,19 +1,40 @@
 <Project>
     <!--
-        The representation of strong types in an OpenAPI document and a GraphQL schema, read by the strong type registry generator and written
-        into LaunchPadStrongTypes as constants the templates use:
-          - LaunchPadStrongTypeOpenApiRepresentation: Component (default, a schema named after the strong type) or Inline (the value's schema
-            in place).
-          - LaunchPadStrongTypeGraphQLRepresentation: Value (default, the scalar of the value) or Named (a scalar named after the strong type).
+        The settings of the domain primitive generator, read from the project:
+          - LaunchPadPrimitivesTrim, LaunchPadPrimitivesNotEmpty: whether every string domain primitive is trimmed / must not be empty, unless
+            its own rules say otherwise (false by default).
+          - LaunchPadPrimitivesMaxLength: the longest a string domain primitive may be when its rules set no length (4096 by default).
+          - LaunchPadPrimitivesExceptionType: the full name of the exception Create throws for a rejected value, instead of
+            DomainPrimitiveValidationException. It needs a constructor that takes the message (LPAD2017 checks).
+        And the representation of domain primitives in an OpenAPI document and a GraphQL schema, written into LaunchPadPrimitives as constants
+        the templates use:
+          - LaunchPadPrimitivesOpenApiRepresentation: Component (default, a schema named after the domain primitive) or Inline (the value's
+            schema in place).
+          - LaunchPadPrimitivesGraphQLRepresentation: Value (default, the scalar of the value, ID for a strong ID) or Named (a scalar named after
+            the domain primitive).
     -->
     <PropertyGroup>
-        <LaunchPadStrongTypeOpenApiRepresentation Condition="'$(LaunchPadStrongTypeOpenApiRepresentation)' == ''">Component</LaunchPadStrongTypeOpenApiRepresentation>
-        <LaunchPadStrongTypeGraphQLRepresentation Condition="'$(LaunchPadStrongTypeGraphQLRepresentation)' == ''">Value</LaunchPadStrongTypeGraphQLRepresentation>
+        <_LaunchPadPrimitivesTargetsImported>true</_LaunchPadPrimitivesTargetsImported>
+        <LaunchPadPrimitivesOpenApiRepresentation Condition="'$(LaunchPadPrimitivesOpenApiRepresentation)' == ''">Component</LaunchPadPrimitivesOpenApiRepresentation>
+        <LaunchPadPrimitivesGraphQLRepresentation Condition="'$(LaunchPadPrimitivesGraphQLRepresentation)' == ''">Value</LaunchPadPrimitivesGraphQLRepresentation>
     </PropertyGroup>
     <ItemGroup>
-        <CompilerVisibleProperty Include="LaunchPadStrongTypeOpenApiRepresentation" />
-        <CompilerVisibleProperty Include="LaunchPadStrongTypeGraphQLRepresentation" />
+        <CompilerVisibleProperty Include="LaunchPadPrimitivesTrim" />
+        <CompilerVisibleProperty Include="LaunchPadPrimitivesNotEmpty" />
+        <CompilerVisibleProperty Include="LaunchPadPrimitivesMaxLength" />
+        <CompilerVisibleProperty Include="LaunchPadPrimitivesExceptionType" />
+        <CompilerVisibleProperty Include="LaunchPadPrimitivesOpenApiRepresentation" />
+        <CompilerVisibleProperty Include="LaunchPadPrimitivesGraphQLRepresentation" />
     </ItemGroup>
+    <!--
+        The NodaTime members of DatePrimitiveKind, which the generator writes into the project, exist only when the project references NodaTime:
+        the attributes are written before the generator sees the references, so the members are kept behind a preprocessor symbol.
+    -->
+    <Target Name="_LaunchPadPrimitivesNodaTime" AfterTargets="ResolveAssemblyReferences" BeforeTargets="CoreCompile">
+        <PropertyGroup Condition="@(ReferencePath->AnyHaveMetadataValue('Filename', 'NodaTime'))">
+            <DefineConstants>$(DefineConstants);LAUNCHPAD_PRIMITIVES_NODATIME</DefineConstants>
+        </PropertyGroup>
+    </Target>
     <!-- The Joints for the libraries an application references, as templates. -->
     <Import
         Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.Primitives.Templates.targets"

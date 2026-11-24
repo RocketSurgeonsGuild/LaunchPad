@@ -8,7 +8,7 @@ project's [host model](../host-models/) and references match. Unused wiring neve
 template depends on none of the libraries the template uses.
 
 `Rocket.Surgery.LaunchPad.Hosting` ships its [Joints](../joints/) this way, and so does `Rocket.Surgery.LaunchPad.Primitives` for the
-libraries its [strong types](../strong-types/) are described to. Each one is a template with three gates, and every gate has to pass:
+libraries its [domain primitives](../domain-primitives/) are described to. Each one is a template with three gates, and every gate has to pass:
 
 - **Hosts**: the project declares one of the host models the template is for.
 - **References**: every assembly the template compiles against is among the project's references.
@@ -62,21 +62,27 @@ configuration first and from the environment after.
 
 ## The Primitives templates
 
-| Joint                                      | Written when the project references | Host models                                    |
-| ------------------------------------------ | ----------------------------------- | ---------------------------------------------- |
-| `LaunchPadStrongTypes` (the registry)      | `SuperStrong.Types`                 | generic host, ASP.NET Core, Blazor WebAssembly |
-| `LaunchPadStrongTypesOpenApiJoint`         | `Microsoft.AspNetCore.OpenApi`      | ASP.NET Core                                   |
-| `LaunchPadStrongTypesHotChocolateJoint`    | `HotChocolate.Types`                | generic host, ASP.NET Core                     |
-| `LaunchPadStrongTypesEntityFrameworkJoint` | `Microsoft.EntityFrameworkCore`     | generic host, ASP.NET Core                     |
+| Joint                                     | Written when the project references                                                         | Host models                                    |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| `LaunchPadPrimitives` (the registry)      | `Rocket.Surgery.LaunchPad.Primitives`                                                       | generic host, ASP.NET Core, Blazor WebAssembly |
+| `LaunchPadPrimitivesOpenApiJoint`         | `Rocket.Surgery.LaunchPad.Primitives` and `Microsoft.AspNetCore.OpenApi`                    | ASP.NET Core                                   |
+| `LaunchPadPrimitivesHotChocolateJoint`    | `Rocket.Surgery.LaunchPad.Primitives` and `HotChocolate.Types`                              | generic host, ASP.NET Core                     |
+| `LaunchPadPrimitivesEntityFrameworkJoint` | `Rocket.Surgery.LaunchPad.Primitives` and `Microsoft.EntityFrameworkCore`                   | generic host, ASP.NET Core                     |
+| `LaunchPadPrimitivesInstrumentationJoint` | `Rocket.Surgery.LaunchPad.Primitives`, `Joinery.Dovetail.OpenTelemetry` and `OpenTelemetry` | generic host, ASP.NET Core, Blazor WebAssembly |
 
-`LaunchPadStrongTypes` is the registry the other Joints read, which Primitives' source generator fills in with every strong type the
-application declares or references.
+`LaunchPadPrimitives` is the registry the other Joints read, which Primitives' registry generator fills in with every domain primitive
+the application declares or references, and its rules. The EF Core Joint configures every `DbContext` with the value converters the
+registry generator writes for each domain primitive, maps value objects as complex properties and generates the keys that are strong IDs
+of a `Guid`; the instrumentation Joint calls the `AddLaunchPadPrimitivesInstrumentation()` the registry generator writes when the
+application references OpenTelemetry. Dapper needs no Joint: the registry generator registers its type handlers in a module initializer.
+See [domain primitives](../domain-primitives/#in-openapi-graphql-ef-core-and-dapper).
 
 ## Templates or packages
 
 Templates are for gating by host model inside `LaunchPad.Hosting`, where there is no package boundary to draw, and for the Joints
-of `LaunchPad.Primitives`, which describe its strong types to libraries it must not depend on
-([ADR 0008](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/docs/adr/0008-primitives-is-an-independent-strong-types-package.md)).
+of `LaunchPad.Primitives`, which describe domain primitives to libraries it must not depend on
+([ADR 0008](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/docs/adr/0008-primitives-is-an-independent-strong-types-package.md),
+[ADR 0011](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/docs/adr/0011-primitives-is-a-port-of-dotnet-domain-primitives.md)).
 Support for a third-party technology ships as an [integration package](../integration-packages/) instead.
 
 The template mechanism itself is Dovetail's:

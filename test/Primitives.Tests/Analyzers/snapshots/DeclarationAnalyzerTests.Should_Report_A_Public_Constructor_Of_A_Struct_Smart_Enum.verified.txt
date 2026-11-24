@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2012,
+      Severity: Warning,
+      Location: Input.cs: (9,11)-(9,16),
+      Source: Level,
+      Message: Domain primitive 'Level' declares a public constructor, which creates it without running its rules; use the generated Create and TryCreate
+    }
+  ]
+}

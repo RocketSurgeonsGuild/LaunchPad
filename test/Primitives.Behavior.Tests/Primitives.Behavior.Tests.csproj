@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <!--
+        How domain primitives behave at run time: the types in Types/ are completed by the Primitives generator, which runs here as it runs in
+        an application (Primitives.Tests runs it on compilations of its own, for the snapshots of what it writes).
+    -->
+    <PropertyGroup>
+        <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
+        <IsPackable>false</IsPackable>
+        <!-- On purpose, to prove how they behave: the tests create default instances (LPAD2007) and declare domain primitives without rules (LPAD2009). -->
+        <NoWarn>$(NoWarn);LPAD2007;LPAD2009</NoWarn>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />
+        <ProjectReference
+            Include="..\..\src\Primitives.Analyzers\Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj"
+            OutputItemType="Analyzer"
+            ReferenceOutputAssembly="false"
+        />
+        <!-- The JSON converters of NodaTime values, which a NodaTime domain primitive's converter reads and writes its value through. -->
+        <ProjectReference Include="..\..\src\NodaTime\Rocket.Surgery.LaunchPad.NodaTime.csproj" />
+        <PackageReference Include="NodaTime" />
+        <PackageReference Include="NodaTime.Testing" />
+        <PackageReference Include="CsCheck" />
+        <PackageReference Include="Dapper" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    </ItemGroup>
+    <ItemGroup>
+        <!--
+            The registry and EF Core templates, compiled here as they are written into an application: Dovetail only writes them into a project
+            that declares a host model (DovetailHost), which a test project doesn't, so they are compiled from the files Primitives ships.
+        -->
+        <Compile Include="..\..\src\Primitives\build\LaunchPadPrimitives.cs.template" Link="Templates\LaunchPadPrimitives.cs" />
+        <Compile
+            Include="..\..\src\Primitives\build\LaunchPadPrimitivesEntityFrameworkJoint.cs.template"
+            Link="Templates\LaunchPadPrimitivesEntityFrameworkJoint.cs"
+        />
+    </ItemGroup>
+</Project>

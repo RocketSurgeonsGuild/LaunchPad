@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2012,
+      Severity: Warning,
+      Location: Input.cs: (16,15)-(16,23),
+      Source: Shipped_,
+      Message: Domain primitive 'OrderStatus.Shipped_' declares a public constructor, which creates it without running its rules; use the generated Create and TryCreate
+    }
+  ]
+}

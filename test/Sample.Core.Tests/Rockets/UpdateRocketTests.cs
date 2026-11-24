@@ -62,7 +62,7 @@ public class UpdateRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
         await using var scope = ServiceProvider.CreateAsyncScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        var result = await mediator.Send(new EditRocket.PatchRequest { Id = RocketId.New(), }.ResetChanges(), TestContext.CancellationToken);
+        var result = await mediator.Send(new EditRocket.PatchRequest { Id = RocketId.Create(), }.ResetChanges(), TestContext.CancellationToken);
 
         await result.Value.Should().BeOfType(typeof(NotFound));
     }
@@ -84,14 +84,14 @@ public class UpdateRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
         yield return () => (
             new EditRocket.Request
             {
-                Id = RocketId.New(),
+                Id = RocketId.Create(),
             },
             nameof(EditRocket.Request.SerialNumber)
         );
         yield return () => (
             new EditRocket.Request
             {
-                Id = RocketId.New(),
+                Id = RocketId.Create(),
                 SerialNumber = Faker.Random.String2(0, 9),
             },
             nameof(EditRocket.Request.SerialNumber)
@@ -99,7 +99,7 @@ public class UpdateRocketTests() : HandleTestHostBase(LogEventLevel.Verbose)
         yield return () => (
             new EditRocket.Request
             {
-                Id = RocketId.New(),
+                Id = RocketId.Create(),
                 SerialNumber = Faker.Random.String2(600, 800),
             },
             nameof(EditRocket.Request.SerialNumber)

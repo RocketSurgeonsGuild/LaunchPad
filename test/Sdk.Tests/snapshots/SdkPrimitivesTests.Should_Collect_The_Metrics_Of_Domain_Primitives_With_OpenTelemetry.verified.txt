@@ -1,0 +1,8 @@
+﻿Joint:True
+Traces:True
+domain_primitive.creation primitive_type=CustomerEmail: 1
+domain_primitive.creation primitive_type=LoyaltyPoints: 1
+domain_primitive.validation.failure error_type=FORMAT primitive_type=CustomerEmail: 1
+domain_primitive.validation.failure error_type=RANGE primitive_type=LoyaltyPoints: 1
+domain_primitive.validation.success primitive_type=CustomerEmail: 1
+domain_primitive.validation.success primitive_type=LoyaltyPoints: 1

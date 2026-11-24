@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2022,
+      Severity: Warning,
+      Location: Input.cs: (7,1)-(7,5),
+      Source: Trim,
+      Message: [Trim] does not apply to 'Target', a numeric primitive, and the rule applies to a string
+    }
+  ]
+}

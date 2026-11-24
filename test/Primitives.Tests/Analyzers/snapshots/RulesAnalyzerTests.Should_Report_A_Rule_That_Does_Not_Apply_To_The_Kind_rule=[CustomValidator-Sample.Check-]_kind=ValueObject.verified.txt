@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2022,
+      Severity: Warning,
+      Location: Input.cs: (7,1)-(7,30),
+      Source: CustomValidator<Sample.Check>,
+      Message: [CustomValidator] does not apply to 'Target', a value object, which takes no rules: check its members in their own domain primitives
+    }
+  ]
+}

@@ -25,6 +25,21 @@ public class ValidationTests : WebAppFixtureTest
         await failures[0].GetProperty("errorMessage").GetString().Should().BeEqualTo("SerialNumber must be at least 10 characters.");
     }
 
+    // The samples' strong IDs read the empty Guid (RejectEmpty = false): the operation's IsAssigned rule rejects it, before the handler looks it up.
+    [Test]
+    public async Task Should_Reject_The_Empty_Id()
+    {
+        var response = await AlbaHost.Server.CreateClient().GetAsync(
+            new Uri($"/rocket/{Guid.Empty}", UriKind.Relative),
+            TestContext.CancellationToken
+        );
+
+        await response.StatusCode.Should().Because(await response.Content.ReadAsStringAsync(TestContext.CancellationToken)).BeEqualTo(HttpStatusCode.UnprocessableEntity);
+        using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync(TestContext.CancellationToken));
+        var failures = document.RootElement.GetProperty("errors").GetProperty("Id");
+        await failures.GetArrayLength().Should().BeEqualTo(1);
+    }
+
     [Test]
     public async Task Should_Create_A_Valid_Request()
     {

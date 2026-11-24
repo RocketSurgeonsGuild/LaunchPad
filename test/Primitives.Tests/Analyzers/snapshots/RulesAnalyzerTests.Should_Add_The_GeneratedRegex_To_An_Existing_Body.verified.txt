@@ -1,0 +1,36 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2023,
+      Severity: Info,
+      Location: Input.cs: (6,1)-(6,18),
+      Source: Regex("^[0-9]+$"),
+      Message: The pattern of [Regex] on 'Digits' is built at run time and interpreted: declare it as a [GeneratedRegex] member of the domain primitive
+    }
+  ],
+  CodeFixes: [
+    {
+      Diagnostic: LPAD2023 Input.cs: (6,1)-(6,18),
+      Title: Use a [GeneratedRegex],
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using System.Text.RegularExpressions;
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[StringPrimitive]
+public sealed partial record Digits
+{
+    public static string Format => "digits";
+
+    [GeneratedRegex("^[0-9]+$", RegexOptions.CultureInvariant, 1000)]
+    private static partial Regex Format2 { get; }
+}
+        }
+      ]
+    }
+  ]
+}

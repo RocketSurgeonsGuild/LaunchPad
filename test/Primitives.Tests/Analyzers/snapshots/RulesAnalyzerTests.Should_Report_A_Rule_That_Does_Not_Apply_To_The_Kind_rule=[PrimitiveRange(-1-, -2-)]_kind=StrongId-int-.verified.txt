@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2022,
+      Severity: Warning,
+      Location: Input.cs: (7,1)-(7,25),
+      Source: PrimitiveRange("1", "2"),
+      Message: [PrimitiveRange] does not apply to 'Target', a strong ID of int, whose bounds are numbers: use [PrimitiveRange(min, max)]
+    }
+  ]
+}

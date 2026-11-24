@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2006,
+      Severity: Error,
+      Location: Input.cs: (4,57)-(4,119),
+      Source: PrimitiveRange("2030-01-01T00:00:00Z", "2020-01-01T00:00:00Z"),
+      Message: The minimum (2030-01-01T00:00:00Z) is greater than the maximum (2020-01-01T00:00:00Z), so no value is valid
+    }
+  ]
+}

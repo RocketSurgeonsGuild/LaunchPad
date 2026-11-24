@@ -92,10 +92,26 @@ _Avoid_: Serializer context, type resolver, JSON options
 The list of its types an assembly declares as crossing the wire as JSON, from which the applications that reference it get their JSON context.
 _Avoid_: JSON registry, type list
 
-**Strong type**:
-A type that wraps a single value of a domain concept (an identifier, an email address, an amount) and is valid by construction.
-_Avoid_: Domain primitive, value object (that has several members), strongly typed ID (only one kind of strong type), primitive (that is LaunchPad's Primitives package)
+**Domain primitive**:
+A type that holds a value of a domain concept (an email address, an amount, an order's ID) and only accepts values its rules allow.
+_Avoid_: Strong type (LaunchPad's earlier name for it; say domain primitive), wrapper, primitive on its own (that is a built-in type such as `int` or `string`, and Primitives is LaunchPad's package)
+
+**Value object**:
+A domain primitive that holds several values, validated together, such as an amount of money and its currency.
+_Avoid_: Composite primitive, compound value, record (that is the C# declaration)
+
+**Smart enum**:
+A domain primitive whose values are a fixed set of named members, each with a value of its own and, optionally, data of its own (a label, a fee). Depending on how the smart enum is declared, a member can also behave differently from the other members.
+_Avoid_: Enumeration class, enum (that is the C# `enum`), case (that is a union's)
+
+**Strong ID**:
+A domain primitive that identifies an entity, so the IDs of different entities can't be mixed up.
+_Avoid_: Strongly typed ID, typed ID, entity key
+
+**Primitive kind**:
+A ready-made set of rules, such as email address, currency code or latitude, applied to a domain primitive the application declares.
+_Avoid_: Shortcut (the name in the library Primitives was ported from; say primitive kind), ready-made type, preset
 
 **Rules**:
-A named, reusable set of constraints a strong type declares it is valid under, so several strong types can share them.
-_Avoid_: Template (that is source written into a project), validator (one constraint of a rules set), profile
+The checks and normalizations that decide which values a domain primitive accepts, declared on it directly or brought by its primitive kind.
+_Avoid_: Template (that is source written into a project), validator (that is one rule written as code), profile, constraints

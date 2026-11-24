@@ -519,8 +519,8 @@ internal static class HostReader
         return result;
     }
 
-    // A default route's tokens get the constraint of their member's type ({id:guid}), as hand-written routes usually do; a strongly typed id
-    // counts as the type of its Value. Routes written by the user are left as they are.
+    // A default route's tokens get the constraint of their member's type ({id:guid}), as hand-written routes usually do; a strong ID
+    // (or any type with a Value) counts as the type of its Value. Routes written by the user are left as they are.
     private static string Constrain(string route, List<RawMember> members)
     {
         foreach (var token in RouteText.Tokens(route).ToArray())

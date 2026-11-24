@@ -1,9 +1,9 @@
 <Project>
     <!--
         Rocket.Surgery.LaunchPad.Primitives.Templates.targets
-        The Joints that describe strong types to the libraries an application uses, shipped as C# templates (*.cs.template next to this file)
-        that Joinery.Dovetail writes into the application and compiles there (Joinery.Dovetail.Templates.targets, the DovetailTemplate item),
-        so Primitives depends on none of those libraries (docs/adr/0008-primitives-is-an-independent-strong-types-package.md). A template is
+        The Joints that describe domain primitives to the libraries an application uses, shipped as C# templates (*.cs.template next to this
+        file) that Joinery.Dovetail writes into the application and compiles there (Joinery.Dovetail.Templates.targets, the DovetailTemplate
+        item), so Primitives depends on none of those libraries (docs/adr/0011-primitives-is-a-port-of-dotnet-domain-primitives.md). A template is
         only written into a project that
           - has a direct reference to this package (a PackageReference, or a ProjectReference to the project): referencing Primitives is how an
             application opts in, and a project that only receives it through a library gets nothing,
@@ -11,16 +11,16 @@
           - references every assembly in the template's References, and
           - runs the Dovetail source generator, which is what finds the joints the templates declare.
 
-        LaunchPadStrongTypes is the registry the Joints read: the template declares it, and the strong type registry generator of this package
-        (Analyzers/) fills it in with a description of every strong type the application declares or references. Every other template needs it,
-        so its gates are the loosest.
+        LaunchPadPrimitives is the registry the Joints read: the template declares it, and the registry generator of this package
+        (Rocket.Surgery.LaunchPad.Primitives.Analyzers) fills it in with the description of every domain primitive and value object the
+        application declares or references. Every other template but the instrumentation joint needs it, so its gates are the loosest.
 
         To add a joint:
           1. Write it as Name.cs.template next to this file: an internal sealed class with [Embedded] (so an assembly never sees the copy a
              referenced assembly wrote for itself), [DovetailExport] and the DovetailCategory it needs. Do not use backslashes.
           2. Add one line to _LaunchPadPrimitivesTemplate below: Include is the name (and the file name), References the assemblies it compiles
              against (file names without extension), Hosts the host models it is for.
-          3. Cover it in test/Sdk.Tests (SdkStrongTypesTests), which builds throwaway applications against the packed packages.
+          3. Cover it in test/Sdk.Tests (SdkPrimitivesTests), which builds throwaway applications against the packed packages.
 
         Rocket.Surgery.LaunchPad.Primitives.targets imports this file into every project that gets the package. The repository's
         Directory.Build.targets imports it into every project in the repository instead, since a ProjectReference imports no package assets.
@@ -30,21 +30,35 @@
         <_LaunchPadPrimitivesTemplatesImported>true</_LaunchPadPrimitivesTemplatesImported>
     </PropertyGroup>
     <ItemGroup>
-        <_LaunchPadPrimitivesTemplate Include="LaunchPadStrongTypes" References="SuperStrong.Types" Hosts="HostApplication;WebApplication;WebAssembly" />
         <_LaunchPadPrimitivesTemplate
-            Include="LaunchPadStrongTypesOpenApiJoint"
-            References="SuperStrong.Types;Microsoft.AspNetCore.OpenApi"
+            Include="LaunchPadPrimitives"
+            References="Rocket.Surgery.LaunchPad.Primitives"
+            Hosts="HostApplication;WebApplication;WebAssembly"
+        />
+        <_LaunchPadPrimitivesTemplate
+            Include="LaunchPadPrimitivesOpenApiJoint"
+            References="Rocket.Surgery.LaunchPad.Primitives;Microsoft.AspNetCore.OpenApi"
             Hosts="WebApplication"
         />
         <_LaunchPadPrimitivesTemplate
-            Include="LaunchPadStrongTypesHotChocolateJoint"
-            References="SuperStrong.Types;HotChocolate.Types"
+            Include="LaunchPadPrimitivesHotChocolateJoint"
+            References="Rocket.Surgery.LaunchPad.Primitives;HotChocolate.Types"
             Hosts="HostApplication;WebApplication"
         />
         <_LaunchPadPrimitivesTemplate
-            Include="LaunchPadStrongTypesEntityFrameworkJoint"
-            References="SuperStrong.Types;Microsoft.EntityFrameworkCore"
+            Include="LaunchPadPrimitivesHotChocolateFilteringJoint"
+            References="Rocket.Surgery.LaunchPad.Primitives;HotChocolate.Types;HotChocolate.Data"
             Hosts="HostApplication;WebApplication"
+        />
+        <_LaunchPadPrimitivesTemplate
+            Include="LaunchPadPrimitivesEntityFrameworkJoint"
+            References="Rocket.Surgery.LaunchPad.Primitives;Microsoft.EntityFrameworkCore"
+            Hosts="HostApplication;WebApplication"
+        />
+        <_LaunchPadPrimitivesTemplate
+            Include="LaunchPadPrimitivesInstrumentationJoint"
+            References="Rocket.Surgery.LaunchPad.Primitives;Joinery.Dovetail.OpenTelemetry;OpenTelemetry"
+            Hosts="HostApplication;WebApplication;WebAssembly"
         />
     </ItemGroup>
     <ItemGroup>

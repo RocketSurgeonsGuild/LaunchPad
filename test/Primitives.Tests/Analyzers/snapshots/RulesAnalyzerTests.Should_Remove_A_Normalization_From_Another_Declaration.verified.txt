@@ -1,0 +1,42 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2005,
+      Severity: Error,
+      Location: Input.cs: (5,38)-(5,42),
+      Source: Code,
+      Message: Domain primitive 'Code' cannot have both [LowerCase] and [UpperCase]
+    }
+  ],
+  CodeFixes: [
+    {
+      Diagnostic: LPAD2005 Input.cs: (5,38)-(5,42),
+      Title: Remove [LowerCase],
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[StringPrimitive, NotEmpty]
+public readonly partial record struct Code;
+        }
+      ]
+    },
+    {
+      Diagnostic: LPAD2005 Input.cs: (5,38)-(5,42),
+      Title: Remove [UpperCase],
+      Documents: [
+        {
+          Name: Code.Casing.cs,
+          Text:
+namespace Sample;
+
+public readonly partial record struct Code;
+        }
+      ]
+    }
+  ]
+}

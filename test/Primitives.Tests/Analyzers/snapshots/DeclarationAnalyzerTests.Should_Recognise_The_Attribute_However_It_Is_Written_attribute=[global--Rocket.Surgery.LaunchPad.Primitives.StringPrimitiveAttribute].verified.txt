@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2001,
+      Severity: Error,
+      Location: Input.cs: (6,30)-(6,38),
+      Source: UserName,
+      Message: 'UserName' must be declared 'partial' so the generator can complete it
+    }
+  ]
+}

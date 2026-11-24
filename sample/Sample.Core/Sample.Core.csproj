@@ -10,8 +10,6 @@
     <PackageReference Include="Joinery.Dovetail" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
-    <PackageReference Include="StronglyTypedId" />
-    <PackageReference Include="StronglyTypedId.Templates" />
     <PackageReference Include="Riok.Mapperly" ExcludeAssets="runtime" />
     <!-- ZeroAlloc.Mediator generates the mediator from the handlers in this project; the generators stay out of the projects that reference it -->
     <PackageReference Include="ZeroAlloc.Mediator" />
@@ -41,6 +39,8 @@
       Include="..\..\src\EntityFramework\Rocket.Surgery.LaunchPad.EntityFramework.csproj" />
     <ProjectReference Include="..\..\src\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
     <ProjectReference Include="..\..\src\NodaTime\Rocket.Surgery.LaunchPad.NodaTime.csproj" />
+    <!-- the strong IDs of the models (RocketId, LaunchRecordId) are domain primitives -->
+    <ProjectReference Include="..\..\src\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />
   </ItemGroup>
 
 </Project>

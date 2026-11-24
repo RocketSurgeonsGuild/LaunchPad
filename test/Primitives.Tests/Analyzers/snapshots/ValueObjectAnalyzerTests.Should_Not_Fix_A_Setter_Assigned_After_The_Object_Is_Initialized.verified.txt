@@ -1,0 +1,68 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2008,
+      Severity: Error,
+      Location: Input.cs: (8,18)-(8,24),
+      Source: Street,
+      Message: Property 'Street' of value object 'Address' must use 'init' instead of 'set'
+    },
+    {
+      Id: LPAD2008,
+      Severity: Error,
+      Location: Input.cs: (9,18)-(9,22),
+      Source: City,
+      Message: Property 'City' of value object 'Address' must use 'init' instead of 'set'
+    },
+    {
+      Id: LPAD2008,
+      Severity: Error,
+      Location: Input.cs: (10,18)-(10,25),
+      Source: Country,
+      Message: Property 'Country' of value object 'Address' must use 'init' instead of 'set'
+    },
+    {
+      Id: LPAD2008,
+      Severity: Error,
+      Location: Input.cs: (11,18)-(11,24),
+      Source: Region,
+      Message: Property 'Region' of value object 'Address' must use 'init' instead of 'set'
+    }
+  ],
+  CodeFixes: [
+    {
+      Diagnostic: LPAD2008 Input.cs: (8,18)-(8,24),
+      Title: Use 'init' instead of 'set',
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using System;
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[ValueObject]
+public sealed partial record Address
+{
+    public string Street { get; init; } = "";
+    public string City { get; private set; } = "";
+    public string Country { get; set; } = "";
+    public string Region { get; set; } = "";
+
+    public void Move(string city) => City = city;
+}
+
+public sealed class Mover
+{
+    public Mover(Address address)
+    {
+        address.Country = "France";
+        Action<string> rename = name => address.Region = name;
+    }
+}
+        }
+      ]
+    }
+  ]
+}

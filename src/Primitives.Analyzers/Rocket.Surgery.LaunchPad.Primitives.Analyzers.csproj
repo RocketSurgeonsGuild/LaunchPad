@@ -1,9 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <!--
-        The strong type registry generator (docs/adr/0008-primitives-is-an-independent-strong-types-package.md): it finds the strong types of an
-        application and its references and describes each one, for the Joints Primitives writes into the application as templates. Packed as its
-        own analyzer package, which Rocket.Surgery.LaunchPad.Primitives depends on; Primitives depends on nothing else of LaunchPad, so it can't
-        use the analyzer assembly Foundation carries.
+        The generators, analyzers and code fixes of domain primitives (docs/adr/0011-primitives-is-a-port-of-dotnet-domain-primitives.md),
+        ported from dotnet-domain-primitives (MIT, see THIRD-PARTY-NOTICES.md):
+          - the attributes, written into every project that references Primitives from Sources/ (kept out of this assembly's compilation);
+          - the domain primitive generator, which completes each type an attribute marks;
+          - the registry generator, which describes the domain primitives of an application and its references for the Joints Primitives
+            writes into the application as templates, and writes the EF Core, Dapper and OpenTelemetry glue the application can use;
+          - the LPAD2xxx analyzers and their code fixes.
+        Packed as its own analyzer package, which Rocket.Surgery.LaunchPad.Primitives depends on; Primitives depends on nothing else of
+        LaunchPad, so it can't use the analyzer assembly Foundation carries.
     -->
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
@@ -11,13 +16,26 @@
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <IsRoslynComponent>true</IsRoslynComponent>
         <RootNamespace>Rocket.Surgery.LaunchPad.Primitives.Analyzers</RootNamespace>
-        <PackageDescription>The strong type registry generator of Rocket.Surgery.LaunchPad.Primitives.</PackageDescription>
-        <PackageTags>$(PackageTags);source-generator;roslyn;strong-types;superstrong</PackageTags>
+        <PackageDescription>The generators, analyzers and code fixes of Rocket.Surgery.LaunchPad.Primitives.</PackageDescription>
+        <PackageTags>$(PackageTags);source-generator;roslyn;analyzers;domain-primitives</PackageTags>
+        <!-- RS1038: the code fixes need Workspaces, which the command-line compiler doesn't carry. The compiler finds generators and analyzers by
+             their attributes in metadata and never creates a code fix, so the assembly loads without Workspaces; only the IDE, which has it, uses
+             the fixes (the same as src/Analyzers). -->
+        <NoWarn>$(NoWarn);RS1038</NoWarn>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Polyfill" PrivateAssets="All" />
         <!-- The Roslyn of the .NET 11 SDK (5.12), the oldest that builds a net11.0 application, so no older roslynX.Y builds are packed. -->
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
+        <!-- The code fixes. -->
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" PrivateAssets="all" />
+    </ItemGroup>
+    <ItemGroup>
+        <!-- The source the generator writes into a project, as files so they can be read and edited as C#. -->
+        <Compile Remove="Sources/**/*.cs" />
+        <EmbeddedResource Include="Sources/**/*.cs" LogicalName="Rocket.Surgery.LaunchPad.Primitives.Sources.%(Filename)%(Extension)" />
+        <AdditionalFiles Include="AnalyzerReleases.Shipped.md" Condition="Exists('AnalyzerReleases.Shipped.md')" />
+        <AdditionalFiles Include="AnalyzerReleases.Unshipped.md" Condition="Exists('AnalyzerReleases.Unshipped.md')" />
     </ItemGroup>
     <ItemGroup>
         <Using Remove="System.Diagnostics.CodeAnalysis.NotNullAttribute" />
@@ -25,10 +43,14 @@
         <Using Remove="Joinery.Dovetail.Attributes" />
         <Using Remove="Joinery.Dovetail.Joints" />
     </ItemGroup>
+    <ItemGroup>
+        <InternalsVisibleTo Include="Primitives.Tests" />
+    </ItemGroup>
     <!-- Packed from wherever the build wrote it: an artifacts path moves it out of bin. -->
-    <Target Name="_LaunchPadPackStrongTypeAnalyzer" BeforeTargets="_GetPackageFiles">
+    <Target Name="_LaunchPadPackPrimitivesAnalyzer" BeforeTargets="_GetPackageFiles">
         <ItemGroup>
             <None Include="$(TargetPath)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+            <None Include="../../THIRD-PARTY-NOTICES.md" Pack="true" PackagePath="" Visible="false" />
         </ItemGroup>
     </Target>
 </Project>

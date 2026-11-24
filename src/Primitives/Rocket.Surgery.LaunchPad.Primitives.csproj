@@ -1,35 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <!--
-        Strong types (docs/adr/0008-primitives-is-an-independent-strong-types-package.md): an optional package that depends on no other
-        LaunchPad package. An application or library opts in by referencing it.
+        Domain primitives (docs/adr/0011-primitives-is-a-port-of-dotnet-domain-primitives.md): an optional package that depends on no other
+        package. An application or library opts in by referencing it, and declares its own domain primitives with the attributes the
+        Primitives generator writes into it. Ported from dotnet-domain-primitives (MIT, see THIRD-PARTY-NOTICES.md).
     -->
     <PropertyGroup>
         <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
-        <PackageDescription>Ready-made strong types (email addresses, country and currency codes, IBANs, amounts and more) built on SuperStrong.</PackageDescription>
-        <PackageTags>$(PackageTags);strong-types;superstrong;value-objects;primitive-obsession;domain-primitives;iban;currency;money</PackageTags>
+        <PackageDescription>Domain primitives: strongly typed, validated values (strings, numbers, dates, strong IDs, smart enums and value objects) completed by a source generator, with ready-made kinds such as email addresses, currency codes and money.</PackageDescription>
+        <PackageTags>$(PackageTags);domain-primitives;strong-types;value-objects;strongly-typed-id;smart-enum;primitive-obsession;iban;currency;money</PackageTags>
         <IsAotCompatible>true</IsAotCompatible>
-        <!-- The strong types live in Rocket.Surgery.LaunchPad.StrongTypes, under the StrongTypes folder. -->
-        <RootNamespace>Rocket.Surgery.LaunchPad</RootNamespace>
-        <!--
-            SuperStrong's generator writes each strong type's members (From, TryFrom, Parse, the operators) without XML documentation, and an
-            .editorconfig severity does not reach generated code for CS1591.
-        -->
-        <NoWarn>$(NoWarn);CS1591</NoWarn>
     </PropertyGroup>
     <ItemGroup>
         <None Include="build/*.*" Pack="true" PackagePath="build" />
         <None Include="buildMultiTargeting/*.*" Pack="true" PackagePath="buildMultiTargeting" />
         <None Include="buildTransitive/*.*" Pack="true" PackagePath="buildTransitive" />
+        <None Include="../../THIRD-PARTY-NOTICES.md" Pack="true" PackagePath="" Visible="false" />
     </ItemGroup>
     <ItemGroup>
-        <!--
-            SuperStrong's source generator and analyzers flow to every project that references Primitives, so an application declares its own
-            strong types with the same rules sets.
-        -->
-        <PackageReference Include="SuperStrong.Types" />
-    </ItemGroup>
-    <ItemGroup>
-        <!-- The strong type registry generator, which Primitives' templates read, flows to every project that references Primitives. -->
+        <!-- The Primitives generators and analyzers flow to every project that references Primitives. -->
         <ProjectReference
             Include="..\Primitives.Analyzers\Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj"
             IncludeAssets="analyzers"

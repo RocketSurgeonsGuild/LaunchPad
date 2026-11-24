@@ -1,0 +1,76 @@
+﻿{
+  FinalDiagnostics: [
+    {
+      Id: CS0246,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (10,44)-(10,50),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0246),
+      MessageFormat: The type or namespace name '{0}' could not be found (are you missing a using directive or an assembly reference?),
+      Message: The type or namespace name 'Admin_' could not be found (are you missing a using directive or an assembly reference?),
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    },
+    {
+      Id: CS0246,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (11,43)-(11,48),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0246),
+      MessageFormat: The type or namespace name '{0}' could not be found (are you missing a using directive or an assembly reference?),
+      Message: The type or namespace name 'User_' could not be found (are you missing a using directive or an assembly reference?),
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    },
+    {
+      Id: LPAD2105,
+      Title: Smart enum members share a value,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (12,32)-(12,36),
+      MessageFormat: {0}'s members {1} and {2} have the same value,
+      Message: Role's members Admin and Root have the same value,
+      Category: LaunchPad.Primitives
+    },
+    {
+      Id: CS0246,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (12,43)-(12,48),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0246),
+      MessageFormat: The type or namespace name '{0}' could not be found (are you missing a using directive or an assembly reference?),
+      Message: The type or namespace name 'Root_' could not be found (are you missing a using directive or an assembly reference?),
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Primitives.Analyzers.DomainPrimitiveGenerator: [
+      {
+        Id: LPAD2105,
+        Title: Smart enum members share a value,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input0.cs: (12,32)-(12,36),
+        MessageFormat: {0}'s members {1} and {2} have the same value,
+        Message: Role's members Admin and Root have the same value,
+        Category: LaunchPad.Primitives
+      }
+    ]
+  }
+}

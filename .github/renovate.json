@@ -57,8 +57,6 @@
         "Optionary",
         "Chirograph",
         "Riok.Mapperly",
-        "StronglyTypedId",
-        "StronglyTypedId.Templates",
         "Swashbuckle.AspNetCore",
         "Swashbuckle.AspNetCore.*",
         "ConsoleAppFramework",

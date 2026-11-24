@@ -1,0 +1,68 @@
+﻿{
+  FinalDiagnostics: [
+    {
+      Id: LPAD2101,
+      Title: Unsupported value type,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (11,38)-(11,44),
+      MessageFormat: {0} can't hold {1}: {2},
+      Message: Moment can't hold Instant: the type is not referenced,
+      Category: LaunchPad.Primitives
+    },
+    {
+      Id: LPAD2101,
+      Title: Unsupported value type,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (5,38)-(5,49),
+      MessageFormat: {0} can't hold {1}: {2},
+      Message: Measurement can't hold double: a strong ID is a Guid, int, long or string,
+      Category: LaunchPad.Primitives
+    },
+    {
+      Id: LPAD2101,
+      Title: Unsupported value type,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (8,29)-(8,33),
+      MessageFormat: {0} can't hold {1}: {2},
+      Message: Huge can't hold System.Numerics.BigInteger: the value must be a string, a number, a Guid, a date or time, or a NodaTime type,
+      Category: LaunchPad.Primitives
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Primitives.Analyzers.DomainPrimitiveGenerator: [
+      {
+        Id: LPAD2101,
+        Title: Unsupported value type,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input0.cs: (11,38)-(11,44),
+        MessageFormat: {0} can't hold {1}: {2},
+        Message: Moment can't hold Instant: the type is not referenced,
+        Category: LaunchPad.Primitives
+      },
+      {
+        Id: LPAD2101,
+        Title: Unsupported value type,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input0.cs: (5,38)-(5,49),
+        MessageFormat: {0} can't hold {1}: {2},
+        Message: Measurement can't hold double: a strong ID is a Guid, int, long or string,
+        Category: LaunchPad.Primitives
+      },
+      {
+        Id: LPAD2101,
+        Title: Unsupported value type,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input0.cs: (8,29)-(8,33),
+        MessageFormat: {0} can't hold {1}: {2},
+        Message: Huge can't hold System.Numerics.BigInteger: the value must be a string, a number, a Guid, a date or time, or a NodaTime type,
+        Category: LaunchPad.Primitives
+      }
+    ]
+  }
+}

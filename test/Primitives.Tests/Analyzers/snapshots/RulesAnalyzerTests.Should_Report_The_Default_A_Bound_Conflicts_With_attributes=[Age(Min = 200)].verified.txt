@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2006,
+      Severity: Error,
+      Location: Input.cs: (4,1)-(4,15),
+      Source: Age(Min = 200),
+      Message: The minimum (200) is greater than the maximum (150), so no value is valid
+    }
+  ]
+}

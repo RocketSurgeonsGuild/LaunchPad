@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2013,
+      Severity: Info,
+      Location: Input.cs: (9,29)-(9,37),
+      Source: UserCode,
+      Message: Domain primitive 'UserCode' has the same kind and rules as 'EmployeeCode'; merge them, or make sure they are different concepts
+    }
+  ]
+}

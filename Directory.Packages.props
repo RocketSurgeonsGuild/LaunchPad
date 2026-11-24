@@ -42,7 +42,6 @@
         <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="11.0.1" />
         <PackageVersion Include="Microsoft.Extensions.TimeProvider.Testing" Version="11.0.1" />
         <PackageVersion Include="Polyfill" Version="12.0.0" />
-        <PackageVersion Include="SuperStrong.Types" Version="1.0.1" />
 
         <PackageVersion Include="ZeroAlloc.Mediator" Version="6.7.3" />
         <PackageVersion Include="ZeroAlloc.Mediator.Generator" Version="6.7.3" />
@@ -95,7 +94,7 @@
 
 
 
-        <!-- Compiled against only: the JSON context task (src/Primitives.Tasks) runs inside MSBuild, which brings both. -->
+        <!-- Compiled against only: the JSON context task (src/Foundation.Tasks) runs inside MSBuild, which brings both. -->
         <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="18.12.2" />
         <PackageVersion Include="System.Reflection.Metadata" Version="11.0.0" />
         <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.12.0" />
@@ -117,7 +116,6 @@
         <PackageVersion Include="NodaTime.Serialization.JsonNet" Version="3.3.0" />
         <PackageVersion Include="NodaTime.Testing" Version="3.3.7" />
 
-        <PackageVersion Include="StronglyTypedId" Version="1.0.0-beta08" />
         <PackageVersion Include="Rocket.Surgery.Build.Information" Version="3.3.11" />
         <PackageVersion Include="Joinery.Dovetail.OpenTelemetry" Version="0.8.0" />
         <PackageVersion Include="Specular" Version="0.4.1" />
@@ -182,6 +180,8 @@
         <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.21.0" />
         <PackageVersion Include="Alba" Version="9.0.0" />
         <PackageVersion Include="Bogus" Version="35.6.5" />
+        <PackageVersion Include="CsCheck" Version="5.0.1" />
+        <PackageVersion Include="Dapper" Version="2.1.89" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Testing.TUnit" Version="11.0.1" />
     <PackageVersion Include="Rocket.Surgery.Extensions.Testing.SourceGenerators" Version="11.0.1" />
         <PackageVersion Include="TUnit" Version="1.87.12" />

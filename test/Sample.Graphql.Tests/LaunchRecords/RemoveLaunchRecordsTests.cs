@@ -29,7 +29,7 @@ public class RemoveLaunchRecordsTests : GraphQlWebAppFixtureTest
             id = record.Id;
         }
 
-        var response = await client.DeleteLaunchRecord.ExecuteAsync(new DeleteLaunchRecordRequest { Id = id.Value },
+        var response = await client.DeleteLaunchRecord.ExecuteAsync(new DeleteLaunchRecordRequest { Id = id.ToString() },
             cancellationToken: TestContext.CancellationToken);
         response.EnsureNoErrors();
 

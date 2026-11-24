@@ -1,0 +1,30 @@
+---
+# Codacy reads this file only for the paths it analyzes: which rules are on, and the quality gate, are set on Codacy's Code patterns page.
+#
+# C# is left to the tools the repository runs itself. Every build runs the compiler's nullable analysis and the .NET analyzers, and the lint
+# check runs dotnet format with the severities in .editorconfig (hk, .config/hk.pkl). Opengrep's null dereference rule, SonarC#'s style
+# rules (braces on every statement, CLS compliance) and Lizard's size limits disagree with those, so they don't analyze C#. Codacy still
+# analyzes the rest: YAML, shell, Markdown, JavaScript, TypeScript, MSBuild files and so on.
+exclude_paths:
+    # Tests, samples and the build pipeline: not shipped.
+    - 'test/**'
+    - 'sample/**'
+    - 'build/**'
+    # Verify snapshots and generated code.
+    - '**/snapshots/**'
+    - '**/*.verified.*'
+    - '**/*.received.*'
+    - '**/*.g.cs'
+    # The documentation site, its design notes and ADRs, and the guidance for coding agents.
+    - 'docs/**'
+    - 'AGENTS.md'
+engines:
+    opengrep:
+        exclude_paths:
+            - '**/*.cs'
+    sonarcsharp:
+        exclude_paths:
+            - '**/*.cs'
+    lizard:
+        exclude_paths:
+            - '**/*.cs'

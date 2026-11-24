@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2006,
+      Severity: Error,
+      Location: Input.cs: (4,18)-(4,33),
+      Source: MinLength(5000),
+      Message: The minimum (5000) is greater than the maximum (4096, the project's LaunchPadPrimitivesMaxLength), so no value is valid
+    }
+  ]
+}

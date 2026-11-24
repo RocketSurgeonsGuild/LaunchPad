@@ -1,0 +1,86 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2001,
+      Severity: Error,
+      Location: Input.cs: (4,20)-(4,25),
+      Source: Outer,
+      Message: 'Outer' must be declared 'partial' so the generator can complete the domain primitive 'Code' it contains
+    },
+    {
+      Id: LPAD2001,
+      Severity: Error,
+      Location: Input.cs: (8,28)-(8,33),
+      Source: Inner,
+      Message: 'Inner' must be declared 'partial' so the generator can complete the domain primitive 'Code' it contains
+    }
+  ],
+  CodeFixes: [
+    {
+      Diagnostic: LPAD2001 Input.cs: (4,20)-(4,25),
+      Title: Make the containing type partial,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+public static partial class Outer
+{
+    public partial record Middle
+    {
+        public sealed class Inner
+        {
+            [StringPrimitive, NotEmpty]
+            public readonly partial record struct Code;
+
+            [Email]
+            public sealed partial record Address;
+        }
+    }
+}
+
+public static class Unrelated
+{
+    public sealed class Plain;
+}
+        }
+      ]
+    },
+    {
+      Diagnostic: LPAD2001 Input.cs: (8,28)-(8,33),
+      Title: Make the containing type partial,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+public static class Outer
+{
+    public partial record Middle
+    {
+        public sealed partial class Inner
+        {
+            [StringPrimitive, NotEmpty]
+            public readonly partial record struct Code;
+
+            [Email]
+            public sealed partial record Address;
+        }
+    }
+}
+
+public static class Unrelated
+{
+    public sealed class Plain;
+}
+        }
+      ]
+    }
+  ]
+}

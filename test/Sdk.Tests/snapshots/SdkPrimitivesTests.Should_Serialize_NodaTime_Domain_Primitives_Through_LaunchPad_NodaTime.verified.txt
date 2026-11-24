@@ -1,0 +1,2 @@
+﻿{"birthday":"1815-12-10","arrivedAt":"2026-01-02T03:04:05Z","stayLength":"36:00:00"}
+Read back: True {"birthday":"1815-12-10","arrivedAt":"2026-01-02T03:04:05Z","stayLength":"36:00:00"}

@@ -1,0 +1,35 @@
+﻿CREATE TABLE "Customers" (
+    "Id" TEXT NOT NULL CONSTRAINT "PK_Customers" PRIMARY KEY,
+    "Email" TEXT NOT NULL,
+    "Country" TEXT NOT NULL,
+    "Points" INTEGER NOT NULL,
+    "Tier" INTEGER NOT NULL,
+    "Channel" TEXT NOT NULL,
+    "Handle" TEXT NULL,
+    "Rating" TEXT NOT NULL,
+    "Address_City" TEXT NOT NULL,
+    "Address_Street" TEXT NOT NULL,
+    "Balance_Amount" TEXT NOT NULL,
+    "Balance_Currency" TEXT NOT NULL,
+    "Membership_End" TEXT NULL,
+    "Membership_Start" TEXT NULL
+);
+
+Complex types: Address (Address), Balance (Balance), Membership (Membership)
+Address_City: String stored as String, size -, precision -, scale -, generated Never
+Address_Street: String stored as String, size -, precision -, scale -, generated Never
+Balance_Amount: Decimal stored as Decimal, size -, precision -, scale -, generated Never
+Balance_Currency: String stored as String, size -, precision -, scale -, generated Never
+Channel: ContactChannel stored as String, size -, precision -, scale -, generated Never
+Country: Country stored as String, size 2, precision -, scale -, generated Never
+Email: CustomerEmail stored as String, size 320, precision -, scale -, generated Never
+Handle: Handle stored as String, size 200, precision -, scale -, generated Never
+Id: CustomerId stored as Guid, size -, precision -, scale -, generated OnAdd by a value generator
+Membership_End: DateOnly stored as DateOnly, size -, precision -, scale -, generated Never
+Membership_Start: DateOnly stored as DateOnly, size -, precision -, scale -, generated Never
+Points: LoyaltyPoints stored as Int32, size -, precision -, scale -, generated Never
+Rating: Stars stored as Decimal, size -, precision 18, scale 1, generated Never
+Tier: CustomerTier stored as Int32, size -, precision -, scale -, generated Never
+
+Key generated on insert: True (version 7)
+Read back: True ada@example.com GB 40 Gold Phone (By phone) 12 St James's Square, London 12.5 GBP 2026-01-01..2026-12-31 ada-lovelace 4.5

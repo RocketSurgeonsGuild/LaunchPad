@@ -1,0 +1,82 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2008,
+      Severity: Error,
+      Location: Input.cs: (7,18)-(7,24),
+      Source: Street,
+      Message: Property 'Street' of value object 'Address' must use 'init' instead of 'set'
+    },
+    {
+      Id: LPAD2008,
+      Severity: Error,
+      Location: Input.cs: (8,18)-(8,22),
+      Source: City,
+      Message: Property 'City' of value object 'Address' must use 'init' instead of 'set'
+    }
+  ],
+  CodeFixes: [
+    {
+      Diagnostic: LPAD2008 Input.cs: (7,18)-(7,24),
+      Title: Use 'init' instead of 'set',
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[ValueObject]
+public sealed partial record Address
+{
+    public string Street { get; init; } = "";
+    public string City { get; set; } = "";
+    public string Line
+    {
+        get => $"{Street}, {City}";
+        init => (Street, this.City) = (value, value);
+    }
+}
+
+public static class Addresses
+{
+    public static Address Create(string street) => new() { Street = street, City = "Paris" };
+    public static Address Move(Address address, string city) => address with { City = city };
+}
+        }
+      ]
+    },
+    {
+      Diagnostic: LPAD2008 Input.cs: (8,18)-(8,22),
+      Title: Use 'init' instead of 'set',
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[ValueObject]
+public sealed partial record Address
+{
+    public string Street { get; set; } = "";
+    public string City { get; init; } = "";
+    public string Line
+    {
+        get => $"{Street}, {City}";
+        init => (Street, this.City) = (value, value);
+    }
+}
+
+public static class Addresses
+{
+    public static Address Create(string street) => new() { Street = street, City = "Paris" };
+    public static Address Move(Address address, string city) => address with { City = city };
+}
+        }
+      ]
+    }
+  ]
+}

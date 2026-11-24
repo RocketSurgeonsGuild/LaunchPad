@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2022,
+      Severity: Warning,
+      Location: Input.cs: (7,1)-(7,14),
+      Source: MaxLength(10),
+      Message: [MaxLength] does not apply to 'Target', a strong ID of Guid, and the rule applies to a string
+    }
+  ]
+}

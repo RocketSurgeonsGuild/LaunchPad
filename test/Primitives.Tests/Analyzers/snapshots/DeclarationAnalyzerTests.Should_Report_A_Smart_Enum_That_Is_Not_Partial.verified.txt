@@ -1,0 +1,32 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2001,
+      Severity: Error,
+      Location: Input.cs: (5,20)-(5,25),
+      Source: Level,
+      Message: 'Level' must be declared 'partial' so the generator can complete it
+    }
+  ],
+  CodeFixes: [
+    {
+      Diagnostic: LPAD2001 Input.cs: (5,20)-(5,25),
+      Title: Make the domain primitive partial,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[SmartEnum<int>]
+public closed partial class Level
+{
+    public static readonly Level Low = new Low_(1);
+}
+        }
+      ]
+    }
+  ]
+}

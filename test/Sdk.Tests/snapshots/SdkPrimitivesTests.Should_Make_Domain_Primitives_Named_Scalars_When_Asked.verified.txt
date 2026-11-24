@@ -1,0 +1,106 @@
+﻿schema {
+  query: Query
+}
+
+type Query {
+  customer(id: CustomerId!, country: Country!): Customer!
+}
+
+type Address {
+  street: String!
+  city: String!
+}
+
+type Balance {
+  amount: Decimal!
+  currency: String!
+}
+
+type Customer {
+  id: CustomerId!
+  email: CustomerEmail!
+  country: Country!
+  points: LoyaltyPoints!
+  tier: CustomerTier!
+  channel: ContactChannel!
+  address: Address!
+  balance: Balance!
+  membership: Membership
+  handle: Handle
+  rating: Stars!
+}
+
+type Membership {
+  start: LocalDate!
+  end: LocalDate!
+}
+
+scalar ContactChannel
+
+scalar Country
+
+scalar CustomerEmail
+
+scalar CustomerId
+
+scalar CustomerTier
+
+"The `Decimal` scalar type represents a decimal floating-point number with high precision."
+scalar Decimal
+  @specifiedBy(url: "https://scalars.graphql.org/chillicream/decimal.html")
+
+scalar Handle
+
+"The `LocalDate` scalar type represents a date without time or time zone information."
+scalar LocalDate
+  @specifiedBy(url: "https://scalars.graphql.org/chillicream/local-date.html")
+
+scalar LoyaltyPoints
+
+scalar Stars
+
+{
+  "data": {
+    "customer": {
+      "id": "6f9619ff-8b86-d011-b42d-00cf4fc964ff",
+      "email": "ada@example.com",
+      "country": "GB",
+      "points": 40,
+      "tier": 2,
+      "channel": "phone",
+      "address": {
+        "street": "12 St James's Square",
+        "city": "London"
+      },
+      "balance": {
+        "amount": 12.5,
+        "currency": "GBP"
+      },
+      "membership": {
+        "start": "2026-01-01",
+        "end": "2026-12-31"
+      },
+      "handle": "ada-lovelace",
+      "rating": 4.5
+    }
+  }
+}
+
+{
+  "errors": [
+    {
+      "message": "The value is not a valid Country.",
+      "path": [
+        "customer"
+      ],
+      "extensions": {
+        "inputPath": [
+          "country"
+        ],
+        "coordinate": "Query.customer(country:)",
+        "fieldType": "Country"
+      }
+    }
+  ],
+  "data": null
+}

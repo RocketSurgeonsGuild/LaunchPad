@@ -20,6 +20,8 @@
     <ProjectReference Include="..\..\src\ZeroAlloc.Grpc\Rocket.Surgery.LaunchPad.ZeroAlloc.Grpc.csproj" />
     <ProjectReference Include="..\..\src\Hosting\Rocket.Surgery.LaunchPad.Hosting.csproj" />
     <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
+    <!-- a direct reference, so the Primitives joints (the strong IDs in Entity Framework and OpenAPI, and the domain primitive metrics) are written into the application -->
+    <ProjectReference Include="..\..\src\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />
   </ItemGroup>
   <ItemGroup>
     <!-- ASP.NET Core's entry point: ConfigureDovetail on the WebApplicationBuilder -->

@@ -1,0 +1,32 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2002,
+      Severity: Error,
+      Location: Input.cs: (5,29)-(5,34),
+      Source: Level,
+      Message: Domain primitive 'Level' is a record struct and must be declared 'readonly'
+    }
+  ],
+  CodeFixes: [
+    {
+      Diagnostic: LPAD2002 Input.cs: (5,29)-(5,34),
+      Title: Make the domain primitive readonly,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[SmartEnum<int>]
+public readonly partial record struct Level
+{
+    public static readonly Level Low = new(1);
+}
+        }
+      ]
+    }
+  ]
+}

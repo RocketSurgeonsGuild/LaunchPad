@@ -1,0 +1,10 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2017,
+      Severity: Error,
+      Location: : (0,0)-(0,0),
+      Message: LaunchPadPrimitivesExceptionType is 'Sample.NotAnException', which does not derive from System.Exception
+    }
+  ]
+}

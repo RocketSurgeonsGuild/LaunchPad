@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2006,
+      Severity: Error,
+      Location: Input.cs: (4,1)-(4,21),
+      Source: Email(MaxLength = 3),
+      Message: The minimum (5) is greater than the maximum (3), so no value is valid
+    }
+  ]
+}

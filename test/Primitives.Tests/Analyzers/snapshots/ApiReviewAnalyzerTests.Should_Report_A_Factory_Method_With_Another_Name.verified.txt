@@ -1,0 +1,81 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2016,
+      Severity: Info,
+      Location: Input.cs: (8,27)-(8,32),
+      Source: Build,
+      Message: Factory method 'Build' of domain primitive 'UserName' should be named Create, TryCreate, Parse or TryParse
+    }
+  ],
+  CodeFixes: [
+    {
+      Diagnostic: LPAD2016 Input.cs: (8,27)-(8,32),
+      Title: Rename to 'Create',
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[StringPrimitive, NotEmpty]
+public sealed partial record UserName
+{
+    /// <summary>Makes one.</summary>
+    public static UserName Create(int length) => Create(new string('a', length));
+
+    /// <summary>Makes one.</summary>
+    public static UserName Parse(string value, int length) => Create(value[..length]);
+
+    /// <summary>Not a factory.</summary>
+    public static int Count(UserName name) => 0;
+
+    /// <summary>Not static.</summary>
+    public UserName With(int length) => this;
+}
+
+public static class Uses
+{
+    public static UserName Run() => UserName.Create(3);
+}
+        }
+      ]
+    },
+    {
+      Diagnostic: LPAD2016 Input.cs: (8,27)-(8,32),
+      Title: Rename to 'Parse',
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[StringPrimitive, NotEmpty]
+public sealed partial record UserName
+{
+    /// <summary>Makes one.</summary>
+    public static UserName Parse(int length) => Create(new string('a', length));
+
+    /// <summary>Makes one.</summary>
+    public static UserName Parse(string value, int length) => Create(value[..length]);
+
+    /// <summary>Not a factory.</summary>
+    public static int Count(UserName name) => 0;
+
+    /// <summary>Not static.</summary>
+    public UserName With(int length) => this;
+}
+
+public static class Uses
+{
+    public static UserName Run() => UserName.Parse(3);
+}
+        }
+      ]
+    }
+  ]
+}

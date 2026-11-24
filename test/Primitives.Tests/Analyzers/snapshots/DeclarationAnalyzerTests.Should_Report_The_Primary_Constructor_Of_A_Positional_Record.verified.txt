@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2012,
+      Severity: Warning,
+      Location: Input.cs: (5,38)-(5,46),
+      Source: UserName,
+      Message: Domain primitive 'UserName' declares a public constructor, which creates it without running its rules; use the generated Create and TryCreate
+    }
+  ]
+}
