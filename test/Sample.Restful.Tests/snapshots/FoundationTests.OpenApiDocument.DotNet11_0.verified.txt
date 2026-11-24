@@ -777,8 +777,7 @@
             name: id,
             required: true,
             schema: {
-              format: uuid,
-              type: string
+              $ref: #/components/schemas/LaunchRecordId
             }
           }
         ],

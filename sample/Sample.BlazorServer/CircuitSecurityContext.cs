@@ -1,5 +1,3 @@
-using System.Security.Claims;
-
 using Microsoft.AspNetCore.Components.Authorization;
 
 using Rocket.Surgery.LaunchPad.AspNetCore.Authorization;
@@ -9,26 +7,39 @@ using ZeroAlloc.Authorization;
 namespace Sample.BlazorServer;
 
 /// <summary>
-///     The caller the policies of the operations see in a circuit: the user who was signed in when the circuit started. On the server the
-///     authentication state is ready by then, so it is read without waiting.
+///     The caller the policies of the operations see in a circuit: the circuit's signed-in user, kept up to date when the authentication
+///     state changes. On the server the state is ready when the circuit starts, so it is read without waiting.
 /// </summary>
-internal sealed class CircuitSecurityContext(AuthenticationStateProvider authentication) : ISecurityContext
+internal sealed class CircuitSecurityContext : ISecurityContext, IDisposable
 {
-    private ClaimsPrincipal? _user;
+    private readonly AuthenticationStateProvider _authentication;
+
+    public CircuitSecurityContext(AuthenticationStateProvider authentication)
+    {
+        _authentication = authentication;
+        _authentication.AuthenticationStateChanged += OnChanged;
+    }
 
     public string Id => Current.Id;
     public IReadOnlySet<string> Roles => Current.Roles;
     public IReadOnlyDictionary<string, string> Claims => Current.Claims;
 
+    [AllowNull]
     private ISecurityContext Current
     {
         get
         {
-            var state = authentication.GetAuthenticationStateAsync();
-            var user = state.IsCompletedSuccessfully ? state.Result.User : null;
-            if (ReferenceEquals(user, _user)) return field;
-            _user = user;
-            return field = ClaimsSecurityContext.From(user);
+            if (field is { } current) return current;
+            // A state that is not ready yet is nobody, and is asked for again at the next read.
+            var state = _authentication.GetAuthenticationStateAsync();
+            return state.IsCompletedSuccessfully ? field = ClaimsSecurityContext.From(state.Result.User) : AnonymousSecurityContext.Instance;
         }
-    } = AnonymousSecurityContext.Instance;
+
+        set;
+    }
+
+    public void Dispose() => _authentication.AuthenticationStateChanged -= OnChanged;
+
+    private void OnChanged(Task<AuthenticationState> state) =>
+        Current = state.IsCompletedSuccessfully ? ClaimsSecurityContext.From(state.Result.User) : null;
 }

@@ -619,20 +619,6 @@ input StringOperationFilterInput {
   nendsWith: String @cost(weight: "20")
 }
 
-input StronglyTypedIdFilterOfUuidTypeFilterInput {
-  eq: UUID @cost(weight: "10")
-  neq: UUID @cost(weight: "10")
-  in: [UUID] @cost(weight: "10")
-  nin: [UUID] @cost(weight: "10")
-}
-
-input StronglyTypedIdOperationFilterInput {
-  eq: UUID @cost(weight: "10")
-  neq: UUID @cost(weight: "10")
-  in: [UUID] @cost(weight: "10")
-  nin: [UUID] @cost(weight: "10")
-}
-
 "Defines when a policy shall be executed."
 enum ApplyPolicy {
   "Before the resolver was executed."
@@ -702,10 +688,6 @@ scalar Long
 
 "A position is an array of numbers. There MUST be two or more elements. The first two elements are longitude and latitude, or easting and northing, precisely in that order and using decimal numbers. Altitude or elevation MAY be included as an optional third element."
 scalar Position
-
-"The `UUID` scalar type represents a Universally Unique Identifier (UUID) as defined by RFC 9562."
-scalar UUID
-  @specifiedBy(url: "https://scalars.graphql.org/chillicream/uuid.html")
 
 directive @allowAnonymous repeatable on FIELD_DEFINITION
 
