@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2013,
+      Severity: Info,
+      Location: Input.cs: (20,38)-(20,44),
+      Source: Ticker,
+      Message: Domain primitive 'Ticker' has the same kind and rules as 'Sku'; merge them, or make sure they are different concepts
+    }
+  ]
+}

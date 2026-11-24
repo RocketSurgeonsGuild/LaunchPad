@@ -1,0 +1,166 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2010,
+      Severity: Warning,
+      Location: Input.cs: (18,46)-(18,61),
+      Source: "admin" == name,
+      Message: A string is compared with domain primitive 'UserName'; compare with its Value, or create a 'UserName' from the string first
+    },
+    {
+      Id: LPAD2010,
+      Severity: Warning,
+      Location: Input.cs: (19,47)-(19,62),
+      Source: name != "admin",
+      Message: A string is compared with domain primitive 'UserName'; compare with its Value, or create a 'UserName' from the string first
+    },
+    {
+      Id: LPAD2010,
+      Severity: Warning,
+      Location: Input.cs: (20,42)-(20,53),
+      Source: sku == "A1",
+      Message: A string is compared with domain primitive 'Sku'; compare with its Value, or create a 'Sku' from the string first
+    },
+    {
+      Id: LPAD2010,
+      Severity: Warning,
+      Location: Input.cs: (21,46)-(21,60),
+      Source: color == "red",
+      Message: A string is compared with domain primitive 'Color'; compare with its Value, or create a 'Color' from the string first
+    }
+  ],
+  CodeFixes: [
+    {
+      Diagnostic: LPAD2010 Input.cs: (18,46)-(18,61),
+      Title: Compare with the domain primitive's Value,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[StringPrimitive, NotEmpty]
+public readonly partial record struct UserName;
+
+[StrongId<string>, MaxLength(10)]
+public sealed partial record Sku;
+
+[SmartEnum<string>]
+public sealed partial record Color
+{
+    public static readonly Color Red = new("red");
+}
+
+public static class Uses
+{
+    public static bool Left(UserName name) => "admin" == name.Value;
+    public static bool Right(UserName name) => name != "admin";
+    public static bool Strong(Sku sku) => sku == "A1";
+    public static bool Member(Color color) => color == "red";
+}
+        }
+      ]
+    },
+    {
+      Diagnostic: LPAD2010 Input.cs: (19,47)-(19,62),
+      Title: Compare with the domain primitive's Value,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[StringPrimitive, NotEmpty]
+public readonly partial record struct UserName;
+
+[StrongId<string>, MaxLength(10)]
+public sealed partial record Sku;
+
+[SmartEnum<string>]
+public sealed partial record Color
+{
+    public static readonly Color Red = new("red");
+}
+
+public static class Uses
+{
+    public static bool Left(UserName name) => "admin" == name;
+    public static bool Right(UserName name) => name.Value != "admin";
+    public static bool Strong(Sku sku) => sku == "A1";
+    public static bool Member(Color color) => color == "red";
+}
+        }
+      ]
+    },
+    {
+      Diagnostic: LPAD2010 Input.cs: (20,42)-(20,53),
+      Title: Compare with the domain primitive's Value,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[StringPrimitive, NotEmpty]
+public readonly partial record struct UserName;
+
+[StrongId<string>, MaxLength(10)]
+public sealed partial record Sku;
+
+[SmartEnum<string>]
+public sealed partial record Color
+{
+    public static readonly Color Red = new("red");
+}
+
+public static class Uses
+{
+    public static bool Left(UserName name) => "admin" == name;
+    public static bool Right(UserName name) => name != "admin";
+    public static bool Strong(Sku sku) => sku.Value == "A1";
+    public static bool Member(Color color) => color == "red";
+}
+        }
+      ]
+    },
+    {
+      Diagnostic: LPAD2010 Input.cs: (21,46)-(21,60),
+      Title: Compare with the domain primitive's Value,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[StringPrimitive, NotEmpty]
+public readonly partial record struct UserName;
+
+[StrongId<string>, MaxLength(10)]
+public sealed partial record Sku;
+
+[SmartEnum<string>]
+public sealed partial record Color
+{
+    public static readonly Color Red = new("red");
+}
+
+public static class Uses
+{
+    public static bool Left(UserName name) => "admin" == name;
+    public static bool Right(UserName name) => name != "admin";
+    public static bool Strong(Sku sku) => sku == "A1";
+    public static bool Member(Color color) => color.Value == "red";
+}
+        }
+      ]
+    }
+  ]
+}

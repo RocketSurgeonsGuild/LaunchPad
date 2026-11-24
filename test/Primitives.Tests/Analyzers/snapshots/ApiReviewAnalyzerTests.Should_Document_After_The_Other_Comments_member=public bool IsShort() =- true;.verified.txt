@@ -1,0 +1,36 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2015,
+      Severity: Info,
+      Location: Input.cs: (8,16)-(8,23),
+      Source: IsShort,
+      Message: Public member 'IsShort' of domain primitive 'UserName' has no XML documentation
+    }
+  ],
+  CodeFixes: [
+    {
+      Diagnostic: LPAD2015 Input.cs: (8,16)-(8,23),
+      Title: Add XML documentation,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[StringPrimitive, NotEmpty]
+public readonly partial record struct UserName
+{
+    // A comment
+    /// <summary>
+    /// IsShort.
+    /// </summary>
+    public bool IsShort() => true;
+}
+        }
+      ]
+    }
+  ]
+}

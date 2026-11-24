@@ -1,0 +1,30 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2009,
+      Severity: Warning,
+      Location: Input.cs: (5,38)-(5,46),
+      Source: UserName,
+      Message: Domain primitive 'UserName' declares no rules to check its value: add [NotEmpty], a length, a [Regex] or a [CustomValidator<T>]
+    }
+  ],
+  CodeFixes: [
+    {
+      Diagnostic: LPAD2009 Input.cs: (5,38)-(5,46),
+      Title: Add [NotEmpty],
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[StringPrimitive]
+[NotEmpty]
+public readonly partial record struct UserName;
+        }
+      ]
+    }
+  ]
+}

@@ -30,13 +30,7 @@ public class DuplicatePrimitiveAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2013: UserCode"], CollectionOrdering.Matching);
-        await Messages(result, "LPAD2013")
-             .Should()
-             .BeEquivalentTo(
-                  ["Domain primitive 'UserCode' has the same kind and rules as 'EmployeeCode'; merge them, or make sure they are different concepts"],
-                  CollectionOrdering.Matching
-              );
+        await VerifyAnalysis(result);
     }
 
     // A [GeneratedRegex] member is a rule: its pattern and options count, its name doesn't.
@@ -73,7 +67,7 @@ public class DuplicatePrimitiveAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2013: Ticker"], CollectionOrdering.Matching);
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -94,7 +88,7 @@ public class DuplicatePrimitiveAnalyzerTests
               """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2013: B"], CollectionOrdering.Matching);
+        await VerifyAnalysis(result, settings => settings.UseTextForParameters(ParameterText(first, second)));
     }
 
     [Test]
@@ -121,7 +115,7 @@ public class DuplicatePrimitiveAnalyzerTests
               """
         );
 
-        await Diagnostics(result).Should().BeEmpty();
+        await VerifyAnalysis(result, settings => settings.UseTextForParameters(ParameterText(first, second)));
     }
 
     [Test]
@@ -144,8 +138,7 @@ public class DuplicatePrimitiveAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2013: C", "LPAD2013: B"], CollectionOrdering.Matching);
-        await Messages(result, "LPAD2013").Should().All(m => m.EndsWith("as 'A'; merge them, or make sure they are different concepts", StringComparison.Ordinal));
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -169,6 +162,11 @@ public class DuplicatePrimitiveAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
+
+    // The pair names the snapshot without its spaces, which written out can be longer than a file name may be, and with '-' for the characters
+    // Verify leaves in a parameter text it is given but Windows doesn't allow in a file name.
+    private static string ParameterText(string first, string second) =>
+        string.Concat($"{first}_{second}".Where(c => c != ' ').Select(c => "<>:\"|?*/\\".Contains(c, StringComparison.Ordinal) ? '-' : c));
 }

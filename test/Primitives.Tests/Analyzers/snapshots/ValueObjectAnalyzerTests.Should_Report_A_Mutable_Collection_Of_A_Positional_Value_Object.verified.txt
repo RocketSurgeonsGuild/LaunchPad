@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2018,
+      Severity: Warning,
+      Location: Input.cs: (5,45)-(5,50),
+      Source: int[],
+      Message: Property 'Items' of value object 'Basket' is a 'int[]', which can be changed after the value object is created; use an immutable collection
+    }
+  ]
+}

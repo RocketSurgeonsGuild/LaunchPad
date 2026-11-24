@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2004,
+      Severity: Error,
+      Location: Input.cs: (4,18)-(4,31),
+      Source: Regex("[a-z"),
+      Message: The pattern '[a-z' of [Regex] is not a valid regular expression: Invalid pattern '[a-z' at offset 4. Unterminated [] set.
+    }
+  ]
+}

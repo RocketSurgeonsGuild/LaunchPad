@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2006,
+      Severity: Error,
+      Location: Input.cs: (4,1)-(4,21),
+      Source: Percentage(Max = -1),
+      Message: The minimum (0) is greater than the maximum (-1), so no value is valid
+    }
+  ]
+}

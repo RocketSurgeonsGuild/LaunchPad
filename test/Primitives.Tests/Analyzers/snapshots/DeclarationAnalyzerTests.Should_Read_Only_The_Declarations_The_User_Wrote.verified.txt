@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2002,
+      Severity: Error,
+      Location: Input.cs: (5,29)-(5,37),
+      Source: UserName,
+      Message: Domain primitive 'UserName' is a record struct and must be declared 'readonly'
+    }
+  ]
+}

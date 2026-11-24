@@ -1,0 +1,50 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2010,
+      Severity: Warning,
+      Location: Input.cs: (18,48)-(18,76),
+      Source: (name ?? default) != "admin",
+      Message: A string is compared with domain primitive 'UserName'; compare with its Value, or create a 'UserName' from the string first
+    },
+    {
+      Id: LPAD2007,
+      Severity: Warning,
+      Location: Input.cs: (18,57)-(18,64),
+      Source: default,
+      Message: This makes an uninitialized 'UserName' that no rule has checked; use UserName.Create or UserName.TryCreate
+    }
+  ],
+  CodeFixes: [
+    {
+      Diagnostic: LPAD2010 Input.cs: (18,48)-(18,76),
+      Title: Compare with the domain primitive's Value,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[StringPrimitive, NotEmpty]
+public readonly partial record struct UserName;
+
+[StrongId<string>, MaxLength(10)]
+public sealed partial record Sku;
+
+[SmartEnum<string>]
+public sealed partial record Color
+{
+    public static readonly Color Red = new("red");
+}
+
+public static class Uses
+{
+    public static bool Right(UserName? name) => (name ?? default).Value != "admin";
+}
+        }
+      ]
+    }
+  ]
+}

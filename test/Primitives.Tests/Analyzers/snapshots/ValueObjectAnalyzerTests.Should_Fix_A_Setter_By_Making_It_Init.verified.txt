@@ -1,0 +1,102 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2008,
+      Severity: Error,
+      Location: Input.cs: (7,27)-(7,33),
+      Source: Street,
+      Message: Property 'Street' of value object 'Address' must use 'init' instead of 'set'
+    },
+    {
+      Id: LPAD2008,
+      Severity: Error,
+      Location: Input.cs: (8,18)-(8,22),
+      Source: City,
+      Message: Property 'City' of value object 'Address' must use 'init' instead of 'set'
+    },
+    {
+      Id: LPAD2008,
+      Severity: Error,
+      Location: Input.cs: (9,18)-(9,22),
+      Source: Note,
+      Message: Property 'Note' of value object 'Address' must use 'init' instead of 'set'
+    }
+  ],
+  CodeFixes: [
+    {
+      Diagnostic: LPAD2008 Input.cs: (7,27)-(7,33),
+      Title: Use 'init' instead of 'set',
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[ValueObject]
+public sealed partial record Address
+{
+    public required string Street { get; init; }
+    public string City { get; private set; } = "";
+    public string Note
+    {
+        get => field;
+        set => field = value.Trim();
+    } = "";
+}
+        }
+      ]
+    },
+    {
+      Diagnostic: LPAD2008 Input.cs: (8,18)-(8,22),
+      Title: Use 'init' instead of 'set',
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[ValueObject]
+public sealed partial record Address
+{
+    public required string Street { get; set; }
+    public string City { get; private init; } = "";
+    public string Note
+    {
+        get => field;
+        set => field = value.Trim();
+    } = "";
+}
+        }
+      ]
+    },
+    {
+      Diagnostic: LPAD2008 Input.cs: (9,18)-(9,22),
+      Title: Use 'init' instead of 'set',
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[ValueObject]
+public sealed partial record Address
+{
+    public required string Street { get; set; }
+    public string City { get; private set; } = "";
+    public string Note
+    {
+        get => field;
+        init => field = value.Trim();
+    } = "";
+}
+        }
+      ]
+    }
+  ]
+}

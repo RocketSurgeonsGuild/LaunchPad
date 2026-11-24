@@ -1,0 +1,33 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2016,
+      Severity: Info,
+      Location: Input.cs: (8,27)-(8,31),
+      Source: From,
+      Message: Factory method 'From' of domain primitive 'UserName' should be named Create, TryCreate, Parse or TryParse
+    }
+  ],
+  CodeFixes: [
+    {
+      Diagnostic: LPAD2016 Input.cs: (8,27)-(8,31),
+      Title: Rename to 'Parse',
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[StringPrimitive, NotEmpty]
+public sealed partial record UserName
+{
+    /// <summary>Makes one.</summary>
+    public static UserName Parse(string value) => new();
+}
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2006,
+      Severity: Error,
+      Location: Input.cs: (4,1)-(4,25),
+      Source: Money(Min = 10, Max = 5),
+      Message: The minimum (10) is greater than the maximum (5), so no value is valid
+    },
+    {
+      Id: LPAD2022,
+      Severity: Warning,
+      Location: Input.cs: (4,27)-(4,49),
+      Source: PrimitiveRange(0, 100),
+      Message: [PrimitiveRange] does not apply to 'Bounded', a value object, which takes no rules: check its members in their own domain primitives
+    }
+  ]
+}

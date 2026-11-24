@@ -25,30 +25,14 @@ public class ApiReviewAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2015: Length"], CollectionOrdering.Matching);
-        await ( await Fixed<AddDocumentationCodeFix>(result, "Add XML documentation") ).Should().BeEqualTo(
-            """
-            using Rocket.Surgery.LaunchPad.Primitives;
-
-            namespace Sample;
-
-            [StringPrimitive, NotEmpty]
-            public readonly partial record struct UserName
-            {
-                /// <summary>
-                /// Gets the Length.
-                /// </summary>
-                public int Length => 0;
-            }
-            """
-        );
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<AddDocumentationCodeFix>(result, "Add XML documentation") ).Should().BeEmpty();
     }
 
     [Test]
-    [Arguments("public bool IsShort() => true;", "    // A comment\n    /// <summary>\n    /// IsShort.\n    /// </summary>\n    public bool IsShort() => true;")]
-    [Arguments("public static readonly int Limit = 3;", "    // A comment\n    /// <summary>\n    /// The Limit.\n    /// </summary>\n    public static readonly int Limit = 3;")]
-    public async Task Should_Document_After_The_Other_Comments(string member, string documented)
+    [Arguments("public bool IsShort() => true;")]
+    [Arguments("public static readonly int Limit = 3;")]
+    public async Task Should_Document_After_The_Other_Comments(string member)
     {
         var result = await Fix<ApiReviewAnalyzer, AddDocumentationCodeFix>(
             $$"""
@@ -65,7 +49,7 @@ public class ApiReviewAnalyzerTests
               """
         );
 
-        await ( await Fixed<AddDocumentationCodeFix>(result, "Add XML documentation") ).Should().Contain(documented);
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<AddDocumentationCodeFix>(result, "Add XML documentation") ).Should().BeEmpty();
     }
 
@@ -107,7 +91,7 @@ public class ApiReviewAnalyzerTests
             )
         );
 
-        await Diagnostics(result).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -142,11 +126,7 @@ public class ApiReviewAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2016: Build"], CollectionOrdering.Matching);
-        await FixTitles<RenameFactoryCodeFix>(result).Should().BeEquivalentTo(["Rename to 'Create'", "Rename to 'Parse'"], CollectionOrdering.Any);
-        var renamed = await Fixed<RenameFactoryCodeFix>(result, "Rename to 'Create'");
-        await renamed.Should().Contain("public static UserName Create(int length) => Create(new string('a', length));");
-        await renamed.Should().Contain("public static UserName Run() => UserName.Create(3);");
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<RenameFactoryCodeFix>(result, "Rename to 'Create'") ).Should().BeEmpty();
         await ( await ErrorsAfterFix<RenameFactoryCodeFix>(result, "Rename to 'Parse'") ).Should().BeEmpty();
     }
@@ -181,7 +161,7 @@ public class ApiReviewAnalyzerTests
             )
         );
 
-        await FixTitles<RenameFactoryCodeFix>(result).Should().BeEquivalentTo(["Rename to 'Parse'"], CollectionOrdering.Matching);
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -194,16 +174,9 @@ public class ApiReviewAnalyzerTests
     public async Task Should_Report_More_Members_Than_The_Budget_Of_The_Kind(string attribute, int budget)
     {
         var within = await Analyze<ApiReviewAnalyzer>(Members(attribute, budget));
-        await Diagnostics(within).Should().BeEmpty();
-
         var over = await Analyze<ApiReviewAnalyzer>(Members(attribute, budget + 1));
-        await Diagnostics(over).Should().BeEquivalentTo(["LPAD2014: Target"], CollectionOrdering.Matching);
-        await Messages(over, "LPAD2014")
-             .Should()
-             .BeEquivalentTo(
-                  [$"Domain primitive 'Target' declares {budget + 1} public members, more than the {budget} a domain primitive of its kind should need"],
-                  CollectionOrdering.Matching
-              );
+
+        await VerifySnapshot(new { Within = await Describe(within), Over = await Describe(over) });
     }
 
     // A value object gets one more for each property or field, a smart enum for each static value.
@@ -211,14 +184,19 @@ public class ApiReviewAnalyzerTests
     public async Task Should_Count_The_Members_That_Make_A_Value_Object_Or_A_Smart_Enum()
     {
         var valueObject = Members("ValueObject", 20, "/// <summary>A.</summary>\n    public string? A { get; init; }\n    /// <summary>B.</summary>\n    public string? B;");
-        await Diagnostics(await Analyze<ApiReviewAnalyzer>(valueObject)).Should().BeEmpty();
         var bigValueObject = Members("ValueObject", 21, "/// <summary>A.</summary>\n    public string? A { get; init; }\n    /// <summary>B.</summary>\n    public string? B;");
-        await Diagnostics(await Analyze<ApiReviewAnalyzer>(bigValueObject)).Should().BeEquivalentTo(["LPAD2014: Target"], CollectionOrdering.Matching);
-
         var smartEnum = Members("SmartEnum<int>", 12, "/// <summary>A.</summary>\n    public static readonly Target A = default;\n    /// <summary>B.</summary>\n    public static Target B => default;");
-        await Diagnostics(await Analyze<ApiReviewAnalyzer>(smartEnum)).Should().BeEmpty();
         var bigSmartEnum = Members("SmartEnum<int>", 13, "/// <summary>A.</summary>\n    public static readonly Target A = default;\n    /// <summary>B.</summary>\n    public static Target B => default;");
-        await Diagnostics(await Analyze<ApiReviewAnalyzer>(bigSmartEnum)).Should().BeEquivalentTo(["LPAD2014: Target"], CollectionOrdering.Matching);
+
+        await VerifySnapshot(
+            new
+            {
+                ValueObjectWithinBudget = await Describe(await Analyze<ApiReviewAnalyzer>(valueObject)),
+                ValueObjectOverBudget = await Describe(await Analyze<ApiReviewAnalyzer>(bigValueObject)),
+                SmartEnumWithinBudget = await Describe(await Analyze<ApiReviewAnalyzer>(smartEnum)),
+                SmartEnumOverBudget = await Describe(await Analyze<ApiReviewAnalyzer>(bigSmartEnum)),
+            }
+        );
     }
 
     private static string Members(string attribute, int count, string extra = "") =>

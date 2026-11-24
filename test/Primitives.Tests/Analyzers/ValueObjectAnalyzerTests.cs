@@ -32,8 +32,7 @@ public class ValueObjectAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2008: Street", "LPAD2008: Name"], CollectionOrdering.Matching);
-        await Messages(result, "LPAD2008").Should().Contain("Property 'Street' of value object 'Address' must use 'init' instead of 'set'");
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -59,11 +58,7 @@ public class ValueObjectAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2008: Street", "LPAD2008: City", "LPAD2008: Note"], CollectionOrdering.Matching);
-        var fixedSources = await FixedAll<UseInitCodeFix>(result, "Use 'init' instead of 'set'");
-        await fixedSources.Should().Contain(s => s.Contains("public required string Street { get; init; }"));
-        await fixedSources.Should().Contain(s => s.Contains("public string City { get; private init; } = \"\";"));
-        await fixedSources.Should().Contain(s => s.Contains("init => field = value.Trim();"));
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<UseInitCodeFix>(result, "Use 'init' instead of 'set'") ).Should().BeEmpty();
     }
 
@@ -98,8 +93,7 @@ public class ValueObjectAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2008: Street", "LPAD2008: City"], CollectionOrdering.Matching);
-        await ( await FixedAll<UseInitCodeFix>(result, "Use 'init' instead of 'set'") ).Should().HaveCount(2);
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<UseInitCodeFix>(result, "Use 'init' instead of 'set'") ).Should().BeEmpty();
     }
 
@@ -136,12 +130,7 @@ public class ValueObjectAnalyzerTests
             """
         );
 
-        await Diagnostics(result)
-             .Should()
-             .BeEquivalentTo(["LPAD2008: Street", "LPAD2008: City", "LPAD2008: Country", "LPAD2008: Region"], CollectionOrdering.Matching);
-        var fixedSources = await FixedAll<UseInitCodeFix>(result, "Use 'init' instead of 'set'");
-        await fixedSources.Should().HaveCount(1);
-        await fixedSources[0].Should().Contain("public string Street { get; init; }");
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<UseInitCodeFix>(result, "Use 'init' instead of 'set'") ).Should().BeEmpty();
     }
 
@@ -160,7 +149,7 @@ public class ValueObjectAnalyzerTests
             """
         );
 
-        await FixTitles<UseInitCodeFix>(result).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -187,7 +176,7 @@ public class ValueObjectAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -212,7 +201,7 @@ public class ValueObjectAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -245,7 +234,7 @@ public class ValueObjectAnalyzerTests
             builder => builder.AddReferences(typeof(LinkedList<>).Assembly, typeof(System.Collections.ObjectModel.Collection<>).Assembly)
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo([$"LPAD2018: {type}"], CollectionOrdering.Matching);
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -262,12 +251,6 @@ public class ValueObjectAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2018: int[]"], CollectionOrdering.Matching);
-        await Messages(result, "LPAD2018")
-             .Should()
-             .BeEquivalentTo(
-                  ["Property 'Items' of value object 'Basket' is a 'int[]', which can be changed after the value object is created; use an immutable collection"],
-                  CollectionOrdering.Matching
-              );
+        await VerifyAnalysis(result);
     }
 }

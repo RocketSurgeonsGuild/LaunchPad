@@ -1,0 +1,306 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2011,
+      Severity: Warning,
+      Location: Input.cs: (18,28)-(18,54),
+      Source: _field = default(UserName),
+      Message: Domain primitive 'UserName' is used as a string; use its Value
+    },
+    {
+      Id: LPAD2011,
+      Severity: Warning,
+      Location: Input.cs: (22,15)-(22,27),
+      Source: local = name,
+      Message: Domain primitive 'UserName' is used as a string; use its Value
+    },
+    {
+      Id: LPAD2011,
+      Severity: Warning,
+      Location: Input.cs: (24,8)-(24,22),
+      Source: assigned = sku,
+      Message: Domain primitive 'Sku' is used as a string; use its Value
+    },
+    {
+      Id: LPAD2011,
+      Severity: Warning,
+      Location: Input.cs: (25,13)-(25,17),
+      Source: name,
+      Message: Domain primitive 'UserName' is used as a string; use its Value
+    },
+    {
+      Id: LPAD2011,
+      Severity: Warning,
+      Location: Input.cs: (26,17)-(26,21),
+      Source: name,
+      Message: Domain primitive 'UserName' is used as a string; use its Value
+    },
+    {
+      Id: LPAD2011,
+      Severity: Warning,
+      Location: Input.cs: (27,14)-(27,24),
+      Source: text: name,
+      Message: Domain primitive 'UserName' is used as a string; use its Value
+    }
+  ],
+  CodeFixes: [
+    {
+      Diagnostic: LPAD2011 Input.cs: (18,28)-(18,54),
+      Title: Use the domain primitive's Value,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[StringPrimitive, NotEmpty]
+public readonly partial record struct UserName;
+
+[StrongId<string>, MaxLength(10)]
+public sealed partial record Sku;
+
+[SmartEnum<string>]
+public sealed partial record Color
+{
+    public static readonly Color Red = new("red");
+}
+
+public class Uses
+{
+    private readonly string _field = default(UserName).Value;
+
+    public void Run(UserName name, Sku sku)
+    {
+        string local = name;
+        string assigned;
+        assigned = sku;
+        Take(name);
+        Take2(0, name);
+        Take2(text: name, number: 1);
+    }
+
+    private static void Take(string text) { }
+    private static void Take2(int number, string text) { }
+}
+        }
+      ]
+    },
+    {
+      Diagnostic: LPAD2011 Input.cs: (22,15)-(22,27),
+      Title: Use the domain primitive's Value,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[StringPrimitive, NotEmpty]
+public readonly partial record struct UserName;
+
+[StrongId<string>, MaxLength(10)]
+public sealed partial record Sku;
+
+[SmartEnum<string>]
+public sealed partial record Color
+{
+    public static readonly Color Red = new("red");
+}
+
+public class Uses
+{
+    private readonly string _field = default(UserName);
+
+    public void Run(UserName name, Sku sku)
+    {
+        string local = name.Value;
+        string assigned;
+        assigned = sku;
+        Take(name);
+        Take2(0, name);
+        Take2(text: name, number: 1);
+    }
+
+    private static void Take(string text) { }
+    private static void Take2(int number, string text) { }
+}
+        }
+      ]
+    },
+    {
+      Diagnostic: LPAD2011 Input.cs: (24,8)-(24,22),
+      Title: Use the domain primitive's Value,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[StringPrimitive, NotEmpty]
+public readonly partial record struct UserName;
+
+[StrongId<string>, MaxLength(10)]
+public sealed partial record Sku;
+
+[SmartEnum<string>]
+public sealed partial record Color
+{
+    public static readonly Color Red = new("red");
+}
+
+public class Uses
+{
+    private readonly string _field = default(UserName);
+
+    public void Run(UserName name, Sku sku)
+    {
+        string local = name;
+        string assigned;
+        assigned = sku.Value;
+        Take(name);
+        Take2(0, name);
+        Take2(text: name, number: 1);
+    }
+
+    private static void Take(string text) { }
+    private static void Take2(int number, string text) { }
+}
+        }
+      ]
+    },
+    {
+      Diagnostic: LPAD2011 Input.cs: (25,13)-(25,17),
+      Title: Use the domain primitive's Value,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[StringPrimitive, NotEmpty]
+public readonly partial record struct UserName;
+
+[StrongId<string>, MaxLength(10)]
+public sealed partial record Sku;
+
+[SmartEnum<string>]
+public sealed partial record Color
+{
+    public static readonly Color Red = new("red");
+}
+
+public class Uses
+{
+    private readonly string _field = default(UserName);
+
+    public void Run(UserName name, Sku sku)
+    {
+        string local = name;
+        string assigned;
+        assigned = sku;
+        Take(name.Value);
+        Take2(0, name);
+        Take2(text: name, number: 1);
+    }
+
+    private static void Take(string text) { }
+    private static void Take2(int number, string text) { }
+}
+        }
+      ]
+    },
+    {
+      Diagnostic: LPAD2011 Input.cs: (26,17)-(26,21),
+      Title: Use the domain primitive's Value,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[StringPrimitive, NotEmpty]
+public readonly partial record struct UserName;
+
+[StrongId<string>, MaxLength(10)]
+public sealed partial record Sku;
+
+[SmartEnum<string>]
+public sealed partial record Color
+{
+    public static readonly Color Red = new("red");
+}
+
+public class Uses
+{
+    private readonly string _field = default(UserName);
+
+    public void Run(UserName name, Sku sku)
+    {
+        string local = name;
+        string assigned;
+        assigned = sku;
+        Take(name);
+        Take2(0, name.Value);
+        Take2(text: name, number: 1);
+    }
+
+    private static void Take(string text) { }
+    private static void Take2(int number, string text) { }
+}
+        }
+      ]
+    },
+    {
+      Diagnostic: LPAD2011 Input.cs: (27,14)-(27,24),
+      Title: Use the domain primitive's Value,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[StringPrimitive, NotEmpty]
+public readonly partial record struct UserName;
+
+[StrongId<string>, MaxLength(10)]
+public sealed partial record Sku;
+
+[SmartEnum<string>]
+public sealed partial record Color
+{
+    public static readonly Color Red = new("red");
+}
+
+public class Uses
+{
+    private readonly string _field = default(UserName);
+
+    public void Run(UserName name, Sku sku)
+    {
+        string local = name;
+        string assigned;
+        assigned = sku;
+        Take(name);
+        Take2(0, name);
+        Take2(text: name.Value, number: 1);
+    }
+
+    private static void Take(string text) { }
+    private static void Take2(int number, string text) { }
+}
+        }
+      ]
+    }
+  ]
+}

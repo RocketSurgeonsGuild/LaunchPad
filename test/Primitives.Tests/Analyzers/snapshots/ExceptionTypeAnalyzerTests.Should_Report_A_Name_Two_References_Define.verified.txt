@@ -1,0 +1,10 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2017,
+      Severity: Error,
+      Location: : (0,0)-(0,0),
+      Message: LaunchPadPrimitivesExceptionType is 'Shared.DuplicateException', which is defined in more than one referenced assembly (First, Second), so the name is ambiguous
+    }
+  ]
+}

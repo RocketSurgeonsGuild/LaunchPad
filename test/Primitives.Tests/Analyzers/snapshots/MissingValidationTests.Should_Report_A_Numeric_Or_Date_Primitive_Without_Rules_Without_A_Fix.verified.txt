@@ -1,0 +1,18 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2009,
+      Severity: Warning,
+      Location: Input.cs: (5,38)-(5,44),
+      Source: Amount,
+      Message: Domain primitive 'Amount' declares no rules to check its value: add a [PrimitiveRange] or a [CustomValidator<T>]
+    },
+    {
+      Id: LPAD2009,
+      Severity: Warning,
+      Location: Input.cs: (8,38)-(8,41),
+      Source: Day,
+      Message: Domain primitive 'Day' declares no rules to check its value: set PastOnly or FutureOnly, or add a [PrimitiveRange] or a [CustomValidator<T>]
+    }
+  ]
+}

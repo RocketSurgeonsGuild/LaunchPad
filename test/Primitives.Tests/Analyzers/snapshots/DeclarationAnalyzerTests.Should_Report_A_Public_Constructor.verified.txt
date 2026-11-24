@@ -1,0 +1,18 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2012,
+      Severity: Warning,
+      Location: Input.cs: (7,11)-(7,18),
+      Source: OrderId,
+      Message: Domain primitive 'OrderId' declares a public constructor, which creates it without running its rules; use the generated Create and TryCreate
+    },
+    {
+      Id: LPAD2012,
+      Severity: Warning,
+      Location: Input.cs: (13,11)-(13,23),
+      Source: EmailAddress,
+      Message: Domain primitive 'EmailAddress' declares a public constructor, which creates it without running its rules; use the generated Create and TryCreate
+    }
+  ]
+}

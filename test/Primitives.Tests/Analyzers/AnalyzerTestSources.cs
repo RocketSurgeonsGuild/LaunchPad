@@ -69,63 +69,125 @@ internal static class AnalyzerTestSources
         Analyze<TAnalyzer>(source, builder => ( configure?.Invoke(builder) ?? builder ).WithCodeFix<TFix>());
 
     /// <summary>
-    ///     The LPAD diagnostics the analyzer reported, each as <c>ID: text</c>, the text being what its location spans (the type name, the
-    ///     attribute, the expression), or <c>ID</c> alone for a diagnostic without a location. In source order.
+    ///     Snapshots what the analyzer and the code fixes of a test did, as <see cref="Describe(GeneratorTestResults)" /> describes it.
     /// </summary>
-    public static string[] Diagnostics(GeneratorTestResults results) =>
-        [.. results.AnalyzerResults.Values
-               .SelectMany(r => r.Diagnostics)
-               // AD0001: an analyzer threw, which an empty list must not hide.
-               .Where(d => d.Id.StartsWith("LPAD", StringComparison.Ordinal) || d.Id == "AD0001")
-               // The harness can report a diagnostic more than once.
-               .GroupBy(d => (d.Id, d.Location.SourceTree?.FilePath, d.Location.SourceSpan))
-               .Select(g => g.First())
-               .OrderBy(d => d.Location.SourceSpan.Start)
-               .ThenBy(d => d.Id, StringComparer.Ordinal)
-               .Select(Describe)];
-
-    /// <summary>The diagnostics of one ID, with their messages, to check a message.</summary>
-    public static string[] Messages(GeneratorTestResults results, string id) =>
-        [.. results.AnalyzerResults.Values
-               .SelectMany(r => r.Diagnostics)
-               .Where(d => d.Id == id)
-               .Select(d => d.GetMessage(System.Globalization.CultureInfo.InvariantCulture))
-               .Distinct()];
-
-    /// <summary>The titles of the fixes <typeparamref name="TFix" /> offered.</summary>
-    public static string[] FixTitles<TFix>(GeneratorTestResults results)
-        where TFix : CodeFixProvider =>
-        results.CodeFixResults.TryGetValue(typeof(TFix), out var fixes)
-            ? [.. fixes.ResolvedFixes.SelectMany(f => f.CodeActions).Select(a => a.CodeAction.Title).Distinct()]
-            : [];
-
-    /// <summary>The input source as the fix titled <paramref name="title" /> leaves it, for the first diagnostic it was offered on.</summary>
-    public static async Task<string> Fixed<TFix>(GeneratorTestResults results, string title)
-        where TFix : CodeFixProvider =>
-        ( await FixedAll<TFix>(results, title) ).FirstOrDefault() ?? throw new InvalidOperationException($"No fix titled '{title}' was offered.");
+    public static async Task VerifyAnalysis(
+        GeneratorTestResults results,
+        Func<SettingsTask, SettingsTask>? settings = null,
+        [System.Runtime.CompilerServices.CallerFilePath] string sourceFile = ""
+    ) =>
+        await VerifySnapshot(await Describe(results), settings, sourceFile);
 
     /// <summary>
-    ///     The input source as each fix titled <paramref name="title" /> leaves it, one for each diagnostic it was offered on. Each action is
-    ///     applied to the document it was offered on: the harness applies them one after the other, so only its first one shows a fix alone.
+    ///     Snapshots <paramref name="target" />: what <see cref="Describe(GeneratorTestResults)" /> returns, or an object of those for a test that
+    ///     runs the analyzer more than once. An empty list shows as one, so a snapshot of an analysis that reported nothing says so.
     /// </summary>
-    public static async Task<string[]> FixedAll<TFix>(GeneratorTestResults results, string title)
-        where TFix : CodeFixProvider
+    public static async Task VerifySnapshot(
+        object target,
+        Func<SettingsTask, SettingsTask>? settings = null,
+        [System.Runtime.CompilerServices.CallerFilePath] string sourceFile = ""
+    )
     {
-        var texts = new List<string>();
-        if (!results.CodeFixResults.TryGetValue(typeof(TFix), out var fixes)) return [];
-        foreach (var action in fixes.ResolvedFixes.SelectMany(f => f.CodeActions).Where(a => a.CodeAction.Title == title))
+        var task = Verify(target, sourceFile: sourceFile).DontIgnoreEmptyCollections();
+        await ( settings?.Invoke(task) ?? task );
+    }
+
+    /// <summary>
+    ///     What a snapshot shows of an analyzer run: the LPAD diagnostics the analyzer reported (and AD0001, an analyzer that threw, which the
+    ///     snapshot must not hide), each once, in source order, as <see cref="Snapshot(Diagnostic)" /> shows them; and, when the test ran a code fix, each fix it offered: the diagnostic it was
+    ///     offered on, its title and the input source as that fix alone leaves it. A test that runs the analyzer more than once snapshots an
+    ///     object of these.
+    /// </summary>
+    public static async Task<object> Describe(GeneratorTestResults results)
+    {
+        var diagnostics = Reported(results).Select(Snapshot).ToArray();
+        var fixes = new List<object>();
+        // The harness can report one diagnostic more than once, and offer its fixes each time.
+        var fixedDiagnostics = new HashSet<(string, string?, TextSpan)>();
+        foreach (var resolved in results.CodeFixResults.Values.SelectMany(r => r.ResolvedFixes))
         {
-            var operations = await action.CodeAction.GetOperationsAsync(CancellationToken.None);
-            foreach (var operation in operations)
+            var diagnostic = resolved.Diagnostic;
+            if (!fixedDiagnostics.Add((diagnostic.Id, diagnostic.Location.SourceTree?.FilePath, diagnostic.Location.SourceSpan))) continue;
+            foreach (var action in resolved.CodeActions)
             {
-                if (operation is not ApplyChangesOperation apply) continue;
-                var document = apply.ChangedSolution.GetDocument(action.TargetDocument.Id)!;
-                texts.Add(( await document.GetTextAsync() ).ToString());
-                break;
+                fixes.Add(
+                    new
+                    {
+                        Diagnostic = $"{diagnostic.Id} {diagnostic.Location.GetLineSpan()}",
+                        action.CodeAction.Title,
+                        Documents = await FixedDocuments(action.CodeAction, action.TargetDocument),
+                    }
+                );
             }
         }
 
-        return [.. texts];
+        return fixes.Count == 0 ? new { Diagnostics = diagnostics } : new { Diagnostics = diagnostics, CodeFixes = fixes };
+    }
+
+    /// <summary>
+    ///     The documents <paramref name="action" /> changes when it is applied alone to the project it was offered on, each with its name and
+    ///     its text as the fix leaves it. The harness applies the fixes it collects one after the other, so a fix's own changes are read from its
+    ///     operations, not from the workspace the harness leaves.
+    /// </summary>
+    private static async Task<object[]> FixedDocuments(CodeAction action, Document offeredOn)
+    {
+        var documents = new List<object>();
+        foreach (var operation in await action.GetOperationsAsync(CancellationToken.None))
+        {
+            if (operation is not ApplyChangesOperation apply) continue;
+            foreach (var changed in apply.ChangedSolution.GetProject(offeredOn.Project.Id)!.Documents)
+            {
+                var text = ( await changed.GetTextAsync() ).ToString();
+                if (offeredOn.Project.GetDocument(changed.Id) is { } original && ( await original.GetTextAsync() ).ToString() == text) continue;
+                documents.Add(new { changed.Name, Text = text });
+            }
+
+            break;
+        }
+
+        return [.. documents];
+    }
+
+    /// <summary>
+    ///     A diagnostic as a snapshot shows it: its ID, severity, location, the source its location spans (the type name, the attribute, the
+    ///     expression) and its message. Its descriptor's title, description and format are the same in every snapshot, so they are left out.
+    /// </summary>
+    private static object Snapshot(Diagnostic diagnostic) =>
+        new
+        {
+            diagnostic.Id,
+            diagnostic.Severity,
+            Location = diagnostic.Location.GetLineSpan().ToString(),
+            Source = diagnostic.Location.SourceTree?.GetText().ToString(diagnostic.Location.SourceSpan),
+            Message = diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture),
+        };
+
+    /// <summary>The LPAD diagnostics the analyzer reported, and AD0001, each once, in source order.</summary>
+    private static Diagnostic[] Reported(GeneratorTestResults results) =>
+        [.. results.AnalyzerResults.Values
+               .SelectMany(r => r.Diagnostics)
+               .Where(d => d.Id.StartsWith("LPAD", StringComparison.Ordinal) || d.Id == "AD0001")
+               .GroupBy(d => (d.Id, d.Location.SourceTree?.FilePath, d.Location.SourceSpan))
+               .Select(g => g.First())
+               .OrderBy(d => d.Location.SourceTree?.FilePath, StringComparer.Ordinal)
+               .ThenBy(d => d.Location.SourceSpan.Start)
+               .ThenBy(d => d.Id, StringComparer.Ordinal)];
+
+    /// <summary>
+    ///     The input source as the first fix titled <paramref name="title" /> leaves it, with its line endings, which a snapshot doesn't show.
+    /// </summary>
+    public static async Task<string> Fixed<TFix>(GeneratorTestResults results, string title)
+        where TFix : CodeFixProvider
+    {
+        var offered = ( results.CodeFixResults.TryGetValue(typeof(TFix), out var fixes)
+            ? fixes.ResolvedFixes.SelectMany(f => f.CodeActions).FirstOrDefault(a => a.CodeAction.Title == title)
+            : null ) ?? throw new InvalidOperationException($"No fix titled '{title}' was offered.");
+        foreach (var operation in await offered.CodeAction.GetOperationsAsync(CancellationToken.None))
+        {
+            if (operation is ApplyChangesOperation apply) return ( await apply.ChangedSolution.GetDocument(offered.TargetDocument.Id)!.GetTextAsync() ).ToString();
+        }
+
+        throw new InvalidOperationException($"The fix titled '{title}' changes no document.");
     }
 
     /// <summary>
@@ -254,15 +316,6 @@ internal static class AnalyzerTestSources
            .Distinct(StringComparer.Ordinal)
            .Select(location => MetadataReference.CreateFromFile(location)),
     ];
-
-    private static string Describe(Diagnostic diagnostic) =>
-        diagnostic switch
-        {
-            // The exception, to see what went wrong.
-            { Id: "AD0001" } => $"AD0001: {diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture)}",
-            { Location.SourceTree: { } tree } => $"{diagnostic.Id}: {tree.GetText().ToString(diagnostic.Location.SourceSpan)}",
-            _ => diagnostic.Id,
-        };
 
     private static string ReadAttributes()
     {

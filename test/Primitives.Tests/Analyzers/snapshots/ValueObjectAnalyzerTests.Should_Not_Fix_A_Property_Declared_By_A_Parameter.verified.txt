@@ -1,0 +1,18 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2008,
+      Severity: Error,
+      Location: Input.cs: (5,39)-(5,40),
+      Source: X,
+      Message: Property 'X' of value object 'Point' must use 'init' instead of 'set'
+    },
+    {
+      Id: LPAD2008,
+      Severity: Error,
+      Location: Input.cs: (5,46)-(5,47),
+      Source: Y,
+      Message: Property 'Y' of value object 'Point' must use 'init' instead of 'set'
+    }
+  ]
+}

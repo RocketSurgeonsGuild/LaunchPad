@@ -47,15 +47,7 @@ public class UninitializedStructTests
             """
         );
 
-        await Diagnostics(result)
-             .Should()
-             .BeEquivalentTo(
-                  ["LPAD2007: default", "LPAD2007: new UserName()", "LPAD2007: new()", "LPAD2007: default(UserName)", "LPAD2007: default"],
-                  CollectionOrdering.Matching
-              );
-        await Messages(result, "LPAD2007")
-             .Should()
-             .BeEquivalentTo(["This makes an uninitialized 'UserName' that no rule has checked; use UserName.Create or UserName.TryCreate"], CollectionOrdering.Matching);
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -79,7 +71,7 @@ public class UninitializedStructTests
             """
         );
 
-        await Diagnostics(result).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
 
     // A domain primitive of another assembly has lost its attributes: it is found by the IDomainPrimitive it implements.
@@ -117,7 +109,7 @@ public class UninitializedStructTests
             builder => builder.AddCompilationReferences(contracts)
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2007: default"], CollectionOrdering.Matching);
+        await VerifyAnalysis(result);
     }
 
     // A project that can't see IDomainPrimitive<TSelf> has no domain primitive: nothing is analyzed, even a type with a primitive attribute.
@@ -134,7 +126,7 @@ public class UninitializedStructTests
                           .Build()
                           .GenerateAsync(CancellationToken.None);
 
-        await Diagnostics(result).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
 }
 
@@ -180,17 +172,7 @@ public class StringUsageTests
             """
         );
 
-        await Diagnostics(result)
-             .Should()
-             .BeEquivalentTo(
-                  ["LPAD2010: \"admin\" == name", "LPAD2010: name != \"admin\"", "LPAD2010: sku == \"A1\"", "LPAD2010: color == \"red\""],
-                  CollectionOrdering.Matching
-              );
-        var fixedSources = await FixedAll<UseValueCodeFix>(result, "Compare with the domain primitive's Value");
-        await fixedSources.Should().Contain(s => s.Contains("public static bool Left(UserName name) => \"admin\" == name.Value;"));
-        await fixedSources.Should().Contain(s => s.Contains("public static bool Right(UserName name) => name.Value != \"admin\";"));
-        await fixedSources.Should().Contain(s => s.Contains("public static bool Strong(Sku sku) => sku.Value == \"A1\";"));
-        await fixedSources.Should().Contain(s => s.Contains("public static bool Member(Color color) => color.Value == \"red\";"));
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<UseValueCodeFix>(result, "Compare with the domain primitive's Value") ).Should().BeEmpty();
     }
 
@@ -207,8 +189,7 @@ public class StringUsageTests
             """
         );
 
-        await ( await Fixed<UseValueCodeFix>(result, "Compare with the domain primitive's Value") ).Should()
-                                                                                                    .Contain("=> (name ?? default).Value != \"admin\";");
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<UseValueCodeFix>(result, "Compare with the domain primitive's Value") ).Should().BeEmpty();
     }
 
@@ -227,7 +208,7 @@ public class StringUsageTests
             """
         );
 
-        await Diagnostics(result).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -256,34 +237,17 @@ public class StringUsageTests
             """
         );
 
-        await Diagnostics(result)
-             .Where(d => d.StartsWith("LPAD2011", StringComparison.Ordinal))
-             .Should()
-             .BeEquivalentTo(
-                  [
-                      "LPAD2011: _field = default(UserName)",
-                      "LPAD2011: local = name",
-                      "LPAD2011: assigned = sku",
-                      "LPAD2011: name",
-                      "LPAD2011: name",
-                      "LPAD2011: text: name",
-                  ],
-                  CollectionOrdering.Matching
-              );
-        await Messages(result, "LPAD2011").Should().Contain("Domain primitive 'UserName' is used as a string; use its Value");
-        var fixedSources = await FixedAll<UseValueCodeFix>(result, "Use the domain primitive's Value");
-        await fixedSources.Should().Contain(s => s.Contains("private readonly string _field = default(UserName).Value;"));
-        await fixedSources.Should().Contain(s => s.Contains("Take2(0, name.Value);"));
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<UseValueCodeFix>(result, "Use the domain primitive's Value") ).Should().BeEmpty();
     }
 
     [Test]
-    [Arguments("string local = name;", "string local = name.Value;")]
-    [Arguments("string assigned; assigned = name;", "string assigned; assigned = name.Value;")]
-    [Arguments("Take(name);", "Take(name.Value);")]
-    [Arguments("Take(text: name);", "Take(text: name.Value);")]
-    [Arguments("Take(Get() ?? name);", "Take((Get() ?? name).Value);")]
-    public async Task Should_Fix_By_Reading_The_Value(string statement, string fixedStatement)
+    [Arguments("string local = name;")]
+    [Arguments("string assigned; assigned = name;")]
+    [Arguments("Take(name);")]
+    [Arguments("Take(text: name);")]
+    [Arguments("Take(Get() ?? name);")]
+    public async Task Should_Fix_By_Reading_The_Value(string statement)
     {
         var result = await Fix<UsageAnalyzer, UseValueCodeFix>(
             Primitives
@@ -301,7 +265,7 @@ public class StringUsageTests
               """
         );
 
-        await ( await Fixed<UseValueCodeFix>(result, "Use the domain primitive's Value") ).Should().Contain(fixedStatement);
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<UseValueCodeFix>(result, "Use the domain primitive's Value") ).Should().BeEmpty();
     }
 
@@ -354,8 +318,7 @@ public class StringUsageTests
             """
         );
 
-        await Diagnostics(result).Should().BeEmpty();
-        await FixTitles<UseValueCodeFix>(result).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
 
     // A domain primitive of another assembly has lost its attributes: its IDomainPrimitive<TSelf, TValue> says what its value is.
@@ -403,7 +366,7 @@ public class StringUsageTests
             builder => builder.AddCompilationReferences(contracts)
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2010: sku == \"A1\"", "LPAD2011: a = sku"], CollectionOrdering.Matching);
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -430,6 +393,6 @@ public class StringUsageTests
             """
         );
 
-        await Diagnostics(result).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
 }

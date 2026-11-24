@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2009,
+      Severity: Warning,
+      Location: Input.cs: (5,38)-(5,41),
+      Source: Sku,
+      Message: Domain primitive 'Sku' declares no rules to check its value: a string strong ID without a length or a [Regex] accepts any string
+    }
+  ]
+}

@@ -451,7 +451,9 @@ An application that references Primitives itself gets [Joints](../joints/) that 
 references, to the libraries it uses. They are [templates](../templates/#the-primitives-templates): written into the application only
 when it references the library, so Primitives depends on none of them. They read a registry, `LaunchPadPrimitives`, that the registry
 generator fills in at build time with every domain primitive the application declares or references and its rules, so nothing reflects
-over them.
+over them. An application whose domain primitives reach it only through a reference gets none of these Joints until it references
+Primitives too: in its OpenAPI document, for one, every domain primitive is an empty schema, because each is written by its own JSON
+converter, whose output ASP.NET Core can't see.
 
 | Library                      | What a domain primitive becomes                                                                                                                                                                                                                                                                               |
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

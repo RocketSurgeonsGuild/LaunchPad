@@ -1,0 +1,39 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2007,
+      Severity: Warning,
+      Location: Input.cs: (17,48)-(17,55),
+      Source: default,
+      Message: This makes an uninitialized 'UserName' that no rule has checked; use UserName.Create or UserName.TryCreate
+    },
+    {
+      Id: LPAD2007,
+      Severity: Warning,
+      Location: Input.cs: (19,16)-(19,30),
+      Source: new UserName(),
+      Message: This makes an uninitialized 'UserName' that no rule has checked; use UserName.Create or UserName.TryCreate
+    },
+    {
+      Id: LPAD2007,
+      Severity: Warning,
+      Location: Input.cs: (20,21)-(20,26),
+      Source: new(),
+      Message: This makes an uninitialized 'UserName' that no rule has checked; use UserName.Create or UserName.TryCreate
+    },
+    {
+      Id: LPAD2007,
+      Severity: Warning,
+      Location: Input.cs: (21,16)-(21,33),
+      Source: default(UserName),
+      Message: This makes an uninitialized 'UserName' that no rule has checked; use UserName.Create or UserName.TryCreate
+    },
+    {
+      Id: LPAD2007,
+      Severity: Warning,
+      Location: Input.cs: (22,21)-(22,28),
+      Source: default,
+      Message: This makes an uninitialized 'UserName' that no rule has checked; use UserName.Create or UserName.TryCreate
+    }
+  ]
+}

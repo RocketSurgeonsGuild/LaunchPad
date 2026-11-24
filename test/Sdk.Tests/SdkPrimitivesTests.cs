@@ -173,7 +173,9 @@ public partial class SdkPrimitivesTests(string targetFramework)
 
     /// <summary>
     ///     An application whose domain primitives reach it only through its contracts has not referenced Primitives itself, so it gets no
-    ///     templates, and ASP.NET Core describes the domain primitives as it describes any other type.
+    ///     templates, and ASP.NET Core can't describe the domain primitives: each is written by its own JSON converter, whose output ASP.NET
+    ///     Core's schemas can't see, so every domain primitive, a value object too, is an empty schema (<c>{}</c>). A parameter still has the
+    ///     type of the text it is parsed from.
     /// </summary>
     [Test]
     public async Task Should_Not_Describe_Domain_Primitives_Without_A_Reference_To_Primitives()

@@ -1,0 +1,29 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2001,
+      Severity: Error,
+      Location: Input.cs: (5,30)-(5,38),
+      Source: UserName,
+      Message: 'UserName' must be declared 'partial' so the generator can complete it
+    }
+  ],
+  CodeFixes: [
+    {
+      Diagnostic: LPAD2001 Input.cs: (5,30)-(5,38),
+      Title: Make the domain primitive partial,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[StringPrimitive, NotEmpty]
+public readonly partial record struct UserName;
+        }
+      ]
+    }
+  ]
+}

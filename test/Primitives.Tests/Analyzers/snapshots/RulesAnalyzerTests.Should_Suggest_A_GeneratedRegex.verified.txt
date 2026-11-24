@@ -1,0 +1,25 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2023,
+      Severity: Info,
+      Location: Input.cs: (4,48)-(4,67),
+      Source: Regex("^[A-Z]{3}$"),
+      Message: The pattern of [Regex] on 'Code' is built at run time and interpreted: declare it as a [GeneratedRegex] member of the domain primitive
+    },
+    {
+      Id: LPAD2004,
+      Severity: Error,
+      Location: Input.cs: (4,69)-(4,82),
+      Source: Regex("[a-z"),
+      Message: The pattern '[a-z' of [Regex] is not a valid regular expression: Invalid pattern '[a-z' at offset 4. Unterminated [] set.
+    },
+    {
+      Id: LPAD2023,
+      Severity: Info,
+      Location: Input.cs: (7,19)-(7,39),
+      Source: Regex("^ID-[0-9]+$"),
+      Message: The pattern of [Regex] on 'Id' is built at run time and interpreted: declare it as a [GeneratedRegex] member of the domain primitive
+    }
+  ]
+}

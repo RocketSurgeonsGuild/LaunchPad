@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2022,
+      Severity: Warning,
+      Location: Input.cs: (7,1)-(7,9),
+      Source: NotEmpty,
+      Message: [NotEmpty] does not apply to 'Target', a smart enum, which takes no rules: its values are its members
+    }
+  ]
+}

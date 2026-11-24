@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2006,
+      Severity: Error,
+      Location: Input.cs: (4,1)-(4,28),
+      Source: FiscalYear(MinYear = 10000),
+      Message: The minimum (10000) is greater than the maximum (9999), so no value is valid
+    }
+  ]
+}

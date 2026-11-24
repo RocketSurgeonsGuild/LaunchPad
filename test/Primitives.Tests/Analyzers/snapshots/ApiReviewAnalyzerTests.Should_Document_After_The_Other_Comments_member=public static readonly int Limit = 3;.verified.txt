@@ -1,0 +1,36 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2015,
+      Severity: Info,
+      Location: Input.cs: (8,31)-(8,36),
+      Source: Limit,
+      Message: Public member 'Limit' of domain primitive 'UserName' has no XML documentation
+    }
+  ],
+  CodeFixes: [
+    {
+      Diagnostic: LPAD2015 Input.cs: (8,31)-(8,36),
+      Title: Add XML documentation,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[StringPrimitive, NotEmpty]
+public readonly partial record struct UserName
+{
+    // A comment
+    /// <summary>
+    /// The Limit.
+    /// </summary>
+    public static readonly int Limit = 3;
+}
+        }
+      ]
+    }
+  ]
+}

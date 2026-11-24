@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2007,
+      Severity: Warning,
+      Location: Input.cs: (4,43)-(4,50),
+      Source: default,
+      Message: This makes an uninitialized 'Sku' that no rule has checked; use Sku.Create or Sku.TryCreate
+    }
+  ]
+}

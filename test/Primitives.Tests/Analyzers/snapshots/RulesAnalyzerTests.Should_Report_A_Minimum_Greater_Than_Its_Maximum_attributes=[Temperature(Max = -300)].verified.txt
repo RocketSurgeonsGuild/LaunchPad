@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2006,
+      Severity: Error,
+      Location: Input.cs: (4,1)-(4,24),
+      Source: Temperature(Max = -300),
+      Message: The minimum (-273.15) is greater than the maximum (-300), so no value is valid
+    }
+  ]
+}

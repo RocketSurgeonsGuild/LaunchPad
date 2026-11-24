@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2013,
+      Severity: Info,
+      Location: Input.cs: (8,38)-(8,39),
+      Source: B,
+      Message: Domain primitive 'B' has the same kind and rules as 'A'; merge them, or make sure they are different concepts
+    }
+  ]
+}

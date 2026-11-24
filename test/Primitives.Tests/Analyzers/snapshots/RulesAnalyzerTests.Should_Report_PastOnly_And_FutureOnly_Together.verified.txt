@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2020,
+      Severity: Error,
+      Location: Input.cs: (4,1)-(4,50),
+      Source: DatePrimitive(PastOnly = true, FutureOnly = true),
+      Message: Domain primitive 'Never' sets both PastOnly and FutureOnly, so no value is valid
+    }
+  ]
+}

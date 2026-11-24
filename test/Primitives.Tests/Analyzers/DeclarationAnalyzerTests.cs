@@ -33,8 +33,8 @@ public class DeclarationAnalyzerTests
             """
         );
 
+        await VerifyAnalysis(result);
         await result.FinalDiagnostics.Where(d => d.Severity == DiagnosticSeverity.Error).Select(d => d.ToString()).Should().BeEmpty();
-        await Diagnostics(result).Should().BeEmpty();
     }
 
     [Test]
@@ -51,17 +51,7 @@ public class DeclarationAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2001: UserName"], CollectionOrdering.Matching);
-        await ( await Fixed<DeclarationCodeFix>(result, "Make the domain primitive partial") ).Should().BeEqualTo(
-            """
-            using Rocket.Surgery.LaunchPad.Primitives;
-
-            namespace Sample;
-
-            [StringPrimitive, NotEmpty]
-            public readonly partial record struct UserName;
-            """
-        );
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Make the domain primitive partial") ).Should().BeEmpty();
     }
 
@@ -79,8 +69,7 @@ public class DeclarationAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2001: EmailAddress"], CollectionOrdering.Matching);
-        await ( await Fixed<DeclarationCodeFix>(result, "Make the domain primitive partial") ).Should().Contain("public sealed partial record EmailAddress;");
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Make the domain primitive partial") ).Should().BeEmpty();
     }
 
@@ -106,7 +95,7 @@ public class DeclarationAnalyzerTests
               """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2001: UserName"], CollectionOrdering.Matching);
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -123,8 +112,7 @@ public class DeclarationAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2002: UserName"], CollectionOrdering.Matching);
-        await ( await Fixed<DeclarationCodeFix>(result, "Make the domain primitive readonly") ).Should().Contain("public readonly partial record struct UserName;");
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Make the domain primitive readonly") ).Should().BeEmpty();
     }
 
@@ -142,9 +130,7 @@ public class DeclarationAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2001: UserName", "LPAD2002: UserName"], CollectionOrdering.Matching);
-        await ( await Fixed<DeclarationCodeFix>(result, "Make the domain primitive readonly") ).Should().Contain("\nreadonly record struct UserName;");
-        await ( await Fixed<DeclarationCodeFix>(result, "Make the domain primitive partial") ).Should().Contain("\npartial record struct UserName;");
+        await VerifyAnalysis(result);
         // Without partial, the generator doesn't complete the domain primitive; with it, it writes the readonly part.
         await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Make the domain primitive readonly") )
            .Should()
@@ -176,7 +162,7 @@ public class DeclarationAnalyzerTests
             )
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2002: UserName"], CollectionOrdering.Matching);
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -193,9 +179,7 @@ public class DeclarationAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2019: UserName"], CollectionOrdering.Matching);
-        var fixedSource = await Fixed<DeclarationCodeFix>(result, "Make the domain primitive sealed");
-        await fixedSource.Should().Contain("public sealed partial record UserName;");
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Make the domain primitive sealed") ).Should().BeEmpty();
     }
 
@@ -213,7 +197,7 @@ public class DeclarationAnalyzerTests
             """
         );
 
-        await ( await Fixed<DeclarationCodeFix>(result, "Make the domain primitive sealed") ).Should().Contain("public sealed partial record Code;");
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Make the domain primitive sealed") ).Should().BeEmpty();
     }
 
@@ -235,21 +219,7 @@ public class DeclarationAnalyzerTests
         );
 
         // Only LPAD2003: its fix makes the declaration whole.
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2003: UserName"], CollectionOrdering.Matching);
-        await FixTitles<DeclarationCodeFix>(result).Should().BeEquivalentTo(["Convert to a readonly partial record struct"], CollectionOrdering.Matching);
-        await ( await Fixed<DeclarationCodeFix>(result, "Convert to a readonly partial record struct") ).Should().BeEqualTo(
-            """
-            using Rocket.Surgery.LaunchPad.Primitives;
-
-            namespace Sample;
-
-            [StringPrimitive, NotEmpty]
-            public readonly partial record struct UserName
-            {
-                public int Length => 0;
-            }
-            """
-        );
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Convert to a readonly partial record struct") ).Should().BeEmpty();
     }
 
@@ -267,12 +237,7 @@ public class DeclarationAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2003: UserName"], CollectionOrdering.Matching);
-        await FixTitles<DeclarationCodeFix>(result)
-             .Should()
-             .BeEquivalentTo(["Convert to a sealed partial record", "Convert to a readonly partial record struct"], CollectionOrdering.Any);
-        await ( await Fixed<DeclarationCodeFix>(result, "Convert to a sealed partial record") ).Should().Contain("[StringPrimitive, NotEmpty]\nsealed partial record UserName { }");
-        await ( await Fixed<DeclarationCodeFix>(result, "Convert to a readonly partial record struct") ).Should().Contain("[StringPrimitive, NotEmpty]\nreadonly partial record struct UserName { }");
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Convert to a sealed partial record") ).Should().BeEmpty();
         await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Convert to a readonly partial record struct") ).Should().BeEmpty();
     }
@@ -299,8 +264,7 @@ public class DeclarationAnalyzerTests
             """
         );
 
-        await ( await Fixed<DeclarationCodeFix>(result, "Convert to a sealed partial record") ).Should().Contain("public sealed partial record UserName : ILabelled");
-        await ( await Fixed<DeclarationCodeFix>(result, "Convert to a readonly partial record struct") ).Should().Contain("public readonly partial record struct UserName : ILabelled");
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Convert to a sealed partial record") ).Should().BeEmpty();
         await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Convert to a readonly partial record struct") ).Should().BeEmpty();
     }
@@ -331,10 +295,9 @@ public class DeclarationAnalyzerTests
             )
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2003: UserName"], CollectionOrdering.Matching);
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Convert to a sealed partial record") ).Should().BeEmpty();
         await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Convert to a readonly partial record struct") ).Should().BeEmpty();
-        await ( await Fixed<DeclarationCodeFix>(result, "Convert to a sealed partial record") ).Should().Contain("public sealed partial record UserName;");
     }
 
     // sealed on one declaration seals the type, but abstract on another one would contradict it.
@@ -363,7 +326,7 @@ public class DeclarationAnalyzerTests
             )
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2019: UserName"], CollectionOrdering.Matching);
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Make the domain primitive sealed") ).Should().BeEmpty();
     }
 
@@ -396,7 +359,7 @@ public class DeclarationAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
 
     // The generator writes the part of a nested domain primitive inside a partial declaration of each type that contains it (CS0260 otherwise).
@@ -431,20 +394,7 @@ public class DeclarationAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2001: Outer", "LPAD2001: Inner"], CollectionOrdering.Matching);
-        await Messages(result, "LPAD2001")
-             .Should()
-             .BeEquivalentTo(
-                  [
-                      "'Outer' must be declared 'partial' so the generator can complete the domain primitive 'Code' it contains",
-                      "'Inner' must be declared 'partial' so the generator can complete the domain primitive 'Code' it contains",
-                  ],
-                  CollectionOrdering.Any
-              );
-        await FixTitles<DeclarationCodeFix>(result).Should().BeEquivalentTo(["Make the containing type partial"], CollectionOrdering.Matching);
-        var fixedSources = await FixedAll<DeclarationCodeFix>(result, "Make the containing type partial");
-        await fixedSources.Should().Contain(s => s.Contains("public static partial class Outer"));
-        await fixedSources.Should().Contain(s => s.Contains("public sealed partial class Inner"));
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Make the containing type partial") ).Should().BeEmpty();
     }
 
@@ -478,9 +428,7 @@ public class DeclarationAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2001: Address", "LPAD2003: Contact"], CollectionOrdering.Matching);
-        await Messages(result, "LPAD2001").Should().BeEquivalentTo(["'Address' must be declared 'partial' so the generator can complete it"], CollectionOrdering.Matching);
-        await FixTitles<DeclarationCodeFix>(result).Should().NotContain("Make the containing type partial");
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Make the domain primitive partial", "Convert to a sealed partial record") ).Should().BeEmpty();
     }
 
@@ -498,7 +446,7 @@ public class DeclarationAnalyzerTests
             """
         );
 
-        await Messages(result, "LPAD2001").Should().BeEquivalentTo(["'UserName' must be declared 'partial' so the generator can complete it"], CollectionOrdering.Matching);
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -520,7 +468,7 @@ public class DeclarationAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -541,7 +489,7 @@ public class DeclarationAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -574,7 +522,7 @@ public class DeclarationAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2012: OrderId", "LPAD2012: EmailAddress"], CollectionOrdering.Matching);
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -595,10 +543,7 @@ public class DeclarationAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2012: EmailAddress"], CollectionOrdering.Matching);
-        await ( await Fixed<MakeConstructorPrivateCodeFix>(result, "Make the constructor private") )
-             .Should()
-             .Contain("    /// <summary>A comment that stays.</summary>\n    private EmailAddress(int length) { }");
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<MakeConstructorPrivateCodeFix>(result, "Make the constructor private") ).Should().BeEmpty();
     }
 
@@ -636,8 +581,7 @@ public class DeclarationAnalyzerTests
             )
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2012: UserName", "LPAD2012: OrderId"], CollectionOrdering.Matching);
-        await FixTitles<MakeConstructorPrivateCodeFix>(result).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -654,7 +598,7 @@ public class DeclarationAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2012: UserName"], CollectionOrdering.Matching);
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -682,6 +626,6 @@ public class DeclarationAnalyzerTests
             )
         );
 
-        await Diagnostics(result).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
 }

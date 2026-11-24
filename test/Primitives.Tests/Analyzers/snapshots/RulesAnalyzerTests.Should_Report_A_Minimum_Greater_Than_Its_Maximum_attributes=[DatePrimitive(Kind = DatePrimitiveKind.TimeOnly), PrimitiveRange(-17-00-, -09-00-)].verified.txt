@@ -1,0 +1,11 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2006,
+      Severity: Error,
+      Location: Input.cs: (4,51)-(4,83),
+      Source: PrimitiveRange("17:00", "09:00"),
+      Message: The minimum (17:00) is greater than the maximum (09:00), so no value is valid
+    }
+  ]
+}

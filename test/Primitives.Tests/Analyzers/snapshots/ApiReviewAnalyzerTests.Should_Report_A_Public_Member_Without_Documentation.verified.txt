@@ -1,0 +1,35 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2015,
+      Severity: Info,
+      Location: Input.cs: (7,15)-(7,21),
+      Source: Length,
+      Message: Public member 'Length' of domain primitive 'UserName' has no XML documentation
+    }
+  ],
+  CodeFixes: [
+    {
+      Diagnostic: LPAD2015 Input.cs: (7,15)-(7,21),
+      Title: Add XML documentation,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[StringPrimitive, NotEmpty]
+public readonly partial record struct UserName
+{
+    /// <summary>
+    /// Gets the Length.
+    /// </summary>
+    public int Length => 0;
+}
+        }
+      ]
+    }
+  ]
+}

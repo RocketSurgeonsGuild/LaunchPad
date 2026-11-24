@@ -1,0 +1,32 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2003,
+      Severity: Error,
+      Location: Input.cs: (5,14)-(5,22),
+      Source: UserName,
+      Message: Domain primitive 'UserName' must be declared as a 'readonly partial record struct' or a 'sealed partial record'
+    }
+  ],
+  CodeFixes: [
+    {
+      Diagnostic: LPAD2003 Input.cs: (5,14)-(5,22),
+      Title: Convert to a readonly partial record struct,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[StringPrimitive, NotEmpty]
+public readonly partial record struct UserName
+{
+    public int Length => 0;
+}
+        }
+      ]
+    }
+  ]
+}

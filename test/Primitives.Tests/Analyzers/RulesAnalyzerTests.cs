@@ -33,9 +33,7 @@ public class RulesAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2004: Regex(\"[a-z\")"], CollectionOrdering.Matching);
-        var message = await Messages(result, "LPAD2004").Should().HaveSingleItem();
-        await message.Should().StartWith("The pattern '[a-z' of [Regex] is not a valid regular expression: ");
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -49,7 +47,7 @@ public class RulesAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
 
     // LPAD2023: a [Regex] that reports the default error can be a [GeneratedRegex]; one with its own error or an invalid pattern can't, nor
@@ -71,10 +69,7 @@ public class RulesAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(
-            ["LPAD2023: Regex(\"^[A-Z]{3}$\")", "LPAD2004: Regex(\"[a-z\")", "LPAD2023: Regex(\"^ID-[0-9]+$\")"],
-            CollectionOrdering.Matching
-        );
+        await VerifyAnalysis(result);
     }
 
     // The braces go after the base list, the property isn't named like the type, and a comment after the [Regex] follows the pattern.
@@ -92,23 +87,7 @@ public class RulesAnalyzerTests
             """
         );
 
-        await ( await Fixed<UseGeneratedRegexCodeFix>(result, "Use a [GeneratedRegex]") ).Should().BeEqualTo(
-            """
-            using System.Text.RegularExpressions;
-            using Rocket.Surgery.LaunchPad.Primitives;
-
-            namespace Sample;
-
-            public interface IMarker;
-
-            [StringPrimitive]
-            public readonly partial record struct Format : IMarker
-            {
-                [GeneratedRegex("^[a-z]+$", RegexOptions.CultureInvariant, 1000)] // lower case letters
-                private static partial Regex Format2 { get; }
-            }
-            """.ReplaceLineEndings("\n")
-        );
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<UseGeneratedRegexCodeFix>(result, "Use a [GeneratedRegex]") ).Should().BeEmpty();
     }
 
@@ -124,8 +103,9 @@ public class RulesAnalyzerTests
               """ ).ReplaceLineEndings("\r\n")
         );
 
+        await VerifyAnalysis(result);
+        // Verify normalizes line endings, so the snapshot can't show them.
         var fixedSource = await Fixed<UseGeneratedRegexCodeFix>(result, "Use a [GeneratedRegex]");
-        await fixedSource.Should().Contain("private static partial Regex Format { get; }");
         await fixedSource.Replace("\r\n", "", StringComparison.Ordinal).Should().NotContain("\n");
     }
 
@@ -141,22 +121,7 @@ public class RulesAnalyzerTests
             """
         );
 
-        await ( await Fixed<UseGeneratedRegexCodeFix>(result, "Use a [GeneratedRegex]") ).Should().BeEqualTo(
-            """
-            using System.Text.RegularExpressions;
-            using Rocket.Surgery.LaunchPad.Primitives;
-
-            namespace Sample;
-
-            /// <summary>A code.</summary>
-            [StringPrimitive, Trim]
-            public readonly partial record struct Code
-            {
-                [GeneratedRegex(@"^[A-Z]{3}$", RegexOptions.CultureInvariant, 1000)]
-                private static partial Regex Format { get; }
-            }
-            """.ReplaceLineEndings("\n")
-        );
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<UseGeneratedRegexCodeFix>(result, "Use a [GeneratedRegex]") ).Should().BeEmpty();
     }
 
@@ -180,23 +145,7 @@ public class RulesAnalyzerTests
             """
         );
 
-        await ( await Fixed<UseGeneratedRegexCodeFix>(result, "Use a [GeneratedRegex]") ).Should().BeEqualTo(
-            """
-            using System.Text.RegularExpressions;
-            using Rocket.Surgery.LaunchPad.Primitives;
-
-            namespace Sample;
-
-            [StringPrimitive]
-            public sealed partial record Digits
-            {
-                public static string Format => "digits";
-
-                [GeneratedRegex("^[0-9]+$", RegexOptions.CultureInvariant, 1000)]
-                private static partial Regex Format2 { get; }
-            }
-            """.ReplaceLineEndings("\n")
-        );
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<UseGeneratedRegexCodeFix>(result, "Use a [GeneratedRegex]") ).Should().BeEmpty();
     }
 
@@ -227,7 +176,7 @@ public class RulesAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Where(z => z.StartsWith("LPAD2009", StringComparison.Ordinal)).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -244,19 +193,14 @@ public class RulesAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2005: Code"], CollectionOrdering.Matching);
-        await FixTitles<RemoveNormalizationCodeFix>(result).Should().BeEquivalentTo(["Remove [LowerCase]", "Remove [UpperCase]"], CollectionOrdering.Matching);
-        await ( await Fixed<RemoveNormalizationCodeFix>(result, "Remove [LowerCase]") ).Should().Contain("[StringPrimitive, NotEmpty, UpperCase]\npublic readonly partial record struct Code;");
-        await ( await Fixed<RemoveNormalizationCodeFix>(result, "Remove [UpperCase]") ).Should().Contain("[StringPrimitive, NotEmpty, LowerCase]\npublic readonly partial record struct Code;");
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<RemoveNormalizationCodeFix>(result, "Remove [LowerCase]") ).Should().BeEmpty();
         await ( await ErrorsAfterFix<RemoveNormalizationCodeFix>(result, "Remove [UpperCase]") ).Should().BeEmpty();
     }
 
     // An attribute alone in its list goes with its list; the first list leaves its comments to the next one.
     [Test]
-    [Arguments("Remove [LowerCase]", "/// <summary>A code.</summary>\n[UpperCase]\n[StringPrimitive, NotEmpty]\npublic readonly partial record struct Code;")]
-    [Arguments("Remove [UpperCase]", "/// <summary>A code.</summary>\n[StringPrimitive, NotEmpty]\n[LowerCase]\npublic readonly partial record struct Code;")]
-    public async Task Should_Remove_A_Normalization_Alone_In_Its_List(string title, string fixedSource)
+    public async Task Should_Remove_A_Normalization_Alone_In_Its_List()
     {
         var result = await Fix<RulesAnalyzer, RemoveNormalizationCodeFix>(
             Usings
@@ -269,8 +213,9 @@ public class RulesAnalyzerTests
             """
         );
 
-        await ( await Fixed<RemoveNormalizationCodeFix>(result, title) ).Should().Contain(fixedSource);
-        await ( await ErrorsAfterFix<RemoveNormalizationCodeFix>(result, title) ).Should().BeEmpty();
+        await VerifyAnalysis(result);
+        await ( await ErrorsAfterFix<RemoveNormalizationCodeFix>(result, "Remove [LowerCase]") ).Should().BeEmpty();
+        await ( await ErrorsAfterFix<RemoveNormalizationCodeFix>(result, "Remove [UpperCase]") ).Should().BeEmpty();
     }
 
     // The two can be on different declarations of the type: each is removed where it is written.
@@ -294,41 +239,38 @@ public class RulesAnalyzerTests
             )
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2005: Code"], CollectionOrdering.Matching);
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<RemoveNormalizationCodeFix>(result, "Remove [LowerCase]") ).Should().BeEmpty();
         await ( await ErrorsAfterFix<RemoveNormalizationCodeFix>(result, "Remove [UpperCase]") ).Should().BeEmpty();
     }
 
     [Test]
-    [Arguments("[StringPrimitive, MinLength(10), MaxLength(5)]", "MinLength(10)")]
-    [Arguments("[StringPrimitive, MaxLength(5), MinLength(10)]", "MaxLength(5)")]
-    [Arguments("[StringPrimitive, Length(10, 5)]", "Length(10, 5)")]
-    [Arguments("[NumericPrimitive<int>, PrimitiveRange(10, 5)]", "PrimitiveRange(10, 5)")]
-    [Arguments("[NumericPrimitive<double>, PrimitiveRange(1.5, 0.5)]", "PrimitiveRange(1.5, 0.5)")]
-    [Arguments("[DatePrimitive, PrimitiveRange(\"2030-01-01\", \"2020-01-01\")]", "PrimitiveRange(\"2030-01-01\", \"2020-01-01\")")]
-    [Arguments(
-        "[DatePrimitive(Kind = DatePrimitiveKind.DateTimeOffset), PrimitiveRange(\"2030-01-01T00:00:00Z\", \"2020-01-01T00:00:00Z\")]",
-        "PrimitiveRange(\"2030-01-01T00:00:00Z\", \"2020-01-01T00:00:00Z\")"
-    )]
-    [Arguments("[DatePrimitive(Kind = DatePrimitiveKind.TimeOnly), PrimitiveRange(\"17:00\", \"09:00\")]", "PrimitiveRange(\"17:00\", \"09:00\")")]
-    [Arguments("[Percentage(Min = 50, Max = 10)]", "Percentage(Min = 50, Max = 10)")]
-    [Arguments("[Username(MinLength = 20, MaxLength = 3)]", "Username(MinLength = 20, MaxLength = 3)")]
-    [Arguments("[FiscalYear(MinYear = 2100, MaxYear = 2000)]", "FiscalYear(MinYear = 2100, MaxYear = 2000)")]
-    [Arguments("[Money(Min = 10, Max = 5)]", "Money(Min = 10, Max = 5)")]
+    [Arguments("[StringPrimitive, MinLength(10), MaxLength(5)]")]
+    [Arguments("[StringPrimitive, MaxLength(5), MinLength(10)]")]
+    [Arguments("[StringPrimitive, Length(10, 5)]")]
+    [Arguments("[NumericPrimitive<int>, PrimitiveRange(10, 5)]")]
+    [Arguments("[NumericPrimitive<double>, PrimitiveRange(1.5, 0.5)]")]
+    [Arguments("[DatePrimitive, PrimitiveRange(\"2030-01-01\", \"2020-01-01\")]")]
+    [Arguments("[DatePrimitive(Kind = DatePrimitiveKind.DateTimeOffset), PrimitiveRange(\"2030-01-01T00:00:00Z\", \"2020-01-01T00:00:00Z\")]")]
+    [Arguments("[DatePrimitive(Kind = DatePrimitiveKind.TimeOnly), PrimitiveRange(\"17:00\", \"09:00\")]")]
+    [Arguments("[Percentage(Min = 50, Max = 10)]")]
+    [Arguments("[Username(MinLength = 20, MaxLength = 3)]")]
+    [Arguments("[FiscalYear(MinYear = 2100, MaxYear = 2000)]")]
+    [Arguments("[Money(Min = 10, Max = 5)]")]
     // A bound of the kind against the other bound's default, or against a rule.
-    [Arguments("[Age(Min = 200)]", "Age(Min = 200)")]
-    [Arguments("[Percentage(Max = -1)]", "Percentage(Max = -1)")]
-    [Arguments("[Temperature(Max = -300)]", "Temperature(Max = -300)")]
-    [Arguments("[FiscalYear(MinYear = 10000)]", "FiscalYear(MinYear = 10000)")]
-    [Arguments("[Username(MinLength = 60)]", "Username(MinLength = 60)")]
-    [Arguments("[Username(MaxLength = 2)]", "Username(MaxLength = 2)")]
-    [Arguments("[Username(MaxLength = 4), MinLength(5)]", "Username(MaxLength = 4)")]
-    [Arguments("[Email(MaxLength = 3), MinLength(5)]", "Email(MaxLength = 3)")]
-    [Arguments("[CountryCode, MinLength(3)]", "CountryCode")]
+    [Arguments("[Age(Min = 200)]")]
+    [Arguments("[Percentage(Max = -1)]")]
+    [Arguments("[Temperature(Max = -300)]")]
+    [Arguments("[FiscalYear(MinYear = 10000)]")]
+    [Arguments("[Username(MinLength = 60)]")]
+    [Arguments("[Username(MaxLength = 2)]")]
+    [Arguments("[Username(MaxLength = 4), MinLength(5)]")]
+    [Arguments("[Email(MaxLength = 3), MinLength(5)]")]
+    [Arguments("[CountryCode, MinLength(3)]")]
     // A minimum length against the project's maximum length, 4096 by default, where neither a rule nor the kind sets one.
-    [Arguments("[StringPrimitive, MinLength(5000)]", "MinLength(5000)")]
-    [Arguments("[StrongId<string>, MinLength(5000)]", "MinLength(5000)")]
-    public async Task Should_Report_A_Minimum_Greater_Than_Its_Maximum(string attributes, string reported)
+    [Arguments("[StringPrimitive, MinLength(5000)]")]
+    [Arguments("[StrongId<string>, MinLength(5000)]")]
+    public async Task Should_Report_A_Minimum_Greater_Than_Its_Maximum(string attributes)
     {
         var result = await Analyze<RulesAnalyzer>(
             Usings
@@ -338,7 +280,7 @@ public class RulesAnalyzerTests
               """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo([$"LPAD2006: {reported}"], CollectionOrdering.Matching);
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -371,18 +313,15 @@ public class RulesAnalyzerTests
               """
         );
 
-        await Diagnostics(result).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
 
     [Test]
-    [Arguments("[Age(Min = 200)]", "The minimum (200) is greater than the maximum (150), so no value is valid")]
-    [Arguments("[Temperature(Max = -300)]", "The minimum (-273.15) is greater than the maximum (-300), so no value is valid")]
-    [Arguments("[CountryCode, MinLength(3)]", "The minimum (3) is greater than the maximum (2), so no value is valid")]
-    [Arguments(
-        "[StringPrimitive, MinLength(5000)]",
-        "The minimum (5000) is greater than the maximum (4096, the project's LaunchPadPrimitivesMaxLength), so no value is valid"
-    )]
-    public async Task Should_Report_The_Default_A_Bound_Conflicts_With(string attributes, string message)
+    [Arguments("[Age(Min = 200)]")]
+    [Arguments("[Temperature(Max = -300)]")]
+    [Arguments("[CountryCode, MinLength(3)]")]
+    [Arguments("[StringPrimitive, MinLength(5000)]")]
+    public async Task Should_Report_The_Default_A_Bound_Conflicts_With(string attributes)
     {
         var result = await Analyze<RulesAnalyzer>(
             Usings
@@ -392,13 +331,13 @@ public class RulesAnalyzerTests
               """
         );
 
-        await Messages(result, "LPAD2006").Should().BeEquivalentTo([message], CollectionOrdering.Matching);
+        await VerifyAnalysis(result);
     }
 
     [Test]
-    [Arguments("100", "[StringPrimitive, MinLength(200)]", true)]
-    [Arguments("10000", "[StringPrimitive, MinLength(5000)]", false)]
-    public async Task Should_Read_The_Maximum_Length_The_Project_Sets(string maxLength, string attributes, bool reported)
+    [Arguments("100", "[StringPrimitive, MinLength(200)]")]
+    [Arguments("10000", "[StringPrimitive, MinLength(5000)]")]
+    public async Task Should_Read_The_Maximum_Length_The_Project_Sets(string maxLength, string attributes)
     {
         var result = await Analyze<RulesAnalyzer>(
             Usings
@@ -409,8 +348,7 @@ public class RulesAnalyzerTests
             builder => builder.AddGlobalOption("build_property.LaunchPadPrimitivesMaxLength", maxLength)
         );
 
-        string[] expected = reported ? ["LPAD2006: MinLength(200)"] : [];
-        await Diagnostics(result).Should().BeEquivalentTo(expected, CollectionOrdering.Matching);
+        await VerifyAnalysis(result);
     }
 
     // The generator reads the range of [Money] from its Min and Max alone: a [PrimitiveRange] doesn't apply to it (LPAD2022) and doesn't hide them.
@@ -425,9 +363,7 @@ public class RulesAnalyzerTests
             """
         );
 
-        await Diagnostics(result)
-             .Should()
-             .BeEquivalentTo(["LPAD2006: Money(Min = 10, Max = 5)", "LPAD2022: PrimitiveRange(0, 100)"], CollectionOrdering.Matching);
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -441,8 +377,7 @@ public class RulesAnalyzerTests
             """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2020: DatePrimitive(PastOnly = true, FutureOnly = true)"], CollectionOrdering.Matching);
-        await Messages(result, "LPAD2020").Should().BeEquivalentTo(["Domain primitive 'Never' sets both PastOnly and FutureOnly, so no value is valid"], CollectionOrdering.Matching);
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -461,9 +396,7 @@ public class RulesAnalyzerTests
             NodaTime
         );
 
-        await Messages(result, "LPAD2020")
-             .Should()
-             .BeEquivalentTo([$"Domain primitive 'Span' sets {direction} on the {kind} kind, which is not a point in time"], CollectionOrdering.Matching);
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -479,27 +412,27 @@ public class RulesAnalyzerTests
               """
         );
 
-        await Diagnostics(result).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
 
     [Test]
-    [Arguments("[MaxLength(10)]", "NumericPrimitive<int>", "MaxLength", "a numeric primitive, and the rule applies to a string")]
-    [Arguments("[Trim]", "Percentage", "Trim", "a numeric primitive, and the rule applies to a string")]
-    [Arguments("[Regex(\"^a$\")]", "DatePrimitive", "Regex", "a date primitive, and the rule applies to a string")]
-    [Arguments("[PrimitiveRange(1, 2)]", "StringPrimitive", "PrimitiveRange", "a string primitive, and the rule applies to a number, a date or a time")]
-    [Arguments("[PrimitiveRange(1, 2)]", "Email", "PrimitiveRange", "a string primitive, and the rule applies to a number, a date or a time")]
-    [Arguments("[MaxLength(10)]", "StrongId<System.Guid>", "MaxLength", "a strong ID of Guid, and the rule applies to a string")]
-    [Arguments("[PrimitiveRange(1, 2)]", "StrongId<string>", "PrimitiveRange", "a strong ID of string, and the rule applies to a number, a date or a time")]
-    [Arguments("[NotEmpty]", "SmartEnum<int>", "NotEmpty", "a smart enum, which takes no rules: its values are its members")]
-    [Arguments("[MaxLength(3)]", "Money", "MaxLength", "a value object, which takes no rules: check its members in their own domain primitives")]
-    [Arguments("[CustomValidator<Sample.Check>]", "ValueObject", "CustomValidator", "a value object, which takes no rules: check its members in their own domain primitives")]
+    [Arguments("[MaxLength(10)]", "NumericPrimitive<int>")]
+    [Arguments("[Trim]", "Percentage")]
+    [Arguments("[Regex(\"^a$\")]", "DatePrimitive")]
+    [Arguments("[PrimitiveRange(1, 2)]", "StringPrimitive")]
+    [Arguments("[PrimitiveRange(1, 2)]", "Email")]
+    [Arguments("[MaxLength(10)]", "StrongId<System.Guid>")]
+    [Arguments("[PrimitiveRange(1, 2)]", "StrongId<string>")]
+    [Arguments("[NotEmpty]", "SmartEnum<int>")]
+    [Arguments("[MaxLength(3)]", "Money")]
+    [Arguments("[CustomValidator<Sample.Check>]", "ValueObject")]
     // The generator reads a date's bounds as text and a number's as numbers: the other overload sets no bound or fails at run time.
-    [Arguments("[PrimitiveRange(1, 2)]", "DatePrimitive", "PrimitiveRange", "a date primitive, whose bounds are ISO 8601 text: use [PrimitiveRange(\"min\", \"max\")]")]
-    [Arguments("[PrimitiveRange(0, 100)]", "BirthDate", "PrimitiveRange", "a date primitive, whose bounds are ISO 8601 text: use [PrimitiveRange(\"min\", \"max\")]")]
-    [Arguments("[PrimitiveRange(\"1\", \"2\")]", "NumericPrimitive<decimal>", "PrimitiveRange", "a numeric primitive, whose bounds are numbers: use [PrimitiveRange(min, max)]")]
-    [Arguments("[PrimitiveRange(\"1\", \"2\")]", "Percentage", "PrimitiveRange", "a numeric primitive, whose bounds are numbers: use [PrimitiveRange(min, max)]")]
-    [Arguments("[PrimitiveRange(\"1\", \"2\")]", "StrongId<int>", "PrimitiveRange", "a strong ID of int, whose bounds are numbers: use [PrimitiveRange(min, max)]")]
-    public async Task Should_Report_A_Rule_That_Does_Not_Apply_To_The_Kind(string rule, string kind, string name, string reason)
+    [Arguments("[PrimitiveRange(1, 2)]", "DatePrimitive")]
+    [Arguments("[PrimitiveRange(0, 100)]", "BirthDate")]
+    [Arguments("[PrimitiveRange(\"1\", \"2\")]", "NumericPrimitive<decimal>")]
+    [Arguments("[PrimitiveRange(\"1\", \"2\")]", "Percentage")]
+    [Arguments("[PrimitiveRange(\"1\", \"2\")]", "StrongId<int>")]
+    public async Task Should_Report_A_Rule_That_Does_Not_Apply_To_The_Kind(string rule, string kind)
     {
         var result = await Analyze<RulesAnalyzer>(
             Usings
@@ -512,8 +445,7 @@ public class RulesAnalyzerTests
               """
         );
 
-        await Messages(result, "LPAD2022").Should().BeEquivalentTo([$"[{name}] does not apply to 'Target', {reason}"], CollectionOrdering.Matching);
-        await Diagnostics(result).Where(d => d.StartsWith("LPAD2022", StringComparison.Ordinal)).Should().BeEquivalentTo([$"LPAD2022: {rule[1..^1]}"], CollectionOrdering.Matching);
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -541,7 +473,7 @@ public class RulesAnalyzerTests
               """
         );
 
-        await Diagnostics(result).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -562,17 +494,7 @@ public class RulesAnalyzerTests
             NodaTime
         );
 
-        await Diagnostics(result)
-             .Should()
-             .BeEquivalentTo(
-                  ["LPAD2021: DatePrimitive(Kind = DatePrimitiveKind.Instant, PastOnly = true)", "LPAD2021: DateRange(Kind = DatePrimitiveKind.LocalDate)"],
-                  CollectionOrdering.Matching
-              );
-        await Messages(result, "LPAD2021")
-             .Should()
-             .Contain(
-                  "Domain primitive 'HappenedAt' wraps NodaTime's Instant, but the project does not reference Rocket.Surgery.LaunchPad.NodaTime, whose JSON converters its JSON converter uses"
-              );
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -587,7 +509,7 @@ public class RulesAnalyzerTests
             builder => NodaTime(builder).AddReferences(LaunchPadNodaTime())
         );
 
-        await Diagnostics(result).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
 
     /// <summary>An assembly named Rocket.Surgery.LaunchPad.NodaTime (the test harness names a compilation after the project without its last part).</summary>
@@ -627,18 +549,7 @@ public class MissingValidationTests
             """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2009: UserName"], CollectionOrdering.Matching);
-        await ( await Fixed<AddNotEmptyCodeFix>(result, "Add [NotEmpty]") ).Should().BeEqualTo(
-            """
-            using Rocket.Surgery.LaunchPad.Primitives;
-
-            namespace Sample;
-
-            [StringPrimitive]
-            [NotEmpty]
-            public readonly partial record struct UserName;
-            """
-        );
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<AddNotEmptyCodeFix>(result, "Add [NotEmpty]") ).Should().BeEmpty();
     }
 
@@ -655,16 +566,7 @@ public class MissingValidationTests
             """
         );
 
-        await ( await Fixed<AddNotEmptyCodeFix>(result, "Add [NotEmpty]") ).Should().BeEqualTo(
-            """
-            namespace Sample
-            {
-                [Rocket.Surgery.LaunchPad.Primitives.StringPrimitive]
-                [global::Rocket.Surgery.LaunchPad.Primitives.NotEmpty]
-                public sealed partial record UserName;
-            }
-            """
-        );
+        await VerifyAnalysis(result);
         await ( await ErrorsAfterFix<AddNotEmptyCodeFix>(result, "Add [NotEmpty]") ).Should().BeEmpty();
     }
 
@@ -703,7 +605,7 @@ public class MissingValidationTests
               """
         );
 
-        await Diagnostics(result).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -721,7 +623,7 @@ public class MissingValidationTests
             builder => builder.AddGlobalOption("build_property.LaunchPadPrimitivesNotEmpty", "true")
         );
 
-        await Diagnostics(result).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
 
     [Test]
@@ -741,8 +643,7 @@ public class MissingValidationTests
             """
         );
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2009: Amount", "LPAD2009: Day"], CollectionOrdering.Matching);
-        await FixTitles<AddNotEmptyCodeFix>(result).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
 
     // A string strong ID already rejects an empty string: without a length or a format it is any other string.
@@ -760,12 +661,6 @@ public class MissingValidationTests
             """
         );
 
-        await Messages(result, "LPAD2009")
-             .Should()
-             .BeEquivalentTo(
-                  ["Domain primitive 'Sku' declares no rules to check its value: a string strong ID without a length or a [Regex] accepts any string"],
-                  CollectionOrdering.Matching
-              );
-        await FixTitles<AddNotEmptyCodeFix>(result).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
 }

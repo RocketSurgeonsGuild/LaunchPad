@@ -1,0 +1,36 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2023,
+      Severity: Info,
+      Location: Input.cs: (7,1)-(7,18),
+      Source: Regex("^[a-z]+$"),
+      Message: The pattern of [Regex] on 'Format' is built at run time and interpreted: declare it as a [GeneratedRegex] member of the domain primitive
+    }
+  ],
+  CodeFixes: [
+    {
+      Diagnostic: LPAD2023 Input.cs: (7,1)-(7,18),
+      Title: Use a [GeneratedRegex],
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using System.Text.RegularExpressions;
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+public interface IMarker;
+
+[StringPrimitive]
+public readonly partial record struct Format : IMarker
+{
+    [GeneratedRegex("^[a-z]+$", RegexOptions.CultureInvariant, 1000)] // lower case letters
+    private static partial Regex Format2 { get; }
+}
+        }
+      ]
+    }
+  ]
+}

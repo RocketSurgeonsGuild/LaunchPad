@@ -59,26 +59,22 @@ public class ExceptionTypeAnalyzerTests
     {
         var result = await Analyze<ExceptionTypeAnalyzer>(Source, builder => builder.AddGlobalOption("build_property.LaunchPadPrimitivesExceptionType", type));
 
-        await Diagnostics(result).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
 
     [Test]
-    [Arguments("Sample.Missing", "which the project cannot find")]
-    [Arguments("Sample.NotAnException", "which does not derive from System.Exception")]
-    [Arguments("Sample.NoMessageException", "which has no accessible constructor that takes the message (a single string)")]
-    [Arguments("Sample.AbstractException", "which is abstract, so it cannot be thrown")]
-    [Arguments(
-        "Sample.Outer+NestedException",
-        "which is not a C# name of a type: write a nested type as Outer.Inner (the generator writes new global::<name>(message)), and a generic type can't be used"
-    )]
-    [Arguments("Sample.Outer.Missing", "which the project cannot find")]
-    [Arguments("Sample..GoodException", "which the project cannot find")]
-    public async Task Should_Report_A_Type_Create_Cannot_Throw(string type, string problem)
+    [Arguments("Sample.Missing")]
+    [Arguments("Sample.NotAnException")]
+    [Arguments("Sample.NoMessageException")]
+    [Arguments("Sample.AbstractException")]
+    [Arguments("Sample.Outer+NestedException")]
+    [Arguments("Sample.Outer.Missing")]
+    [Arguments("Sample..GoodException")]
+    public async Task Should_Report_A_Type_Create_Cannot_Throw(string type)
     {
         var result = await Analyze<ExceptionTypeAnalyzer>(Source, builder => builder.AddGlobalOption("build_property.LaunchPadPrimitivesExceptionType", type));
 
-        await Diagnostics(result).Should().BeEquivalentTo(["LPAD2017"], CollectionOrdering.Matching);
-        await Messages(result, "LPAD2017").Should().BeEquivalentTo([$"LaunchPadPrimitivesExceptionType is '{type}', {problem}"], CollectionOrdering.Matching);
+        await VerifyAnalysis(result);
     }
 
     // Two references that both define the name make it ambiguous (CS0433), which is not the same as missing.
@@ -91,12 +87,7 @@ public class ExceptionTypeAnalyzerTests
                               .AddGlobalOption("build_property.LaunchPadPrimitivesExceptionType", "Shared.DuplicateException")
         );
 
-        await Messages(result, "LPAD2017")
-             .Should()
-             .BeEquivalentTo(
-                  ["LaunchPadPrimitivesExceptionType is 'Shared.DuplicateException', which is defined in more than one referenced assembly (First, Second), so the name is ambiguous"],
-                  CollectionOrdering.Matching
-              );
+        await VerifyAnalysis(result);
     }
 
     // The project's own type wins over a reference's (CS0436 is a warning); one reference alone is no ambiguity.
@@ -113,7 +104,7 @@ public class ExceptionTypeAnalyzerTests
             builder => builder.AddReferences(Exceptions("First")).AddGlobalOption("build_property.LaunchPadPrimitivesExceptionType", "Shared.DuplicateException")
         );
 
-        await Diagnostics(result).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
 
     /// <summary>An assembly named <paramref name="assemblyName" /> that declares <c>Shared.DuplicateException</c>.</summary>
@@ -141,6 +132,6 @@ public class ExceptionTypeAnalyzerTests
             builder => builder.AddGlobalOption("build_property.LaunchPadPrimitivesExceptionType", "Sample.Missing")
         );
 
-        await Diagnostics(result).Should().BeEmpty();
+        await VerifyAnalysis(result);
     }
 }

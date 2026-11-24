@@ -1,0 +1,18 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2010,
+      Severity: Warning,
+      Location: Input.cs: (6,12)-(6,23),
+      Source: sku == "A1",
+      Message: A string is compared with domain primitive 'Sku'; compare with its Value, or create a 'Sku' from the string first
+    },
+    {
+      Id: LPAD2011,
+      Severity: Warning,
+      Location: Input.cs: (9,15)-(9,22),
+      Source: a = sku,
+      Message: Domain primitive 'Sku' is used as a string; use its Value
+    }
+  ]
+}

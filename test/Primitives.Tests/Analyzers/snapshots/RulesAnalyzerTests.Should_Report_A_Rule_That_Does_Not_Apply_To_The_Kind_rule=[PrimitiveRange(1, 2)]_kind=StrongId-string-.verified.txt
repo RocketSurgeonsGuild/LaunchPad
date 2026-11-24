@@ -1,0 +1,18 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2022,
+      Severity: Warning,
+      Location: Input.cs: (7,1)-(7,21),
+      Source: PrimitiveRange(1, 2),
+      Message: [PrimitiveRange] does not apply to 'Target', a strong ID of string, and the rule applies to a number, a date or a time
+    },
+    {
+      Id: LPAD2009,
+      Severity: Warning,
+      Location: Input.cs: (8,38)-(8,44),
+      Source: Target,
+      Message: Domain primitive 'Target' declares no rules to check its value: a string strong ID without a length or a [Regex] accepts any string
+    }
+  ]
+}

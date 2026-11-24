@@ -1,0 +1,33 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2012,
+      Severity: Warning,
+      Location: Input.cs: (8,11)-(8,23),
+      Source: EmailAddress,
+      Message: Domain primitive 'EmailAddress' declares a public constructor, which creates it without running its rules; use the generated Create and TryCreate
+    }
+  ],
+  CodeFixes: [
+    {
+      Diagnostic: LPAD2012 Input.cs: (8,11)-(8,23),
+      Title: Make the constructor private,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[Email]
+public sealed partial record EmailAddress
+{
+    /// <summary>A comment that stays.</summary>
+    private EmailAddress(int length) { }
+}
+        }
+      ]
+    }
+  ]
+}
