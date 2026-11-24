@@ -12,7 +12,7 @@ General purpose LocalDate Serializer
 ## LocalDateSerializer
 
 - Name: `Constructor`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.b3468f8f7f271d2dc63ee1d3333c2bcdd48e93a2/src/NodaTime.StrawberryShake/LocalDateSerializer.cs#L14-L16)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.c35dcc131245e369cef6bf89daaeca2d2d05743c/src/NodaTime.StrawberryShake/LocalDateSerializer.cs#L14-L16)
 
 Create a new LocalDateSerializer
 

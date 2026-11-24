@@ -12,7 +12,7 @@ The options of the NodaTime support, set on the joint context to change how it b
 ## NodaTimeOptions
 
 - Name: `Constructor`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.b3468f8f7f271d2dc63ee1d3333c2bcdd48e93a2/src/NodaTime/NodaTimeOptions.cs#L14)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.c35dcc131245e369cef6bf89daaeca2d2d05743c/src/NodaTime/NodaTimeOptions.cs#L14)
 
 ```csharp
 public class NodaTimeOptions

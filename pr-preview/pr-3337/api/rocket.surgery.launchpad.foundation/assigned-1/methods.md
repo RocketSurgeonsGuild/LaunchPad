@@ -15,7 +15,7 @@ The Assigned type is used to differentiate between not set and set input values.
 - Name: `Empty(T?)`
 - Modifiers: `static`
 - Returns: [Assigned<T>](/LaunchPad/pr-preview/pr-3337/api/rocket.surgery.launchpad.foundation/assigned-1.md)
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.b3468f8f7f271d2dc63ee1d3333c2bcdd48e93a2/src/Foundation/Assigned.cs#L62)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.c35dcc131245e369cef6bf89daaeca2d2d05743c/src/Foundation/Assigned.cs#L62)
 
 Creates an empty Assigned that provides a default value.
 
@@ -43,7 +43,7 @@ public class Assigned<T>
 - Name: `Equals(object?)`
 - Modifiers: `override`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.b3468f8f7f271d2dc63ee1d3333c2bcdd48e93a2/src/Foundation/Assigned.cs#L114-L116)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.c35dcc131245e369cef6bf89daaeca2d2d05743c/src/Foundation/Assigned.cs#L114-L116)
 
 Compares this `Foundation.Assigned`1` value to another value.
 
@@ -73,7 +73,7 @@ public class Assigned<T>
 
 - Name: `Equals(Assigned<T>)`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.b3468f8f7f271d2dc63ee1d3333c2bcdd48e93a2/src/Foundation/Assigned.cs#L142-L148)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.c35dcc131245e369cef6bf89daaeca2d2d05743c/src/Foundation/Assigned.cs#L142-L148)
 
 Compares this `Foundation.Assigned`1` value to another value.
 
@@ -104,7 +104,7 @@ public class Assigned<T>
 - Name: `GetHashCode`
 - Modifiers: `override`
 - Returns: `int`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.b3468f8f7f271d2dc63ee1d3333c2bcdd48e93a2/src/Foundation/Assigned.cs#L128)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.c35dcc131245e369cef6bf89daaeca2d2d05743c/src/Foundation/Assigned.cs#L128)
 
 Serves as a hash function for a `Foundation.Assigned`1` object.
 
@@ -130,7 +130,7 @@ public class Assigned<T>
 - Name: `op_Equality(Assigned<T>, Assigned<T>)`
 - Modifiers: `static`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.b3468f8f7f271d2dc63ee1d3333c2bcdd48e93a2/src/Foundation/Assigned.cs#L20)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.c35dcc131245e369cef6bf89daaeca2d2d05743c/src/Foundation/Assigned.cs#L20)
 
 Operator call through to Equals
 
@@ -165,7 +165,7 @@ public class Assigned<T>
 - Name: `op_Implicit(T)`
 - Modifiers: `static`
 - Returns: [Assigned<T>](/LaunchPad/pr-preview/pr-3337/api/rocket.surgery.launchpad.foundation/assigned-1.md)
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.b3468f8f7f271d2dc63ee1d3333c2bcdd48e93a2/src/Foundation/Assigned.cs#L43)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.c35dcc131245e369cef6bf89daaeca2d2d05743c/src/Foundation/Assigned.cs#L43)
 
 Implicitly creates a new `Foundation.Assigned`1` from the given value.
 
@@ -192,7 +192,7 @@ public class Assigned<T>
 - Name: `op_Implicit(Assigned<T>)`
 - Modifiers: `static` `nullable`
 - Returns: `T?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.b3468f8f7f271d2dc63ee1d3333c2bcdd48e93a2/src/Foundation/Assigned.cs#L51)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.c35dcc131245e369cef6bf89daaeca2d2d05743c/src/Foundation/Assigned.cs#L51)
 
 Implicitly gets the Assigned value.
 
@@ -219,7 +219,7 @@ public class Assigned<T>
 - Name: `op_Inequality(Assigned<T>, Assigned<T>)`
 - Modifiers: `static`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.b3468f8f7f271d2dc63ee1d3333c2bcdd48e93a2/src/Foundation/Assigned.cs#L33)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.c35dcc131245e369cef6bf89daaeca2d2d05743c/src/Foundation/Assigned.cs#L33)
 
 Operator call through to Equals
 
@@ -253,7 +253,7 @@ public class Assigned<T>
 - Name: `ToString`
 - Modifiers: `override`
 - Returns: `string`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.b3468f8f7f271d2dc63ee1d3333c2bcdd48e93a2/src/Foundation/Assigned.cs#L100)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.c35dcc131245e369cef6bf89daaeca2d2d05743c/src/Foundation/Assigned.cs#L100)
 
 Provides the name string.
 
