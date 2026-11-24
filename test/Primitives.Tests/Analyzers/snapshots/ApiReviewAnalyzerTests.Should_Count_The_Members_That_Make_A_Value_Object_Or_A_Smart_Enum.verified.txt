@@ -21,9 +21,23 @@
       {
         Id: LPAD2014,
         Severity: Info,
+        Location: Input.cs: (5,28)-(5,34),
+        Source: Target,
+        Message: Domain primitive 'Target' declares 17 public members, more than the 16 a domain primitive of its kind should need
+      }
+    ]
+  },
+  StructSmartEnumWithinBudget: {
+    Diagnostics: []
+  },
+  StructSmartEnumOverBudget: {
+    Diagnostics: [
+      {
+        Id: LPAD2014,
+        Severity: Info,
         Location: Input.cs: (5,38)-(5,44),
         Source: Target,
-        Message: Domain primitive 'Target' declares 15 public members, more than the 14 a domain primitive of its kind should need
+        Message: Domain primitive 'Target' declares 17 public members, more than the 16 a domain primitive of its kind should need
       }
     ]
   }

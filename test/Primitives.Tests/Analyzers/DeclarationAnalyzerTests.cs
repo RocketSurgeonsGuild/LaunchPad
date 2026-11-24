@@ -8,8 +8,9 @@ using static Primitives.Tests.Analyzers.AnalyzerTestSources;
 namespace Primitives.Tests.Analyzers;
 
 /// <summary>
-///     LPAD2001 (partial, and the types that contain it), LPAD2002 (readonly), LPAD2003 (record), LPAD2012 (public constructor) and LPAD2019
-///     (sealed), with their fixes. Every fixed project is compiled with the generator.
+///     LPAD2001 (partial, and the types that contain it), LPAD2002 (readonly), LPAD2003 (record, or a closed class or a record struct for a
+///     smart enum), LPAD2012 (public constructor) and LPAD2019 (sealed, or closed for a smart enum class), with their fixes. Every fixed project
+///     is compiled with the generator.
 /// </summary>
 public class DeclarationAnalyzerTests
 {
@@ -485,6 +486,520 @@ public class DeclarationAnalyzerTests
             {
                 [Custom.StringPrimitive]
                 public struct UserName;
+            }
+            """
+        );
+
+        await VerifyAnalysis(result);
+    }
+
+    // A smart enum may be a closed partial class; closed may be on any of its declarations. The application's own part of a member's class,
+    // where it changes behaviour, isn't a domain primitive of its own.
+    [Test]
+    public async Task Should_Accept_A_Smart_Enum_Declared_As_A_Closed_Partial_Class()
+    {
+        var result = await AnalyzeWithGenerator<DeclarationAnalyzer>(
+            """
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [SmartEnum<int>]
+            public closed partial class OrderStatus
+            {
+                public static readonly OrderStatus Pending = new Pending_(1, "Waiting");
+                public static readonly OrderStatus Shipped = new Shipped_(2, "On its way");
+
+                public string Label { get; }
+
+                public virtual bool CanCancel => true;
+
+                public partial class Shipped_
+                {
+                    internal Shipped_(string label) : this(2, label) { }
+
+                    public override bool CanCancel => false;
+                }
+            }
+
+            [SmartEnum<string>]
+            public partial class Role
+            {
+                public static readonly Role Admin = new Admin_("admin");
+            }
+
+            public closed partial class Role;
+            """
+        );
+
+        await VerifyAnalysis(result);
+        await result.FinalDiagnostics.Where(d => d.Severity == DiagnosticSeverity.Error).Select(d => d.ToString()).Should().BeEmpty();
+    }
+
+    // A smart enum that is a record class is neither form: its fixes make it a closed partial class or a readonly partial record struct, never a
+    // sealed record, and make each member as that form makes it (new Low_(1) in the class, new(1) in the struct).
+    [Test]
+    public async Task Should_Report_A_Smart_Enum_That_Is_A_Record()
+    {
+        var result = await Fix<DeclarationAnalyzer, DeclarationCodeFix>(
+            """
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [SmartEnum<int>]
+            public sealed partial record Level
+            {
+                public static readonly Level Low = new(1), Medium = new Level(2);
+                public static Level High { get; } = new(3);
+            }
+
+            [SmartEnum<string>]
+            public closed partial record Role
+            {
+                public static readonly Role Admin = new Admin_("admin", 10);
+
+                public int Rank { get; }
+            }
+            """
+        );
+
+        await VerifyAnalysis(result);
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Convert to a closed partial class") ).Should().BeEmpty();
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Convert to a readonly partial record struct") ).Should().BeEmpty();
+        // Compiling isn't enough: a member the fix dropped, or one the generator no longer reads as a member (High, a property), compiles too.
+        foreach (var title in (string[])["Convert to a closed partial class", "Convert to a readonly partial record struct"])
+        {
+            await ( await MembersAfterFix<DeclarationCodeFix>(result, "Sample.Level", title) ).Should().BeEquivalentTo(["Low", "Medium", "High"]);
+            await ( await MembersAfterFix<DeclarationCodeFix>(result, "Sample.Role", title) ).Should().BeEquivalentTo(["Admin"]);
+        }
+    }
+
+    [Test]
+    public async Task Should_Report_A_Smart_Enum_That_Is_A_Struct_But_Not_A_Record()
+    {
+        var result = await Fix<DeclarationAnalyzer, DeclarationCodeFix>(
+            """
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [SmartEnum<int>]
+            public struct Size
+            {
+                public static readonly Size Small = new(1, "S");
+
+                public string Label { get; }
+            }
+            """
+        );
+
+        await VerifyAnalysis(result);
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Convert to a closed partial class") ).Should().BeEmpty();
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Convert to a readonly partial record struct") ).Should().BeEmpty();
+    }
+
+    // The struct form: a readonly partial record struct whose members are values of it, made with their value and then their data, or with
+    // their value alone. readonly may be on any of its declarations.
+    [Test]
+    public async Task Should_Accept_A_Smart_Enum_Declared_As_A_Readonly_Partial_Record_Struct()
+    {
+        var result = await AnalyzeWithGenerator<DeclarationAnalyzer>(
+            """
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [SmartEnum<int>]
+            public readonly partial record struct OrderStatus
+            {
+                public static readonly OrderStatus Pending = new(1, "Waiting", 0m);
+                public static readonly OrderStatus Shipped = new(2, "On its way", 5m);
+
+                public string Label { get; }
+
+                public decimal Fee { get; }
+
+                public bool CanCancel => this == Pending;
+            }
+
+            [SmartEnum<string>]
+            public partial record struct Role
+            {
+                public static readonly Role Admin = new("admin");
+            }
+
+            public readonly partial record struct Role;
+            """
+        );
+
+        await VerifyAnalysis(result);
+        await result.FinalDiagnostics.Where(d => d.Severity == DiagnosticSeverity.Error).Select(d => d.ToString()).Should().BeEmpty();
+    }
+
+    [Test]
+    public async Task Should_Report_A_Struct_Smart_Enum_That_Is_Not_Readonly()
+    {
+        var result = await Fix<DeclarationAnalyzer, DeclarationCodeFix>(
+            """
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [SmartEnum<int>]
+            public partial record struct Level
+            {
+                public static readonly Level Low = new(1);
+            }
+            """
+        );
+
+        await VerifyAnalysis(result);
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Make the domain primitive readonly") ).Should().BeEmpty();
+    }
+
+    // A public constructor of a struct smart enum makes values that aren't among its members, as it lets invalid values into any other kind.
+    [Test]
+    public async Task Should_Report_A_Public_Constructor_Of_A_Struct_Smart_Enum()
+    {
+        var result = await Analyze<DeclarationAnalyzer>(
+            """
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [SmartEnum<int>]
+            public readonly partial record struct Level
+            {
+                public static readonly Level Low = new(1);
+
+                public Level(string name) { }
+            }
+            """
+        );
+
+        await VerifyAnalysis(result);
+    }
+
+    // closed on one declaration closes the type, but abstract or sealed on another one would contradict it (CS9381, CS9384).
+    [Test]
+    public async Task Should_Report_A_Smart_Enum_That_Is_Not_Closed()
+    {
+        var result = await Fix<DeclarationAnalyzer, DeclarationCodeFix>(
+            """
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [SmartEnum<int>]
+            public partial class Level
+            {
+                public static readonly Level Low = new Low_(1);
+            }
+
+            [SmartEnum<int>]
+            public sealed partial class Size
+            {
+                public static readonly Size Small = new Small_(1);
+            }
+            """,
+            builder => builder.AddSource(
+                "Level.Rank.cs",
+                """
+                namespace Sample;
+
+                public abstract partial class Level
+                {
+                    public int Rank => 0;
+                }
+                """
+            )
+        );
+
+        await VerifyAnalysis(result);
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Make the smart enum closed") ).Should().BeEmpty();
+    }
+
+    // A closed class makes each member with new of its own class: making the smart enum closed makes each member that way too, in every part,
+    // or the generator wouldn't complete it (LPAD2104) and new(1) would make an instance of an abstract class (CS0144).
+    [Test]
+    public async Task Should_Make_Each_Member_With_Its_Own_Class_When_Closing_A_Smart_Enum()
+    {
+        var result = await Fix<DeclarationAnalyzer, DeclarationCodeFix>(
+            """
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [SmartEnum<int>]
+            public partial class Level
+            {
+                public static readonly Level Low = new(1), Medium = new Level(2);
+                public static Level High { get; } = new(3);
+            }
+            """,
+            builder => builder.AddSource(
+                "Level.Top.cs",
+                """
+                namespace Sample;
+
+                public sealed partial class Level
+                {
+                    public static readonly Level Top = new Level(4);
+                }
+                """
+            )
+        );
+
+        await VerifyAnalysis(result);
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Make the smart enum closed") ).Should().BeEmpty();
+        await ( await MembersAfterFix<DeclarationCodeFix>(result, "Sample.Level", "Make the smart enum closed") )
+           .Should()
+           .BeEquivalentTo(["Low", "Medium", "High", "Top"]);
+    }
+
+    // A member is a static field or property of the smart enum's type however that type is spelled, and new Sample.Level(2) makes the smart
+    // enum as new Level(2) does: making it closed makes each of them with new of its own class, or the generator wouldn't complete it (LPAD2104)
+    // and new Sample.Level(2) would make an instance of an abstract class (CS0144).
+    [Test]
+    public async Task Should_Make_Each_Member_With_Its_Own_Class_However_The_Smart_Enum_Is_Spelled()
+    {
+        var result = await Fix<DeclarationAnalyzer, DeclarationCodeFix>(
+            """
+            using Rocket.Surgery.LaunchPad.Primitives;
+            using Alias = Sample.Level;
+
+            namespace Sample;
+
+            [SmartEnum<int>]
+            public partial class Level
+            {
+                public static readonly Sample.Level Low = new(1);
+                public static readonly global::Sample.Level Medium = new Sample.Level(2);
+                public static Level High { get; } = new global::Sample.Level(3);
+                public static readonly Alias Top = new Alias(4);
+            }
+
+            public static partial class Outer
+            {
+                [SmartEnum<int>]
+                public partial class Level
+                {
+                    public static readonly Outer.Level Low = new Outer.Level(1);
+                    public static readonly Level High = new(2);
+                }
+            }
+            """
+        );
+
+        await VerifyAnalysis(result);
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Make the smart enum closed") ).Should().BeEmpty();
+        await ( await MembersAfterFix<DeclarationCodeFix>(result, "Sample.Level", "Make the smart enum closed") )
+           .Should()
+           .BeEquivalentTo(["Low", "Medium", "High", "Top"]);
+        await ( await MembersAfterFix<DeclarationCodeFix>(result, "Sample.Outer+Level", "Make the smart enum closed") ).Should().BeEquivalentTo(["Low", "High"]);
+    }
+
+    // The same spellings in a smart enum that is a record: either form its fixes give it keeps every member.
+    [Test]
+    public async Task Should_Keep_Every_Member_However_The_Smart_Enum_Is_Spelled_When_Converting_A_Record()
+    {
+        var result = await Fix<DeclarationAnalyzer, DeclarationCodeFix>(
+            """
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [SmartEnum<int>]
+            public sealed partial record Level
+            {
+                public static readonly Sample.Level Low = new(1);
+                public static readonly global::Sample.Level Medium = new Sample.Level(2);
+                public static Level High { get; } = new global::Sample.Level(3);
+            }
+
+            public static partial class Outer
+            {
+                [SmartEnum<int>]
+                public sealed partial record Level
+                {
+                    public static readonly Outer.Level Low = new Outer.Level(1);
+                }
+            }
+            """
+        );
+
+        await VerifyAnalysis(result);
+        foreach (var title in (string[])["Convert to a closed partial class", "Convert to a readonly partial record struct"])
+        {
+            await ( await ErrorsAfterFix<DeclarationCodeFix>(result, title) ).Should().BeEmpty();
+            await ( await MembersAfterFix<DeclarationCodeFix>(result, "Sample.Level", title) ).Should().BeEquivalentTo(["Low", "Medium", "High"]);
+            await ( await MembersAfterFix<DeclarationCodeFix>(result, "Sample.Outer+Level", title) ).Should().BeEquivalentTo(["Low"]);
+        }
+    }
+
+    // A record struct makes each member with new(...): converting to one turns new Low_(1) back into new(1) however the member's class is
+    // named (Level.Low_, Sample.Level.Low_, global::Sample.Level.Low_), or the class no longer exists (CS0426).
+    [Test]
+    public async Task Should_Make_Each_Member_With_New_However_Its_Class_Is_Named_When_Converting_To_A_Record_Struct()
+    {
+        var result = await Fix<DeclarationAnalyzer, DeclarationCodeFix>(
+            """
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [SmartEnum<int>]
+            public closed partial record Level
+            {
+                public static readonly Level Low = new Level.Low_(1);
+                public static readonly Sample.Level Medium = new Sample.Level.Medium_(2);
+                public static Level High { get; } = new global::Sample.Level.High_(3);
+                public static readonly Level Top = new Top_(4);
+            }
+            """
+        );
+
+        await VerifyAnalysis(result);
+        foreach (var title in (string[])["Convert to a closed partial class", "Convert to a readonly partial record struct"])
+        {
+            await ( await ErrorsAfterFix<DeclarationCodeFix>(result, title) ).Should().BeEmpty();
+            await ( await MembersAfterFix<DeclarationCodeFix>(result, "Sample.Level", title) ).Should().BeEquivalentTo(["Low", "Medium", "High", "Top"]);
+        }
+    }
+
+    // Level? is the smart enum in a class, but Nullable<Level> in a record struct, which isn't a member: the conversion drops the `?`.
+    [Test]
+    public async Task Should_Keep_A_Member_Typed_With_A_Nullable_Annotation_When_Converting_To_A_Record_Struct()
+    {
+        var result = await Fix<DeclarationAnalyzer, DeclarationCodeFix>(
+            """
+            #nullable enable
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [SmartEnum<int>]
+            public sealed partial record Level
+            {
+                public static readonly Level? Low = new(1);
+                public static Level? High { get; } = new Level(2);
+            }
+            """
+        );
+
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Convert to a readonly partial record struct") ).Should().BeEmpty();
+        await ( await MembersAfterFix<DeclarationCodeFix>(result, "Sample.Level", "Convert to a readonly partial record struct") ).Should().BeEquivalentTo(["Low", "High"]);
+    }
+
+    [Test]
+    public async Task Should_Report_A_Smart_Enum_That_Is_Not_Partial()
+    {
+        var result = await Fix<DeclarationAnalyzer, DeclarationCodeFix>(
+            """
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [SmartEnum<int>]
+            public closed class Level
+            {
+                public static readonly Level Low = new Low_(1);
+            }
+            """
+        );
+
+        await VerifyAnalysis(result);
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Make the domain primitive partial") ).Should().BeEmpty();
+    }
+
+    // Only a smart enum is a closed class: any other kind is a record, and its fixes take closed away.
+    [Test]
+    public async Task Should_Report_Another_Kind_Declared_Closed()
+    {
+        var result = await Fix<DeclarationAnalyzer, DeclarationCodeFix>(
+            """
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [StringPrimitive, NotEmpty]
+            public closed partial class UserName;
+
+            [Email]
+            public closed partial record EmailAddress;
+            """
+        );
+
+        await VerifyAnalysis(result);
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Convert to a sealed partial record", "Make the domain primitive sealed") ).Should().BeEmpty();
+        await ( await ErrorsAfterFix<DeclarationCodeFix>(result, "Convert to a readonly partial record struct", "Make the domain primitive sealed") ).Should().BeEmpty();
+    }
+
+    // A public constructor of the application's part of a member's class makes members that aren't among the smart enum's; the generator's
+    // are internal. One of the smart enum itself creates nothing: a closed class is abstract.
+    [Test]
+    public async Task Should_Report_A_Public_Constructor_Of_A_Member_Class()
+    {
+        var result = await AnalyzeWithGenerator<DeclarationAnalyzer>(
+            """
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [SmartEnum<int>]
+            public closed partial class OrderStatus
+            {
+                public static readonly OrderStatus Pending = new Pending_(1, "Waiting");
+                public static readonly OrderStatus Shipped = new Shipped_(2, "On its way");
+
+                public OrderStatus() : this(0, "", "") { }
+
+                public string Label { get; }
+
+                public partial class Shipped_
+                {
+                    public Shipped_() : this(2, "On its way") { }
+
+                    internal Shipped_(string label) : this(2, label) { }
+                }
+
+                public sealed class Helper
+                {
+                    public Helper() { }
+                }
+            }
+            """
+        );
+
+        await VerifyAnalysis(result);
+    }
+
+    // Before the generator has completed it, the class of a member is known by its name: the member's with an underscore. Another nested class
+    // whose name ends with one isn't a member's.
+    [Test]
+    public async Task Should_Report_A_Public_Constructor_Of_A_Member_Class_Before_The_Generator_Runs()
+    {
+        var result = await Analyze<DeclarationAnalyzer>(
+            """
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [SmartEnum<int>]
+            public closed partial class OrderStatus
+            {
+                public static readonly OrderStatus Shipped = new Shipped_(2);
+
+                public partial class Shipped_
+                {
+                    public Shipped_() { }
+                }
+
+                public sealed class Other_
+                {
+                    public Other_() { }
+                }
             }
             """
         );

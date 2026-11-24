@@ -12,23 +12,37 @@ namespace Sample
     [global::System.Diagnostics.DebuggerDisplay("{ToString(),nq}")]
     [global::System.Text.Json.Serialization.JsonConverter(typeof(Role.RoleJsonConverter))]
     [global::System.ComponentModel.TypeConverter(typeof(Role.RoleTypeConverter))]
-    sealed partial record Role :
+    partial class Role :
         global::Rocket.Surgery.LaunchPad.Primitives.IDomainPrimitive<Role, string>,
+        global::System.IEquatable<Role>,
         global::System.IParsable<Role>,
         global::System.IFormattable
     {
-        private readonly string _value;
-
-        private Role(string value)
+        private Role(string value, string name)
         {
-            _value = value;
+            Value = value;
+            Name = name;
+        }
+
+        /// <summary>The class of the member <see cref="Admin" />: match it to handle that member.</summary>
+        [global::System.Text.Json.Serialization.JsonConverter(typeof(RoleJsonConverter))]
+        public sealed partial class Admin_ : Role
+        {
+            internal Admin_(string value) : base(value, "Admin") { }
+        }
+
+        /// <summary>The class of the member <see cref="User" />: match it to handle that member.</summary>
+        [global::System.Text.Json.Serialization.JsonConverter(typeof(RoleJsonConverter))]
+        public sealed partial class User_ : Role
+        {
+            internal User_(string value) : base(value, "User") { }
         }
 
         /// <summary>The value.</summary>
-        public string Value => _value;
+        public string Value { get; }
 
         /// <summary>The name of the member: the name of its field.</summary>
-        public string Name => Names.TryGetValue(_value, out var name) ? name : _value.ToString() ?? string.Empty;
+        public string Name { get; }
 
         /// <inheritdoc />
         public static string PrimitiveName => "Role";
@@ -44,18 +58,18 @@ namespace Sample
         }
 
         private static global::System.Collections.Generic.IReadOnlyList<Role>? _all;
-        private static global::System.Collections.Frozen.FrozenDictionary<string, string>? _names;
+        private static global::System.Collections.Frozen.FrozenDictionary<string, Role>? _byValue;
         private static global::System.Collections.Frozen.FrozenDictionary<string, Role>? _byName;
         private static global::System.Collections.Frozen.FrozenDictionary<string, Role>? _byNameIgnoringCase;
 
         /// <summary>Every member, in declaration order.</summary>
         public static global::System.Collections.Generic.IReadOnlyList<Role> All => _all ??= [Admin, User];
 
-        private static global::System.Collections.Frozen.FrozenDictionary<string, string> Names => _names ??= global::System.Collections.Frozen.FrozenDictionary.ToFrozenDictionary(
-            new global::System.Collections.Generic.KeyValuePair<string, string>[] { new(Admin._value, "Admin"), new(User._value, "User") });
+        private static global::System.Collections.Frozen.FrozenDictionary<string, Role> ByValue => _byValue ??= global::System.Collections.Frozen.FrozenDictionary.ToFrozenDictionary(
+            All, static member => member.Value);
 
         private static global::System.Collections.Frozen.FrozenDictionary<string, Role> ByName => _byName ??= global::System.Collections.Frozen.FrozenDictionary.ToFrozenDictionary(
-            new global::System.Collections.Generic.KeyValuePair<string, Role>[] { new("Admin", Admin), new("User", User) }, global::System.StringComparer.Ordinal);
+            All, static member => member.Name, global::System.StringComparer.Ordinal);
 
         private static global::System.Collections.Frozen.FrozenDictionary<string, Role> ByNameIgnoringCase => _byNameIgnoringCase ??=
             global::System.Collections.Frozen.FrozenDictionary.ToFrozenDictionary(ByName, global::System.StringComparer.OrdinalIgnoreCase);
@@ -69,9 +83,9 @@ namespace Sample
         /// <summary>The member with a value, or why there is none.</summary>
         public static bool TryCreate(string value, [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Role? result, out global::Rocket.Surgery.LaunchPad.Primitives.PrimitiveError validationError)
         {
-            if (value is not null && Names.ContainsKey(value))
+            if (value is not null && ByValue.TryGetValue(value, out var member))
             {
-                result = new Role(value);
+                result = member;
                 validationError = global::Rocket.Surgery.LaunchPad.Primitives.PrimitiveError.None;
                 global::Rocket.Surgery.LaunchPad.Primitives.Diagnostics.DomainPrimitivesInstrumentation.RecordValidationSuccess(PrimitiveName);
                 global::Rocket.Surgery.LaunchPad.Primitives.Diagnostics.DomainPrimitivesInstrumentation.RecordCreation(PrimitiveName);
@@ -80,7 +94,7 @@ namespace Sample
 
             validationError = new global::Rocket.Surgery.LaunchPad.Primitives.PrimitiveError("UNKNOWN_MEMBER", $"Role has no member with the value '{value}'.");
             global::Rocket.Surgery.LaunchPad.Primitives.Diagnostics.DomainPrimitivesInstrumentation.RecordValidationFailure(PrimitiveName, validationError);
-            result = default;
+            result = null;
             return false;
         }
 
@@ -103,32 +117,8 @@ namespace Sample
                 return true;
             }
 
-            result = default;
+            result = null;
             return false;
-        }
-
-        /// <summary>The result of the function for this member.</summary>
-        public TResult Match<TResult>(global::System.Func<TResult> whenAdmin, global::System.Func<TResult> whenUser)
-        {
-            if (global::System.Collections.Generic.EqualityComparer<string>.Default.Equals(_value, Admin._value)) return whenAdmin();
-            if (global::System.Collections.Generic.EqualityComparer<string>.Default.Equals(_value, User._value)) return whenUser();
-            throw new global::System.InvalidOperationException($"{this} is not a member of Role.");
-        }
-
-        /// <summary>The result of the function for this member, given the member.</summary>
-        public TResult Map<TResult>(global::System.Func<Role, TResult> whenAdmin, global::System.Func<Role, TResult> whenUser)
-        {
-            if (global::System.Collections.Generic.EqualityComparer<string>.Default.Equals(_value, Admin._value)) return whenAdmin(this);
-            if (global::System.Collections.Generic.EqualityComparer<string>.Default.Equals(_value, User._value)) return whenUser(this);
-            throw new global::System.InvalidOperationException($"{this} is not a member of Role.");
-        }
-
-        /// <summary>Runs the action for this member.</summary>
-        public void Switch(global::System.Action whenAdmin, global::System.Action whenUser)
-        {
-            if (global::System.Collections.Generic.EqualityComparer<string>.Default.Equals(_value, Admin._value)) { whenAdmin(); return; }
-            if (global::System.Collections.Generic.EqualityComparer<string>.Default.Equals(_value, User._value)) { whenUser(); return; }
-            throw new global::System.InvalidOperationException($"{this} is not a member of Role.");
         }
 
         /// <inheritdoc />
@@ -150,9 +140,24 @@ namespace Sample
                 return true;
             }
 
-            result = default;
+            result = null;
             return false;
         }
+
+        /// <inheritdoc />
+        public bool Equals(Role? other) => other is not null && global::System.Collections.Generic.EqualityComparer<string>.Default.Equals(Value, other.Value);
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj) => obj is Role other && Equals(other);
+
+        /// <inheritdoc />
+        public override int GetHashCode() => global::System.Collections.Generic.EqualityComparer<string>.Default.GetHashCode(Value!);
+
+        /// <summary>Whether two Roles are the same member.</summary>
+        public static bool operator ==(Role? left, Role? right) => left is null ? right is null : left.Equals(right);
+
+        /// <summary>Whether two Roles are different members.</summary>
+        public static bool operator !=(Role? left, Role? right) => !(left == right);
 
         /// <inheritdoc />
         public override string ToString() => Name;
@@ -194,6 +199,9 @@ namespace Sample
         [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
         public sealed class RoleJsonConverter : global::System.Text.Json.Serialization.JsonConverter<Role>
         {
+            /// <summary>The smart enum, and the class of each of its members.</summary>
+            public override bool CanConvert(global::System.Type typeToConvert) => typeof(Role).IsAssignableFrom(typeToConvert);
+
             public override Role Read(ref global::System.Text.Json.Utf8JsonReader reader, global::System.Type typeToConvert, global::System.Text.Json.JsonSerializerOptions options)
             {
                 if (reader.TokenType == global::System.Text.Json.JsonTokenType.String && TryFromName(reader.GetString(), true, out var named)) return named;

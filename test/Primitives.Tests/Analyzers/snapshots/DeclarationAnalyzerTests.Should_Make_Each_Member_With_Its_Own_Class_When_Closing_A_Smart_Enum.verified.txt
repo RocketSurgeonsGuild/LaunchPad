@@ -1,0 +1,43 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2019,
+      Severity: Error,
+      Location: Input.cs: (5,21)-(5,26),
+      Source: Level,
+      Message: Domain primitive 'Level' is a smart enum class and must be declared 'closed'
+    }
+  ],
+  CodeFixes: [
+    {
+      Diagnostic: LPAD2019 Input.cs: (5,21)-(5,26),
+      Title: Make the smart enum closed,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+
+namespace Sample;
+
+[SmartEnum<int>]
+public closed partial class Level
+{
+    public static readonly Level Low = new Low_(1), Medium = new Medium_(2);
+    public static Level High { get; } = new High_(3);
+}
+        },
+        {
+          Name: Level.Top.cs,
+          Text:
+namespace Sample;
+
+public partial class Level
+{
+    public static readonly Level Top = new Top_(4);
+}
+        }
+      ]
+    }
+  ]
+}

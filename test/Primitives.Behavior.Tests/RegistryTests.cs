@@ -13,6 +13,10 @@ public class RegistryTests
         await LaunchPadPrimitives.Find(typeof(CustomerId))!.IsStrongId.Should().BeTrue();
         await LaunchPadPrimitives.Find(typeof(CustomerId?))!.Type.Should().BeEqualTo(typeof(CustomerId));
         await LaunchPadPrimitives.Find(typeof(OrderStatus))!.IsSmartEnum.Should().BeTrue();
+        // a struct smart enum is listed too, and found from its nullable type
+        await LaunchPadPrimitives.Find(typeof(DeliveryStatus))!.IsSmartEnum.Should().BeTrue();
+        await LaunchPadPrimitives.Find(typeof(Size?))!.Type.Should().BeEqualTo(typeof(Size));
+        await LaunchPadPrimitives.Find(typeof(Size))!.AllowedValues.Should().BeEquivalentTo(["extraLarge", "medium", "small"], CollectionOrdering.Matching);
         await LaunchPadPrimitives.Find(typeof(EmailAddress))!.MaxLength.Should().BeEqualTo(320);
         await LaunchPadPrimitives.Find(typeof(Catalog.Product.NestedSlug)).Should().NotBeNull();
         await LaunchPadPrimitives.Find(typeof(string)).Should().BeNull();

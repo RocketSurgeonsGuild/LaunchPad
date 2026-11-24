@@ -14,9 +14,11 @@ namespace Rocket.Surgery.LaunchPad.Primitives.Generated
         /// <summary>Every domain primitive with one value the application declares or references.</summary>
         public static global::System.Collections.Generic.IReadOnlyList<global::Rocket.Surgery.LaunchPad.Primitives.Descriptions.DomainPrimitiveDescription> All { get; } =
         [
+            global::Sample.Application.Channel.Description,
             global::Sample.Application.Code.Description,
             global::Sample.Application.EmailAddress.Description,
             global::Sample.Application.OrderId.Description,
+            global::Sample.Application.Speed.Description,
         ];
 
         /// <summary>Every value object the application declares or references.</summary>
@@ -33,17 +35,21 @@ namespace Rocket.Surgery.LaunchPad.Primitives.Generated
 
         static partial void ForEachConverter(global::Rocket.Surgery.LaunchPad.Primitives.Generated.LaunchPadPrimitivesConverters visitor)
         {
+            visitor.Visit<global::Sample.Application.Channel, string, LaunchPadPrimitivesValueConverters.Sample_Application_ChannelValueConverter>();
             visitor.Visit<global::Sample.Application.Code, string, LaunchPadPrimitivesValueConverters.Sample_Application_CodeValueConverter>();
             visitor.Visit<global::Sample.Application.EmailAddress, string, LaunchPadPrimitivesValueConverters.Sample_Application_EmailAddressValueConverter>();
             visitor.VisitGuidStrongId<global::Sample.Application.OrderId, LaunchPadPrimitivesValueConverters.Sample_Application_OrderIdValueConverter>();
+            visitor.Visit<global::Sample.Application.Speed, int, LaunchPadPrimitivesValueConverters.Sample_Application_SpeedValueConverter>();
         }
     }
 
     /// <summary>A value converter per domain primitive: an expression tree can't call a static abstract member, so each names its type.</summary>
     internal static class LaunchPadPrimitivesValueConverters
     {
+        public sealed class Sample_Application_ChannelValueConverter() : global::Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<global::Sample.Application.Channel, string>(value => value.Value, value => global::Sample.Application.Channel.Create(value), LaunchPadPrimitivesEntityFramework.Hints(global::Sample.Application.Channel.Description));
         public sealed class Sample_Application_CodeValueConverter() : global::Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<global::Sample.Application.Code, string>(value => value.Value, value => global::Sample.Application.Code.Create(value), LaunchPadPrimitivesEntityFramework.Hints(global::Sample.Application.Code.Description));
         public sealed class Sample_Application_EmailAddressValueConverter() : global::Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<global::Sample.Application.EmailAddress, string>(value => value.Value, value => global::Sample.Application.EmailAddress.Create(value), LaunchPadPrimitivesEntityFramework.Hints(global::Sample.Application.EmailAddress.Description));
         public sealed class Sample_Application_OrderIdValueConverter() : global::Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<global::Sample.Application.OrderId, global::System.Guid>(value => value.Value, value => global::Sample.Application.OrderId.Create(value), LaunchPadPrimitivesEntityFramework.Hints(global::Sample.Application.OrderId.Description));
+        public sealed class Sample_Application_SpeedValueConverter() : global::Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<global::Sample.Application.Speed, int>(value => value.Value, value => global::Sample.Application.Speed.Create(value), LaunchPadPrimitivesEntityFramework.Hints(global::Sample.Application.Speed.Description));
     }
 }

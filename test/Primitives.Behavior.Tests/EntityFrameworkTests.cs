@@ -36,6 +36,8 @@ public class EntityFrameworkTests
             Rating = MovieRating.Create(4.25m),
             Status = OrderStatus.Processing,
             Role = Role.Admin,
+            Delivery = DeliveryStatus.Processing,
+            Size = Size.ExtraLarge,
             Number = OrderNumber.Create(7),
             Stay = Stay.Create(new DateOnly(2026, 1, 1), new DateOnly(2026, 1, 3)),
             Price = Cash.Create(10.5m, "CAD"),
@@ -65,11 +67,17 @@ public class EntityFrameworkTests
             await read.Rating.Should().BeEqualTo(order.Rating);
             await read.Status.Should().BeEqualTo(OrderStatus.Processing);
             await read.Role.Should().BeEqualTo(Role.Admin);
+            await read.Delivery.Should().BeEqualTo(DeliveryStatus.Processing);
+            await read.Size.Should().BeEqualTo(Size.ExtraLarge);
+            await read.Size!.Value.Label.Should().BeEqualTo("Extra large");
+            await read.Spare.Should().BeNull();
             await read.Number.Should().BeEqualTo(order.Number);
             await read.Stay.Should().BeEqualTo(order.Stay);
             await read.Price.Should().BeEqualTo(order.Price);
             await read.Day.Should().BeEqualTo(order.Day);
             await ( await context.Orders.CountAsync(z => z.Status == OrderStatus.Pending) ).Should().BeEqualTo(0);
+            await ( await context.Orders.CountAsync(z => z.Delivery == DeliveryStatus.Processing) ).Should().BeEqualTo(1);
+            await ( await context.Orders.CountAsync(z => z.Size == Size.Small) ).Should().BeEqualTo(0);
         }
     }
 
@@ -134,8 +142,11 @@ public sealed class ShopOrder
     public EmailAddress Email { get; set; }
     public LastName? Family { get; set; }
     public MovieRating Rating { get; set; }
-    public OrderStatus Status { get; set; }
+    public OrderStatus Status { get; set; } = OrderStatus.Pending;
     public Role Role { get; set; } = Role.User;
+    public DeliveryStatus Delivery { get; set; } = DeliveryStatus.Pending;
+    public Size? Size { get; set; }
+    public Size? Spare { get; set; }
     public OrderNumber Number { get; set; }
     public Stay Stay { get; set; }
     public Cash Price { get; set; }

@@ -110,7 +110,8 @@
     },
     "Contact": {
       "required": [
-        "email"
+        "email",
+        "channel"
       ],
       "type": "object",
       "properties": {
@@ -139,8 +140,28 @@
               "$ref": "#/components/schemas/Handle"
             }
           ]
+        },
+        "tier": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/components/schemas/CustomerTier"
+            }
+          ]
+        },
+        "channel": {
+          "$ref": "#/components/schemas/ContactChannel"
         }
       }
+    },
+    "ContactChannel": {
+      "enum": [
+        "mail",
+        "phone"
+      ],
+      "type": "string"
     },
     "Country": {
       "maxLength": 2,
@@ -168,6 +189,9 @@
         },
         "tier": {
           "$ref": "#/components/schemas/CustomerTier"
+        },
+        "channel": {
+          "$ref": "#/components/schemas/ContactChannel"
         },
         "address": {
           "$ref": "#/components/schemas/Address"
@@ -278,5 +302,13 @@
         }
       }
     }
+  },
+  "wire": {
+    "email": "ada@example.com",
+    "phone": null,
+    "since": null,
+    "handle": null,
+    "tier": "gold",
+    "channel": "phone"
   }
 }

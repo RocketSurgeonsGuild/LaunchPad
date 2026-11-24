@@ -12,28 +12,46 @@ namespace Sample
     [global::System.Diagnostics.DebuggerDisplay("{ToString(),nq}")]
     [global::System.Text.Json.Serialization.JsonConverter(typeof(OrderStatus.OrderStatusJsonConverter))]
     [global::System.ComponentModel.TypeConverter(typeof(OrderStatus.OrderStatusTypeConverter))]
-    readonly partial record struct OrderStatus :
+    partial class OrderStatus :
         global::Rocket.Surgery.LaunchPad.Primitives.IDomainPrimitive<OrderStatus, int>,
+        global::System.IEquatable<OrderStatus>,
         global::System.IParsable<OrderStatus>,
         global::System.IFormattable
     {
-        private readonly int _value;
-        private readonly bool _initialized;
-
-        private OrderStatus(int value)
+        private OrderStatus(int value, string name, string label, decimal fee)
         {
-            _value = value;
-            _initialized = true;
+            Value = value;
+            Name = name;
+            this.Label = label;
+            this.Fee = fee;
         }
 
-        /// <summary>Whether this is the default value, which is none of the members.</summary>
-        public bool IsDefault => !_initialized;
+        /// <summary>The class of the member <see cref="Pending" />: match it to handle that member.</summary>
+        [global::System.Text.Json.Serialization.JsonConverter(typeof(OrderStatusJsonConverter))]
+        public sealed partial class Pending_ : OrderStatus
+        {
+            internal Pending_(int value, string label, decimal fee) : base(value, "Pending", label, fee) { }
+        }
 
-        /// <summary>The value. Reading it from the default value throws <see cref="global::System.InvalidOperationException" />.</summary>
-        public int Value => IsDefault ? throw new global::System.InvalidOperationException("Value accessed on a default instance of OrderStatus.") : _value;
+        /// <summary>The class of the member <see cref="Shipped" />: match it to handle that member.</summary>
+        [global::System.Text.Json.Serialization.JsonConverter(typeof(OrderStatusJsonConverter))]
+        public sealed partial class Shipped_ : OrderStatus
+        {
+            internal Shipped_(int value, string label, decimal fee) : base(value, "Shipped", label, fee) { }
+        }
+
+        /// <summary>The class of the member <see cref="DeliveredToCustomer" />: match it to handle that member.</summary>
+        [global::System.Text.Json.Serialization.JsonConverter(typeof(OrderStatusJsonConverter))]
+        public sealed partial class DeliveredToCustomer_ : OrderStatus
+        {
+            internal DeliveredToCustomer_(int value, string label, decimal fee) : base(value, "DeliveredToCustomer", label, fee) { }
+        }
+
+        /// <summary>The value.</summary>
+        public int Value { get; }
 
         /// <summary>The name of the member: the name of its field.</summary>
-        public string Name => IsDefault ? string.Empty : Names.TryGetValue(_value, out var name) ? name : _value.ToString() ?? string.Empty;
+        public string Name { get; }
 
         /// <inheritdoc />
         public static string PrimitiveName => "OrderStatus";
@@ -49,18 +67,18 @@ namespace Sample
         }
 
         private static global::System.Collections.Generic.IReadOnlyList<OrderStatus>? _all;
-        private static global::System.Collections.Frozen.FrozenDictionary<int, string>? _names;
+        private static global::System.Collections.Frozen.FrozenDictionary<int, OrderStatus>? _byValue;
         private static global::System.Collections.Frozen.FrozenDictionary<string, OrderStatus>? _byName;
         private static global::System.Collections.Frozen.FrozenDictionary<string, OrderStatus>? _byNameIgnoringCase;
 
         /// <summary>Every member, in declaration order.</summary>
         public static global::System.Collections.Generic.IReadOnlyList<OrderStatus> All => _all ??= [Pending, Shipped, DeliveredToCustomer];
 
-        private static global::System.Collections.Frozen.FrozenDictionary<int, string> Names => _names ??= global::System.Collections.Frozen.FrozenDictionary.ToFrozenDictionary(
-            new global::System.Collections.Generic.KeyValuePair<int, string>[] { new(Pending._value, "Pending"), new(Shipped._value, "Shipped"), new(DeliveredToCustomer._value, "DeliveredToCustomer") });
+        private static global::System.Collections.Frozen.FrozenDictionary<int, OrderStatus> ByValue => _byValue ??= global::System.Collections.Frozen.FrozenDictionary.ToFrozenDictionary(
+            All, static member => member.Value);
 
         private static global::System.Collections.Frozen.FrozenDictionary<string, OrderStatus> ByName => _byName ??= global::System.Collections.Frozen.FrozenDictionary.ToFrozenDictionary(
-            new global::System.Collections.Generic.KeyValuePair<string, OrderStatus>[] { new("Pending", Pending), new("Shipped", Shipped), new("DeliveredToCustomer", DeliveredToCustomer) }, global::System.StringComparer.Ordinal);
+            All, static member => member.Name, global::System.StringComparer.Ordinal);
 
         private static global::System.Collections.Frozen.FrozenDictionary<string, OrderStatus> ByNameIgnoringCase => _byNameIgnoringCase ??=
             global::System.Collections.Frozen.FrozenDictionary.ToFrozenDictionary(ByName, global::System.StringComparer.OrdinalIgnoreCase);
@@ -72,11 +90,11 @@ namespace Sample
         public static OrderStatus Create(int value) => TryCreate(value, out var result, out var error) ? result : throw Fail(error);
 
         /// <summary>The member with a value, or why there is none.</summary>
-        public static bool TryCreate(int value, [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out OrderStatus result, out global::Rocket.Surgery.LaunchPad.Primitives.PrimitiveError validationError)
+        public static bool TryCreate(int value, [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out OrderStatus? result, out global::Rocket.Surgery.LaunchPad.Primitives.PrimitiveError validationError)
         {
-            if (Names.ContainsKey(value))
+            if (ByValue.TryGetValue(value, out var member))
             {
-                result = new OrderStatus(value);
+                result = member;
                 validationError = global::Rocket.Surgery.LaunchPad.Primitives.PrimitiveError.None;
                 global::Rocket.Surgery.LaunchPad.Primitives.Diagnostics.DomainPrimitivesInstrumentation.RecordValidationSuccess(PrimitiveName);
                 global::Rocket.Surgery.LaunchPad.Primitives.Diagnostics.DomainPrimitivesInstrumentation.RecordCreation(PrimitiveName);
@@ -85,7 +103,7 @@ namespace Sample
 
             validationError = new global::Rocket.Surgery.LaunchPad.Primitives.PrimitiveError("UNKNOWN_MEMBER", $"OrderStatus has no member with the value '{value}'.");
             global::Rocket.Surgery.LaunchPad.Primitives.Diagnostics.DomainPrimitivesInstrumentation.RecordValidationFailure(PrimitiveName, validationError);
-            result = default;
+            result = null;
             return false;
         }
 
@@ -93,14 +111,14 @@ namespace Sample
         public static OrderStatus FromValue(int value) => Create(value);
 
         /// <summary>The member with a value.</summary>
-        public static bool TryFromValue(int value, [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out OrderStatus result) => TryCreate(value, out result, out _);
+        public static bool TryFromValue(int value, [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out OrderStatus? result) => TryCreate(value, out result, out _);
 
         /// <summary>The member with a name, or throws when there is none.</summary>
         public static OrderStatus FromName(string name, bool ignoreCase = false) =>
             TryFromName(name, ignoreCase, out var result) ? result : throw Fail(new global::Rocket.Surgery.LaunchPad.Primitives.PrimitiveError("UNKNOWN_MEMBER", $"OrderStatus has no member named '{name}'."));
 
         /// <summary>The member with a name.</summary>
-        public static bool TryFromName(string? name, bool ignoreCase, [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out OrderStatus result)
+        public static bool TryFromName(string? name, bool ignoreCase, [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out OrderStatus? result)
         {
             if (name is not null && (ignoreCase ? ByNameIgnoringCase : ByName).TryGetValue(name, out var member))
             {
@@ -108,35 +126,8 @@ namespace Sample
                 return true;
             }
 
-            result = default;
+            result = null;
             return false;
-        }
-
-        /// <summary>The result of the function for this member.</summary>
-        public TResult Match<TResult>(global::System.Func<TResult> whenPending, global::System.Func<TResult> whenShipped, global::System.Func<TResult> whenDeliveredToCustomer)
-        {
-            if (global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(_value, Pending._value)) return whenPending();
-            if (global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(_value, Shipped._value)) return whenShipped();
-            if (global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(_value, DeliveredToCustomer._value)) return whenDeliveredToCustomer();
-            throw new global::System.InvalidOperationException($"{this} is not a member of OrderStatus.");
-        }
-
-        /// <summary>The result of the function for this member, given the member.</summary>
-        public TResult Map<TResult>(global::System.Func<OrderStatus, TResult> whenPending, global::System.Func<OrderStatus, TResult> whenShipped, global::System.Func<OrderStatus, TResult> whenDeliveredToCustomer)
-        {
-            if (global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(_value, Pending._value)) return whenPending(this);
-            if (global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(_value, Shipped._value)) return whenShipped(this);
-            if (global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(_value, DeliveredToCustomer._value)) return whenDeliveredToCustomer(this);
-            throw new global::System.InvalidOperationException($"{this} is not a member of OrderStatus.");
-        }
-
-        /// <summary>Runs the action for this member.</summary>
-        public void Switch(global::System.Action whenPending, global::System.Action whenShipped, global::System.Action whenDeliveredToCustomer)
-        {
-            if (global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(_value, Pending._value)) { whenPending(); return; }
-            if (global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(_value, Shipped._value)) { whenShipped(); return; }
-            if (global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(_value, DeliveredToCustomer._value)) { whenDeliveredToCustomer(); return; }
-            throw new global::System.InvalidOperationException($"{this} is not a member of OrderStatus.");
         }
 
         /// <inheritdoc />
@@ -158,9 +149,24 @@ namespace Sample
                 return true;
             }
 
-            result = default;
+            result = null;
             return false;
         }
+
+        /// <inheritdoc />
+        public bool Equals(OrderStatus? other) => other is not null && global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(Value, other.Value);
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj) => obj is OrderStatus other && Equals(other);
+
+        /// <inheritdoc />
+        public override int GetHashCode() => global::System.Collections.Generic.EqualityComparer<int>.Default.GetHashCode(Value!);
+
+        /// <summary>Whether two OrderStatuss are the same member.</summary>
+        public static bool operator ==(OrderStatus? left, OrderStatus? right) => left is null ? right is null : left.Equals(right);
+
+        /// <summary>Whether two OrderStatuss are different members.</summary>
+        public static bool operator !=(OrderStatus? left, OrderStatus? right) => !(left == right);
 
         /// <inheritdoc />
         public override string ToString() => Name;
@@ -203,9 +209,11 @@ namespace Sample
         [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
         public sealed class OrderStatusJsonConverter : global::System.Text.Json.Serialization.JsonConverter<OrderStatus>
         {
+            /// <summary>The smart enum, and the class of each of its members.</summary>
+            public override bool CanConvert(global::System.Type typeToConvert) => typeof(OrderStatus).IsAssignableFrom(typeToConvert);
+
             public override OrderStatus Read(ref global::System.Text.Json.Utf8JsonReader reader, global::System.Type typeToConvert, global::System.Text.Json.JsonSerializerOptions options)
             {
-                if (reader.TokenType == global::System.Text.Json.JsonTokenType.Null) return default;
                 if (reader.TokenType == global::System.Text.Json.JsonTokenType.String && TryFromName(reader.GetString(), true, out var named)) return named;
                 var value = global::System.Text.Json.Serialization.Metadata.JsonMetadataServices.Int32Converter.Read(ref reader, typeof(int), options);
                 return TryFromValue(value, out var result) ? result : throw new global::System.Text.Json.JsonException($"'{value}' is not a member of OrderStatus.");
@@ -213,12 +221,6 @@ namespace Sample
 
             public override void Write(global::System.Text.Json.Utf8JsonWriter writer, OrderStatus value, global::System.Text.Json.JsonSerializerOptions options)
             {
-                if (value.IsDefault)
-                {
-                    writer.WriteNullValue();
-                    return;
-                }
-
                 writer.WriteStringValue(global::System.Text.Json.JsonNamingPolicy.CamelCase.ConvertName(value.Name));
             }
 

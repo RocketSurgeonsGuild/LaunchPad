@@ -22,6 +22,7 @@ type Customer {
   country: String!
   points: Int!
   tier: Int!
+  channel: String!
   address: Address!
   balance: Balance!
   membership: Membership
@@ -50,6 +51,7 @@ scalar LocalDate
       "country": "GB",
       "points": 40,
       "tier": 2,
+      "channel": "phone",
       "address": {
         "street": "12 St James's Square",
         "city": "London"

@@ -26,6 +26,8 @@ public class DapperTests
                 Rating text not null,
                 Status integer not null,
                 Role text not null,
+                Delivery integer not null,
+                Size text not null,
                 Since text not null,
                 Opens text not null
             )
@@ -42,6 +44,8 @@ public class DapperTests
         MovieRating Rating,
         OrderStatus Status,
         Role Role,
+        DeliveryStatus Delivery,
+        Size Size,
         CenturyDay Since,
         OfficeHour Opens
     );
@@ -58,17 +62,21 @@ public class DapperTests
             MovieRating.Create(4.25m),
             OrderStatus.Completed,
             Role.ReadOnlyAuditor,
+            DeliveryStatus.Processing,
+            Size.ExtraLarge,
             CenturyDay.Create(new DateOnly(2026, 11, 23)),
             OfficeHour.Create(new TimeOnly(9, 30))
         );
 
         await connection.ExecuteAsync(
-            "insert into Customers values (@Id, @Email, @Family, @Score, @Rating, @Status, @Role, @Since, @Opens)",
+            "insert into Customers values (@Id, @Email, @Family, @Score, @Rating, @Status, @Role, @Delivery, @Size, @Since, @Opens)",
             customer
         );
         var read = await connection.QuerySingleAsync<CustomerRow>("select * from Customers");
 
         await read.Should().BeEqualTo(customer);
+        // a struct smart enum read back is the member, with its data
+        await read.Size.Label.Should().BeEqualTo("Extra large");
     }
 
     [Test]
@@ -77,16 +85,42 @@ public class DapperTests
         await using var connection = await Open();
         var id = CustomerId.Create();
         await connection.ExecuteAsync(
-            "insert into Customers values (@Id, 'ada@example.com', 'Lovelace', 1, '1', 1, 'admin', '2026-01-01', '09:00:00')",
+            "insert into Customers values (@Id, 'ada@example.com', 'Lovelace', 1, '1', 1, 'admin', 2, 'm', '2026-01-01', '09:00:00')",
             new { Id = id }
         );
 
         var email = await connection.QuerySingleAsync<EmailAddress>("select Email from Customers where Id = @id", new { id });
         var family = await connection.QuerySingleAsync<LastName>("select Family from Customers where Email = @email", new { email });
         var count = await connection.ExecuteScalarAsync<long>("select count(*) from Customers where Status = @status", new { status = OrderStatus.Pending });
+        var delivered = await connection.ExecuteScalarAsync<long>("select count(*) from Customers where Delivery = @delivery", new { delivery = DeliveryStatus.Processing });
+        var size = await connection.QuerySingleAsync<Size>("select Size from Customers where Id = @id", new { id });
 
         await email.Should().BeEqualTo(EmailAddress.Create("ada@example.com"));
         await family.Should().BeEqualTo(LastName.Create("Lovelace"));
+        await count.Should().BeEqualTo(1);
+        await delivered.Should().BeEqualTo(1);
+        await size.Should().BeEqualTo(Size.Medium);
+        await size.Weight.Should().BeEqualTo(1m);
+    }
+
+    [Test]
+    public async Task Should_Write_A_Smart_Enum_Member_Of_A_Dynamic_Parameter()
+    {
+        await using var connection = await Open();
+        await connection.ExecuteAsync(
+            "insert into Customers values ('a', 'ada@example.com', null, 1, '1', 2, 'admin', 2, 'm', '2026-01-01', '09:00:00')"
+        );
+
+        // Dapper looks the handler up by the runtime type of the value, which is the member's own class for a closed smart enum.
+        var parameters = new DynamicParameters();
+        parameters.Add("status", OrderStatus.Processing);
+        parameters.Add("role", Role.Admin);
+        parameters.Add("size", Size.Medium);
+        var count = await connection.ExecuteScalarAsync<long>(
+            "select count(*) from Customers where Status = @status and Role = @role and Size = @size",
+            parameters
+        );
+
         await count.Should().BeEqualTo(1);
     }
 

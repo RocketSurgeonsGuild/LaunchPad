@@ -89,7 +89,34 @@ public class JsonTests
         await JsonSerializer.Deserialize<Role>("\"admin\"", Options).Should().BeEqualTo(Role.Admin);
         await FailsToRead<OrderStatus>("42");
         await FailsToRead<Role>("\"root\"");
-        await JsonSerializer.Serialize(default(OrderStatus), Options).Should().BeEqualTo("null");
+        // a member written as its own class (as an object, say) is written as the smart enum too
+        await JsonSerializer.Serialize<object>(OrderStatus.Pending, ReflectionOptions).Should().BeEqualTo("\"pending\"");
+        await JsonSerializer.Serialize((OrderStatus.Completed_)OrderStatus.Completed, ReflectionOptions).Should().BeEqualTo("\"completed\"");
+        await JsonSerializer.Deserialize<OrderStatus.Completed_>("\"completed\"", ReflectionOptions).Should().BeSameReferenceAs(OrderStatus.Completed);
+        // a class: null is a null reference
+        await JsonSerializer.Serialize<OrderStatus?>(null, Options).Should().BeEqualTo("null");
+        await JsonSerializer.Deserialize<OrderStatus>("null", Options).Should().BeNull();
+    }
+
+    [Test]
+    public async Task Should_Write_A_Struct_Smart_Enum_As_Its_Name()
+    {
+        await RoundTrips(DeliveryStatus.Processing, "\"processing\"");
+        await RoundTrips(Size.ExtraLarge, "\"extraLarge\"");
+        // read by its name in any case, or by its value
+        await JsonSerializer.Deserialize<DeliveryStatus>("\"COMPLETED\"", Options).Should().BeEqualTo(DeliveryStatus.Completed);
+        await JsonSerializer.Deserialize<DeliveryStatus>("3", Options).Should().BeEqualTo(DeliveryStatus.Completed);
+        await JsonSerializer.Deserialize<Size>("\"medium\"", Options).Should().BeEqualTo(Size.Medium);
+        await FailsToRead<DeliveryStatus>("42");
+        await FailsToRead<Size>("\"xxl\"");
+        // a member read is the member, with its data
+        await JsonSerializer.Deserialize<Size>("\"xl\"", Options).Label.Should().BeEqualTo("Extra large");
+        await JsonSerializer.Deserialize<Size>("\"SMALL\"", Options).Weight.Should().BeEqualTo(0.5m);
+        // a struct: the default value is null, and null reads as the default value
+        await JsonSerializer.Serialize(default(DeliveryStatus), Options).Should().BeEqualTo("null");
+        await JsonSerializer.Serialize(default(Size), Options).Should().BeEqualTo("null");
+        await JsonSerializer.Deserialize<DeliveryStatus>("null", Options).IsDefault.Should().BeTrue();
+        await JsonSerializer.Deserialize<Size?>("null", Options).Should().BeNull();
     }
 
     [Test]
@@ -110,6 +137,26 @@ public class JsonTests
             """{"name":"Ada","email":null,"family":"Lovelace","country":"GB","since":"2020-01-02","birthday":null}"""
         );
         await RoundTrips(GeoPoint.Create(Latitude.Create(45.5), Longitude.Create(-73.5)), """{"latitude":45.5,"longitude":-73.5}""");
+    }
+
+    [Test]
+    public async Task Should_Write_A_Smart_Enum_Of_A_Value_Object_As_Its_Name()
+    {
+        // as a smart enum is written on its own, and as the OpenAPI document describes it: the name of its member, in camel case
+        var parcel = Parcel.Create(OrderStatus.Processing, Size.ExtraLarge, DeliveryStatus.Completed, Role.ReadOnlyAuditor);
+        await RoundTrips(parcel, """{"status":"processing","size":"extraLarge","delivery":"completed","handler":"readOnlyAuditor"}""");
+        await RoundTrips(Parcel.Create(OrderStatus.Pending, Size.Small, null, null), """{"status":"pending","size":"small","delivery":null,"handler":null}""");
+        // read by name, in any case
+        await JsonSerializer
+             .Deserialize<Parcel>("""{"status":"PROCESSING","size":"ExtraLarge","delivery":"Completed","handler":"READONLYAUDITOR"}""", Options)
+             .Should()
+             .BeEqualTo(parcel);
+        // or by value
+        await JsonSerializer.Deserialize<Parcel>("""{"status":2,"size":"xl","delivery":3,"handler":"auditor"}""", Options).Should().BeEqualTo(parcel);
+        await JsonSerializer.Deserialize<Parcel>("""{"status":2,"size":"xl","delivery":3,"handler":"auditor"}""", Options).Size.Label.Should().BeEqualTo("Extra large");
+        // a value no member has
+        var unknown = await FailsToRead<Parcel>("""{"status":9,"size":"s"}""");
+        await unknown!.Message.Should().Contain("[UNKNOWN_MEMBER]");
     }
 
     [Test]
@@ -225,6 +272,7 @@ public class JsonTests
         var guid = Guid.Parse("01936f3c-0000-7000-8000-000000000001");
         var byId = new Dictionary<CustomerId, int> { [CustomerId.Create(guid)] = 1 };
         var byStatus = new Dictionary<OrderStatus, int> { [OrderStatus.Pending] = 2 };
+        var bySize = new Dictionary<Size, int> { [Size.ExtraLarge] = 5 };
         var byDay = new Dictionary<CenturyDay, int> { [CenturyDay.Create(new DateOnly(2026, 1, 2))] = 3 };
         var byTime = new Dictionary<OfficeHour, int> { [OfficeHour.Create(new TimeOnly(9, 30, 15))] = 4 };
 
@@ -235,6 +283,8 @@ public class JsonTests
                             .BeEqualTo(1);
         await JsonSerializer.Serialize(byStatus, ReflectionOptions).Should().BeEqualTo("""{"pending":2}""");
         await JsonSerializer.Deserialize<Dictionary<OrderStatus, int>>("""{"PENDING":2}""", ReflectionOptions)![OrderStatus.Pending].Should().BeEqualTo(2);
+        await JsonSerializer.Serialize(bySize, ReflectionOptions).Should().BeEqualTo("""{"extraLarge":5}""");
+        await JsonSerializer.Deserialize<Dictionary<Size, int>>("""{"EXTRALARGE":5}""", ReflectionOptions)![Size.ExtraLarge].Should().BeEqualTo(5);
         await JsonSerializer.Serialize(byDay, ReflectionOptions).Should().BeEqualTo("""{"2026-01-02":3}""");
         // a key keeps every part of its value
         var time = JsonSerializer.Deserialize<Dictionary<OfficeHour, int>>(JsonSerializer.Serialize(byTime, ReflectionOptions), ReflectionOptions)!;
@@ -250,6 +300,8 @@ public class JsonTests
             Id = CustomerId.Create(Guid.Parse("01936f3c-0000-7000-8000-000000000001")),
             Email = EmailAddress.Create("ada@example.com"),
             Status = OrderStatus.Completed,
+            Delivery = DeliveryStatus.Processing,
+            Size = Size.Medium,
             Price = Cash.Create(10m, "CAD"),
             Score = null,
             Family = null,
@@ -259,7 +311,7 @@ public class JsonTests
 
         await json.Should()
                   .BeEqualTo(
-                       """{"Id":"01936f3c-0000-7000-8000-000000000001","Email":"ada@example.com","Status":"completed","Price":{"amount":10,"currency":"CAD"},"Score":null,"Family":null}"""
+                       """{"Id":"01936f3c-0000-7000-8000-000000000001","Email":"ada@example.com","Status":"completed","Delivery":"processing","Size":"medium","Price":{"amount":10,"currency":"CAD"},"Score":null,"Family":null}"""
                    );
         await JsonSerializer.Deserialize<OrderDocument>(json, ReflectionOptions).Should().BeEqualTo(order);
     }
@@ -269,7 +321,9 @@ public sealed record OrderDocument
 {
     public CustomerId Id { get; init; }
     public EmailAddress Email { get; init; }
-    public OrderStatus Status { get; init; }
+    public OrderStatus Status { get; init; } = OrderStatus.Pending;
+    public DeliveryStatus Delivery { get; init; }
+    public Size? Size { get; init; }
     public Cash Price { get; init; }
     public Score? Score { get; init; }
     public LastName? Family { get; init; }
@@ -298,11 +352,14 @@ internal sealed class ConverterResolver : IJsonTypeInfoResolver
         Add(new OrderNumber.OrderNumberJsonConverter());
         Add(new OrderStatus.OrderStatusJsonConverter());
         Add(new Role.RoleJsonConverter());
+        Add(new DeliveryStatus.DeliveryStatusJsonConverter());
+        Add(new Size.SizeJsonConverter());
         Add(new Address.AddressJsonConverter());
         Add(new Contact.ContactJsonConverter());
         Add(new GeoPoint.GeoPointJsonConverter());
         Add(new Household.HouseholdJsonConverter());
         Add(new GridCell.GridCellJsonConverter());
+        Add(new Parcel.ParcelJsonConverter());
         Add(new CountryClass.CountryClassJsonConverter());
         Add(new Cash.CashJsonConverter());
         Add(new Dollars.DollarsJsonConverter());
@@ -318,6 +375,10 @@ internal sealed class ConverterResolver : IJsonTypeInfoResolver
         Factories[typeof(Score?)] = static options => JsonMetadataServices.CreateValueInfo<Score?>(
             options,
             JsonMetadataServices.GetNullableConverter(options.GetTypeInfo<Score>())
+        );
+        Factories[typeof(Size?)] = static options => JsonMetadataServices.CreateValueInfo<Size?>(
+            options,
+            JsonMetadataServices.GetNullableConverter(options.GetTypeInfo<Size>())
         );
     }
 

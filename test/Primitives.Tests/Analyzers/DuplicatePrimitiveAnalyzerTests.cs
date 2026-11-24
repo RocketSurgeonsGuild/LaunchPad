@@ -108,10 +108,10 @@ public class DuplicatePrimitiveAnalyzerTests
             Usings
           + $$"""
               {{first}}
-              public readonly partial record struct A;
+              {{DeclarationOf(first)}} A;
 
               {{second}}
-              public readonly partial record struct B;
+              {{DeclarationOf(second)}} B;
               """
         );
 

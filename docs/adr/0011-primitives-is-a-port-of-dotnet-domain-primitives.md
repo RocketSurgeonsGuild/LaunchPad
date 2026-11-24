@@ -52,3 +52,24 @@ Primitives no longer ships types such as `EmailAddress`, `CurrencyCode`, `DateRa
 - The templates are renamed (`LaunchPadPrimitives` for the registry and `LaunchPadPrimitives*Joint`) and reference `Rocket.Surgery.LaunchPad.Primitives` instead of `SuperStrong.Types`.
 - The samples' strong IDs are `[StrongId<Guid>]` domain primitives, and LaunchPad's StronglyTypedId helpers (`ConfigureStronglyTypedId`, `StronglyTypedIdValueGenerator`) are gone.
 - Fixes and features from upstream are not picked up automatically; they are ported by hand, and the copy is LaunchPad's to maintain.
+
+## Amendment, 2026-11-23: a smart enum can be a closed class
+
+A smart enum can be a C# 15 `closed partial class` as well as a `readonly partial record struct`, and can no longer be a record class. In
+the closed form each member is made with `new` of a class of its own, named after the member with an underscore
+(`Pending = new Pending_(...)`), nested in the smart enum and written by the generator, which takes the member's value and then the data every member
+carries; a member can override the smart enum's behaviour in its own part of that class. Because only the smart enum's assembly can derive
+from a closed class, a switch expression over the member classes must handle every member (CS8509). That does the work of `Match`, `Map`
+and `Switch`, so a closed smart enum doesn't get them, and as a class has no `default` it has no `IsDefault` either. The generator reports
+a member not made with a class of its own (LPAD2104) and two members with the same value (LPAD2105).
+
+The record struct form stays as it was, `Match`, `Map`, `Switch` and `IsDefault` included, and its members can carry data as well:
+each is made with `new(...)`, its value first and then its data, read as for the closed form. It doesn't allocate, and a smart enum whose
+members differ only in their name, value and data doesn't need a class for each. Nothing can derive from a struct, so it has no member
+classes, and a switch over its members isn't checked for every one of them. Its data are fields of the application's declaration and its
+value a field of the generated part, whose order C# doesn't define (CS0282); Primitives' analyzers suppress that warning (LPADSPR2001), as
+nothing depends on the layout of a smart enum. The generator reports two of its members with the same value (LPAD2105) too. A record
+class smart enum has neither advantage: it allocates, and as it is sealed its members can't have classes of their own. So it is
+LPAD2003, and the generator leaves it alone. The rest of this decision stands; the text above is kept as it was decided, so where it
+says a domain primitive is a `readonly partial record struct` or a `sealed partial record`, a smart enum is a `closed partial class` or a
+`readonly partial record struct`.

@@ -8,11 +8,39 @@
       Message: A string is compared with domain primitive 'Sku'; compare with its Value, or create a 'Sku' from the string first
     },
     {
+      Id: LPAD2010,
+      Severity: Warning,
+      Location: Input.cs: (9,12)-(9,27),
+      Source: role == "admin",
+      Message: A string is compared with domain primitive 'Role'; compare with its Value, or create a 'Role' from the string first
+    },
+    {
+      Id: LPAD2010,
+      Severity: Warning,
+      Location: Input.cs: (10,12)-(10,26),
+      Source: tier == "gold",
+      Message: A string is compared with domain primitive 'Tier'; compare with its Value, or create a 'Tier' from the string first
+    },
+    {
       Id: LPAD2011,
       Severity: Warning,
-      Location: Input.cs: (9,15)-(9,22),
+      Location: Input.cs: (11,15)-(11,22),
       Source: a = sku,
       Message: Domain primitive 'Sku' is used as a string; use its Value
+    },
+    {
+      Id: LPAD2011,
+      Severity: Warning,
+      Location: Input.cs: (14,15)-(14,24),
+      Source: d = admin,
+      Message: Domain primitive 'Admin_' is used as a string; use its Value
+    },
+    {
+      Id: LPAD2011,
+      Severity: Warning,
+      Location: Input.cs: (15,15)-(15,23),
+      Source: e = tier,
+      Message: Domain primitive 'Tier' is used as a string; use its Value
     }
   ]
 }

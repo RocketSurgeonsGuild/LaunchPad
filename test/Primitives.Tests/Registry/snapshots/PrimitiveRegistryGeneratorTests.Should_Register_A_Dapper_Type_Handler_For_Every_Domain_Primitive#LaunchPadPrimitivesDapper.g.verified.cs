@@ -10,9 +10,26 @@ namespace Rocket.Surgery.LaunchPad.Primitives.Generated
         [global::System.Runtime.CompilerServices.ModuleInitializer]
         internal static void Register()
         {
+            {
+                var handler = new DomainPrimitiveTypeHandler<global::Sample.Application.Channel, string>();
+                global::Dapper.SqlMapper.AddTypeHandler(handler);
+                global::Dapper.SqlMapper.AddTypeHandler(typeof(global::Sample.Application.Channel.Web_), handler);
+                global::Dapper.SqlMapper.AddTypeHandler(typeof(global::Sample.Application.Channel.Store_), handler);
+            }
             global::Dapper.SqlMapper.AddTypeHandler(new DomainPrimitiveTypeHandler<global::Sample.Application.Code, string>());
             global::Dapper.SqlMapper.AddTypeHandler(new DomainPrimitiveTypeHandler<global::Sample.Application.EmailAddress, string>());
             global::Dapper.SqlMapper.AddTypeHandler(new DomainPrimitiveTypeHandler<global::Sample.Application.OrderId, global::System.Guid>());
+            global::Dapper.SqlMapper.AddTypeHandler(new DomainPrimitiveTypeHandler<global::Sample.Application.Speed, int>());
+            global::Dapper.SqlMapper.AddTypeHandler(new DomainPrimitiveTypeHandler<global::Sample.Core.CustomerId, int>());
+            global::Dapper.SqlMapper.AddTypeHandler(new DomainPrimitiveTypeHandler<global::Sample.Core.Nested.Handle, string>());
+            global::Dapper.SqlMapper.AddTypeHandler(new DomainPrimitiveTypeHandler<global::Sample.Core.Stars, decimal>());
+            {
+                var handler = new DomainPrimitiveTypeHandler<global::Sample.Core.Status, int>();
+                global::Dapper.SqlMapper.AddTypeHandler(handler);
+                global::Dapper.SqlMapper.AddTypeHandler(typeof(global::Sample.Core.Status.Active_), handler);
+                global::Dapper.SqlMapper.AddTypeHandler(typeof(global::Sample.Core.Status.Closed_), handler);
+            }
+            global::Dapper.SqlMapper.AddTypeHandler(new DomainPrimitiveTypeHandler<global::Sample.Core.Tier, string>());
         }
     }
 

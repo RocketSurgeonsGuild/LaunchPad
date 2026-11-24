@@ -1,3 +1,7 @@
+using System.Collections;
+using System.Reflection;
+using System.Runtime.Loader;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -32,6 +36,13 @@ internal static class AnalyzerTestSources
                                                 internal sealed class EmbeddedAttribute : global::System.Attribute;
                                             }
                                             """;
+
+    /// <summary>
+    ///     How a test declares a domain primitive with <paramref name="attributes" />: a <c>closed partial class</c> for a smart enum, a
+    ///     <c>readonly partial record struct</c> for every other kind.
+    /// </summary>
+    public static string DeclarationOf(string attributes) =>
+        attributes.Contains("SmartEnum", StringComparison.Ordinal) ? "public closed partial class" : "public readonly partial record struct";
 
     /// <summary>The attributes, as the generator writes them.</summary>
     public static string Attributes { get; } = ReadAttributes();
@@ -198,6 +209,43 @@ internal static class AnalyzerTestSources
     ///     and the generator completed each domain primitive.
     /// </summary>
     public static async Task<string[]> ErrorsAfterFix<TFix>(GeneratorTestResults results, params string[] titles)
+        where TFix : CodeFixProvider =>
+        ( await CompileAfterFix<TFix>(results, titles) ).Errors;
+
+    /// <summary>
+    ///     The names of the members of the smart enum <paramref name="typeName" /> (a metadata name, <c>Sample.Level</c>) once every fix titled
+    ///     one of <paramref name="titles" /> is applied, compiled as <see cref="ErrorsAfterFix{TFix}" /> compiles it and read from its generated
+    ///     <c>All</c> by running the compiled code, so a member the fix dropped, or one the generator doesn't read as a member, is missing. Throws
+    ///     when the fixed project doesn't compile.
+    /// </summary>
+    public static async Task<string[]> MembersAfterFix<TFix>(GeneratorTestResults results, string typeName, params string[] titles)
+        where TFix : CodeFixProvider
+    {
+        var (output, errors) = await CompileAfterFix<TFix>(results, titles);
+        if (errors.Length > 0) throw new InvalidOperationException(string.Join("\n", errors));
+        using var stream = new MemoryStream();
+        var emitted = output.Emit(stream);
+        if (!emitted.Success) throw new InvalidOperationException(string.Join("\n", emitted.Diagnostics.Select(d => d.ToString())));
+        stream.Position = 0;
+        var context = new AssemblyLoadContext(typeName, isCollectible: true);
+        try
+        {
+            var type = context.LoadFromStream(stream).GetType(typeName, throwOnError: true)!;
+            var name = type.GetProperty("Name", BindingFlags.Public | BindingFlags.Instance)!;
+            var all = (IEnumerable)type.GetProperty("All", BindingFlags.Public | BindingFlags.Static)!.GetValue(null)!;
+            return [.. all.Cast<object>().Select(member => (string)name.GetValue(member)!)];
+        }
+        finally
+        {
+            context.Unload();
+        }
+    }
+
+    /// <summary>
+    ///     The project once every fix titled one of <paramref name="titles" /> is applied, completed by the generators, and its errors as
+    ///     <see cref="ErrorsAfterFix{TFix}" /> describes them.
+    /// </summary>
+    private static async Task<(Compilation Output, string[] Errors)> CompileAfterFix<TFix>(GeneratorTestResults results, string[] titles)
         where TFix : CodeFixProvider
     {
         if (!results.CodeFixResults.TryGetValue(typeof(TFix), out var fixes) || fixes.ResolvedFixes.IsEmpty)
@@ -257,10 +305,10 @@ internal static class AnalyzerTestSources
         // The regular expression generator implements the [GeneratedRegex] members a fix writes.
         _ = CSharpGeneratorDriver.Create([new DomainPrimitiveGenerator().AsSourceGenerator(), RegexGenerator.Create().AsSourceGenerator()], parseOptions: parseOptions)
                                  .RunGeneratorsAndUpdateCompilation(compilation, out var output, out var generatorDiagnostics);
-        return [.. generatorDiagnostics.Concat(output.GetDiagnostics())
-                                       .Where(d => d.Severity == DiagnosticSeverity.Error)
-                                       .Select(d => d.ToString()),
-            .. Uncompleted(output, trees)];
+        return (output, [.. generatorDiagnostics.Concat(output.GetDiagnostics())
+                                                .Where(d => d.Severity == DiagnosticSeverity.Error)
+                                                .Select(d => d.ToString()),
+            .. Uncompleted(output, trees)]);
     }
 
     /// <summary>A message for each domain primitive declared in <paramref name="trees" /> that the generator wrote no part of.</summary>
@@ -299,6 +347,24 @@ internal static class AnalyzerTestSources
         var errors = results.FinalDiagnostics.Where(d => d.Severity == DiagnosticSeverity.Error).Select(d => d.ToString()).ToArray();
         return errors.Length == 0 ? results : throw new InvalidOperationException(string.Join("\n", errors));
     }
+
+    /// <summary>
+    ///     Runs <typeparamref name="TAnalyzer" /> on <paramref name="source" /> completed by the domain primitive generator, as an IDE or a build
+    ///     runs it: on what the generator wrote too (the class of each member of a smart enum, say), which it reads as generated code.
+    /// </summary>
+    public static Task<GeneratorTestResults> AnalyzeWithGenerator<TAnalyzer>(string source)
+        where TAnalyzer : DiagnosticAnalyzer, new() =>
+        GeneratorTestContextBuilder
+           .Create()
+           .WithLanguageVersion(LanguageVersion.Preview)
+           .WithDocumentationMode(DocumentationMode.Diagnose)
+           .AddReferences(typeof(Rocket.Surgery.LaunchPad.Primitives.IDomainPrimitive<>).Assembly)
+           .AddReferences(GeneratedCodeReferences)
+           .AddSource("Input.cs", source)
+           .WithGenerator<DomainPrimitiveGenerator>()
+           .WithAnalyzer<TAnalyzer>()
+           .Build()
+           .GenerateAsync(CancellationToken.None);
 
     /// <summary>The assemblies the generated code compiles against besides those the harness adds.</summary>
     private static readonly MetadataReference[] GeneratedCodeReferences =

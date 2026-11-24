@@ -229,9 +229,13 @@ internal static class ValueObjectEmitter
 
     private static string Read(MemberInfo member)
     {
-        // A nested domain primitive that rejects the value fails the read like the value object's own rules do: with a JsonException.
+        // A nested domain primitive that rejects the value fails the read like the value object's own rules do: with a JsonException. A smart
+        // enum is read like its own converter reads it: by the name of a member (in any case), or by its value.
+        var byName = member.IsSmartEnum
+            ? $"reader.TokenType == {Names.Json}.JsonTokenType.String && {member.Underlying}.TryFromName(reader.GetString(), true, out var {member.Name}Named) ? {member.Name}Named : "
+            : "";
         return member.PrimitiveValue is { } primitive
-            ? $"{member.Underlying}.TryCreate({PrimitiveEmitter.ReadJson(primitive)}, out var {member.Name}Read, out var {member.Name}Error) ? {member.Name}Read : throw new {Names.Json}.JsonException($\"[{{{member.Name}Error.Code}}] {{{member.Name}Error.Message}}\")"
+            ? $"{byName}{member.Underlying}.TryCreate({PrimitiveEmitter.ReadJson(primitive)}, out var {member.Name}Read, out var {member.Name}Error) ? {member.Name}Read : throw new {Names.Json}.JsonException($\"[{{{member.Name}Error.Code}}] {{{member.Name}Error.Message}}\")"
             : member.Value is { } value
             ? PrimitiveEmitter.ReadJson(value)
             : $"{Names.Json}.JsonSerializer.Deserialize(ref reader, ({Names.JsonMetadata}.JsonTypeInfo<{member.TypeOf}>)options.GetTypeInfo(typeof({member.TypeOf})))!";
@@ -240,6 +244,14 @@ internal static class ValueObjectEmitter
     private static string Write(MemberInfo member, string expression)
     {
         var value = member.IsNullableValueType ? expression + ".Value" : expression;
+        // A smart enum is written like its own converter writes it: as its member's name in camel case (the name the OpenAPI document lists),
+        // and a default struct smart enum as null.
+        if (member.IsSmartEnum)
+        {
+            var name = $"writer.WriteStringValue({Names.Json}.JsonNamingPolicy.CamelCase.ConvertName({value}.Name));";
+            return member.IsValueType ? $"if ({value}.IsDefault) writer.WriteNullValue(); else {name}" : name;
+        }
+
         return member.PrimitiveValue is { } primitive
             ? PrimitiveEmitter.WriteJson(primitive, value + ".Value")
             : member.Value is { } info

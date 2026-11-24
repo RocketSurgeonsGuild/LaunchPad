@@ -213,5 +213,17 @@ public class TypeConverterTests
         await statuses.ConvertFrom(2).Should().BeEqualTo(OrderStatus.Processing);
         await statuses.ConvertToInvariantString(OrderStatus.Pending).Should().BeEqualTo("Pending");
         await statuses.ConvertTo(OrderStatus.Pending, typeof(int)).Should().BeEqualTo(1);
+
+        // a struct smart enum converts the same way, and a member converted from its value carries its data
+        var deliveries = TypeDescriptor.GetConverter(typeof(DeliveryStatus));
+        await deliveries.ConvertFromInvariantString("completed").Should().BeEqualTo(DeliveryStatus.Completed);
+        await deliveries.ConvertFrom(2).Should().BeEqualTo(DeliveryStatus.Processing);
+        await deliveries.ConvertToInvariantString(DeliveryStatus.Pending).Should().BeEqualTo("Pending");
+        await deliveries.ConvertTo(DeliveryStatus.Pending, typeof(int)).Should().BeEqualTo(1);
+        var sizes = TypeDescriptor.GetConverter(typeof(Size));
+        await ( (Size)sizes.ConvertFromInvariantString("xl")! ).Label.Should().BeEqualTo("Extra large");
+        await sizes.ConvertFromInvariantString("Medium").Should().BeEqualTo(Size.Medium);
+        await sizes.ConvertToInvariantString(Size.ExtraLarge).Should().BeEqualTo("ExtraLarge");
+        await sizes.ConvertTo(Size.Small, typeof(string)).Should().BeEqualTo("Small");
     }
 }

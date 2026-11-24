@@ -14,13 +14,16 @@ namespace Rocket.Surgery.LaunchPad.Primitives.Generated
         /// <summary>Every domain primitive with one value the application declares or references.</summary>
         public static global::System.Collections.Generic.IReadOnlyList<global::Rocket.Surgery.LaunchPad.Primitives.Descriptions.DomainPrimitiveDescription> All { get; } =
         [
+            global::Sample.Application.Channel.Description,
             global::Sample.Application.Code.Description,
             global::Sample.Application.EmailAddress.Description,
             global::Sample.Application.OrderId.Description,
+            global::Sample.Application.Speed.Description,
             global::Sample.Core.CustomerId.Description,
             global::Sample.Core.Nested.Handle.Description,
             global::Sample.Core.Stars.Description,
             global::Sample.Core.Status.Description,
+            global::Sample.Core.Tier.Description,
         ];
 
         /// <summary>Every value object the application declares or references.</summary>

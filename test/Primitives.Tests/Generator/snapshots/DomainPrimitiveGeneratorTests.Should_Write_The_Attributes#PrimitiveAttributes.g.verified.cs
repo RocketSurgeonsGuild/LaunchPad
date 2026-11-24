@@ -11,7 +11,8 @@ namespace Rocket.Surgery.LaunchPad.Primitives
 {
     /// <summary>
     ///     Marks a type as a domain primitive and says what kind it is. A type has exactly one primitive attribute, and its declaration is
-    ///     <c>readonly partial record struct</c> or <c>sealed partial record</c>.
+    ///     <c>readonly partial record struct</c> or <c>sealed partial record</c>, except a smart enum's
+    ///     (<see cref="SmartEnumAttribute{TValue}" />), which is <c>closed partial class</c> or <c>readonly partial record struct</c>.
     /// </summary>
     [global::System.AttributeUsage(global::System.AttributeTargets.Struct | global::System.AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     [global::System.Diagnostics.Conditional("CodeGeneration")]
@@ -167,7 +168,51 @@ namespace Rocket.Surgery.LaunchPad.Primitives
         public bool FutureOnly { get; init; }
     }
 
-    /// <summary>A smart enum: a fixed set of named values, declared as <c>public static readonly</c> fields of the type.</summary>
+    /// <summary>
+    ///     A smart enum: a fixed set of named members, each a <c>public static readonly</c> field of the smart enum's type, made with its value
+    ///     first, then the data every member carries in the order the smart enum declares it. The data are the get-only auto-properties and the
+    ///     readonly fields the smart enum declares without an initializer. It is declared in one of two forms.
+    ///     <para>
+    ///         As a <c>closed partial class</c>, each member (or a get-only static property with an initializer) is made with <c>new</c> of its
+    ///         own class, named after the member with an underscore, which the generator writes nested in the smart enum and derived from it:
+    ///         <c>Pending = new Pending_(1, "Waiting")</c>. A member changes behaviour (a <c>virtual</c> member of the smart enum) in the
+    ///         application's own <c>partial</c> part of its class. As the class is closed, a <c>switch</c> over the classes of its members
+    ///         (<c>OrderStatus.Pending_</c>) is exhaustive.
+    ///     </para>
+    ///     <para>
+    ///         As a <c>readonly partial record struct</c>, each member is a value of it, made with <c>new</c>: <c>Small = new(1, "S")</c>. Its
+    ///         members share its behaviour, as a struct has no derived types; the generator writes <c>Match</c>, <c>Map</c> and <c>Switch</c>, with
+    ///         one parameter for each member.
+    ///     </para>
+    /// </summary>
+    /// <example>
+    ///     <code>
+    ///     [SmartEnum&lt;int&gt;]
+    ///     public closed partial class OrderStatus
+    ///     {
+    ///         public static readonly OrderStatus Pending = new Pending_(1, "Waiting");
+    ///         public static readonly OrderStatus Shipped = new Shipped_(2, "On its way");
+    ///
+    ///         public string Label { get; }
+    ///
+    ///         public virtual bool CanCancel => true;
+    ///
+    ///         public partial class Shipped_
+    ///         {
+    ///             public override bool CanCancel => false;
+    ///         }
+    ///     }
+    ///
+    ///     [SmartEnum&lt;int&gt;]
+    ///     public readonly partial record struct Size
+    ///     {
+    ///         public static readonly Size Small = new(1, "S");
+    ///         public static readonly Size Large = new(2, "L");
+    ///
+    ///         public string Label { get; }
+    ///     }
+    ///     </code>
+    /// </example>
     /// <typeparam name="TValue">The value of each member.</typeparam>
     [global::System.Diagnostics.Conditional("CodeGeneration")]
     [global::Microsoft.CodeAnalysis.Embedded]

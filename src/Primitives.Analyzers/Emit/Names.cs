@@ -22,7 +22,66 @@ internal static class Names
 
     public static string Literal(string value) => PrimitiveReader.Literal(value);
 
+    /// <summary>A name as C# code: with <c>@</c> when it is a keyword (a smart enum member named <c>@class</c>).</summary>
+    public static string Identifier(string name) => SyntaxFacts.IsReserved(name) ? "@" + name : name;
+
+    /// <summary>
+    ///     A member of a smart enum as written inside a generic method of it (Match&lt;TResult&gt;): qualified by the smart enum's name, so a
+    ///     member named like the method's type parameter (<c>TResult</c>) isn't bound to it (CS0704).
+    /// </summary>
+    public static string SmartEnumMember(string smartEnum, string member) => $"{Identifier(smartEnum)}.{Identifier(member)}";
+
     public static string NewError(string code, string message) => $"new {Error}({Literal(code)}, {message})";
+
+    /// <summary>
+    ///     The constructor parameters of a smart enum's data, after the member's value (and, for a closed smart enum, its name): each named
+    ///     after its property or field in camel case, and made unique when that name is already taken (a field named <c>name</c>, <c>_Value</c>,
+    ///     or <c>_label</c> beside <c>Label</c>). Each is written as a name, with <c>@</c> when it is a keyword.
+    /// </summary>
+    public static string[] Parameters(EquatableArray<SmartEnumData> data)
+    {
+        var used = new HashSet<string>(StringComparer.Ordinal) { "value", "name" };
+        var result = new string[data.Length];
+        for (var i = 0; i < data.Length; i++)
+        {
+            var candidate = data[i].Parameter.TrimStart('@');
+            var unique = candidate;
+            for (var suffix = 2; !used.Add(unique); suffix++)
+            {
+                unique = candidate + suffix.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            }
+
+            result[i] = Identifier(unique);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    ///     Whether the generator writes a member of this name into a smart enum (SmartEnumEmitter for a closed class, StructSmartEnumEmitter for
+    ///     a record struct): a member or a datum of that name would be declared twice (CS0102).
+    /// </summary>
+    public static bool IsGeneratedSmartEnumMember(string name, string smartEnum, bool isStruct) =>
+        name == smartEnum + "TypeConverter"
+     || name == smartEnum + "JsonConverter"
+     || GeneratedSmartEnumMembers.Contains(name)
+     || ( isStruct ? GeneratedStructSmartEnumMembers : GeneratedClassSmartEnumMembers ).Contains(name);
+
+    private static readonly HashSet<string> GeneratedSmartEnumMembers =
+    [
+        with(StringComparer.Ordinal),
+        "Value", "Name", "PrimitiveName", "Description", "Errors", "All", "_all", "_byName", "_byNameIgnoringCase", "ByName",
+        "ByNameIgnoringCase", "Fail", "Create", "TryCreate", "FromValue", "TryFromValue", "FromName", "TryFromName", "Parse", "TryParse",
+        "ToString", "Equals", "GetHashCode",
+    ];
+
+    private static readonly HashSet<string> GeneratedClassSmartEnumMembers = [with(StringComparer.Ordinal), "_byValue", "ByValue"];
+
+    private static readonly HashSet<string> GeneratedStructSmartEnumMembers =
+    [
+        with(StringComparer.Ordinal),
+        "_value", "_initialized", "IsDefault", "_names", "Names", "Match", "Map", "Switch",
+    ];
 
     /// <summary>
     ///     The error of a check: its code, and its message, or <paramref name="defaultMessage" /> (a C# expression) when it has none of its

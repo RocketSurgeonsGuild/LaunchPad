@@ -127,7 +127,8 @@
     },
     "Contact": {
       "required": [
-        "email"
+        "email",
+        "channel"
       ],
       "type": "object",
       "properties": {
@@ -159,6 +160,24 @@
             "null",
             "string"
           ]
+        },
+        "tier": {
+          "enum": [
+            "gold",
+            "standard",
+            null
+          ],
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "channel": {
+          "enum": [
+            "mail",
+            "phone"
+          ],
+          "type": "string"
         }
       }
     },
@@ -199,6 +218,13 @@
           "enum": [
             "gold",
             "standard"
+          ],
+          "type": "string"
+        },
+        "channel": {
+          "enum": [
+            "mail",
+            "phone"
           ],
           "type": "string"
         },
@@ -273,5 +299,13 @@
         }
       }
     }
+  },
+  "wire": {
+    "email": "ada@example.com",
+    "phone": null,
+    "since": null,
+    "handle": null,
+    "tier": "gold",
+    "channel": "phone"
   }
 }

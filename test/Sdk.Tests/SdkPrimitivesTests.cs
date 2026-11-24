@@ -54,7 +54,8 @@ public partial class SdkPrimitivesTests(string targetFramework)
     ///     The OpenAPI document gives each domain primitive the schema of its value, narrowed by its rules, as a named schema, in a body and in the
     ///     route and the query of a Minimal API and an MVC controller, and each value object the named schema of an object of its values: a
     ///     domain primitive value refers to its schema, a NodaTime value is text, and a nullable value may be null. A nullable domain primitive
-    ///     or value object refers to the schema with null.
+    ///     or value object refers to the schema with null. A value object written to JSON (<c>wire</c>) matches its schema: a smart enum it
+    ///     holds is the name of its member, one of those its schema lists.
     /// </summary>
     [Test]
     public async Task Should_Describe_Domain_Primitives_In_The_OpenApi_Document()
@@ -409,10 +410,20 @@ public partial class SdkPrimitivesTests(string targetFramework)
         public readonly partial record struct LoyaltyPoints;
 
         [SmartEnum<int>]
-        public sealed partial record CustomerTier
+        public closed partial class CustomerTier
         {
-            public static readonly CustomerTier Standard = new(1);
-            public static readonly CustomerTier Gold = new(2);
+            public static readonly CustomerTier Standard = new Standard_(1);
+            public static readonly CustomerTier Gold = new Gold_(2);
+        }
+
+        // A smart enum can be a readonly partial record struct too, with data as a closed one.
+        [SmartEnum<string>]
+        public readonly partial record struct ContactChannel
+        {
+            public static readonly ContactChannel Mail = new("mail", "By post");
+            public static readonly ContactChannel Phone = new("phone", "By phone");
+
+            public string Label { get; }
         }
 
         [ValueObject]
@@ -441,6 +452,7 @@ public partial class SdkPrimitivesTests(string targetFramework)
             public Country Country { get; set; }
             public LoyaltyPoints Points { get; set; }
             public required CustomerTier Tier { get; set; }
+            public ContactChannel Channel { get; set; }
             public Address Address { get; set; }
             public Balance Balance { get; set; }
             public Membership? Membership { get; set; }
@@ -458,6 +470,7 @@ public partial class SdkPrimitivesTests(string targetFramework)
                     Country = country,
                     Points = LoyaltyPoints.Create(40),
                     Tier = CustomerTier.Gold,
+                    Channel = ContactChannel.Phone,
                     Address = Address.Create("12 St James's Square", "London"),
                     Balance = Balance.Create(12.5m, "GBP"),
                     Membership = Membership.Create(new(2026, 1, 1), new(2026, 12, 31)),
@@ -489,7 +502,7 @@ public partial class SdkPrimitivesTests(string targetFramework)
         foreach (var country in new[] { "GB", "ZZ" })
         {
             var result = await executor.ExecuteAsync(
-                $$"""{ customer(id: "6f9619ff-8b86-d011-b42d-00cf4fc964ff", country: "{{country}}") { id email country points tier address { street city } balance { amount currency } membership { start end } handle rating } }"""
+                $$"""{ customer(id: "6f9619ff-8b86-d011-b42d-00cf4fc964ff", country: "{{country}}") { id email country points tier channel address { street city } balance { amount currency } membership { start end } handle rating } }"""
             );
             Console.WriteLine();
             Console.WriteLine(result.ToJson());
@@ -612,7 +625,7 @@ public partial class SdkPrimitivesTests(string targetFramework)
             Console.WriteLine($"Key generated on insert: {added.Id.Value != Guid.Empty} (version {added.Id.Value.Version})");
             context.ChangeTracker.Clear();
             var customer = context.Customers.Single(z => z.Email == CustomerEmail.Create("ada@example.com"));
-            Console.WriteLine($"Read back: {customer.Id == added.Id} {customer.Email} {customer.Country} {customer.Points} {customer.Tier.Name} {customer.Address.Street}, {customer.Address.City} {customer.Balance} {customer.Membership?.Start:O}..{customer.Membership?.End:O} {customer.Handle} {customer.Rating}");
+            Console.WriteLine($"Read back: {customer.Id == added.Id} {customer.Email} {customer.Country} {customer.Points} {customer.Tier.Name} {customer.Channel.Name} ({customer.Channel.Label}) {customer.Address.Street}, {customer.Address.City} {customer.Balance} {customer.Membership?.Start:O}..{customer.Membership?.End:O} {customer.Handle} {customer.Rating}");
             return;
         }
 
@@ -641,7 +654,10 @@ public partial class SdkPrimitivesTests(string targetFramework)
             }
         }
 
-        Console.WriteLine(new JsonObject { ["parameters"] = parameters, ["schemas"] = schemas }.ToJsonString(new JsonSerializerOptions { WriteIndented = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping }));
+        // A value object on the wire, as the document describes it: a smart enum of either form is the name of its member.
+        var contact = Contact.Create(CustomerEmail.Create("ada@example.com"), null, null, null, CustomerTier.Gold, ContactChannel.Phone);
+        var wire = JsonNode.Parse(JsonSerializer.Serialize(contact, AppJsonContext.Default.Contact));
+        Console.WriteLine(new JsonObject { ["parameters"] = parameters, ["schemas"] = schemas, ["wire"] = wire }.ToJsonString(new JsonSerializerOptions { WriteIndented = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping }));
         await app.StopAsync();
 
         public sealed class ShopContext(DbContextOptions<ShopContext> options) : DbContext(options)
@@ -784,7 +800,8 @@ public partial class SdkPrimitivesTests(string targetFramework)
         """;
 
     // The value objects of a booking, which the OpenAPI and EF Core application declares a Minimal API endpoint for: a range of NodaTime
-    // dates, and a value object of the application's own with a domain primitive, nullable values and a nullable NodaTime value.
+    // dates, and a value object of the application's own with a domain primitive, nullable values, a nullable NodaTime value and smart enums
+    // of both forms.
     private const string BookingContracts = """
 
         [DateRange(Kind = DatePrimitiveKind.LocalDate)]
@@ -797,6 +814,8 @@ public partial class SdkPrimitivesTests(string targetFramework)
             public string? Phone { get; init; }
             public NodaTime.LocalDate? Since { get; init; }
             public Handle? Handle { get; init; }
+            public CustomerTier? Tier { get; init; }
+            public ContactChannel Channel { get; init; }
         }
 
         public sealed record Booking(CustomerId Id, Contact Contact, Stay Stay);
@@ -893,10 +912,21 @@ public partial class SdkPrimitivesTests(string targetFramework)
         public readonly partial record struct Points;
 
         [SmartEnum<int>]
-        public sealed partial record OrderStatus
+        public closed partial class OrderStatus
         {
-            public static readonly OrderStatus Pending = new(1);
-            public static readonly OrderStatus Shipped = new(2);
+            public static readonly OrderStatus Pending = new Pending_(1, "Waiting");
+            public static readonly OrderStatus Shipped = new Shipped_(2, "On its way");
+
+            public string Label { get; }
+        }
+
+        [SmartEnum<int>]
+        public readonly partial record struct Carrier
+        {
+            public static readonly Carrier Post = new(1, "Royal Mail");
+            public static readonly Carrier Courier = new(2, "DHL");
+
+            public string Company { get; }
         }
 
         [ValueObject]
@@ -912,7 +942,7 @@ public partial class SdkPrimitivesTests(string targetFramework)
         [DateRange]
         public sealed partial record Delivery;
 
-        public sealed record Order(OrderId Id, CustomerEmail Email, Points Points, OrderStatus Status, ShippingAddress Address, Total Total, Delivery Delivery);
+        public sealed record Order(OrderId Id, CustomerEmail Email, Points Points, OrderStatus Status, Carrier Carrier, ShippingAddress Address, Total Total, Delivery Delivery);
         """;
 
     // A console application that uses the domain primitives, published with native AOT.
@@ -937,7 +967,8 @@ public partial class SdkPrimitivesTests(string targetFramework)
             Console.WriteLine($"Thrown: {exception.GetType().Name}");
         }
 
-        Console.WriteLine($"Smart enum: {OrderStatus.FromName("shipped", true).Name} {OrderStatus.Shipped.Value}");
+        Console.WriteLine($"Smart enum: {OrderStatus.FromName("shipped", true).Name} {OrderStatus.Shipped.Value} {OrderStatus.Create(2).Label} {(OrderStatus.Shipped switch { OrderStatus.Pending_ => "pending", OrderStatus.Shipped_ => "shipped" })}");
+        Console.WriteLine($"Struct smart enum: {Carrier.FromName("courier", true).Name} {Carrier.Courier.Value} {Carrier.Create(2).Company} {Carrier.Courier.Match(() => "post", () => "courier")} {default(Carrier).IsDefault}");
         Console.WriteLine($"Money: {Total.Create(10m, "usd") + Total.Create(5.25m, "USD")}");
         var delivery = Delivery.Create(new DateOnly(2026, 1, 1), new DateOnly(2026, 1, 3));
         Console.WriteLine($"Date range: {delivery} {delivery.Contains(new DateOnly(2026, 1, 2))} {Delivery.TryCreate(delivery.End, delivery.Start, out _, out _)}");
@@ -947,6 +978,7 @@ public partial class SdkPrimitivesTests(string targetFramework)
             CustomerEmail.Create("ada@example.com"),
             Points.Create(40),
             OrderStatus.Shipped,
+            Carrier.Courier,
             ShippingAddress.Create("12 St James's Square", "London"),
             Total.Create(12.5m, "GBP"),
             delivery

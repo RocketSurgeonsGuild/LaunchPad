@@ -132,6 +132,20 @@ internal sealed class LaunchPadPrimitivesHotChocolateVisitor(IRequestExecutorBui
         builder.BindRuntimeType(typeof(TPrimitive), Scalars[typeof(TValue)]().GetType());
         builder.AddTypeConverter<TPrimitive, TValue>(static value => value.Value);
         builder.AddTypeConverter<TValue, TPrimitive>(static value => TPrimitive.Create(value));
+        // HotChocolate finds a converter by the value's own type, and a smart enum's member is of its own class, derived from the smart enum.
+        if (description.IsSmartEnum)
+        {
+            builder.AddTypeConverter(
+                static (Type source, Type target, [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out global::HotChocolate.Utilities.ChangeType? converter) =>
+                {
+                    converter = target == typeof(TValue) && source != typeof(TPrimitive) && typeof(TPrimitive).IsAssignableFrom(source)
+                        ? static value => value is TPrimitive member ? member.Value : null
+                        : null;
+                    return converter is not null;
+                }
+            );
+        }
+
         return true;
     }
 }

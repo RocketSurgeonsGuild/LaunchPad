@@ -34,9 +34,9 @@ public readonly partial record struct UserName;
 public sealed partial record Sku;
 
 [SmartEnum<string>]
-public sealed partial record Color
+public closed partial class Color
 {
-    public static readonly Color Red = new("red");
+    public static readonly Color Red = new Red_("red");
 }
 
 public static class Uses

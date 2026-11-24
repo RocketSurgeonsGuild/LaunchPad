@@ -149,9 +149,11 @@ internal sealed class LaunchPadPrimitivesOpenApiTransformer(bool inline) : IOpen
             _ => null,
         };
 
+    // A schema that lists its values (a smart enum's names) lists null too, or a null value would match its type but none of its values.
     private static void AllowNull(OpenApiSchema schema)
     {
         if (schema.Type is { } type) schema.Type = type | JsonSchemaType.Null;
+        if (schema.Enum is { Count: > 0 } values && !values.Contains(null!)) values.Add(null!);
     }
 
     public async Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context, CancellationToken cancellationToken)

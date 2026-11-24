@@ -35,10 +35,30 @@ internal static class GeneratorDiagnostics
         true
     );
 
+    public static readonly DiagnosticDescriptor SmartEnumMemberClass = new(
+        "LPAD2104",
+        "Smart enum member without a class of its own",
+        "{0}.{1} must be made with new {1}_(value, ...), its own class, which the generator writes",
+        "LaunchPad.Primitives",
+        DiagnosticSeverity.Error,
+        true
+    );
+
+    public static readonly DiagnosticDescriptor SmartEnumSharedValue = new(
+        "LPAD2105",
+        "Smart enum members share a value",
+        "{0}'s members {1} and {2} have the same value",
+        "LaunchPad.Primitives",
+        DiagnosticSeverity.Error,
+        true
+    );
+
     public static DiagnosticDescriptor Find(string id) => id switch
     {
         "LPAD2101" => UnsupportedValueType,
         "LPAD2102" => MoreThanOnePrimitiveAttribute,
+        "LPAD2104" => SmartEnumMemberClass,
+        "LPAD2105" => SmartEnumSharedValue,
         _ => InvalidAttributeArgument,
     };
 }

@@ -24,7 +24,8 @@ internal sealed record PrimitiveModel(
     EquatableArray<string> Normalizers,
     EquatableArray<string> Validators,
     EquatableArray<MemberInfo> Members,
-    EquatableArray<string> EnumMembers,
+    EquatableArray<SmartEnumMember> EnumMembers,
+    EquatableArray<SmartEnumData> EnumData,
     string? Currency,
     string? ExceptionType,
     string? Format
@@ -112,6 +113,10 @@ internal sealed record DateRules(bool PastOnly, bool FutureOnly, int? MaxAge, bo
 /// <param name="Underlying">Its type without any nullable annotation (the T of a Nullable&lt;T&gt;).</param>
 /// <param name="IsNullableValueType">Whether it is a Nullable&lt;T&gt;.</param>
 /// <param name="IsValueType">Whether its type is a struct.</param>
+/// <param name="IsSmartEnum">
+///     Whether it is a smart enum, which is written as its member's name in camel case and read by name (in any case) or value, like the
+///     smart enum's own converter writes and reads it.
+/// </param>
 internal sealed record MemberInfo(
     string Name,
     string Type,
@@ -121,10 +126,33 @@ internal sealed record MemberInfo(
     string TypeOf,
     string Underlying,
     bool IsNullableValueType,
-    bool IsValueType = false
+    bool IsValueType = false,
+    bool IsSmartEnum = false
 )
 {
     public string Parameter => char.ToLowerInvariant(Name[0]) + Name[1..] is var name && SyntaxFacts.IsReserved(name) ? "@" + name : name;
+}
+
+/// <summary>
+///     A member of a smart enum: its <c>public static readonly</c> field (or get-only static property), and the class it creates, nested in the
+///     smart enum, which the generator writes.
+/// </summary>
+/// <param name="Name">The field, which is the member's name.</param>
+/// <param name="Class">The class its <c>new</c> names.</param>
+internal sealed record SmartEnumMember(string Name, string Class);
+
+/// <summary>
+///     A value every member of a smart enum carries besides its own: a get-only property or readonly field the smart enum declares without an
+///     initializer, which the constructor takes after the member's value.
+/// </summary>
+/// <param name="Name">The property or field.</param>
+/// <param name="Type">Its type as written in generated code.</param>
+internal sealed record SmartEnumData(string Name, string Type)
+{
+    /// <summary>The name of its constructor parameter: the name in camel case, without the underscores a private field starts with.</summary>
+    public string Parameter => Name.TrimStart('_') is { Length: > 0 } trimmed
+        ? char.ToLowerInvariant(trimmed[0]) + trimmed[1..] is var name && SyntaxFacts.IsReserved(name) ? "@" + name : name
+        : "data";
 }
 
 internal static class SyntaxFacts

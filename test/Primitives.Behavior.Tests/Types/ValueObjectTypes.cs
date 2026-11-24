@@ -71,3 +71,13 @@ public readonly partial record struct GridCell
     public int Row { get; init; }
     public int Column { get; init; }
 }
+
+// A value object holding smart enums of both forms, nullable or not: each is written as its member's name, as on its own.
+[ValueObject]
+public readonly partial record struct Parcel
+{
+    public OrderStatus Status { get; init; }
+    public Size Size { get; init; }
+    public DeliveryStatus? Delivery { get; init; }
+    public Role? Handler { get; init; }
+}

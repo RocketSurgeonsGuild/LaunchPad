@@ -144,8 +144,11 @@ internal sealed class LaunchPadPrimitivesConverters
 
     public bool TryGetConverter(Type type, out ValueConverter converter, out Type provider)
     {
-        if (_converters.TryGetValue(Nullable.GetUnderlyingType(type) ?? type, out var found))
+        // The class of a smart enum's member derives from the smart enum: a query that compares with a member (z.Status == OrderStatus.Pending)
+        // gives EF Core the member's own class, which converts as the smart enum does.
+        for (Type? current = Nullable.GetUnderlyingType(type) ?? type; current is not null; current = current.BaseType)
         {
+            if (!_converters.TryGetValue(current, out var found)) continue;
             (converter, provider) = found;
             return true;
         }

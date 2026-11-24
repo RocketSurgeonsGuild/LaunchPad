@@ -101,8 +101,8 @@ A domain primitive that holds several values, validated together, such as an amo
 _Avoid_: Composite primitive, compound value, record (that is the C# declaration)
 
 **Smart enum**:
-A domain primitive whose values are a fixed set of named members, each with a value of its own.
-_Avoid_: Enumeration class, enum (that is the C# `enum`)
+A domain primitive whose values are a fixed set of named members, each with a value of its own and, optionally, data of its own (a label, a fee). Depending on how the smart enum is declared, a member can also behave differently from the other members.
+_Avoid_: Enumeration class, enum (that is the C# `enum`), case (that is a union's)
 
 **Strong ID**:
 A domain primitive that identifies an entity, so the IDs of different entities can't be mixed up.

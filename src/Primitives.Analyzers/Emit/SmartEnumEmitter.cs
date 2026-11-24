@@ -3,7 +3,9 @@ using Rocket.Surgery.LaunchPad.Primitives.Analyzers.Model;
 namespace Rocket.Surgery.LaunchPad.Primitives.Analyzers.Emit;
 
 /// <summary>
-///     Writes a smart enum: a fixed set of named values, the type's <c>public static readonly</c> fields, each created with <c>new(value)</c>.
+///     Writes a smart enum: a <c>closed partial class</c> whose members are its <c>public static readonly</c> fields, each made with
+///     <c>new X(value, data...)</c> of its own class X, nested in the smart enum and derived from it, which this writes. A switch over the
+///     members' classes is exhaustive, as the smart enum is closed.
 /// </summary>
 internal static class SmartEnumEmitter
 {
@@ -13,45 +15,56 @@ internal static class SmartEnumEmitter
         var v = model.Value!;
         var vt = v.Display;
         var members = model.EnumMembers;
-        var nullable = model.IsStruct ? "" : "?";
+        var data = model.EnumData;
+        var names = Names.Parameters(data);
+        var parameters = string.Concat(data.Select((d, i) => $", {d.Type} {names[i]}"));
+        var arguments = string.Concat(names.Select(static z => $", {z}"));
 
         PrimitiveEmitter.TypeAttributes(writer, model);
-        writer.Line($"{PrimitiveEmitter.Declaration(model)} :");
+        writer.Line($"partial class {t} :");
         writer.Line($"    {Names.Primitives}.IDomainPrimitive<{t}, {vt}>,");
+        writer.Line($"    global::System.IEquatable<{t}>,");
         writer.Line($"    global::System.IParsable<{t}>,");
         writer.Line("    global::System.IFormattable");
         writer.Open();
-        writer.Line($"private readonly {vt} _value;");
-        if (model.IsStruct) writer.Line("private readonly bool _initialized;");
-        writer.Line();
-        writer.Line($"private {t}({vt} value)");
+        // Private: only the members' classes, nested in the smart enum, call it.
+        writer.Line($"private {t}({vt} value, string name{parameters})");
         writer.Open();
-        writer.Line("_value = value;");
-        if (model.IsStruct) writer.Line("_initialized = true;");
-        writer.Close();
-        writer.Line();
-        if (model.IsStruct)
+        writer.Line("Value = value;");
+        writer.Line("Name = name;");
+        for (var i = 0; i < data.Length; i++)
         {
-            writer.Line("/// <summary>Whether this is the default value, which is none of the members.</summary>");
-            writer.Line("public bool IsDefault => !_initialized;");
-            writer.Line();
-            writer.Line("/// <summary>The value. Reading it from the default value throws <see cref=\"global::System.InvalidOperationException\" />.</summary>");
-            writer.Line($"public {vt} Value => IsDefault ? throw new global::System.InvalidOperationException(\"Value accessed on a default instance of {t}.\") : _value;");
-        }
-        else
-        {
-            writer.Line("/// <summary>The value.</summary>");
-            writer.Line($"public {vt} Value => _value;");
+            writer.Line($"this.{Names.Identifier(data[i].Name)} = {names[i]};");
         }
 
+        writer.Close();
+        writer.Line();
+        // A member's class is its name with an underscore, which no keyword is and which CS8981 (a lower-case type name) never matches.
+        foreach (var member in members)
+        {
+            var name = Names.Identifier(member.Class);
+            writer.Line($"/// <summary>The class of the member <see cref=\"{Names.Identifier(member.Name)}\" />: match it to handle that member.</summary>");
+            // System.Text.Json reads the converter of the type it is given, not of its base: a member written as itself (as an object, say)
+            // is written as the smart enum.
+            writer.Line($"[{Names.Json}.Serialization.JsonConverter(typeof({t}JsonConverter))]");
+            writer.Line($"public sealed partial class {name} : {t}");
+            writer.Open();
+            // Internal: the smart enum's own field makes the member; another instance would equal it, as members compare by value.
+            writer.Line($"internal {name}({vt} value{parameters}) : base(value, {Names.Literal(member.Name)}{arguments}) {{ }}");
+            writer.Close();
+            writer.Line();
+        }
+
+        writer.Line("/// <summary>The value.</summary>");
+        writer.Line($"public {vt} Value {{ get; }}");
         writer.Line();
         writer.Line("/// <summary>The name of the member: the name of its field.</summary>");
-        writer.Line($"public string Name => {( model.IsStruct ? "IsDefault ? string.Empty : " : "" )}Names.TryGetValue(_value, out var name) ? name : _value.ToString() ?? string.Empty;");
+        writer.Line("public string Name { get; }");
         writer.Line();
         writer.Line("/// <inheritdoc />");
         writer.Line($"public static string PrimitiveName => {Names.Literal(t)};");
         writer.Line();
-        var allowed = members.Select(Names.CamelCase).OrderBy(z => z, StringComparer.Ordinal).Select(Names.Literal);
+        var allowed = members.Select(m => Names.CamelCase(m.Name)).OrderBy(z => z, StringComparer.Ordinal).Select(Names.Literal);
         writer.Line("/// <inheritdoc />");
         writer.Line($"public static {Names.Description}<{t}, {vt}> Description {{ get; }} = new() {{ IsSmartEnum = true, AllowedValues = [{string.Join(", ", allowed)}] }};");
         writer.Line();
@@ -64,21 +77,21 @@ internal static class SmartEnumEmitter
 
         // The members are the type's own static fields, which may be initialized after this part's: everything is built when first used.
         writer.Line($"private static global::System.Collections.Generic.IReadOnlyList<{t}>? _all;");
-        writer.Line($"private static global::System.Collections.Frozen.FrozenDictionary<{vt}, string>? _names;");
+        writer.Line($"private static global::System.Collections.Frozen.FrozenDictionary<{vt}, {t}>? _byValue;");
         writer.Line($"private static global::System.Collections.Frozen.FrozenDictionary<string, {t}>? _byName;");
         writer.Line($"private static global::System.Collections.Frozen.FrozenDictionary<string, {t}>? _byNameIgnoringCase;");
         writer.Line();
         writer.Line("/// <summary>Every member, in declaration order.</summary>");
-        writer.Line($"public static global::System.Collections.Generic.IReadOnlyList<{t}> All => _all ??= [{string.Join(", ", members)}];");
+        writer.Line($"public static global::System.Collections.Generic.IReadOnlyList<{t}> All => _all ??= [{string.Join(", ", members.Select(m => Names.Identifier(m.Name)))}];");
         writer.Line();
-        writer.Line($"private static global::System.Collections.Frozen.FrozenDictionary<{vt}, string> Names => _names ??= global::System.Collections.Frozen.FrozenDictionary.ToFrozenDictionary(");
-        writer.Line($"    new global::System.Collections.Generic.KeyValuePair<{vt}, string>[] {{ {string.Join(", ", members.Select(m => $"new({m}._value, {Names.Literal(m)})"))} }});");
+        writer.Line($"private static global::System.Collections.Frozen.FrozenDictionary<{vt}, {t}> ByValue => _byValue ??= global::System.Collections.Frozen.FrozenDictionary.ToFrozenDictionary(");
+        writer.Line($"    All, static member => member.Value);");
         writer.Line();
         writer.Line($"private static global::System.Collections.Frozen.FrozenDictionary<string, {t}> ByName => _byName ??= global::System.Collections.Frozen.FrozenDictionary.ToFrozenDictionary(");
-        writer.Line($"    new global::System.Collections.Generic.KeyValuePair<string, {t}>[] {{ {string.Join(", ", members.Select(m => $"new({Names.Literal(m)}, {m})"))} }}, global::System.StringComparer.Ordinal);");
+        writer.Line("    All, static member => member.Name, global::System.StringComparer.Ordinal);");
         writer.Line();
         writer.Line($"private static global::System.Collections.Frozen.FrozenDictionary<string, {t}> ByNameIgnoringCase => _byNameIgnoringCase ??=");
-        writer.Line($"    global::System.Collections.Frozen.FrozenDictionary.ToFrozenDictionary(ByName, global::System.StringComparer.OrdinalIgnoreCase);");
+        writer.Line("    global::System.Collections.Frozen.FrozenDictionary.ToFrozenDictionary(ByName, global::System.StringComparer.OrdinalIgnoreCase);");
         writer.Line();
         PrimitiveEmitter.Fail(writer, model);
 
@@ -86,11 +99,11 @@ internal static class SmartEnumEmitter
         writer.Line($"public static {t} Create({vt} value) => TryCreate(value, out var result, out var error) ? result : throw Fail(error);");
         writer.Line();
         writer.Line("/// <summary>The member with a value, or why there is none.</summary>");
-        writer.Line($"public static bool TryCreate({vt} value, [{Names.NotNullWhen}(true)] out {t}{nullable} result, out {Names.Error} validationError)");
+        writer.Line($"public static bool TryCreate({vt} value, [{Names.NotNullWhen}(true)] out {t}? result, out {Names.Error} validationError)");
         writer.Open();
-        writer.Line(v.IsString ? "if (value is not null && Names.ContainsKey(value))" : "if (Names.ContainsKey(value))");
+        writer.Line(v.IsString ? "if (value is not null && ByValue.TryGetValue(value, out var member))" : "if (ByValue.TryGetValue(value, out var member))");
         writer.Open();
-        writer.Line($"result = new {t}(value);");
+        writer.Line("result = member;");
         writer.Line($"validationError = {Names.Error}.None;");
         PrimitiveEmitter.RecordSuccess(writer);
         writer.Line("return true;");
@@ -98,7 +111,7 @@ internal static class SmartEnumEmitter
         writer.Line();
         writer.Line($"validationError = {Names.NewError("UNKNOWN_MEMBER", $"$\"{t} has no member with the value '{{value}}'.\"")};");
         PrimitiveEmitter.RecordFailure(writer);
-        writer.Line("result = default;");
+        writer.Line("result = null;");
         writer.Line("return false;");
         writer.Close();
         writer.Line();
@@ -106,14 +119,14 @@ internal static class SmartEnumEmitter
         writer.Line($"public static {t} FromValue({vt} value) => Create(value);");
         writer.Line();
         writer.Line("/// <summary>The member with a value.</summary>");
-        writer.Line($"public static bool TryFromValue({vt} value, [{Names.NotNullWhen}(true)] out {t}{nullable} result) => TryCreate(value, out result, out _);");
+        writer.Line($"public static bool TryFromValue({vt} value, [{Names.NotNullWhen}(true)] out {t}? result) => TryCreate(value, out result, out _);");
         writer.Line();
         writer.Line("/// <summary>The member with a name, or throws when there is none.</summary>");
         writer.Line($"public static {t} FromName(string name, bool ignoreCase = false) =>");
         writer.Line($"    TryFromName(name, ignoreCase, out var result) ? result : throw Fail({Names.NewError("UNKNOWN_MEMBER", $"$\"{t} has no member named '{{name}}'.\"")});");
         writer.Line();
         writer.Line("/// <summary>The member with a name.</summary>");
-        writer.Line($"public static bool TryFromName(string? name, bool ignoreCase, [{Names.NotNullWhen}(true)] out {t}{nullable} result)");
+        writer.Line($"public static bool TryFromName(string? name, bool ignoreCase, [{Names.NotNullWhen}(true)] out {t}? result)");
         writer.Open();
         writer.Line("if (name is not null && (ignoreCase ? ByNameIgnoringCase : ByName).TryGetValue(name, out var member))");
         writer.Open();
@@ -121,12 +134,10 @@ internal static class SmartEnumEmitter
         writer.Line("return true;");
         writer.Close();
         writer.Line();
-        writer.Line("result = default;");
+        writer.Line("result = null;");
         writer.Line("return false;");
         writer.Close();
         writer.Line();
-
-        Exhaustive(writer, model);
 
         writer.Line("/// <inheritdoc />");
         writer.Line($"public static {t} Parse(string s, global::System.IFormatProvider? provider) =>");
@@ -155,9 +166,26 @@ internal static class SmartEnumEmitter
             writer.Line();
         }
 
-        writer.Line("result = default;");
+        writer.Line("result = null;");
         writer.Line("return false;");
         writer.Close();
+        writer.Line();
+
+        // Members compare by value: a member is one instance, but its class is internal to make, so another instance of it is the same member.
+        writer.Line("/// <inheritdoc />");
+        writer.Line($"public bool Equals({t}? other) => other is not null && global::System.Collections.Generic.EqualityComparer<{vt}>.Default.Equals(Value, other.Value);");
+        writer.Line();
+        writer.Line("/// <inheritdoc />");
+        writer.Line($"public override bool Equals(object? obj) => obj is {t} other && Equals(other);");
+        writer.Line();
+        writer.Line("/// <inheritdoc />");
+        writer.Line($"public override int GetHashCode() => global::System.Collections.Generic.EqualityComparer<{vt}>.Default.GetHashCode(Value!);");
+        writer.Line();
+        writer.Line($"/// <summary>Whether two {t}s are the same member.</summary>");
+        writer.Line($"public static bool operator ==({t}? left, {t}? right) => left is null ? right is null : left.Equals(right);");
+        writer.Line();
+        writer.Line($"/// <summary>Whether two {t}s are different members.</summary>");
+        writer.Line($"public static bool operator !=({t}? left, {t}? right) => !(left == right);");
         writer.Line();
         writer.Line("/// <inheritdoc />");
         writer.Line("public override string ToString() => Name;");
@@ -172,50 +200,6 @@ internal static class SmartEnumEmitter
         TypeConverter(writer, model);
         JsonConverter(writer, model);
         writer.Close();
-    }
-
-    private static void Exhaustive(SourceWriter writer, PrimitiveModel model)
-    {
-        var t = model.Name;
-        var members = model.EnumMembers;
-        if (members.Length == 0) return;
-        string Parameter(string member) => "when" + member;
-        string Is(string member) => $"global::System.Collections.Generic.EqualityComparer<{model.Value!.Display}>.Default.Equals(_value, {member}._value)";
-        var unknown = $"throw new global::System.InvalidOperationException($\"{{this}} is not a member of {t}.\")";
-
-        writer.Line("/// <summary>The result of the function for this member.</summary>");
-        writer.Line($"public TResult Match<TResult>({string.Join(", ", members.Select(m => $"global::System.Func<TResult> {Parameter(m)}"))})");
-        writer.Open();
-        foreach (var member in members)
-        {
-            writer.Line($"if ({Is(member)}) return {Parameter(member)}();");
-        }
-
-        writer.Line(unknown + ";");
-        writer.Close();
-        writer.Line();
-        writer.Line("/// <summary>The result of the function for this member, given the member.</summary>");
-        writer.Line($"public TResult Map<TResult>({string.Join(", ", members.Select(m => $"global::System.Func<{t}, TResult> {Parameter(m)}"))})");
-        writer.Open();
-        foreach (var member in members)
-        {
-            writer.Line($"if ({Is(member)}) return {Parameter(member)}(this);");
-        }
-
-        writer.Line(unknown + ";");
-        writer.Close();
-        writer.Line();
-        writer.Line("/// <summary>Runs the action for this member.</summary>");
-        writer.Line($"public void Switch({string.Join(", ", members.Select(m => $"global::System.Action {Parameter(m)}"))})");
-        writer.Open();
-        foreach (var member in members)
-        {
-            writer.Line($"if ({Is(member)}) {{ {Parameter(member)}(); return; }}");
-        }
-
-        writer.Line(unknown + ";");
-        writer.Close();
-        writer.Line();
     }
 
     private static void TypeConverter(SourceWriter writer, PrimitiveModel model)
@@ -265,9 +249,11 @@ internal static class SmartEnumEmitter
         writer.Line("[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]");
         writer.Line($"public sealed class {t}JsonConverter : {Names.Json}.Serialization.JsonConverter<{t}>");
         writer.Open();
+        writer.Line("/// <summary>The smart enum, and the class of each of its members.</summary>");
+        writer.Line($"public override bool CanConvert(global::System.Type typeToConvert) => typeof({t}).IsAssignableFrom(typeToConvert);");
+        writer.Line();
         writer.Line($"public override {t} Read(ref {Names.Json}.Utf8JsonReader reader, global::System.Type typeToConvert, {Names.Json}.JsonSerializerOptions options)");
         writer.Open();
-        if (model.IsStruct) writer.Line($"if (reader.TokenType == {Names.Json}.JsonTokenType.Null) return default;");
         writer.Line($"if (reader.TokenType == {Names.Json}.JsonTokenType.String && TryFromName(reader.GetString(), true, out var named)) return named;");
         writer.Line($"var value = {PrimitiveEmitter.ReadJson(v)};");
         writer.Line($"return TryFromValue(value, out var result) ? result : throw new {Names.Json}.JsonException($\"'{{value}}' is not a member of {t}.\");");
@@ -275,16 +261,6 @@ internal static class SmartEnumEmitter
         writer.Line();
         writer.Line($"public override void Write({Names.Json}.Utf8JsonWriter writer, {t} value, {Names.Json}.JsonSerializerOptions options)");
         writer.Open();
-        if (model.IsStruct)
-        {
-            writer.Line("if (value.IsDefault)");
-            writer.Open();
-            writer.Line("writer.WriteNullValue();");
-            writer.Line("return;");
-            writer.Close();
-            writer.Line();
-        }
-
         writer.Line($"writer.WriteStringValue({Names.Json}.JsonNamingPolicy.CamelCase.ConvertName(value.Name));");
         writer.Close();
         writer.Line();

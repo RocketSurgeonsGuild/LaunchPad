@@ -1,0 +1,204 @@
+﻿{
+  FinalDiagnostics: [
+    {
+      Id: LPAD2104,
+      Title: Smart enum member without a class of its own,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (10,39)-(10,44),
+      MessageFormat: {0}.{1} must be made with new {1}_(value, ...), its own class, which the generator writes,
+      Message: TargetTyped.First must be made with new First_(value, ...), its own class, which the generator writes,
+      Category: LaunchPad.Primitives
+    },
+    {
+      Id: CS0144,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (10,47)-(10,53),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0144),
+      MessageFormat: Cannot create an instance of the abstract type or interface '{0}',
+      Message: Cannot create an instance of the abstract type or interface 'TargetTyped',
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    },
+    {
+      Id: LPAD2104,
+      Title: Smart enum member without a class of its own,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (16,34)-(16,39),
+      MessageFormat: {0}.{1} must be made with new {1}_(value, ...), its own class, which the generator writes,
+      Message: Itself.First must be made with new First_(value, ...), its own class, which the generator writes,
+      Category: LaunchPad.Primitives
+    },
+    {
+      Id: CS0144,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (16,42)-(16,55),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0144),
+      MessageFormat: Cannot create an instance of the abstract type or interface '{0}',
+      Message: Cannot create an instance of the abstract type or interface 'Itself',
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    },
+    {
+      Id: LPAD2104,
+      Title: Smart enum member without a class of its own,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (22,35)-(22,40),
+      MessageFormat: {0}.{1} must be made with new {1}_(value, ...), its own class, which the generator writes,
+      Message: Outside.First must be made with new First_(value, ...), its own class, which the generator writes,
+      Category: LaunchPad.Primitives
+    },
+    {
+      Id: CS0029,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (22,43)-(22,55),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0029),
+      MessageFormat: Cannot implicitly convert type '{0}' to '{1}',
+      Message: Cannot implicitly convert type 'Sample.First_' to 'Sample.Outside',
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    },
+    {
+      Id: CS0246,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (28,45)-(28,50),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0246),
+      MessageFormat: The type or namespace name '{0}' could not be found (are you missing a using directive or an assembly reference?),
+      Message: The type or namespace name 'Left_' could not be found (are you missing a using directive or an assembly reference?),
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    },
+    {
+      Id: LPAD2104,
+      Title: Smart enum member without a class of its own,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (29,34)-(29,39),
+      MessageFormat: {0}.{1} must be made with new {1}_(value, ...), its own class, which the generator writes,
+      Message: Shared.Right must be made with new Right_(value, ...), its own class, which the generator writes,
+      Category: LaunchPad.Primitives
+    },
+    {
+      Id: CS0246,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (29,46)-(29,51),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0246),
+      MessageFormat: The type or namespace name '{0}' could not be found (are you missing a using directive or an assembly reference?),
+      Message: The type or namespace name 'Left_' could not be found (are you missing a using directive or an assembly reference?),
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    },
+    {
+      Id: LPAD2104,
+      Title: Smart enum member without a class of its own,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (35,36)-(35,41),
+      MessageFormat: {0}.{1} must be made with new {1}_(value, ...), its own class, which the generator writes,
+      Message: Misnamed.First must be made with new First_(value, ...), its own class, which the generator writes,
+      Category: LaunchPad.Primitives
+    },
+    {
+      Id: CS0246,
+      Title: ,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: Input0.cs: (35,48)-(35,61),
+      HelpLink: https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0246),
+      MessageFormat: The type or namespace name '{0}' could not be found (are you missing a using directive or an assembly reference?),
+      Message: The type or namespace name 'FirstMisnamed' could not be found (are you missing a using directive or an assembly reference?),
+      Category: Compiler,
+      CustomTags: [
+        Compiler,
+        Telemetry,
+        NotConfigurable
+      ]
+    }
+  ],
+  GeneratorDiagnostics: {
+    Rocket.Surgery.LaunchPad.Primitives.Analyzers.DomainPrimitiveGenerator: [
+      {
+        Id: LPAD2104,
+        Title: Smart enum member without a class of its own,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input0.cs: (10,39)-(10,44),
+        MessageFormat: {0}.{1} must be made with new {1}_(value, ...), its own class, which the generator writes,
+        Message: TargetTyped.First must be made with new First_(value, ...), its own class, which the generator writes,
+        Category: LaunchPad.Primitives
+      },
+      {
+        Id: LPAD2104,
+        Title: Smart enum member without a class of its own,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input0.cs: (16,34)-(16,39),
+        MessageFormat: {0}.{1} must be made with new {1}_(value, ...), its own class, which the generator writes,
+        Message: Itself.First must be made with new First_(value, ...), its own class, which the generator writes,
+        Category: LaunchPad.Primitives
+      },
+      {
+        Id: LPAD2104,
+        Title: Smart enum member without a class of its own,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input0.cs: (22,35)-(22,40),
+        MessageFormat: {0}.{1} must be made with new {1}_(value, ...), its own class, which the generator writes,
+        Message: Outside.First must be made with new First_(value, ...), its own class, which the generator writes,
+        Category: LaunchPad.Primitives
+      },
+      {
+        Id: LPAD2104,
+        Title: Smart enum member without a class of its own,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input0.cs: (29,34)-(29,39),
+        MessageFormat: {0}.{1} must be made with new {1}_(value, ...), its own class, which the generator writes,
+        Message: Shared.Right must be made with new Right_(value, ...), its own class, which the generator writes,
+        Category: LaunchPad.Primitives
+      },
+      {
+        Id: LPAD2104,
+        Title: Smart enum member without a class of its own,
+        Severity: Error,
+        WarningLevel: 0,
+        Location: Input0.cs: (35,36)-(35,41),
+        MessageFormat: {0}.{1} must be made with new {1}_(value, ...), its own class, which the generator writes,
+        Message: Misnamed.First must be made with new First_(value, ...), its own class, which the generator writes,
+        Category: LaunchPad.Primitives
+      }
+    ]
+  }
+}

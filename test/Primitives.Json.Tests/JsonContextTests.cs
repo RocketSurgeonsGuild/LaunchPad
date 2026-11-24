@@ -51,6 +51,8 @@ public class JsonContextTests
         await ( Options.GetTypeInfo<CustomerId>().Converter is CustomerId.CustomerIdJsonConverter ).Should().BeTrue();
         await ( Options.GetTypeInfo<LastName>().Converter is LastName.LastNameJsonConverter ).Should().BeTrue();
         await ( Options.GetTypeInfo<OrderStatus>().Converter is OrderStatus.OrderStatusJsonConverter ).Should().BeTrue();
+        await ( Options.GetTypeInfo<DeliveryStatus>().Converter is DeliveryStatus.DeliveryStatusJsonConverter ).Should().BeTrue();
+        await ( Options.GetTypeInfo<Size>().Converter is Size.SizeJsonConverter ).Should().BeTrue();
         await ( Options.GetTypeInfo<Address>().Converter is Address.AddressJsonConverter ).Should().BeTrue();
         await ( Options.GetTypeInfo<Cash>().Converter is Cash.CashJsonConverter ).Should().BeTrue();
         await ( Options.GetTypeInfo<RecordedAt>().Converter is RecordedAt.RecordedAtJsonConverter ).Should().BeTrue();
@@ -124,6 +126,14 @@ public class JsonContextTests
         await RoundTrips(Role.ReadOnlyAuditor, "\"readOnlyAuditor\"");
         await JsonSerializer.Deserialize<OrderStatus>("3", Options).Should().BeEqualTo(OrderStatus.Completed);
         await FailsToRead<Role>("\"root\"");
+        // a smart enum that is a readonly partial record struct, with data or without
+        await RoundTrips(DeliveryStatus.Processing, "\"processing\"");
+        await RoundTrips(Size.ExtraLarge, "\"extraLarge\"");
+        await JsonSerializer.Deserialize<DeliveryStatus>("3", Options).Should().BeEqualTo(DeliveryStatus.Completed);
+        await JsonSerializer.Deserialize<Size>("\"xl\"", Options).Label.Should().BeEqualTo("Extra large");
+        await RoundTrips<Size?>(null, "null");
+        await JsonSerializer.Serialize(default(DeliveryStatus), Options).Should().BeEqualTo("null");
+        await FailsToRead<Size>("\"xxl\"");
     }
 
     [Test]
@@ -167,6 +177,8 @@ public class JsonContextTests
             Customer = CustomerId.Create(Guid.Parse("01936f3c-0000-7000-8000-000000000001")),
             Status = OrderStatus.Completed,
             Role = null,
+            Delivery = DeliveryStatus.Processing,
+            Size = Size.Medium,
             Total = Cash.Create(10m, "CAD"),
             Score = Score.Create(5),
             Stay = null,
@@ -175,12 +187,14 @@ public class JsonContextTests
             RecordedAt = RecordedAt.Create(Instant.FromUtc(2026, 11, 23, 10, 30)),
         };
         const string json =
-            """{"customer":"01936f3c-0000-7000-8000-000000000001","status":"completed","role":null,"total":{"amount":10,"currency":"CAD"},"score":5,"stay":null,"skus":["A-1","B-2"],"lines":{"1":2},"recordedAt":"2026-11-23T10:30:00Z"}""";
+            """{"customer":"01936f3c-0000-7000-8000-000000000001","status":"completed","role":null,"delivery":"processing","size":"medium","total":{"amount":10,"currency":"CAD"},"score":5,"stay":null,"skus":["A-1","B-2"],"lines":{"1":2},"recordedAt":"2026-11-23T10:30:00Z"}""";
 
         await JsonSerializer.Serialize(order, Options).Should().BeEqualTo(json);
         var read = JsonSerializer.Deserialize<Order>(json, Options)!;
         await read.Customer.Should().BeEqualTo(order.Customer);
         await read.Total.Should().BeEqualTo(order.Total);
+        await read.Delivery.Should().BeEqualTo(DeliveryStatus.Processing);
+        await read.Size!.Value.Weight.Should().BeEqualTo(1m);
         await read.Skus.SequenceEqual(order.Skus).Should().BeTrue();
         await read.Lines[OrderNumber.Create(1)].Should().BeEqualTo(ItemCount.Create(2));
         await JsonSerializer.Serialize(read, Options).Should().BeEqualTo(json);
@@ -192,8 +206,10 @@ public class JsonContextTests
 public sealed record Order
 {
     public CustomerId Customer { get; init; }
-    public OrderStatus Status { get; init; }
+    public OrderStatus Status { get; init; } = OrderStatus.Pending;
     public Role? Role { get; init; }
+    public DeliveryStatus Delivery { get; init; }
+    public Size? Size { get; init; }
     public Cash Total { get; init; }
     public Score? Score { get; init; }
     public Stay? Stay { get; init; }
@@ -233,6 +249,9 @@ public sealed record NotInTheContext
 [JsonSerializable(typeof(Sku))]
 [JsonSerializable(typeof(OrderStatus))]
 [JsonSerializable(typeof(Role))]
+[JsonSerializable(typeof(DeliveryStatus))]
+[JsonSerializable(typeof(Size))]
+[JsonSerializable(typeof(Size?))]
 [JsonSerializable(typeof(Address))]
 [JsonSerializable(typeof(Contact))]
 [JsonSerializable(typeof(GeoPoint))]

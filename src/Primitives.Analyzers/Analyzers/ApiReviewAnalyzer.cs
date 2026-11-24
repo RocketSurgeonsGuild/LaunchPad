@@ -79,8 +79,9 @@ public sealed class ApiReviewAnalyzer : DiagnosticAnalyzer
     }
 
     /// <summary>
-    ///     How many public members a domain primitive of its kind should need: a value object and a smart enum get one more for each property,
-    ///     field or value they declare.
+    ///     How many public members a domain primitive of its kind should need: a value object gets one more for each property or field it
+    ///     declares, a smart enum, in either form, for each of its members (a static field or property) and each property or field of the data
+    ///     and behaviour its members share.
     /// </summary>
     internal static int Budget(PrimitiveDeclaration primitive, IReadOnlyCollection<ISymbol> members) =>
         primitive.Family switch
@@ -89,7 +90,7 @@ public sealed class ApiReviewAnalyzer : DiagnosticAnalyzer
             PrimitiveFamily.StrongId => 15,
             PrimitiveFamily.Date => 23,
             PrimitiveFamily.ValueObject => 20 + members.Count(m => m.Kind is SymbolKind.Property or SymbolKind.Field),
-            PrimitiveFamily.SmartEnum => 12 + members.Count(m => m.IsStatic && m.Kind is SymbolKind.Property or SymbolKind.Field),
+            PrimitiveFamily.SmartEnum => 12 + members.Count(m => m.Kind is SymbolKind.Property or SymbolKind.Field),
             PrimitiveFamily.String or PrimitiveFamily.Unknown or _ => 25,
         };
 

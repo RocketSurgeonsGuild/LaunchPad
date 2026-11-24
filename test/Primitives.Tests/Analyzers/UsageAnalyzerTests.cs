@@ -50,6 +50,44 @@ public class UninitializedStructTests
         await VerifyAnalysis(result);
     }
 
+    // A struct smart enum's default is no member; a closed smart enum is a class, whose missing value is null.
+    [Test]
+    public async Task Should_Report_An_Uninitialized_Struct_Smart_Enum()
+    {
+        var result = await Analyze<UsageAnalyzer>(
+            """
+            using Rocket.Surgery.LaunchPad.Primitives;
+
+            namespace Sample;
+
+            [SmartEnum<int>]
+            public readonly partial record struct Level
+            {
+                public static readonly Level Low = new(1);
+            }
+
+            [SmartEnum<int>]
+            public closed partial class Size
+            {
+                public static readonly Size Small = new Small_(1);
+            }
+
+            public static class Uses
+            {
+                public static void Run()
+                {
+                    var a = default(Level);
+                    Level b = new();
+                    Level c = Level.Low;
+                    Size? d = default;
+                }
+            }
+            """
+        );
+
+        await VerifyAnalysis(result);
+    }
+
     [Test]
     public async Task Should_Ignore_Constructors_With_Arguments_Classes_And_Other_Types()
     {
@@ -148,9 +186,9 @@ public class StringUsageTests
                                       public sealed partial record Sku;
 
                                       [SmartEnum<string>]
-                                      public sealed partial record Color
+                                      public closed partial class Color
                                       {
-                                          public static readonly Color Red = new("red");
+                                          public static readonly Color Red = new Red_("red");
                                       }
 
 
@@ -289,7 +327,7 @@ public class StringUsageTests
             public sealed partial record Number;
 
             [SmartEnum<int>]
-            public sealed partial record Level;
+            public closed partial class Level;
 
             [ValueObject]
             public sealed partial record Address
@@ -343,23 +381,43 @@ public class StringUsageTests
             {
                 public required string Street { get; init; }
             }
+
+            [SmartEnum<string>]
+            public closed partial class Role
+            {
+                public static readonly Role Admin = new Admin_("admin");
+            }
+
+            [SmartEnum<string>]
+            public readonly partial record struct Tier
+            {
+                public static readonly Tier Gold = new("gold", 3);
+
+                public int Rank { get; }
+            }
             """
         );
 
+        // The class of a smart enum's member is a domain primitive of a string through the smart enum it derives from; a struct smart enum is
+        // one itself.
         var result = await Analyze<UsageAnalyzer>(
             """
             namespace Sample;
 
             public static class Uses
             {
-                public static void Run(Contracts.Sku sku, Contracts.Number number, Contracts.Address address)
+                public static void Run(Contracts.Sku sku, Contracts.Number number, Contracts.Address address, Contracts.Role role, Contracts.Role.Admin_ admin, Contracts.Tier tier)
                 {
                     _ = sku == "A1";
                     _ = number == "1";
                     _ = address == "Main Street";
+                    _ = role == "admin";
+                    _ = tier == "gold";
                     string a = sku;
                     string b = number;
                     string c = address;
+                    string d = admin;
+                    string e = tier;
                 }
             }
             """,

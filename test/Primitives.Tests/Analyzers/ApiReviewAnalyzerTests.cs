@@ -179,14 +179,17 @@ public class ApiReviewAnalyzerTests
         await VerifySnapshot(new { Within = await Describe(within), Over = await Describe(over) });
     }
 
-    // A value object gets one more for each property or field, a smart enum for each static value.
+    // A value object gets one more for each property or field, a smart enum, closed class or record struct, for each member and each property
+    // or field its members share.
     [Test]
     public async Task Should_Count_The_Members_That_Make_A_Value_Object_Or_A_Smart_Enum()
     {
         var valueObject = Members("ValueObject", 20, "/// <summary>A.</summary>\n    public string? A { get; init; }\n    /// <summary>B.</summary>\n    public string? B;");
         var bigValueObject = Members("ValueObject", 21, "/// <summary>A.</summary>\n    public string? A { get; init; }\n    /// <summary>B.</summary>\n    public string? B;");
-        var smartEnum = Members("SmartEnum<int>", 12, "/// <summary>A.</summary>\n    public static readonly Target A = default;\n    /// <summary>B.</summary>\n    public static Target B => default;");
-        var bigSmartEnum = Members("SmartEnum<int>", 13, "/// <summary>A.</summary>\n    public static readonly Target A = default;\n    /// <summary>B.</summary>\n    public static Target B => default;");
+        var smartEnum = Members("SmartEnum<int>", 12, SmartEnumMembers, SmartEnumDeclaration);
+        var bigSmartEnum = Members("SmartEnum<int>", 13, SmartEnumMembers, SmartEnumDeclaration);
+        var structSmartEnum = Members("SmartEnum<int>", 12, StructSmartEnumMembers);
+        var bigStructSmartEnum = Members("SmartEnum<int>", 13, StructSmartEnumMembers);
 
         await VerifySnapshot(
             new
@@ -195,18 +198,28 @@ public class ApiReviewAnalyzerTests
                 ValueObjectOverBudget = await Describe(await Analyze<ApiReviewAnalyzer>(bigValueObject)),
                 SmartEnumWithinBudget = await Describe(await Analyze<ApiReviewAnalyzer>(smartEnum)),
                 SmartEnumOverBudget = await Describe(await Analyze<ApiReviewAnalyzer>(bigSmartEnum)),
+                StructSmartEnumWithinBudget = await Describe(await Analyze<ApiReviewAnalyzer>(structSmartEnum)),
+                StructSmartEnumOverBudget = await Describe(await Analyze<ApiReviewAnalyzer>(bigStructSmartEnum)),
             }
         );
     }
 
-    private static string Members(string attribute, int count, string extra = "") =>
+    private const string SmartEnumDeclaration = "public closed partial class Target";
+
+    // Two members, a piece of data and a behaviour: a budget of 12 + 4.
+    private const string SmartEnumMembers = "/// <summary>A.</summary>\n    public static readonly Target A = new A_(1, \"a\");\n    /// <summary>B.</summary>\n    public static Target B { get; } = new B_(2, \"b\");\n    /// <summary>The label.</summary>\n    public string Label { get; }\n    /// <summary>Whether it is final.</summary>\n    public virtual bool IsFinal => false;";
+
+    // The same in a record struct, whose members are values of it: a budget of 12 + 4.
+    private const string StructSmartEnumMembers = "/// <summary>A.</summary>\n    public static readonly Target A = new(1, \"a\");\n    /// <summary>B.</summary>\n    public static readonly Target B = new(2, \"b\");\n    /// <summary>The label.</summary>\n    public string Label { get; }\n    /// <summary>Whether it is final.</summary>\n    public bool IsFinal => false;";
+
+    private static string Members(string attribute, int count, string extra = "", string declaration = "public readonly partial record struct Target") =>
         $$"""
           using Rocket.Surgery.LaunchPad.Primitives;
 
           namespace Sample;
 
           [{{attribute}}]
-          public readonly partial record struct Target
+          {{declaration}}
           {
               {{extra}}
           {{string.Join("\n", Enumerable.Range(1, count).Select(i => $"    /// <summary>M{i}.</summary>\n    public void M{i}() {{ }}"))}}

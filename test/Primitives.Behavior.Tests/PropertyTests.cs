@@ -81,6 +81,7 @@ public class PropertyTests
         CreateAgreesWithTryCreate<MovieRating, decimal>(Gen.Decimal[-1m, 6m]);
         CreateAgreesWithTryCreate<CustomerId, Guid>(Gen.Frequency((1, Gen.Const(Guid.Empty)), (9, Gen.Guid)));
         CreateAgreesWithTryCreate<OrderStatus, int>(Gen.Int[-1, 5]);
+        CreateAgreesWithTryCreate<DeliveryStatus, int>(Gen.Int[-1, 5]);
         CreateAgreesWithTryCreate<WorkDay, DateOnly>(Gen.DateOnly);
         CreateAgreesWithTryCreate<OfficeHour, TimeOnly>(Gen.TimeOnly);
     }
@@ -102,6 +103,8 @@ public class PropertyTests
         RoundTrips<TransactionId, long>(Gen.Long);
         RoundTrips<Sku, string>(Text);
         RoundTrips<OrderStatus, int>(Gen.Int[1, 3]);
+        RoundTrips<DeliveryStatus, int>(Gen.Int[1, 3]);
+        RoundTrips<Size, string>(Gen.Int[0, 3].Select(static z => z switch { 0 => "s", 1 => "m", 2 => "xl", _ => "xxl" }));
         RoundTrips<CenturyDay, DateOnly>(Gen.DateOnly);
         RoundTrips<OfficeHour, TimeOnly>(Gen.TimeOnly);
         RoundTrips<Moment, DateTimeOffset>(Gen.DateTimeOffset);

@@ -9,7 +9,7 @@ namespace Rocket.Surgery.LaunchPad.Primitives.Analyzers;
 /// </summary>
 internal static class AnalyzerDiagnostics
 {
-    /// <summary>How a domain primitive is declared: partial, readonly or sealed, a record, its attributes.</summary>
+    /// <summary>How a domain primitive is declared: partial, readonly or sealed, a record (a smart enum a closed class or a record struct), its attributes.</summary>
     public const string DeclarationCategory = "LaunchPad.Primitives.Declaration";
 
     /// <summary>How code uses a domain primitive.</summary>
@@ -40,12 +40,12 @@ internal static class AnalyzerDiagnostics
 
     public static readonly DiagnosticDescriptor MustBeRecord = new(
         "LPAD2003",
-        "Domain primitive must be a record",
-        "Domain primitive '{0}' must be declared as a 'readonly partial record struct' or a 'sealed partial record'",
+        "Domain primitive must be a record, or a smart enum a closed class or a record struct",
+        "Domain primitive '{0}' must be declared as {1}",
         DeclarationCategory,
         DiagnosticSeverity.Error,
         true,
-        "A domain primitive gets its value equality from being a record: a record struct or a record class."
+        "A domain primitive gets its value equality from being a record: a record struct or a record class. A smart enum is a 'closed partial class', each of whose members is a class the generator writes, which derives from it, or a 'readonly partial record struct', whose members are values of it; in either form its members can carry data. It is never a record class."
     );
 
     public static readonly DiagnosticDescriptor InvalidRegex = new(
@@ -135,7 +135,7 @@ internal static class AnalyzerDiagnostics
         DeclarationCategory,
         DiagnosticSeverity.Warning,
         true,
-        "The generated constructor is private so that every instance goes through Create or TryCreate. A public constructor lets invalid values in."
+        "The generated constructor is private so that every instance goes through Create or TryCreate. A public constructor lets invalid values in, and one in the class of a smart enum's member makes members that aren't among its own."
     );
 
     public static readonly DiagnosticDescriptor PossibleDuplicate = new(
@@ -202,12 +202,12 @@ internal static class AnalyzerDiagnostics
 
     public static readonly DiagnosticDescriptor ClassMustBeSealed = new(
         "LPAD2019",
-        "Class domain primitive must be sealed",
-        "Domain primitive '{0}' is a record class and must be declared 'sealed'",
+        "Class domain primitive must be sealed, or a smart enum class closed",
+        "Domain primitive '{0}' is a {1} and must be declared '{2}'",
         DeclarationCategory,
         DiagnosticSeverity.Error,
         true,
-        "A derived type could break the rules of a domain primitive: a record class one is declared 'sealed partial record'."
+        "A derived type could break the rules of a domain primitive: a record class one is declared 'sealed partial record'. A smart enum that is a class is declared 'closed partial class': the classes of its members, which the generator writes, are then the only ones that derive from it, so a switch over them is exhaustive."
     );
 
     public static readonly DiagnosticDescriptor DateDirectionMisuse = new(

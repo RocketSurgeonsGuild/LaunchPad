@@ -24,6 +24,9 @@ internal static class PrimitiveEmitter
 
         switch (model.Shape)
         {
+            case PrimitiveShape.SmartEnum when model.IsStruct:
+                StructSmartEnumEmitter.Emit(writer, model);
+                break;
             case PrimitiveShape.SmartEnum:
                 SmartEnumEmitter.Emit(writer, model);
                 break;

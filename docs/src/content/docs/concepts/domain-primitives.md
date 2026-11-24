@@ -39,7 +39,8 @@ The reasons for this design are in
 ## Declaring a domain primitive
 
 A domain primitive is a `readonly partial record struct` or a `sealed partial record` (a record class) with exactly one primitive
-attribute, and any number of rules:
+attribute, and any number of rules. A smart enum is the exception: it is a C# 15 `closed partial class` or a
+`readonly partial record struct`, never a record class (see [smart enums](#smart-enums)).
 
 ```csharp
 using Rocket.Surgery.LaunchPad.Primitives;
@@ -54,28 +55,33 @@ public sealed partial record CustomerEmail;
 public readonly partial record struct OrderId;
 ```
 
-The two forms behave the same, except for the missing value:
+The two record forms behave the same, except for the missing value:
 
 - A **struct** has a `default` that was never validated. `IsDefault` is `true` for it, and reading its `Value` throws. Prefer a
   struct: it doesn't allocate.
 - A **class** has no default instance and no `IsDefault` of its own (through `IDomainPrimitive<TSelf>` it is `false`). A missing value
   is `null`, which nullable annotations track, and JSON `null` reads as a `null` reference.
 
-The analyzers report a declaration that isn't `partial`, a struct that isn't `readonly`, a class that isn't `sealed` and a type that
-isn't a record, and their code fixes add what is missing. The generator reports a type with more than one primitive attribute
-(LPAD2102), and completes nothing for it.
+The analyzers report a declaration that isn't `partial`, a struct that isn't `readonly`, a record class that isn't `sealed`, a type
+that isn't a record, and a smart enum that is a record class or a class that isn't `closed`, and their code fixes add what is missing.
+A fix that changes the form of a smart enum also changes how its members are made, in every part of it: making it a closed class makes
+`new(1)` or `new Level(1)` into `new Low_(1)`, and making it a record struct makes `new Low_(1)` into `new(1)`. It finds the members and
+reads each `new` as the generator does, however a name is spelled: `Sample.Level`, `global::Sample.Level`, an alias, or
+`new Level.Low_(1)`. The generator reports a type with more than one primitive attribute (LPAD2102), and completes nothing for it. It also leaves alone a
+declaration of the wrong form: a smart enum that is a record class, or a class that isn't `closed` and `partial`, and any other domain
+primitive declared as a class that isn't a record.
 
 ### The kinds of domain primitives
 
-| Attribute               | Value                                                                                  | What it is                                                                               |
-| ----------------------- | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `[StringPrimitive]`     | `string`                                                                               | A string checked by its rules.                                                           |
-| `[NumericPrimitive<T>]` | any `INumber<T>`                                                                       | A number checked by its rules, with the arithmetic `Operations` allows.                  |
-| `[DatePrimitive]`       | `DateOnly` (by default), `TimeOnly` or `DateTimeOffset`, or a NodaTime type, by `Kind` | A date or a time, optionally only in the past (`PastOnly`) or the future (`FutureOnly`). |
-| `[StrongId<T>]`         | `Guid`, `int`, `long` or `string`                                                      | A strong ID.                                                                             |
-| `[SmartEnum<T>]`        | the value of each member                                                               | A smart enum, whose members are its `public static readonly` fields of its own type.     |
-| `[ValueObject]`         | its `init` properties                                                                  | A value object.                                                                          |
-| a primitive kind        | set by the kind                                                                        | See [primitive kinds](#primitive-kinds).                                                 |
+| Attribute               | Value                                                                                  | What it is                                                                                                                  |
+| ----------------------- | -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `[StringPrimitive]`     | `string`                                                                               | A string checked by its rules.                                                                                              |
+| `[NumericPrimitive<T>]` | any `INumber<T>`                                                                       | A number checked by its rules, with the arithmetic `Operations` allows.                                                     |
+| `[DatePrimitive]`       | `DateOnly` (by default), `TimeOnly` or `DateTimeOffset`, or a NodaTime type, by `Kind` | A date or a time, optionally only in the past (`PastOnly`) or the future (`FutureOnly`).                                    |
+| `[StrongId<T>]`         | `Guid`, `int`, `long` or `string`                                                      | A strong ID.                                                                                                                |
+| `[SmartEnum<T>]`        | the value of each member                                                               | A smart enum: a `closed partial class` whose members each have a class of their own, or a `readonly partial record struct`. |
+| `[ValueObject]`         | its `init` properties                                                                  | A value object.                                                                                                             |
+| a primitive kind        | set by the kind                                                                        | See [primitive kinds](#primitive-kinds).                                                                                    |
 
 Every primitive attribute has `ErrorCode` and `ErrorMessage`, which replace the code and message of the errors its kind's own checks
 report (the format of `[Email]`, the range of `[Percentage]`, the order of a `[DateRange]`). They don't replace the length checks a kind
@@ -328,36 +334,166 @@ public readonly partial record struct LegacyCustomerId;
 
 ### Smart enums
 
-A smart enum's members are its `public static readonly` fields of its own type, each made with its value through the private
-constructor the generator writes, `new(value)`. A member's name is the name of its field. The smart enum gets:
+A smart enum is declared in one of two forms, and the generator completes either. In both, each member has a name and a value, and can
+carry data of its own (a label, a fee):
 
-- `Value`, `Name`, and for a struct `IsDefault` (the `default` is none of the members).
+- A C# 15 **`closed partial class`**, whose members each have a class of their own. Choose it when code handles each member: a switch
+  expression over the member classes must handle every one of them, so the compiler finds each place a new member has to be handled.
+  Its members can also behave differently from each other.
+- A **`readonly partial record struct`**, whose members are values of it. Choose it for a lightweight value type that doesn't allocate.
+  Code handles each member with the generated `Match`, `Map` and `Switch`, and `IsDefault` tells its `default`, which is none of the
+  members, from them. A switch over its members isn't checked for every member, and its members can't behave differently: nothing
+  derives from a struct.
+
+A smart enum can't be a record class (LPAD2003), and the generator leaves one alone.
+
+#### A closed class
+
+`closed` makes the class abstract and lets only its own assembly derive from it, so the compiler knows every class that does. Each member
+is an instance of a class of its own, named after the member with an underscore and nested in the smart enum, which the generator writes:
+
+```csharp
+[SmartEnum<int>]
+public closed partial class OrderStatus
+{
+    public static readonly OrderStatus Pending = new Pending_(1, "Waiting", 0m);
+    public static readonly OrderStatus Shipped = new Shipped_(2, "On its way", 5m);
+    public static readonly OrderStatus Delivered = new Delivered_(3, "Delivered", 0m);
+
+    public string Label { get; }
+    public decimal Fee { get; }
+
+    public virtual bool CanCancel => true;
+}
+
+public partial class OrderStatus
+{
+    public partial class Shipped_
+    {
+        public override bool CanCancel => false;
+    }
+}
+```
+
+- A **member** is a `public static readonly` field of the smart enum's type, or a public get-only static property of its type with an
+  initializer, made with `new` of a class of its own, named after the member with an underscore: `Pending = new Pending_(...)`, or
+  `new OrderStatus.Pending_(...)`. That class doesn't exist until the generator writes it, nested in the smart enum:
+  `public sealed partial class Pending_ : OrderStatus`, with an `internal` constructor. Its arguments are the member's value first, then
+  the member's data, in the order the smart enum declares them; named arguments (`value:`, `label:`) work too. The member's name is the
+  name of its field or property. A static property of the smart enum's type without an initializer (`Default => Pending`) isn't a member.
+- The **data** every member carries are the smart enum's get-only auto-properties (`{ get; }`) and `readonly` instance fields, declared
+  without an initializer. The generator's private constructor assigns them. A property with a body, an initializer, `init` or `set` is not
+  data, nor is a field with an initializer, nor an `abstract` or `virtual` property. Every member's class takes the data in its `internal`
+  constructor, so a datum's type must be at least `internal`: not a `private` type nested in the smart enum, say. A `private` (or
+  `protected`) type of a class the smart enum is nested in works only when the smart enum, or a class between them, is `private`; a
+  `protected` smart enum is seen by the classes that derive from its container, which can't see that type.
+- A member **changes behaviour** in its own part of its class. Declare the behaviour on the smart enum as `virtual` (or `abstract`, which
+  every member's class must then override), and override it in a `partial` part of the member's class, nested in a `partial` part of the
+  smart enum, as `Shipped_` does above. `closed` can be on any one of the smart enum's declarations.
+
+Code that handles each member switches over the member classes. The compiler knows them all, so a switch expression that leaves one out
+is CS8509. That is a warning: make it an error (`<WarningsAsErrors>CS8509</WarningsAsErrors>`, or `TreatWarningsAsErrors`) so that adding
+a member breaks every switch expression that doesn't handle it. A `switch` statement isn't checked.
+
+```csharp
+var label = status switch
+{
+    OrderStatus.Pending_ => "Waiting",
+    OrderStatus.Shipped_ => "On its way",
+    OrderStatus.Delivered_ => "Delivered",
+};
+```
+
+Besides what [every smart enum gets](#what-every-smart-enum-gets), a closed smart enum gets the class of each member, and the private
+constructor its `internal` one calls with the value, the member's name and the data. Each lookup returns the member itself, the instance
+its field holds. It has no `IsDefault`: a class has no `default` instance, and a missing member is `null`. It has no `Match`, `Map` or
+`Switch` either: the switch expression over the member classes does their work.
+
+The generator leaves alone a class smart enum that isn't `closed` and `partial` (LPAD2001 and LPAD2019 report it), and reports the
+declarations it can't complete:
+
+- LPAD2103: a static field or property of the smart enum's type, with an initializer, that isn't a member: one that isn't `public`, a
+  field that isn't `readonly`, or a property with a `set`. Also a member or a datum named like something the generator writes into the
+  smart enum (`Value`, `Name`, `All`, `Description`, `Errors`, `PrimitiveName`, `Create`, `Parse` and the rest), and a datum whose type is
+  less accessible than `internal`.
+- LPAD2104: a member that isn't made with `new` of its own class, the member's name with an underscore: `new(1)`, a method call,
+  another member (`Alias = Pending`: an alias is a computed property, `Default => Pending`), `new Shipped_(...)` for the member `Pending`,
+  or a class of that name declared outside the smart enum. The class can be one the
+  application declares a part of, nested in the smart enum, as `Shipped_` above.
+- LPAD2105: two members made with the same value, when the value of each is a constant. The value is the argument named `value`, or else
+  the first argument without a name, compared as a value of the smart enum's value type: `1` and `1L` are the same value of a
+  `[SmartEnum<long>]`.
+
+#### A record struct
+
+A record struct smart enum's members are its `public static readonly` fields of its own type, or its public get-only static properties of
+its own type with an initializer, each made with `new(...)` (or `new Size(...)`) through the private constructor the generator writes:
+the member's value first, then the member's data, in the order the smart enum declares them. A member's name is the name of its field or
+property. The data are read as for a closed class: the smart enum's get-only auto-properties and `readonly` instance fields, declared
+without an initializer. A smart enum without data makes each member with its value alone, `new(1)`.
+
+A member is made with `new`, never with another member: `public static readonly Size Alias = Small;` or
+`public static Size Default { get; } = Small;` would be a member of its own, with `Small`'s value, and break `Name`, `All` and
+`FromValue`, so the generator reports it (LPAD2103). An alias of a member is a computed property, `public static Size Default => Small;`,
+which isn't a member.
+
+```csharp
+[SmartEnum<int>]
+public readonly partial record struct PaymentMethod
+{
+    public static readonly PaymentMethod Card = new(1);
+    public static readonly PaymentMethod Invoice = new(2);
+}
+
+[SmartEnum<int>]
+public readonly partial record struct Size
+{
+    public static readonly Size Small = new(1, "S", 0.5m);
+    public static readonly Size Large = new(2, "L", 2m);
+
+    public string Label { get; }
+    public decimal Weight { get; }
+}
+
+var label = method.Match(whenCard: () => "Paid by card", whenInvoice: () => "Paid on invoice");
+method.Switch(whenCard: () => Charge(order), whenInvoice: () => Bill(order));
+var weight = Size.Create(2).Weight; // 2m: Create returns the member, with its data
+```
+
+Besides what [every smart enum gets](#what-every-smart-enum-gets), it gets:
+
+- `IsDefault`, which is `true` for its `default`, the one value that is none of the members. Reading the `Value` of the `default`
+  throws, its `Name` is empty and its data are their own defaults.
+- `Match`, which takes one function per member and returns what the one for this member returns; `Map`, the same with functions that
+  are given the member; and `Switch`, which takes one action per member and runs the one for this member. Each has a parameter per
+  member, named `when` and the member's name, so adding a member breaks every call that doesn't handle it.
+
+It has no member classes, so a member can't change the smart enum's behaviour: put what differs from member to member in its data.
+The generator reports, as for a closed class, LPAD2105 for two members made with the same constant value (the argument named `value`, or
+else the first argument without a name), and LPAD2103 for a static field or property of its type, with an initializer, that isn't a
+member, for a member that isn't made with `new` (an alias of another member), and for a member or a datum named like something the
+generator writes (`IsDefault`, `Match`, `Map` and `Switch` too). Its constructor is private, so its data can be of a `private` type.
+
+The data of a record struct smart enum are fields of the application's declaration, and its value is a field of the part the generator
+writes. C# defines no order between the fields of a partial struct's parts, and reports that as warning CS0282; nothing depends on the
+layout of a smart enum, so Primitives' analyzers suppress it (LPADSPR2001) for a struct smart enum.
+
+#### What every smart enum gets
+
+- `Value`, and `Name`, the name of the member's field or property.
+- `PrimitiveName`, and a `Description` that says it is a smart enum and lists its members' names in camel case for the integrations.
 - `All`, every member in declaration order.
 - `FromValue` and `TryFromValue`, which find a member by its value, and `Create` and `TryCreate`, which do the same and report
   `UNKNOWN_MEMBER` (`Errors.UnknownMember`) when no member has the value. `FromName` and `TryFromName` find a member by its name,
   optionally ignoring case; `FromName` throws `UNKNOWN_MEMBER` too.
-- `Match`, which takes one function per member and returns what the one for this member returns; `Map`, the same with functions that
-  are given the member; and `Switch`, which takes one action per member and runs the one for this member. Each has a parameter per
-  member, so adding a member breaks every call that doesn't handle it.
-- `Parse` and `TryParse` (`IParsable<TSelf>`), which take a name in any case or a value, and `ToString` (`IFormattable`), which is the
+- `Parse` and `TryParse` (`IParsable<TSelf>`), which take a name in any case or a value, and `ToString` (`IFormattable` too), which is the
   name.
+- Equality by value (`IEquatable<TSelf>`, `==` and `!=`).
 - An explicit conversion to its value, but none from it: `FromValue` says what happens when no member has it.
-- A `TypeConverter` and a System.Text.Json converter.
+- A `TypeConverter`, from and to a name or a value, and a System.Text.Json converter (see [JSON](#json)).
 
 A smart enum implements only `IParsable<TSelf>` and `IFormattable` of the parsing and formatting interfaces; the span and UTF-8 ones
 (`ISpanParsable<TSelf>`, `ISpanFormattable` and the rest) are for the domain primitives of one value.
-
-```csharp
-[SmartEnum<int>]
-public readonly partial record struct OrderStatus
-{
-    public static readonly OrderStatus Pending = new(1);
-    public static readonly OrderStatus Shipped = new(2);
-}
-
-var label = status.Match(whenPending: () => "Waiting", whenShipped: () => "On its way");
-status.Switch(whenPending: () => Remind(order), whenShipped: () => Track(order));
-```
 
 ### Value objects
 
@@ -394,15 +530,22 @@ The generator writes a System.Text.Json converter for each domain primitive, whi
 ([ADR 0007](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/main/docs/adr/0007-no-json-reflection.md)). Reading checks the rules,
 so a rejected value fails to deserialize.
 
-| Domain primitive                                         | JSON                                                                                                                                        |
-| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| one value                                                | the value: `"someone@example.com"`, `42`, `"2026-11-23"`                                                                                    |
-| smart enum                                               | its member's name in camel case (`"shipped"`); read by name in any case, or by value                                                        |
-| value object                                             | an object of its values, named by the options' `PropertyNamingPolicy`, in camel case when there is none: `{"amount":12.5,"currency":"USD"}` |
-| a missing value: a `null` class, or a struct's `default` | `null`, both ways                                                                                                                           |
+| Domain primitive                                                                   | JSON                                                                                                                                        |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| one value                                                                          | the value: `"someone@example.com"`, `42`, `"2026-11-23"`                                                                                    |
+| smart enum                                                                         | its member's name in camel case (`"shipped"`); read by name in any case, or by value, into the member itself                                |
+| value object                                                                       | an object of its values, named by the options' `PropertyNamingPolicy`, in camel case when there is none: `{"amount":12.5,"currency":"USD"}` |
+| a missing value: a `null` class or a struct's `default`, a smart enum's among them | `null`, both ways                                                                                                                           |
+
+A domain primitive a value object holds is written and read there as it is on its own: a smart enum as its member's name, which is what
+the value object's OpenAPI schema lists (`{"status":"shipped","size":"extraLarge"}`), read by name in any case or by value.
 
 A domain primitive of one value and a smart enum can also be the key of a dictionary: the key is the value's text (`ToString`) or the
 member's name in camel case, parsed back through the rules.
+
+System.Text.Json takes the converter of the type it is given, not of its base type, so each member's class of a closed smart enum
+(`OrderStatus.Shipped_`) carries the smart enum's converter too: a member is written as its name when it is given as `object` or as its own class. The value
+converters of EF Core and the type converters of HotChocolate find a member by its class the same way.
 
 A domain primitive of a NodaTime type reads and writes its value through the JSON options it is given, so it uses the NodaTime
 converters of `Rocket.Surgery.LaunchPad.NodaTime` (applied by its `NodaTimeSystemTextJsonJoint`, or `ConfigureNodaTimeForLaunchPad`).
@@ -478,7 +621,10 @@ protected override void ConfigureConventions(ModelConfigurationBuilder configura
 
 For Dapper, when the application references it, the registry generator writes a type handler for each domain primitive of one value it
 can see and a module initializer that registers them, so there is nothing to call. Two assemblies that register a handler for the same
-type register the same handler.
+type register the same handler. Dapper looks a handler up by a value's runtime type when a parameter's type isn't known, as with
+`DynamicParameters.Add`, and a member of a closed smart enum is an instance of its own class, so the smart enum's handler is registered
+for each member's class (`OrderStatus.Shipped_`) too. Dapper doesn't run a type handler on the items of a list parameter
+(`where Status in @statuses`), for any type, so pass their values there (`statuses.Select(z => z.Value)`).
 
 ## Metrics and traces
 
@@ -502,18 +648,19 @@ sets up includes domain primitives with no code.
 ## Analyzers
 
 LPAD2001 to LPAD2024 are analyzers. LPAD2024 is LaunchPad's own analyzer, which every LaunchPad application runs, as Primitives' analyzers
-don't run in an application that only gets Primitives through a library. LPAD2101 to LPAD2103 are reported by the generator itself: they
-are declarations it has to refuse to complete as written, so it is the generator that finds them.
+don't run in an application that only gets Primitives through a library. LPAD2101 to LPAD2105 are reported by the generator itself: they
+are declarations it has to refuse to complete as written, so it is the generator that finds them. LPADSPR2001 isn't a diagnostic: it suppresses CS0282 on a
+record struct smart enum that carries data (see [a record struct](#a-record-struct)).
 
 | ID       | Severity | Reports                                                                                                                                                                                                                                                                                 |
 | -------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | LPAD2001 | Error    | A domain primitive that isn't `partial`, or a type that contains one and isn't `partial` (code fix).                                                                                                                                                                                    |
-| LPAD2002 | Error    | A struct domain primitive that isn't `readonly` (code fix).                                                                                                                                                                                                                             |
-| LPAD2003 | Error    | A domain primitive that isn't a record (code fix).                                                                                                                                                                                                                                      |
+| LPAD2002 | Error    | A record struct domain primitive, a record struct smart enum among them, that isn't `readonly` (code fix).                                                                                                                                                                              |
+| LPAD2003 | Error    | A domain primitive that isn't a record, or a smart enum that is neither a `closed partial class` nor a `readonly partial record struct`: a record class, or a struct that isn't a record (code fix).                                                                                    |
 | LPAD2004 | Error    | An invalid `[Regex]` pattern.                                                                                                                                                                                                                                                           |
 | LPAD2005 | Error    | Both `[LowerCase]` and `[UpperCase]` (code fix).                                                                                                                                                                                                                                        |
 | LPAD2006 | Error    | A minimum greater than the maximum: in the rules, in the bounds or defaults of the kind, or above `LaunchPadPrimitivesMaxLength`.                                                                                                                                                       |
-| LPAD2007 | Warning  | `default`, `new()` or `new T()` of a struct domain primitive, which bypasses its rules.                                                                                                                                                                                                 |
+| LPAD2007 | Warning  | `default`, `new()` or `new T()` of a struct domain primitive (a record struct smart enum among them), which bypasses its rules.                                                                                                                                                         |
 | LPAD2008 | Error    | A value object property with `set` instead of `init` (code fix, unless the property is set after the value object is created).                                                                                                                                                          |
 | LPAD2009 | Warning  | A `[StringPrimitive]`, `[NumericPrimitive<T>]`, `[DatePrimitive]` or string strong ID without a rule that checks its value (code fix for a `[StringPrimitive]`: add `[NotEmpty]`). A `[StringPrimitive]` isn't reported when `LaunchPadPrimitivesNotEmpty` is `true`.                   |
 | LPAD2010 | Warning  | A string compared using `==` or `!=` with a domain primitive whose value is a string (code fix).                                                                                                                                                                                        |
@@ -525,7 +672,7 @@ are declarations it has to refuse to complete as written, so it is the generator
 | LPAD2016 | Info     | A factory method not named `Create`, `TryCreate`, `Parse` or `TryParse` (code fix).                                                                                                                                                                                                     |
 | LPAD2017 | Error    | A `LaunchPadPrimitivesExceptionType` the project can't find, can't access or finds in two references, or that isn't an exception with an accessible constructor taking a message.                                                                                                       |
 | LPAD2018 | Warning  | A value object property that is a mutable collection or an array.                                                                                                                                                                                                                       |
-| LPAD2019 | Error    | A class domain primitive that isn't `sealed` (code fix).                                                                                                                                                                                                                                |
+| LPAD2019 | Error    | A record class domain primitive that isn't `sealed`, or a class smart enum that isn't `closed` (code fix).                                                                                                                                                                              |
 | LPAD2020 | Error    | `PastOnly` or `FutureOnly` on a `Duration`, `Period`, `Offset` or `AnnualDate`, or both on one domain primitive.                                                                                                                                                                        |
 | LPAD2021 | Warning  | A NodaTime domain primitive in a project that doesn't reference `Rocket.Surgery.LaunchPad.NodaTime`.                                                                                                                                                                                    |
 | LPAD2022 | Warning  | A rule that doesn't apply to the kind: a string rule on a number, a date or a `Guid` strong ID, `[PrimitiveRange]` on a string, a string strong ID or a `Guid` strong ID, a `[PrimitiveRange]` of numbers on a date or of text on a number, any rule on a smart enum or a value object. |
@@ -533,7 +680,9 @@ are declarations it has to refuse to complete as written, so it is the generator
 | LPAD2024 | Error    | An application (not a test project) that uses the domain primitives of its references with OpenAPI, HotChocolate, EF Core or Dapper but doesn't reference Primitives itself, so it gets none of the Primitives Joints.                                                                  |
 | LPAD2101 | Error    | A value type the primitive attribute doesn't support (a strong ID of a `double`, say), or a date `Kind` whose type the project doesn't reference.                                                                                                                                       |
 | LPAD2102 | Error    | More than one primitive attribute on a type.                                                                                                                                                                                                                                            |
-| LPAD2103 | Error    | An invalid attribute argument: a `GuidVersion` other than 4 or 7, `GuidVersion` on a strong ID that isn't of a `Guid`, a `Kind` the attribute doesn't take, a domain primitive nested in a generic type, or a `[Money]`, `[DateRange]` or `[TimeRange]` named like one of its values.   |
+| LPAD2103 | Error    | An invalid argument or declaration: a `GuidVersion` other than 4 or 7, or on a strong ID not of a `Guid`, a `Kind` the attribute doesn't take, a domain primitive in a generic type, a `[Money]` or range named like its values, or a [smart enum](#smart-enums) it can't complete.     |
+| LPAD2104 | Error    | A member of a class smart enum that isn't made with `new` of its own class, named after the member with an underscore (`Pending = new Pending_(...)`, or `new OrderStatus.Pending_(...)`), or whose class is declared outside the smart enum.                                           |
+| LPAD2105 | Error    | Two members of a smart enum, a closed class or a record struct, made with the same constant value (the argument named `value`, or else the first argument without a name).                                                                                                              |
 
 ## Credits
 

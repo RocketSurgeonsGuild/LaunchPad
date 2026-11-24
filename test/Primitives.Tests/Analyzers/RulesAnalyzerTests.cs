@@ -441,7 +441,7 @@ public class RulesAnalyzerTests
 
               [{{kind}}]
               {{rule}}
-              public readonly partial record struct Target;
+              {{DeclarationOf(kind)}} Target;
               """
         );
 
@@ -601,7 +601,7 @@ public class MissingValidationTests
               public sealed class Check;
 
               {{attributes}}
-              public readonly partial record struct Target;
+              {{DeclarationOf(attributes)}} Target;
               """
         );
 

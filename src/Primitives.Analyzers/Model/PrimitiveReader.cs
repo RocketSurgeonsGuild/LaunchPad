@@ -66,7 +66,7 @@ internal static class PrimitiveReader
 
     public static (PrimitiveModel? Model, EquatableArray<DiagnosticInfo> Diagnostics) Read(
         INamedTypeSymbol type,
-        RecordDeclarationSyntax declaration,
+        TypeDeclarationSyntax declaration,
         AttributeData primitive,
         Compilation compilation,
         PrimitiveSettings settings,
@@ -84,8 +84,14 @@ internal static class PrimitiveReader
             return (null, diagnostics.ToImmutable());
         }
 
-        // The shape is the analyzers' (LPAD2001-LPAD2003, LPAD2019): a type that is not a partial record is left alone.
+        // The shape is the analyzers' (LPAD2001-LPAD2003, LPAD2019): a type that is not a partial record is left alone. A smart enum is a closed
+        // partial class or a partial record struct, never a record class.
         if (!declaration.Modifiers.Any(SyntaxKind.PartialKeyword)) return (null, diagnostics.ToImmutable());
+        var isSmartEnum = primitive.AttributeClass is { Name: "SmartEnumAttribute" };
+        var shapeAccepted = declaration is ClassDeclarationSyntax
+            ? isSmartEnum && IsClosed(type, cancellationToken)
+            : !isSmartEnum || type.IsValueType;
+        if (!shapeAccepted) return (null, diagnostics.ToImmutable());
 
         // The converters are named in attributes on the type, and an attribute can't name a type nested in a generic type (CS0416).
         for (var containing = type.ContainingType; containing is not null; containing = containing.ContainingType)
@@ -229,12 +235,19 @@ internal static class PrimitiveReader
             );
             return (null, diagnostics.ToImmutable());
         }
-        var enumMembers = shape == PrimitiveShape.SmartEnum
-            ? type.GetMembers().OfType<IFieldSymbol>()
-                  .Where(f => f is { IsStatic: true, IsReadOnly: true, DeclaredAccessibility: Accessibility.Public } && SymbolEqualityComparer.Default.Equals(f.Type, type))
-                  .Select(f => f.Name)
-                  .ToEquatableArray()
-            : EquatableArray<string>.Empty;
+        var enumMembers = EquatableArray<SmartEnumMember>.Empty;
+        var enumData = EquatableArray<SmartEnumData>.Empty;
+        if (shape == PrimitiveShape.SmartEnum)
+        {
+            if (( isStruct ? ReadStructSmartEnum(type, valueType!, compilation, location, diagnostics, cancellationToken) : ReadSmartEnum(type, valueType!, compilation, location, diagnostics, cancellationToken) ) is not var (read, data))
+            {
+                return (null, diagnostics.ToImmutable());
+            }
+
+            enumMembers = read;
+            enumData = data;
+        }
+
         var currency = kind == "Money" && primitive.ConstructorArguments is [{ Value: string pinned }] ? pinned.Trim().ToUpperInvariant() : null;
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -259,6 +272,7 @@ internal static class PrimitiveReader
             validators,
             members,
             enumMembers,
+            enumData,
             currency,
             settings.ExceptionType,
             format
@@ -608,6 +622,477 @@ internal static class PrimitiveReader
         return new(past, future, maxAge, weekdays, Error(null, "TEMPORAL", kindError));
     }
 
+    // The members of a struct smart enum: its public static readonly fields (or public get-only static properties with an initializer) of its
+    // own type, each made with new(value, data...) or new Size(value, data...), and its data, read as for a closed smart enum. Null, with
+    // LPAD2103 or LPAD2105, when the smart enum declares something the generator can't complete (see ReadSmartEnum), a member isn't made
+    // with new (an alias of another member, which must be a computed property), or two members are made with the same constant value.
+    private static (EquatableArray<SmartEnumMember> Members, EquatableArray<SmartEnumData> Data)? ReadStructSmartEnum(
+        INamedTypeSymbol type,
+        ITypeSymbol valueType,
+        Compilation compilation,
+        Location location,
+        ImmutableArray<DiagnosticInfo>.Builder diagnostics,
+        CancellationToken cancellationToken
+    )
+    {
+        var members = new List<SmartEnumMember>();
+        var data = new List<SmartEnumData>();
+        var values = new Dictionary<object, string>();
+        var failed = false;
+        foreach (var symbol in type.GetMembers())
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (symbol.IsImplicitlyDeclared) continue;
+            var memberLocation = symbol.Locations.FirstOrDefault() ?? location;
+            switch (ReadMemberDeclaration(symbol, type, cancellationToken))
+            {
+                case MemberDeclaration.NotOfItsType:
+                    if (ReadData(symbol, cancellationToken) is not { } datum) break;
+                    if (IsGenerated(symbol, type, true, memberLocation, diagnostics)) failed = true;
+                    else data.Add(datum);
+                    break;
+                case MemberDeclaration.Computed:
+                    break;
+                case MemberDeclaration.NotAMember:
+                    diagnostics.Add(DiagnosticInfo.Create("LPAD2103", memberLocation, type.Name, NotAMember(symbol)));
+                    failed = true;
+                    break;
+                case MemberDeclaration.Member:
+                    if (IsGenerated(symbol, type, true, memberLocation, diagnostics))
+                    {
+                        failed = true;
+                        break;
+                    }
+
+                    // A member is made with new(...) or new Size(...): anything else (an alias, `Alias = Small`) would be a member of its own
+                    // with another member's value, so its Name, All and FromValue would be wrong.
+                    var initializer = Initializer(symbol, cancellationToken);
+                    if (initializer is not BaseObjectCreationExpressionSyntax creation
+                     // new() with no value is the default, which is none of the members.
+                     || creation.ArgumentList is not { Arguments.Count: > 0 }
+                     || ( creation is ObjectCreationExpressionSyntax
+                       && !SymbolEqualityComparer.Default.Equals(compilation.GetSemanticModel(creation.SyntaxTree).GetTypeInfo(creation, cancellationToken).Type, type) ))
+                    {
+                        diagnostics.Add(
+                            DiagnosticInfo.Create(
+                                "LPAD2103",
+                                memberLocation,
+                                type.Name,
+                                initializer is null or BaseObjectCreationExpressionSyntax
+                                    ? $"{symbol.Name} isn't made with new(value, ...), as a member is"
+                                    : $"{symbol.Name} isn't made with new(value, ...), as a member is: an alias of another member must be a computed property ({symbol.Name} => {initializer})"
+                            )
+                        );
+                        failed = true;
+                        break;
+                    }
+
+                    if (!TrackValue(creation.ArgumentList, symbol, type, valueType, compilation, values, memberLocation, diagnostics, cancellationToken)) failed = true;
+                    members.Add(new(symbol.Name, ""));
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return failed ? null : (members.ToEquatableArray(), data.ToEquatableArray());
+    }
+
+    private enum MemberDeclaration
+    {
+        // Not a static field or property of the smart enum's own type: data, or nothing the generator reads.
+        NotOfItsType,
+
+        // A static property of the smart enum's type computed from another member (`=> Pending`), or without an initializer.
+        Computed,
+
+        // A static field or property of the smart enum's type with an initializer that isn't public, readonly or get-only.
+        NotAMember,
+
+        // A public static readonly field, or a public get-only static property with an initializer, of the smart enum's type.
+        Member,
+    }
+
+    private static MemberDeclaration ReadMemberDeclaration(ISymbol symbol, INamedTypeSymbol type, CancellationToken cancellationToken) =>
+        !IsStaticOfItsType(symbol, type)
+            ? MemberDeclaration.NotOfItsType
+            : symbol switch
+            {
+                IFieldSymbol field => field is { IsReadOnly: true, DeclaredAccessibility: Accessibility.Public } ? MemberDeclaration.Member : MemberDeclaration.NotAMember,
+                IPropertySymbol property => Initializer(property, cancellationToken) is null
+                    ? MemberDeclaration.Computed
+                    : property is { SetMethod: null, DeclaredAccessibility: Accessibility.Public }
+                        ? MemberDeclaration.Member
+                        : MemberDeclaration.NotAMember,
+                _ => MemberDeclaration.NotOfItsType,
+            };
+
+    /// <summary>
+    ///     Whether <paramref name="symbol" /> is a static field or property of the smart enum <paramref name="type" />, however its type is spelled
+    ///     (<c>Level</c>, <c>Sample.Level</c>, <c>global::Sample.Level</c>, an alias): what may be one of its members.
+    /// </summary>
+    internal static bool IsStaticOfItsType(ISymbol symbol, INamedTypeSymbol type) => symbol switch
+    {
+        IFieldSymbol { IsStatic: true } field => SymbolEqualityComparer.Default.Equals(field.Type, type),
+        IPropertySymbol { IsStatic: true } property => SymbolEqualityComparer.Default.Equals(property.Type, type),
+        _ => false,
+    };
+
+    private static string NotAMember(ISymbol symbol) =>
+        $"{symbol.Name} isn't a member: a member is a public static readonly field, or a public get-only static property with an initializer";
+
+    // The initializer of a member's field or property.
+    private static ExpressionSyntax? Initializer(ISymbol symbol, CancellationToken cancellationToken) => SingleSyntax(symbol, cancellationToken) switch
+    {
+        VariableDeclaratorSyntax { Initializer.Value: var v } => v,
+        PropertyDeclarationSyntax { Initializer.Value: var v } => v,
+        _ => null,
+    };
+
+    // A member or a datum named like a member the generator writes into the smart enum (Value, Name, All...) would be declared twice: LPAD2103.
+    private static bool IsGenerated(ISymbol symbol, INamedTypeSymbol type, bool isStruct, Location location, ImmutableArray<DiagnosticInfo>.Builder diagnostics)
+    {
+        if (!Emit.Names.IsGeneratedSmartEnumMember(symbol.Name, type.Name, isStruct)) return false;
+        diagnostics.Add(
+            DiagnosticInfo.Create(
+                "LPAD2103",
+                location,
+                type.Name,
+                $"{symbol.Name} is a name the generator writes into the smart enum, so neither a member nor its data can have it"
+            )
+        );
+        return true;
+    }
+
+    // Records the value a member is made with, when it is a constant: false, with LPAD2105, when another member was made with the same one.
+    // The value is the argument named value, else the first one without a name; a member made without either isn't compared. Constants are
+    // compared as values of the smart enum's value type, so 1 and 1L are the same value of a SmartEnum<long>; one that doesn't convert to it
+    // isn't compared.
+    private static bool TrackValue(
+        ArgumentListSyntax? arguments,
+        ISymbol symbol,
+        INamedTypeSymbol type,
+        ITypeSymbol valueType,
+        Compilation compilation,
+        Dictionary<object, string> values,
+        Location location,
+        ImmutableArray<DiagnosticInfo>.Builder diagnostics,
+        CancellationToken cancellationToken
+    )
+    {
+        if (arguments is null) return true;
+        var value = arguments.Arguments.FirstOrDefault(static z => z.NameColon is { Name.Identifier.ValueText: "value" })
+                 ?? arguments.Arguments.FirstOrDefault(static z => z.NameColon is null);
+        if (value is null
+         || compilation.GetSemanticModel(value.SyntaxTree).GetConstantValue(value.Expression, cancellationToken) is not { HasValue: true, Value: { } constant })
+        {
+            return true;
+        }
+
+        if (ConvertConstant(constant, valueType) is not { } key) return true;
+        if (values.TryGetValue(key, out var shared))
+        {
+            diagnostics.Add(DiagnosticInfo.Create("LPAD2105", location, type.Name, shared, symbol.Name));
+            return false;
+        }
+
+        values[key] = symbol.Name;
+        return true;
+    }
+
+    // The CLR types a constant of a smart enum's value can be converted to.
+    private static readonly Dictionary<SpecialType, Type> ConstantTypes = new()
+    {
+        [SpecialType.System_Boolean] = typeof(bool),
+        [SpecialType.System_Char] = typeof(char),
+        [SpecialType.System_SByte] = typeof(sbyte),
+        [SpecialType.System_Byte] = typeof(byte),
+        [SpecialType.System_Int16] = typeof(short),
+        [SpecialType.System_UInt16] = typeof(ushort),
+        [SpecialType.System_Int32] = typeof(int),
+        [SpecialType.System_UInt32] = typeof(uint),
+        [SpecialType.System_Int64] = typeof(long),
+        [SpecialType.System_UInt64] = typeof(ulong),
+        [SpecialType.System_Single] = typeof(float),
+        [SpecialType.System_Double] = typeof(double),
+        [SpecialType.System_Decimal] = typeof(decimal),
+        [SpecialType.System_String] = typeof(string),
+    };
+
+    // A constant as a value of a smart enum's value type (of its underlying type, for an enum): the constant itself when the value type isn't
+    // one Convert knows (Int128, Half, nint), and null when it doesn't convert.
+    private static object? ConvertConstant(object constant, ITypeSymbol valueType)
+    {
+        var special = valueType is INamedTypeSymbol { TypeKind: TypeKind.Enum, EnumUnderlyingType: { } underlying } ? underlying.SpecialType : valueType.SpecialType;
+        // A lookup, not a switch: dotnet format fills a switch over SpecialType with throwing arms (IDE0072).
+        if (!ConstantTypes.TryGetValue(special, out var target)) return constant;
+        // C# converts a char to a number implicitly, Convert.ChangeType doesn't: 'a' and 97 are the same double.
+        if (constant is char c && target != typeof(char) && target != typeof(string)) constant = (int)c;
+        try
+        {
+            return Convert.ChangeType(constant, target, CultureInfo.InvariantCulture);
+        }
+        catch (Exception e) when (e is InvalidCastException or FormatException or OverflowException)
+        {
+            return null;
+        }
+    }
+
+    // A value every member carries: a get-only auto-property or a readonly instance field without an initializer.
+    private static SmartEnumData? ReadData(ISymbol symbol, CancellationToken cancellationToken)
+    {
+        var type = symbol switch
+        {
+            IPropertySymbol { IsStatic: false, IsAbstract: false, IsVirtual: false, IsOverride: false, SetMethod: null } property
+                when IsAutoProperty(property, cancellationToken) => property.Type,
+            IFieldSymbol { IsStatic: false, IsReadOnly: true, IsConst: false, IsImplicitlyDeclared: false } field
+                when SingleSyntax(field, cancellationToken) is VariableDeclaratorSyntax { Initializer: null } => field.Type,
+            _ => null,
+        };
+        return type is null
+            ? null
+            : new(symbol.Name, type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat.WithMiscellaneousOptions(
+                SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier | SymbolDisplayMiscellaneousOptions.UseSpecialTypes)));
+    }
+
+    // A smart enum is a closed class: its own members are the only classes that derive from it. `closed` may be on any of its declarations.
+    internal static bool IsClosed(INamedTypeSymbol type, CancellationToken cancellationToken) =>
+        type.DeclaringSyntaxReferences
+            .Select(z => z.GetSyntax(cancellationToken))
+            .OfType<TypeDeclarationSyntax>()
+            .Any(static z => z.Modifiers.Any(static m => m.ValueText == "closed"));
+
+    /// <summary>
+    ///     The members and the data of a smart enum. A member is a <c>public static readonly</c> field of the smart enum's type (or a public
+    ///     get-only static property with an initializer) made with <c>new Member_(value, data...)</c>, where <c>Member_</c> is the member's own
+    ///     class, named after it, which the generator writes, so it doesn't exist yet. The data are the get-only properties and readonly fields
+    ///     the smart enum declares without an initializer, which every member gives after its value. Null, with LPAD2103, LPAD2104 or LPAD2105,
+    ///     when a static field or property of the smart enum's type with an initializer isn't a member, a member or a datum is named like
+    ///     something the generator writes, a datum's type is less accessible than internal, a member isn't made with new Member_, or two
+    ///     members share a constant value.
+    /// </summary>
+    private static (EquatableArray<SmartEnumMember> Members, EquatableArray<SmartEnumData> Data)? ReadSmartEnum(
+        INamedTypeSymbol type,
+        ITypeSymbol valueType,
+        Compilation compilation,
+        Location location,
+        ImmutableArray<DiagnosticInfo>.Builder diagnostics,
+        CancellationToken cancellationToken
+    )
+    {
+        var members = new List<SmartEnumMember>();
+        var data = new List<SmartEnumData>();
+        var values = new Dictionary<object, string>();
+        var failed = false;
+        foreach (var symbol in type.GetMembers())
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (symbol.IsImplicitlyDeclared) continue;
+            var memberLocation = symbol.Locations.FirstOrDefault() ?? location;
+            switch (ReadMemberDeclaration(symbol, type, cancellationToken))
+            {
+                case MemberDeclaration.NotOfItsType:
+                    if (ReadData(symbol, cancellationToken) is not { } datum) break;
+                    if (IsGenerated(symbol, type, false, memberLocation, diagnostics))
+                    {
+                        failed = true;
+                    }
+                    else if (LessAccessibleThanInternal(DataType(symbol), type))
+                    {
+                        // Every member's class takes the data in its internal constructor (CS0051).
+                        diagnostics.Add(
+                            DiagnosticInfo.Create(
+                                "LPAD2103",
+                                memberLocation,
+                                type.Name,
+                                $"the data of a smart enum must be of a type at least internal, as every member's class takes it ({symbol.Name} is {DataType(symbol).ToDisplayString()})"
+                            )
+                        );
+                        failed = true;
+                    }
+                    else
+                    {
+                        data.Add(datum);
+                    }
+
+                    break;
+                case MemberDeclaration.Computed:
+                    break;
+                case MemberDeclaration.NotAMember:
+                    diagnostics.Add(DiagnosticInfo.Create("LPAD2103", memberLocation, type.Name, NotAMember(symbol)));
+                    failed = true;
+                    break;
+                case MemberDeclaration.Member:
+                    {
+                        if (IsGenerated(symbol, type, false, memberLocation, diagnostics))
+                        {
+                            failed = true;
+                            break;
+                        }
+
+                        // The member's class is named after it, with an underscore: Pending = new Pending_(...), or new OrderStatus.Pending_(...).
+                        var className = symbol.Name + "_";
+                        if (Initializer(symbol, cancellationToken) is not ObjectCreationExpressionSyntax creation
+                         || !IsMemberClass(creation.Type, className, type, compilation.GetSemanticModel(creation.SyntaxTree), cancellationToken))
+                        {
+                            diagnostics.Add(DiagnosticInfo.Create("LPAD2104", memberLocation, type.Name, symbol.Name));
+                            failed = true;
+                            break;
+                        }
+
+                        if (!TrackValue(creation.ArgumentList, symbol, type, valueType, compilation, values, memberLocation, diagnostics, cancellationToken)) failed = true;
+                        members.Add(new(symbol.Name, className));
+                        break;
+                    }
+
+                default:
+                    break;
+            }
+        }
+
+        return failed ? null : (members.ToEquatableArray(), data.ToEquatableArray());
+    }
+
+    /// <summary>
+    ///     The classes of a closed smart enum's members, by their names in the smart enum (<c>Pending_</c>): from its members made with
+    ///     <c>new Member_(...)</c> when it is declared in source, where the generator writes them in the same run, or from the sealed classes
+    ///     nested in it that derive from it when it comes from a referenced assembly. Empty for anything else.
+    /// </summary>
+    public static IEnumerable<string> SmartEnumMemberClasses(INamedTypeSymbol type, Compilation compilation, CancellationToken cancellationToken)
+    {
+        if (type is not { TypeKind: TypeKind.Class, IsRecord: false }) yield break;
+        if (type.DeclaringSyntaxReferences.IsEmpty)
+        {
+            foreach (var nested in type.GetTypeMembers())
+            {
+                if (nested is { TypeKind: TypeKind.Class, IsSealed: true, IsGenericType: false }
+                 && SymbolEqualityComparer.Default.Equals(nested.BaseType, type)
+                 && compilation.IsSymbolAccessibleWithin(nested, compilation.Assembly))
+                {
+                    yield return nested.Name;
+                }
+            }
+
+            yield break;
+        }
+
+        foreach (var symbol in type.GetMembers())
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (symbol.IsImplicitlyDeclared || ReadMemberDeclaration(symbol, type, cancellationToken) != MemberDeclaration.Member) continue;
+            var className = symbol.Name + "_";
+            if (Initializer(symbol, cancellationToken) is ObjectCreationExpressionSyntax creation
+             && IsMemberClass(creation.Type, className, type, compilation.GetSemanticModel(creation.SyntaxTree), cancellationToken))
+            {
+                yield return className;
+            }
+        }
+    }
+
+    private static ITypeSymbol DataType(ISymbol symbol) => symbol is IPropertySymbol property ? property.Type : ( (IFieldSymbol)symbol ).Type;
+
+    /// <summary>
+    ///     Whether <paramref name="created" />, the type a member's <c>new</c> names, is the member's class <paramref name="className" />, by its
+    ///     rightmost name (<c>Pending_</c>, <c>OrderStatus.Pending_</c>, <c>global::Sample.OrderStatus.Pending_</c>): one the generator writes, so
+    ///     it doesn't exist yet (and a qualified name must then name it in the smart enum), or the application's own part of it, nested in the
+    ///     smart enum (where a member overrides behaviour), which the generator completes.
+    /// </summary>
+    internal static bool IsMemberClass(TypeSyntax created, string className, INamedTypeSymbol smartEnum, SemanticModel model, CancellationToken cancellationToken)
+    {
+        IdentifierNameSyntax name;
+        NameSyntax? container;
+        switch (created)
+        {
+            case IdentifierNameSyntax identifier:
+                (name, container) = (identifier, null);
+                break;
+            case QualifiedNameSyntax { Right: IdentifierNameSyntax right } qualified:
+                (name, container) = (right, qualified.Left);
+                break;
+            case AliasQualifiedNameSyntax { Name: IdentifierNameSyntax right } aliased:
+                (name, container) = (right, aliased);
+                break;
+            default:
+                return false;
+        }
+
+        return name.Identifier.ValueText == className && model.GetTypeInfo(created, cancellationToken).Type switch
+        {
+            // global::Pending_ names a type of the global namespace, never one nested in the smart enum.
+            null or IErrorTypeSymbol => container switch
+            {
+                null => true,
+                AliasQualifiedNameSyntax => false,
+                _ => SymbolEqualityComparer.Default.Equals(model.GetSymbolInfo(container, cancellationToken).Symbol, smartEnum),
+            },
+            INamedTypeSymbol { TypeKind: TypeKind.Class } named => SymbolEqualityComparer.Default.Equals(named.ContainingType, smartEnum),
+            _ => false,
+        };
+    }
+
+    // Whether a type is certainly less accessible than the internal constructor of a member's class (CS0051): when part of it is private,
+    // declared in a type X, unless the smart enum is nested in X inside a private type, itself or one of its containing types strictly inside
+    // X. The constructor is then seen only inside that private type, where the part is seen too; a protected or private protected smart enum
+    // is seen by the types that derive from its container, which can't see the part. A protected or private protected part isn't reported:
+    // whether it is visible enough depends on how the smart enum's containers derive from each other, and the compiler says so (CS0051).
+    private static bool LessAccessibleThanInternal(ITypeSymbol type, INamedTypeSymbol smartEnum)
+    {
+        return Restricted(type).Any(part => !SeenWhereTheSmartEnumIs(part.ContainingType));
+
+        bool SeenWhereTheSmartEnumIs(INamedTypeSymbol? declaredIn)
+        {
+            if (declaredIn is null) return false;
+            var insidePrivate = false;
+            for (var current = smartEnum; current is not null; current = current.ContainingType)
+            {
+                if (SymbolEqualityComparer.Default.Equals(current, declaredIn)) return insidePrivate;
+                if (current.DeclaredAccessibility == Accessibility.Private) insidePrivate = true;
+            }
+
+            return false;
+        }
+
+        static bool IsRestricted(INamedTypeSymbol type) => type.DeclaredAccessibility is Accessibility.Private;
+
+        static IEnumerable<INamedTypeSymbol> Restricted(ITypeSymbol type)
+        {
+            switch (type)
+            {
+                case IArrayTypeSymbol array:
+                    foreach (var part in Restricted(array.ElementType)) yield return part;
+                    break;
+                case IPointerTypeSymbol pointer:
+                    foreach (var part in Restricted(pointer.PointedAtType)) yield return part;
+                    break;
+                case INamedTypeSymbol named:
+                    for (var current = named; current is not null; current = current.ContainingType)
+                    {
+                        if (IsRestricted(current)) yield return current;
+                    }
+
+                    foreach (var argument in named.TypeArguments)
+                    {
+                        foreach (var part in Restricted(argument)) yield return part;
+                    }
+
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    // `{ get; }` with no body and no initializer: what the constructor assigns.
+    private static bool IsAutoProperty(IPropertySymbol property, CancellationToken cancellationToken) =>
+        SingleSyntax(property, cancellationToken) is PropertyDeclarationSyntax
+        {
+            ExpressionBody: null, Initializer: null, AccessorList.Accessors: [{ Body: null, ExpressionBody: null }],
+        };
+
+    // The one declaration of a field or property (a partial property has two, and is neither a member nor data).
+    private static SyntaxNode? SingleSyntax(ISymbol symbol, CancellationToken cancellationToken) =>
+        symbol.DeclaringSyntaxReferences is [var only] ? only.GetSyntax(cancellationToken) : null;
+
     private static EquatableArray<MemberInfo> ReadMembers(INamedTypeSymbol type, string kind, AttributeData primitive, Compilation compilation)
     {
         MemberInfo Of(string name, ITypeSymbol memberType)
@@ -626,7 +1111,8 @@ internal static class PrimitiveReader
                 memberType.WithNullableAnnotation(NullableAnnotation.NotAnnotated).ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
                 underlying.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
                 isNullableValueType,
-                memberType.IsValueType
+                memberType.IsValueType,
+                IsSmartEnum(underlying, compilation)
             );
         }
 
@@ -669,7 +1155,8 @@ internal static class PrimitiveReader
 
     /// <summary>
     ///     The value of a domain primitive with one value: from the interface the generator implements (a referenced assembly), or from the
-    ///     primitive attribute (a type of this compilation, which the generator completes in this same run).
+    ///     primitive attribute (a type of this compilation, which the generator completes in this same run). The class of a smart enum's member
+    ///     inherits the smart enum's interface, but isn't a domain primitive of its own.
     /// </summary>
     public static ITypeSymbol? PrimitiveValueOf(ITypeSymbol type, Compilation compilation)
     {
@@ -678,7 +1165,7 @@ internal static class PrimitiveReader
         foreach (var candidate in named.AllInterfaces)
         {
             if (candidate is { Name: "IDomainPrimitive", TypeArguments.Length: 2 } && candidate.ContainingNamespace?.ToDisplayString() == Namespace)
-                return candidate.TypeArguments[1];
+                return SymbolEqualityComparer.Default.Equals(candidate.TypeArguments[0], named) ? candidate.TypeArguments[1] : null;
         }
 
         if (named.GetAttributes().FirstOrDefault(z => IsPrimitiveAttribute(z.AttributeClass)) is not { AttributeClass: { } attribute } primitive) return null;
@@ -694,6 +1181,17 @@ internal static class PrimitiveReader
             _ => null,
         };
     }
+
+    /// <summary>
+    ///     Whether a type is a smart enum, of either form: by its primitive attribute when it is a type of this compilation, or, from a
+    ///     referenced assembly (where the attributes aren't compiled), by the <c>TryFromName</c> the generator writes into every smart enum.
+    /// </summary>
+    public static bool IsSmartEnum(ITypeSymbol type, Compilation compilation) =>
+        type is INamedTypeSymbol named
+     && PrimitiveValueOf(named, compilation) is not null
+     && ( named.GetAttributes().FirstOrDefault(z => IsPrimitiveAttribute(z.AttributeClass)) is { AttributeClass: { } attribute }
+            ? KindOf(attribute) == "SmartEnum"
+            : named.GetMembers("TryFromName").OfType<IMethodSymbol>().Any(static z => z is { IsStatic: true, DeclaredAccessibility: Accessibility.Public, Parameters: [{ Type.SpecialType: SpecialType.System_String }, { Type.SpecialType: SpecialType.System_Boolean }, { RefKind: RefKind.Out }] }) );
 
     private static EquatableArray<string> ContainingTypes(INamedTypeSymbol type)
     {

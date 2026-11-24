@@ -22,6 +22,7 @@ type Customer {
   country: Country!
   points: LoyaltyPoints!
   tier: CustomerTier!
+  channel: ContactChannel!
   address: Address!
   balance: Balance!
   membership: Membership
@@ -33,6 +34,8 @@ type Membership {
   start: LocalDate!
   end: LocalDate!
 }
+
+scalar ContactChannel
 
 scalar Country
 
@@ -64,6 +67,7 @@ scalar Stars
       "country": "GB",
       "points": 40,
       "tier": 2,
+      "channel": "phone",
       "address": {
         "street": "12 St James's Square",
         "city": "London"

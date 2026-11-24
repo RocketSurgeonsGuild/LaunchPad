@@ -36,6 +36,21 @@ public class PrimitiveRegistryGeneratorTests
             [Money]
             public readonly partial record struct Price;
 
+            [SmartEnum<string>]
+            public closed partial class Channel
+            {
+                public static readonly Channel Web = new Web_("web");
+                public static readonly Channel Store = new Store_("store");
+            }
+
+            // A smart enum can be a record struct too.
+            [SmartEnum<int>]
+            public readonly partial record struct Speed
+            {
+                public static readonly Speed Slow = new(1);
+                public static readonly Speed Fast = new(2);
+            }
+
             // Not public: the application's registry can name it, so it is listed too.
             [StringPrimitive, MaxLength(10)]
             internal readonly partial record struct Code;
@@ -46,6 +61,7 @@ public class PrimitiveRegistryGeneratorTests
     private static readonly string[] ApplicationFiles =
     [
         "Sample.Application.EmailAddress.g.cs", "Sample.Application.OrderId.g.cs", "Sample.Application.Price.g.cs", "Sample.Application.Code.g.cs",
+        "Sample.Application.Channel.g.cs", "Sample.Application.Speed.g.cs",
     ];
 
     private static GeneratorTestContextBuilder Builder(bool nodaTime = false)
@@ -78,10 +94,17 @@ public class PrimitiveRegistryGeneratorTests
                     public readonly partial record struct CustomerId;
 
                     [SmartEnum<int>]
-                    public sealed partial record Status
+                    public closed partial class Status
                     {
-                        public static readonly Status Active = new(1);
-                        public static readonly Status Closed = new(2);
+                        public static readonly Status Active = new Active_(1);
+                        public static readonly Status Closed = new Closed_(2);
+                    }
+
+                    [SmartEnum<string>]
+                    public readonly partial record struct Tier
+                    {
+                        public static readonly Tier Free = new("free");
+                        public static readonly Tier Paid = new("paid");
                     }
 
                     [DateRange(Kind = DatePrimitiveKind.LocalDate)]
@@ -184,8 +207,14 @@ public class PrimitiveRegistryGeneratorTests
     [Test]
     public async Task Should_Register_A_Dapper_Type_Handler_For_Every_Domain_Primitive()
     {
-        // Without the registry declaration: an application that references Dapper gets the type handlers either way.
-        var result = await Builder()
+        var core = await CompileReferencedAssembly();
+        await core.ShouldCompileCleanly();
+
+        // Without the registry declaration: an application that references Dapper gets the type handlers either way. A closed smart enum's
+        // handler is registered for the class of each of its members too (Channel.Web_, and Sample.Core's Status.Active_ from its metadata), as
+        // Dapper looks a handler up by a value's runtime type when a parameter's type isn't known.
+        var result = await Builder(nodaTime: true)
+                          .AddCompilationReferences(core)
                           .AddReferences(typeof(Dapper.SqlMapper).Assembly)
                           .AddSources(Application)
                           .Build()

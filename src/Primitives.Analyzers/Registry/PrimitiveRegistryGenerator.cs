@@ -61,7 +61,10 @@ public sealed class PrimitiveRegistryGenerator : IIncrementalGenerator
     private static string Option(AnalyzerConfigOptions options, string name, string fallback) =>
         options.TryGetValue($"build_property.{name}", out var value) && !string.IsNullOrWhiteSpace(value) ? value.Trim() : fallback;
 
-    private sealed record PrimitiveEntry(string Type, string Value, bool IsGuidStrongId, bool IsStrongId);
+    // MemberClasses: the classes of a closed smart enum's members, the runtime type of each member, which Dapper looks a handler up by when a
+    // parameter's type isn't known (DynamicParameters, an object-typed property). A list parameter never uses a handler: its items must be
+    // passed as their values.
+    private sealed record PrimitiveEntry(string Type, string Value, bool IsGuidStrongId, bool IsStrongId, EquatableArray<string> MemberClasses);
 
     private sealed record RegistryModel(
         bool HasRegistry,
@@ -89,10 +92,11 @@ public sealed class PrimitiveRegistryGenerator : IIncrementalGenerator
         var valueObjects = new List<string>();
         foreach (var type in Types(compilation, Library, cancellationToken))
         {
-            // A type of this compilation is a domain primitive only when it is a record (the generator leaves anything else alone). A record
-            // struct of a referenced assembly isn't a record in metadata (only a record class has a <Clone>$ to tell), so there the interfaces decide.
+            // A type of this compilation is a domain primitive only when the generator completes it: a record, or a smart enum that is a closed
+            // class or a record struct. A record struct of a referenced assembly isn't a record in metadata (only a record class has a <Clone>$ to tell), so there
+            // the interfaces decide.
             if (type is not { IsGenericType: false, IsFileLocal: false, TypeKind: TypeKind.Class or TypeKind.Struct }) continue;
-            if (!type.IsRecord && SymbolEqualityComparer.Default.Equals(type.ContainingAssembly, compilation.Assembly)) continue;
+            if (SymbolEqualityComparer.Default.Equals(type.ContainingAssembly, compilation.Assembly) && !IsCompleted(type, cancellationToken)) continue;
             if (!compilation.IsSymbolAccessibleWithin(type, compilation.Assembly)) continue;
             var name = type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
             if (IsValueObject(type))
@@ -103,7 +107,13 @@ public sealed class PrimitiveRegistryGenerator : IIncrementalGenerator
 
             if (PrimitiveReader.PrimitiveValueOf(type, compilation) is not { } value) continue;
             var isStrongId = IsStrongId(type);
-            primitives.Add(new(name, ValueTypeInfo.From(value).Display, isStrongId && value.MetadataName == "Guid", isStrongId));
+            var memberClasses = new List<string>();
+            foreach (var memberClass in PrimitiveReader.SmartEnumMemberClasses(type, compilation, cancellationToken))
+            {
+                memberClasses.Add($"{name}.{memberClass}");
+            }
+
+            primitives.Add(new(name, ValueTypeInfo.From(value).Display, isStrongId && value.MetadataName == "Guid", isStrongId, memberClasses.ToEquatableArray()));
         }
 
         var dbContexts = new List<string>();
@@ -137,6 +147,14 @@ public sealed class PrimitiveRegistryGenerator : IIncrementalGenerator
             converterParameter
         );
     }
+
+    // What the domain primitive generator completes in this compilation: a smart enum that is a closed class or a record struct (never a record
+    // class), and any other kind on a record.
+    private static bool IsCompleted(INamedTypeSymbol type, CancellationToken cancellationToken) =>
+        PrimitiveKind(type) == "SmartEnum"
+            ? type is { TypeKind: TypeKind.Struct, IsRecord: true }
+           || type is { TypeKind: TypeKind.Class, IsRecord: false } && PrimitiveReader.IsClosed(type, cancellationToken)
+            : type.IsRecord;
 
     private static bool IsValueObject(INamedTypeSymbol type)
     {
@@ -332,7 +350,24 @@ public sealed class PrimitiveRegistryGenerator : IIncrementalGenerator
         writer.Open("internal static void Register()");
         foreach (var primitive in model.Primitives)
         {
-            writer.Line($"global::Dapper.SqlMapper.AddTypeHandler(new DomainPrimitiveTypeHandler<{primitive.Type}, {primitive.Value}>());");
+            if (primitive.MemberClasses.Length == 0)
+            {
+                writer.Line($"global::Dapper.SqlMapper.AddTypeHandler(new DomainPrimitiveTypeHandler<{primitive.Type}, {primitive.Value}>());");
+                continue;
+            }
+
+            // Dapper looks a handler up by a value's runtime type when a parameter's type isn't known (DynamicParameters, an object-typed
+            // property), and a closed smart enum's member is an instance of its own class: the smart enum's handler handles each of them too.
+            // A list parameter never uses a handler, so its items must be passed as their values.
+            writer.Open();
+            writer.Line($"var handler = new DomainPrimitiveTypeHandler<{primitive.Type}, {primitive.Value}>();");
+            writer.Line("global::Dapper.SqlMapper.AddTypeHandler(handler);");
+            foreach (var memberClass in primitive.MemberClasses)
+            {
+                writer.Line($"global::Dapper.SqlMapper.AddTypeHandler(typeof({memberClass}), handler);");
+            }
+
+            writer.Close();
         }
 
         writer.Close();

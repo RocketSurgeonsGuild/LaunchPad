@@ -11,8 +11,10 @@ namespace Rocket.Surgery.LaunchPad.Primitives.Analyzers;
 
 /// <summary>
 ///     Completes every domain primitive of a project: a <c>readonly partial record struct</c> or <c>sealed partial record</c> with a primitive
-///     attribute (PrimitiveAttribute) gets its value, factories, rules, parsing, formatting, conversions, operators and System.Text.Json and
-///     TypeConverter converters. It also writes the attributes themselves into the project (from Sources/), where they exist only in source.
+///     attribute (PrimitiveAttribute), except a smart enum, which is a <c>closed partial class</c> or a <c>readonly partial record struct</c>
+///     with <c>[SmartEnum&lt;T&gt;]</c> and never a record class, gets its value, factories, rules, parsing, formatting, conversions, operators
+///     and System.Text.Json and TypeConverter converters. It also writes the attributes themselves into the project (from Sources/), where
+///     they exist only in source.
 /// </summary>
 /// <remarks>
 ///     A port of the generators of dotnet-domain-primitives (MIT), which are one generator per kind there.
@@ -34,7 +36,7 @@ public sealed class DomainPrimitiveGenerator : IIncrementalGenerator
         var settings = context.AnalyzerConfigOptionsProvider.Select(static (provider, _) => PrimitiveSettings.Read(provider.GlobalOptions));
         var primitives = context.SyntaxProvider
                                 .CreateSyntaxProvider(
-                                     static (node, _) => node is RecordDeclarationSyntax { AttributeLists.Count: > 0 },
+                                     static (node, _) => node is RecordDeclarationSyntax { AttributeLists.Count: > 0 } or ClassDeclarationSyntax { AttributeLists.Count: > 0 },
                                      static (syntax, cancellationToken) => Find(syntax, cancellationToken)
                                  )
                                 .Where(static z => z is not null)
@@ -75,15 +77,15 @@ public sealed class DomainPrimitiveGenerator : IIncrementalGenerator
         );
     }
 
-    private sealed record Found(INamedTypeSymbol Symbol, RecordDeclarationSyntax Declaration, AttributeData Attribute, Compilation Compilation);
+    private sealed record Found(INamedTypeSymbol Symbol, TypeDeclarationSyntax Declaration, AttributeData Attribute, Compilation Compilation);
 
     /// <summary>
-    ///     The domain primitive a record declares, when this declaration carries its primitive attribute (a partial type declared in several
+    ///     The domain primitive a record (or the class of a smart enum) declares, when this declaration carries its primitive attribute (a partial type declared in several
     ///     places is completed once, from the declaration with the attribute).
     /// </summary>
     private static Found? Find(GeneratorSyntaxContext syntax, CancellationToken cancellationToken)
     {
-        var declaration = (RecordDeclarationSyntax)syntax.Node;
+        var declaration = (TypeDeclarationSyntax)syntax.Node;
         if (syntax.SemanticModel.GetDeclaredSymbol(declaration, cancellationToken) is not INamedTypeSymbol symbol) return null;
         foreach (var attribute in symbol.GetAttributes())
         {

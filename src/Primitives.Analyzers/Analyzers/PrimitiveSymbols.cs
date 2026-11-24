@@ -40,6 +40,18 @@ internal sealed record PrimitiveDeclaration(INamedTypeSymbol Type, AttributeData
     public ITypeSymbol? TypeArgument => Attribute.AttributeClass is { TypeArguments: [var argument] } ? argument : null;
 
     public bool IsStruct => Type.TypeKind == TypeKind.Struct;
+
+    /// <summary>
+    ///     A <c>[SmartEnum&lt;T&gt;]</c>, declared as a <c>closed partial class</c> (<see cref="IsClosedSmartEnum" />) or a
+    ///     <c>readonly partial record struct</c>, where every other kind is a record struct or a record class.
+    /// </summary>
+    public bool IsSmartEnum => Family == PrimitiveFamily.SmartEnum;
+
+    /// <summary>
+    ///     A smart enum declared as a class that isn't a record: the closed form, whose members are classes the generator writes, which derive from
+    ///     it. (A record class isn't a smart enum the generator completes; whether it is <c>closed</c> is for LPAD2019.)
+    /// </summary>
+    public bool IsClosedSmartEnum => IsSmartEnum && Type is { TypeKind: TypeKind.Class, IsRecord: false };
 }
 
 /// <summary>
@@ -141,7 +153,11 @@ internal static class PrimitiveSymbols
         return name.EndsWith("Attribute", StringComparison.Ordinal) ? name[..^"Attribute".Length] : name;
     }
 
-    /// <summary>The domain primitive <paramref name="type" /> declares with a primitive attribute in this compilation, if any.</summary>
+    /// <summary>
+    ///     The domain primitive <paramref name="type" /> declares with a primitive attribute in this compilation, if any. The class the generator
+    ///     writes for each member of a smart enum has no attribute of its own: it is not a declaration, though it is a domain primitive
+    ///     (<see cref="IsDomainPrimitive" />) through the smart enum it derives from.
+    /// </summary>
     public static PrimitiveDeclaration? GetDeclaration(INamedTypeSymbol type)
     {
         if (type.TypeKind is not ( TypeKind.Struct or TypeKind.Class )) return null;

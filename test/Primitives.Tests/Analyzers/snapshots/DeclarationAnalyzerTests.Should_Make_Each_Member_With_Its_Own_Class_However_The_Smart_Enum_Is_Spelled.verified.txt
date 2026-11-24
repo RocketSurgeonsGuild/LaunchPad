@@ -1,0 +1,86 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2019,
+      Severity: Error,
+      Location: Input.cs: (6,21)-(6,26),
+      Source: Level,
+      Message: Domain primitive 'Level' is a smart enum class and must be declared 'closed'
+    },
+    {
+      Id: LPAD2019,
+      Severity: Error,
+      Location: Input.cs: (17,25)-(17,30),
+      Source: Level,
+      Message: Domain primitive 'Level' is a smart enum class and must be declared 'closed'
+    }
+  ],
+  CodeFixes: [
+    {
+      Diagnostic: LPAD2019 Input.cs: (17,25)-(17,30),
+      Title: Make the smart enum closed,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+using Alias = Sample.Level;
+
+namespace Sample;
+
+[SmartEnum<int>]
+public partial class Level
+{
+    public static readonly Sample.Level Low = new(1);
+    public static readonly global::Sample.Level Medium = new Sample.Level(2);
+    public static Level High { get; } = new global::Sample.Level(3);
+    public static readonly Alias Top = new Alias(4);
+}
+
+public static partial class Outer
+{
+    [SmartEnum<int>]
+    public closed partial class Level
+    {
+        public static readonly Outer.Level Low = new Low_(1);
+        public static readonly Level High = new High_(2);
+    }
+}
+        }
+      ]
+    },
+    {
+      Diagnostic: LPAD2019 Input.cs: (6,21)-(6,26),
+      Title: Make the smart enum closed,
+      Documents: [
+        {
+          Name: Input.cs,
+          Text:
+using Rocket.Surgery.LaunchPad.Primitives;
+using Alias = Sample.Level;
+
+namespace Sample;
+
+[SmartEnum<int>]
+public closed partial class Level
+{
+    public static readonly Sample.Level Low = new Low_(1);
+    public static readonly global::Sample.Level Medium = new Medium_(2);
+    public static Level High { get; } = new High_(3);
+    public static readonly Alias Top = new Top_(4);
+}
+
+public static partial class Outer
+{
+    [SmartEnum<int>]
+    public partial class Level
+    {
+        public static readonly Outer.Level Low = new Outer.Level(1);
+        public static readonly Level High = new(2);
+    }
+}
+        }
+      ]
+    }
+  ]
+}
