@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore](/LaunchPad/api/rocket.surgery.launchpad.zeroalloc.aspnetcore.md)
-- Version: `2.0.1-beta.451`
+- Version: `2.0.1-beta.452`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.Joints`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.4a5cb286621c756019f759ab46381031aa177050/src/ZeroAlloc.AspNetCore/Joints/ZeroAllocProblemDetailsJoint.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.166abe0de80666ff26996d1f2603a1f6ba81c14c/src/ZeroAlloc.AspNetCore/Joints/ZeroAllocProblemDetailsJoint.cs)
 - Implements: `IDovetailJoint`, `IServiceJoint`
 
 Turns the `Validation.ValidationFailedException` the ZeroAlloc mediator throws for an invalid request into a 422 with [ValidationFailureProblemDetails](/LaunchPad/api/rocket.surgery.launchpad.zeroalloc.aspnetcore/validationfailureproblemdetails.md), for controllers and for the exception handler alike. Implements the `Joints.IServiceJoint`

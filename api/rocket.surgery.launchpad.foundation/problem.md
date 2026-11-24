@@ -2,10 +2,10 @@
 
 - Kind: `record`
 - Package: [Rocket.Surgery.LaunchPad.Foundation](/LaunchPad/api/rocket.surgery.launchpad.foundation.md)
-- Version: `2.0.1-beta.451`
+- Version: `2.0.1-beta.452`
 - Namespace: `Rocket.Surgery.LaunchPad.Foundation`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.4a5cb286621c756019f759ab46381031aa177050/src/Foundation/Problems.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.166abe0de80666ff26996d1f2603a1f6ba81c14c/src/Foundation/Problems.cs)
 - Implements: [IProblemDetailsData](/LaunchPad/api/rocket.surgery.launchpad.foundation/iproblemdetailsdata.md), `IEquatable<Problem>`
 
 The base of LaunchPad's standard error cases: what a handler returns, as a case of its result union, instead of throwing. Each transport turns a case into its own error shape (HTTP ProblemDetails, a gRPC status, a GraphQL error) from [IProblemDetailsData](/LaunchPad/api/rocket.surgery.launchpad.foundation/iproblemdetailsdata.md).

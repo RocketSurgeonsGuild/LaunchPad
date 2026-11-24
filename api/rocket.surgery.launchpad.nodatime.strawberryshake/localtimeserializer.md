@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake](/LaunchPad/api/rocket.surgery.launchpad.nodatime.strawberryshake.md)
-- Version: `2.0.1-beta.451`
+- Version: `2.0.1-beta.452`
 - Namespace: `Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.4a5cb286621c756019f759ab46381031aa177050/src/NodaTime.StrawberryShake/LocalTimeSerializer.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.166abe0de80666ff26996d1f2603a1f6ba81c14c/src/NodaTime.StrawberryShake/LocalTimeSerializer.cs)
 - Inherits: `NodaTimeStringScalarSerializer<LocalTime>`
 
 General purpose LocalTime Serializer

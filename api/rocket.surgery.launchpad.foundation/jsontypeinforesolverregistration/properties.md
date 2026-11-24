@@ -14,7 +14,7 @@ A JSON type info resolver, usually a source generated `Serialization.JsonSeriali
 - Name: `Order`
 - Modifiers: `get; init`
 - Returns: `int`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.4a5cb286621c756019f759ab46381031aa177050/src/Foundation/JsonTypeInfoResolverRegistration.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.166abe0de80666ff26996d1f2603a1f6ba81c14c/src/Foundation/JsonTypeInfoResolverRegistration.cs)
 
 Where the resolver goes in the chain: lower comes first. An application's own resolvers default to 0.
 
@@ -29,7 +29,7 @@ public int Order { get; init; }
 - Name: `Resolver`
 - Modifiers: `get; init`
 - Returns: `IJsonTypeInfoResolver`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.4a5cb286621c756019f759ab46381031aa177050/src/Foundation/JsonTypeInfoResolverRegistration.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.166abe0de80666ff26996d1f2603a1f6ba81c14c/src/Foundation/JsonTypeInfoResolverRegistration.cs)
 
 The resolver to chain.
 

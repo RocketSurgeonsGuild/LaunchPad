@@ -14,7 +14,7 @@ Reads and writes an `Foundation.Assigned`1` as the bare `T`: a property that is 
 - Name: `HandleNull`
 - Modifiers: `override` `get`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.4a5cb286621c756019f759ab46381031aa177050/src/Foundation/AssignedJsonConverter.cs#L28)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.166abe0de80666ff26996d1f2603a1f6ba81c14c/src/Foundation/AssignedJsonConverter.cs#L28)
 
 Gets a value that indicates whether `null` should be passed to the converter on serialization, and whether `JsonTokenType.Null` should be passed on deserialization.
 

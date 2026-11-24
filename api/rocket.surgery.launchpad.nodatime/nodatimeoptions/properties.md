@@ -14,7 +14,7 @@ The options of the NodaTime support, set on the joint context to change how it b
 - Name: `DateTimeZoneSource`
 - Modifiers: `get; set`
 - Returns: `IDateTimeZoneSource`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.4a5cb286621c756019f759ab46381031aa177050/src/NodaTime/NodaTimeOptions.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.166abe0de80666ff26996d1f2603a1f6ba81c14c/src/NodaTime/NodaTimeOptions.cs)
 
 The NodaTime timezone source
 

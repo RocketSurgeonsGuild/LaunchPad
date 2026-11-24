@@ -13,7 +13,7 @@ A joint that configures `Json.JsonSerializerOptions` the LaunchPad way: camel ca
 ## Register(IDovetailContext, IServiceCollection)
 
 - Name: `Register(IDovetailContext, IServiceCollection)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.4a5cb286621c756019f759ab46381031aa177050/src/Foundation/Joints/SystemTextJsonJoint.cs#L35-L57)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.166abe0de80666ff26996d1f2603a1f6ba81c14c/src/Foundation/Joints/SystemTextJsonJoint.cs#L35-L57)
 
 Register the Service part.
 

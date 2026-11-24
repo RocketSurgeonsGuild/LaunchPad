@@ -14,7 +14,7 @@ Reports each failure of a request the ZeroAlloc validators rejected as a `VALIDA
 - Name: `ValidationCode`
 - Modifiers: `static` `const`
 - Returns: `string`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.4a5cb286621c756019f759ab46381031aa177050/src/ZeroAlloc.HotChocolate/Validation/ZeroAllocValidationErrorFilter.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.166abe0de80666ff26996d1f2603a1f6ba81c14c/src/ZeroAlloc.HotChocolate/Validation/ZeroAllocValidationErrorFilter.cs)
 
 The error code of a validation failure.
 

@@ -13,7 +13,7 @@ The Assigned type is used to differentiate between not set and set input values.
 ## Assigned(T?)
 
 - Name: `Constructor(T?)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.4a5cb286621c756019f759ab46381031aa177050/src/Foundation/Assigned.cs#L71-L75)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.166abe0de80666ff26996d1f2603a1f6ba81c14c/src/Foundation/Assigned.cs#L71-L75)
 
 Initializes a new instance of the `Foundation.Assigned`1` struct.
 

@@ -12,7 +12,7 @@ Serializes HotChocolate's `Position` scalar, a GeoJSON position ( `[x, y]` or `[
 ## PositionSerializer
 
 - Name: `Constructor`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.4a5cb286621c756019f759ab46381031aa177050/src/StrawberryShake.Spatial/PositionSerializer.cs#L17)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.166abe0de80666ff26996d1f2603a1f6ba81c14c/src/StrawberryShake.Spatial/PositionSerializer.cs#L17)
 
 Serializes HotChocolate's `Position` scalar, a GeoJSON position ( `[x, y]` or `[x, y, z]`), as a `Geometries.Coordinate`
 

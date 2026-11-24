@@ -15,7 +15,7 @@ Maps LaunchPad's health check endpoints.
 - Name: `MapLaunchPadHealthChecks(IEndpointRouteBuilder)`
 - Modifiers: `extension`
 - Returns: `IEndpointConventionBuilder`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.4a5cb286621c756019f759ab46381031aa177050/src/AspNetCore/LaunchPadHealthCheckExtensions.cs#L54-L63)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.166abe0de80666ff26996d1f2603a1f6ba81c14c/src/AspNetCore/LaunchPadHealthCheckExtensions.cs#L54-L63)
 
 Maps the health report, liveness and readiness endpoints where [LaunchPadHealthCheckOptions](/LaunchPad/api/rocket.surgery.launchpad.aspnetcore/launchpadhealthcheckoptions.md) says.
 

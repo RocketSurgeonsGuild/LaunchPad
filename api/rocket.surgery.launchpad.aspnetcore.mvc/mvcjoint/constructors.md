@@ -13,7 +13,7 @@ Registers MVC Core, the MVC API explorer and the application parts for every ass
 ## MvcJoint(AspNetCoreMvcOptions?)
 
 - Name: `Constructor(AspNetCoreMvcOptions?)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.4a5cb286621c756019f759ab46381031aa177050/src/AspNetCore.Mvc/Joints/MvcJoint.cs#L29-L111)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.166abe0de80666ff26996d1f2603a1f6ba81c14c/src/AspNetCore.Mvc/Joints/MvcJoint.cs#L29-L111)
 
 Registers MVC Core, the MVC API explorer and the application parts for every assembly that depends on Rocket.Surgery.LaunchPad.AspNetCore. MVC is not native AOT compatible, which is why this joint lives in Rocket.Surgery.LaunchPad.AspNetCore.Mvc. Implements the `Joints.IServiceJoint`
 
