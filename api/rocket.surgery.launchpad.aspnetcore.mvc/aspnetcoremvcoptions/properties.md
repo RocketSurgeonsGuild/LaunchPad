@@ -14,7 +14,7 @@ Options for launchpad and aspnet core.
 - Name: `AssemblyPartFilter`
 - Modifiers: `get; set`
 - Returns: `Func<Assembly, bool>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.166abe0de80666ff26996d1f2603a1f6ba81c14c/src/AspNetCore.Mvc/AspNetCoreMvcOptions.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.3675b8bfd84082dc0cd600fe8d8fc9c14e97833a/src/AspNetCore.Mvc/AspNetCoreMvcOptions.cs)
 
 Defines a filter to exclude assembly parts from the application.
 

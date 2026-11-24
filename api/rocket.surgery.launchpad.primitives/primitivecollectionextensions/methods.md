@@ -15,7 +15,7 @@ Creates domain primitives from collections of values.
 - Name: `ToDomainPrimitiveArray(IEnumerable<TValue>)`
 - Modifiers: `extension`
 - Returns: `TPrimitive[]`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.166abe0de80666ff26996d1f2603a1f6ba81c14c/src/Primitives/PrimitiveCollectionExtensions.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.3675b8bfd84082dc0cd600fe8d8fc9c14e97833a/src/Primitives/PrimitiveCollectionExtensions.cs)
 
 Creates a domain primitive from every value, or throws for the first value its rules reject, naming its index.
 
@@ -46,7 +46,7 @@ public static class PrimitiveCollectionExtensions
 - Name: `ToDomainPrimitiveArray(ReadOnlySpan<TValue>)`
 - Modifiers: `extension`
 - Returns: `TPrimitive[]`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.166abe0de80666ff26996d1f2603a1f6ba81c14c/src/Primitives/PrimitiveCollectionExtensions.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.3675b8bfd84082dc0cd600fe8d8fc9c14e97833a/src/Primitives/PrimitiveCollectionExtensions.cs)
 
 Creates a domain primitive from every value, or throws for the first value its rules reject, naming its index.
 
@@ -78,7 +78,7 @@ public static class PrimitiveCollectionExtensions
 - Name: `ToDomainPrimitiveList(IEnumerable<TValue>)`
 - Modifiers: `extension`
 - Returns: `List<TPrimitive>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.166abe0de80666ff26996d1f2603a1f6ba81c14c/src/Primitives/PrimitiveCollectionExtensions.cs#L20-L28)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.3675b8bfd84082dc0cd600fe8d8fc9c14e97833a/src/Primitives/PrimitiveCollectionExtensions.cs#L20-L28)
 
 Creates a domain primitive from every value, or throws for the first value its rules reject, naming its index.
 

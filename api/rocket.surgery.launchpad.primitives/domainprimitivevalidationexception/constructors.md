@@ -13,7 +13,7 @@ Thrown when a domain primitive is created from a value its rules reject, unless 
 ## DomainPrimitiveValidationException(PrimitiveError)
 
 - Name: `Constructor(PrimitiveError)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.166abe0de80666ff26996d1f2603a1f6ba81c14c/src/Primitives/DomainPrimitiveValidationException.cs#L15)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.3675b8bfd84082dc0cd600fe8d8fc9c14e97833a/src/Primitives/DomainPrimitiveValidationException.cs#L15)
 
 Creates the exception.
 
@@ -38,7 +38,7 @@ public sealed class DomainPrimitiveValidationException
 ## DomainPrimitiveValidationException(PrimitiveError, string)
 
 - Name: `Constructor(PrimitiveError, string)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.166abe0de80666ff26996d1f2603a1f6ba81c14c/src/Primitives/DomainPrimitiveValidationException.cs#L22)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.3675b8bfd84082dc0cd600fe8d8fc9c14e97833a/src/Primitives/DomainPrimitiveValidationException.cs#L22)
 
 Creates the exception.
 
@@ -66,7 +66,7 @@ public sealed class DomainPrimitiveValidationException
 ## DomainPrimitiveValidationException(PrimitiveError, Exception?)
 
 - Name: `Constructor(PrimitiveError, Exception?)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.166abe0de80666ff26996d1f2603a1f6ba81c14c/src/Primitives/DomainPrimitiveValidationException.cs#L29)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.3675b8bfd84082dc0cd600fe8d8fc9c14e97833a/src/Primitives/DomainPrimitiveValidationException.cs#L29)
 
 Creates the exception.
 
@@ -94,7 +94,7 @@ public sealed class DomainPrimitiveValidationException
 ## DomainPrimitiveValidationException(PrimitiveError, Exception?, string)
 
 - Name: `Constructor(PrimitiveError, Exception?, string)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.166abe0de80666ff26996d1f2603a1f6ba81c14c/src/Primitives/DomainPrimitiveValidationException.cs#L38)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.3675b8bfd84082dc0cd600fe8d8fc9c14e97833a/src/Primitives/DomainPrimitiveValidationException.cs#L38)
 
 Creates the exception.
 
