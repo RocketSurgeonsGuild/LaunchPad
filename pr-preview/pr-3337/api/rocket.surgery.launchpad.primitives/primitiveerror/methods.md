@@ -15,7 +15,7 @@ Why a domain primitive rejected a value: a code ( `LENGTH`, `FORMAT`, `RANGE`, .
 - Name: `Create(string, string)`
 - Modifiers: `static`
 - Returns: [PrimitiveError](/LaunchPad/pr-preview/pr-3337/api/rocket.surgery.launchpad.primitives/primitiveerror.md)
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.c35dcc131245e369cef6bf89daaeca2d2d05743c/src/Primitives/PrimitiveError.cs#L27)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.8c1925d684bc0cbcfb962e8486f837c5164aa6f2/src/Primitives/PrimitiveError.cs#L27)
 
 Creates an error.
 

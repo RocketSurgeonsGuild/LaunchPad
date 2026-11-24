@@ -15,7 +15,7 @@ General purpose Duration Serializer
 - Name: `Parse(string)`
 - Modifiers: `override`
 - Returns: `Duration`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.c35dcc131245e369cef6bf89daaeca2d2d05743c/src/NodaTime.StrawberryShake/DurationSerializer.cs#L28-L30)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.8c1925d684bc0cbcfb962e8486f837c5164aa6f2/src/NodaTime.StrawberryShake/DurationSerializer.cs#L28-L30)
 
 Parses the serialized value to the runtime representation.
 

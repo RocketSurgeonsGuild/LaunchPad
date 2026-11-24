@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor](/LaunchPad/pr-preview/pr-3337/api/rocket.surgery.launchpad.zeroalloc.blazor.md)
-- Version: `2.0.1-pr.1330`
+- Version: `2.0.1-pr.1331`
 - Namespace: `Rocket.Surgery.LaunchPad.AspNetCore.Blazor`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.c35dcc131245e369cef6bf89daaeca2d2d05743c/src/ZeroAlloc.Blazor/ZeroAllocValidator.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.8c1925d684bc0cbcfb962e8486f837c5164aa6f2/src/ZeroAlloc.Blazor/ZeroAllocValidator.cs)
 - Inherits: `ComponentBase`
 - Implements: `IDisposable`
 

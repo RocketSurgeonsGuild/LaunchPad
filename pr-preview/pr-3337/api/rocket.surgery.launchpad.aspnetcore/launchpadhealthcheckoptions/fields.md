@@ -14,7 +14,7 @@ Where LaunchPad maps the health check endpoints ( `MapLaunchPadHealthChecks`), a
 - Name: `SectionName`
 - Modifiers: `static` `const`
 - Returns: `string`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.c35dcc131245e369cef6bf89daaeca2d2d05743c/src/AspNetCore/HealthChecks/LaunchPadHealthCheckOptions.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.8c1925d684bc0cbcfb962e8486f837c5164aa6f2/src/AspNetCore/HealthChecks/LaunchPadHealthCheckOptions.cs)
 
 The configuration section the options are bound from.
 

@@ -13,7 +13,7 @@ Thrown when a domain primitive is created from a value its rules reject, unless 
 ## DomainPrimitiveValidationException(PrimitiveError)
 
 - Name: `Constructor(PrimitiveError)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.c35dcc131245e369cef6bf89daaeca2d2d05743c/src/Primitives/DomainPrimitiveValidationException.cs#L15)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.8c1925d684bc0cbcfb962e8486f837c5164aa6f2/src/Primitives/DomainPrimitiveValidationException.cs#L15)
 
 Creates the exception.
 
@@ -38,7 +38,7 @@ public sealed class DomainPrimitiveValidationException
 ## DomainPrimitiveValidationException(PrimitiveError, string)
 
 - Name: `Constructor(PrimitiveError, string)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.c35dcc131245e369cef6bf89daaeca2d2d05743c/src/Primitives/DomainPrimitiveValidationException.cs#L22)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.8c1925d684bc0cbcfb962e8486f837c5164aa6f2/src/Primitives/DomainPrimitiveValidationException.cs#L22)
 
 Creates the exception.
 
@@ -66,7 +66,7 @@ public sealed class DomainPrimitiveValidationException
 ## DomainPrimitiveValidationException(PrimitiveError, Exception?)
 
 - Name: `Constructor(PrimitiveError, Exception?)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.c35dcc131245e369cef6bf89daaeca2d2d05743c/src/Primitives/DomainPrimitiveValidationException.cs#L29)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.8c1925d684bc0cbcfb962e8486f837c5164aa6f2/src/Primitives/DomainPrimitiveValidationException.cs#L29)
 
 Creates the exception.
 
@@ -94,7 +94,7 @@ public sealed class DomainPrimitiveValidationException
 ## DomainPrimitiveValidationException(PrimitiveError, Exception?, string)
 
 - Name: `Constructor(PrimitiveError, Exception?, string)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.c35dcc131245e369cef6bf89daaeca2d2d05743c/src/Primitives/DomainPrimitiveValidationException.cs#L38)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.8c1925d684bc0cbcfb962e8486f837c5164aa6f2/src/Primitives/DomainPrimitiveValidationException.cs#L38)
 
 Creates the exception.
 
