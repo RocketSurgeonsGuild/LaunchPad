@@ -15,7 +15,7 @@ Reads and writes an `Foundation.Assigned`1` as the bare `T`: a property that is 
 - Name: `Read(Utf8JsonReader, Type, JsonSerializerOptions)`
 - Modifiers: `override`
 - Returns: [Assigned<T>](/LaunchPad/api/rocket.surgery.launchpad.foundation/assigned-1.md)
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.3640aa07ca8e6f10c5cf6a8d0dc8eb625c18c367/src/Foundation/AssignedJsonConverter.cs#L33-L36)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.4a5cb286621c756019f759ab46381031aa177050/src/Foundation/AssignedJsonConverter.cs#L33-L36)
 
 Reads and converts the JSON to type `Foundation.Assigned{`0}`.
 
@@ -52,7 +52,7 @@ public sealed class AssignedJsonConverter<T>
 
 - Name: `Write(Utf8JsonWriter, Assigned<T>, JsonSerializerOptions)`
 - Modifiers: `override`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.3640aa07ca8e6f10c5cf6a8d0dc8eb625c18c367/src/Foundation/AssignedJsonConverter.cs#L42-L51)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.4a5cb286621c756019f759ab46381031aa177050/src/Foundation/AssignedJsonConverter.cs#L42-L51)
 
 Writes a specified value as JSON.
 

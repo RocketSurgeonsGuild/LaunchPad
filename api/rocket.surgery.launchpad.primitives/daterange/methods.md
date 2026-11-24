@@ -31,7 +31,7 @@ public record DateRange
 
 - Name: `Contains(DateOnly)`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.3640aa07ca8e6f10c5cf6a8d0dc8eb625c18c367/src/Primitives/StrongTypes/DateRange.cs#L44)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.4a5cb286621c756019f759ab46381031aa177050/src/Primitives/StrongTypes/DateRange.cs#L44)
 
 Whether `date` is in the range.
 
@@ -118,7 +118,7 @@ public record DateRange
 - Name: `From(DateOnly, DateOnly)`
 - Modifiers: `static`
 - Returns: [DateRange](/LaunchPad/api/rocket.surgery.launchpad.primitives/daterange.md)
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.3640aa07ca8e6f10c5cf6a8d0dc8eb625c18c367/src/Primitives/StrongTypes/DateRange.cs#L28)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.4a5cb286621c756019f759ab46381031aa177050/src/Primitives/StrongTypes/DateRange.cs#L28)
 
 Creates a range from `start` to `end`.
 
@@ -251,7 +251,7 @@ public record DateRange
 - Name: `TryFrom(DateOnly, DateOnly, DateRange?)`
 - Modifiers: `static`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.3640aa07ca8e6f10c5cf6a8d0dc8eb625c18c367/src/Primitives/StrongTypes/DateRange.cs#L33-L34)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.4a5cb286621c756019f759ab46381031aa177050/src/Primitives/StrongTypes/DateRange.cs#L33-L34)
 
 Creates a range from `start` to `end`, or returns `false` if it is invalid.
 

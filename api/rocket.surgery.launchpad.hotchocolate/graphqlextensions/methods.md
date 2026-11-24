@@ -15,7 +15,7 @@ GraphQl extensions
 - Name: `ConfigureStronglyTypedId(IRequestExecutorBuilder, Func<TStrongType, TValue>, Func<TValue, TStrongType>)`
 - Modifiers: `extension`
 - Returns: `IRequestExecutorBuilder`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.3640aa07ca8e6f10c5cf6a8d0dc8eb625c18c367/src/HotChocolate/GraphqlExtensions.cs#L62-L69)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.4a5cb286621c756019f759ab46381031aa177050/src/HotChocolate/GraphqlExtensions.cs#L62-L69)
 
 Configures a strongly typed id with the GraphQL scalar type of its underlying value: converts between the id and its value, binds the id to the scalar type, and filters it as that scalar.
 
@@ -57,7 +57,7 @@ The conversions are given rather than found by reflection, so this is trim and n
 - Name: `WithProblemDetails(ErrorBuilder, IProblemDetailsData)`
 - Modifiers: `extension`
 - Returns: `ErrorBuilder`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.3640aa07ca8e6f10c5cf6a8d0dc8eb625c18c367/src/HotChocolate/GraphqlExtensions.cs#L25-L37)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.4a5cb286621c756019f759ab46381031aa177050/src/HotChocolate/GraphqlExtensions.cs#L25-L37)
 
 Add problem details to the error
 

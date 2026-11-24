@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-beta.450`
+- Version: `2.0.1-beta.451`
 - Namespace: `Rocket.Surgery.LaunchPad.StrongTypes`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.3640aa07ca8e6f10c5cf6a8d0dc8eb625c18c367/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Rating.g.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.4a5cb286621c756019f759ab46381031aa177050/src/Primitives/obj/Release/net11.0/SuperStrong.Types.CodeAnalysis.Generators/SuperStrong.Types.CodeAnalysis.Generators.StrongTypeGenerator/Rocket_Surgery_LaunchPad_StrongTypes_Rating.g.cs)
 - Implements: `IStrongType<Rating, int>`, `IComparable<Rating>`, `IConvertible`, `IEquatable<Rating>`, `IFormattable`, `IParsable<Rating>`, `ISpanFormattable`, `ISpanParsable<Rating>`, `IUtf8SpanFormattable`, `IUtf8SpanParsable<Rating>`, `IComparisonOperators<Rating, Rating, bool>`, `IEqualityOperators<Rating, Rating, bool>`
 
 A rating from 1 to 5, valid under [RatingRules](/LaunchPad/api/rocket.surgery.launchpad.primitives/ratingrules.md).

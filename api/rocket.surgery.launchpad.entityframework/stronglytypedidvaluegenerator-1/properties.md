@@ -14,7 +14,7 @@ Value generator for StronglyTypedIds
 - Name: `GeneratesTemporaryValues`
 - Modifiers: `override` `get`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.3640aa07ca8e6f10c5cf6a8d0dc8eb625c18c367/src/EntityFramework/StronglyTypedIdValueGenerator.cs#L18)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.4a5cb286621c756019f759ab46381031aa177050/src/EntityFramework/StronglyTypedIdValueGenerator.cs#L18)
 
 Gets a value indicating whether the values generated are temporary (i.e they should be replaced by database generated values when the entity is saved) or are permanent (i.e. the generated values should be saved to the database).
 
