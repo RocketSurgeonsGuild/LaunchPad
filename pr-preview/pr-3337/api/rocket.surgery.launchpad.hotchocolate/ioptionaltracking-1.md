@@ -2,10 +2,10 @@
 
 - Kind: `interface`
 - Package: [Rocket.Surgery.LaunchPad.HotChocolate](/LaunchPad/pr-preview/pr-3337/api/rocket.surgery.launchpad.hotchocolate.md)
-- Version: `2.0.1-pr.1325`
+- Version: `2.0.1-pr.1328`
 - Namespace: `Rocket.Surgery.LaunchPad.HotChocolate`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.7307fcdde362b2224f6c0071b6dfb1eaf21e5cff/src/HotChocolate/IOptionalTracking.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.d457558b817469f413055201c091b86e2edbfa9a/src/HotChocolate/IOptionalTracking.cs)
 
 Marker interface used to create a record or class that copies any setable properties for classes and init/setable record properties
 

@@ -12,7 +12,7 @@ Where LaunchPad maps the health check endpoints ( `MapLaunchPadHealthChecks`), a
 ## LaunchPadHealthCheckOptions
 
 - Name: `Constructor`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.7307fcdde362b2224f6c0071b6dfb1eaf21e5cff/src/AspNetCore/HealthChecks/LaunchPadHealthCheckOptions.cs#L46-L63)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.d457558b817469f413055201c091b86e2edbfa9a/src/AspNetCore/HealthChecks/LaunchPadHealthCheckOptions.cs#L46-L63)
 
 ```csharp
 public sealed class LaunchPadHealthCheckOptions

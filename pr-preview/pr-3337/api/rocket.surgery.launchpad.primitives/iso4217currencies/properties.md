@@ -14,7 +14,7 @@ The alphabetic codes of ISO 4217 list one (current currency and funds codes), as
 - Name: `Codes`
 - Modifiers: `static` `get`
 - Returns: `FrozenSet<string>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.7307fcdde362b2224f6c0071b6dfb1eaf21e5cff/src/Primitives/Registries/Iso4217Currencies.cs#L16)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3337-merge.Sha.d457558b817469f413055201c091b86e2edbfa9a/src/Primitives/Registries/Iso4217Currencies.cs#L16)
 
 The codes.
 
