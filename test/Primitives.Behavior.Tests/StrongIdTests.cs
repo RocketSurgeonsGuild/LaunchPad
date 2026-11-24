@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Rocket.Surgery.LaunchPad.Primitives;
 
 using static Primitives.Behavior.Tests.PrimitiveAssert;
@@ -172,19 +173,50 @@ public class SmartEnumTests
         await Throws<FormatException>(() => OrderStatus.Parse("42", null));
     }
 
+    // IDE0072 doesn't know that a switch over a union's cases is exhaustive, and its fix adds a discard arm that would hide a missing member.
+#pragma warning disable IDE0072
     [Test]
-    public async Task Should_Match_Every_Member()
+    public async Task Should_Switch_Over_Every_Member()
     {
-        await OrderStatus.Processing.Match(() => "pending", () => "processing", () => "completed").Should().BeEqualTo("processing");
-        await Role.User.Map(admin => admin.Value + "!", user => user.Value + "?", auditor => auditor.Value).Should().BeEqualTo("user?");
+        static string Label(OrderStatus status) => status switch
+        {
+            OrderStatus.Cases.Pending => "pending",
+            OrderStatus.Cases.Processing => "processing",
+            OrderStatus.Cases.Completed => "completed",
+        };
 
-        var switched = "";
-        OrderStatus.Completed.Switch(() => switched = "pending", () => switched = "processing", () => switched = "completed");
-        await switched.Should().BeEqualTo("completed");
+        await Label(OrderStatus.Processing).Should().BeEqualTo("processing");
+        await Label(OrderStatus.Create(3)).Should().BeEqualTo("completed");
 
-        // the default struct is no member
-        await Throws<InvalidOperationException>(() => default(OrderStatus).Match(() => 1, () => 2, () => 3));
+        // a class smart enum, and a member made from its value rather than read from its field
+        var role = Role.Create("auditor");
+        await ( role switch { Role.Cases.Admin => "!", Role.Cases.User => "?", Role.Cases.ReadOnlyAuditor => "." } ).Should().BeEqualTo(".");
+        await ( role is Role.Cases.ReadOnlyAuditor ).Should().BeTrue();
+        await ( role is Role.Cases.Admin ).Should().BeFalse();
+
+        // the default struct is no member: it matches no case, and the null pattern
+        await Throws<SwitchExpressionException>(() => Label(default));
+        await ( default(OrderStatus) is null ).Should().BeTrue();
+        await ( default(OrderStatus) is OrderStatus.Cases.Pending ).Should().BeFalse();
+        await ( OrderStatus.Pending is null ).Should().BeFalse();
     }
+#pragma warning restore IDE0072
+
+    [Test]
+    public async Task Should_Convert_A_Case_To_Its_Member()
+    {
+        if (Role.Admin is not Role.Cases.Admin admin) throw new InvalidOperationException("Role.Admin is not the Admin case.");
+
+        Role back = admin;
+        await back.Should().BeEqualTo(Role.Admin);
+        OrderStatus status = new OrderStatus.Cases.Completed();
+        await status.Should().BeEqualTo(OrderStatus.Completed);
+    }
+
+    [Test]
+    public async Task Should_Match_A_Member_In_A_Static_Initializer() =>
+        // The declaration's static initializers run before the generated part's, so the cases are built when first matched.
+        await Stage.Terminal.Should().BeEquivalentTo([Stage.Done]);
 
     [Test]
     public async Task Should_Have_No_Value_When_Default()

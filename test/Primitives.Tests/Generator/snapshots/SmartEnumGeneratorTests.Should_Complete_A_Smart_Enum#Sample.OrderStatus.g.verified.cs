@@ -12,8 +12,10 @@ namespace Sample
     [global::System.Diagnostics.DebuggerDisplay("{ToString(),nq}")]
     [global::System.Text.Json.Serialization.JsonConverter(typeof(OrderStatus.OrderStatusJsonConverter))]
     [global::System.ComponentModel.TypeConverter(typeof(OrderStatus.OrderStatusTypeConverter))]
+    [global::System.Runtime.CompilerServices.Union]
     readonly partial record struct OrderStatus :
         global::Rocket.Surgery.LaunchPad.Primitives.IDomainPrimitive<OrderStatus, int>,
+        OrderStatus.IUnionMembers,
         global::System.IParsable<OrderStatus>,
         global::System.IFormattable
     {
@@ -112,31 +114,60 @@ namespace Sample
             return false;
         }
 
-        /// <summary>The result of the function for this member.</summary>
-        public TResult Match<TResult>(global::System.Func<TResult> whenPending, global::System.Func<TResult> whenShipped, global::System.Func<TResult> whenDeliveredToCustomer)
+        /// <summary>The case type of each member, for C# 15's patterns: <c>value switch { OrderStatus.Cases.Pending => … }</c> must handle every member.</summary>
+        #pragma warning disable CS8981
+        public static class Cases
         {
-            if (global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(_value, Pending._value)) return whenPending();
-            if (global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(_value, Shipped._value)) return whenShipped();
-            if (global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(_value, DeliveredToCustomer._value)) return whenDeliveredToCustomer();
-            throw new global::System.InvalidOperationException($"{this} is not a member of OrderStatus.");
+            /// <summary>The case of <see cref="OrderStatus.Pending" />.</summary>
+            public sealed class Pending
+            {
+                internal Pending() { }
+            }
+
+            /// <summary>The case of <see cref="OrderStatus.Shipped" />.</summary>
+            public sealed class Shipped
+            {
+                internal Shipped() { }
+            }
+
+            /// <summary>The case of <see cref="OrderStatus.DeliveredToCustomer" />.</summary>
+            public sealed class DeliveredToCustomer
+            {
+                internal DeliveredToCustomer() { }
+            }
+        }
+        #pragma warning restore CS8981
+
+        private static object[]? _cases;
+
+        /// <summary>The members C# 15 reads this smart enum through as a union of <see cref="Cases" />'s case types.</summary>
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public interface IUnionMembers
+        {
+            /// <summary>The member <see cref="OrderStatus.Pending" />.</summary>
+            public static OrderStatus Create(Cases.Pending value) => OrderStatus.Pending;
+
+            /// <summary>The member <see cref="OrderStatus.Shipped" />.</summary>
+            public static OrderStatus Create(Cases.Shipped value) => OrderStatus.Shipped;
+
+            /// <summary>The member <see cref="OrderStatus.DeliveredToCustomer" />.</summary>
+            public static OrderStatus Create(Cases.DeliveredToCustomer value) => OrderStatus.DeliveredToCustomer;
+
+            /// <summary>The case type of the member, or null for none.</summary>
+            public object? Value { get; }
         }
 
-        /// <summary>The result of the function for this member, given the member.</summary>
-        public TResult Map<TResult>(global::System.Func<OrderStatus, TResult> whenPending, global::System.Func<OrderStatus, TResult> whenShipped, global::System.Func<OrderStatus, TResult> whenDeliveredToCustomer)
+        object? IUnionMembers.Value
         {
-            if (global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(_value, Pending._value)) return whenPending(this);
-            if (global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(_value, Shipped._value)) return whenShipped(this);
-            if (global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(_value, DeliveredToCustomer._value)) return whenDeliveredToCustomer(this);
-            throw new global::System.InvalidOperationException($"{this} is not a member of OrderStatus.");
-        }
-
-        /// <summary>Runs the action for this member.</summary>
-        public void Switch(global::System.Action whenPending, global::System.Action whenShipped, global::System.Action whenDeliveredToCustomer)
-        {
-            if (global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(_value, Pending._value)) { whenPending(); return; }
-            if (global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(_value, Shipped._value)) { whenShipped(); return; }
-            if (global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(_value, DeliveredToCustomer._value)) { whenDeliveredToCustomer(); return; }
-            throw new global::System.InvalidOperationException($"{this} is not a member of OrderStatus.");
+            get
+            {
+                if (IsDefault) return null;
+                var cases = _cases ??= [new Cases.Pending(), new Cases.Shipped(), new Cases.DeliveredToCustomer()];
+                if (global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(_value, Pending._value)) return cases[0];
+                if (global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(_value, Shipped._value)) return cases[1];
+                if (global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(_value, DeliveredToCustomer._value)) return cases[2];
+                return null;
+            }
         }
 
         /// <inheritdoc />

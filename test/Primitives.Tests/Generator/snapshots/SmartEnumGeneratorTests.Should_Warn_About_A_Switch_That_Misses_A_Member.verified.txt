@@ -1,0 +1,3 @@
+﻿[
+  CS8509 21: The switch expression does not handle all possible values of its input type (it is not exhaustive). For example, the pattern 'Sample.OrderStatus.Cases.Shipped' is not covered.
+]

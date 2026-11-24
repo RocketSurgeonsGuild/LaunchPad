@@ -172,19 +172,20 @@ public partial class SdkPrimitivesTests(string targetFramework)
     }
 
     /// <summary>
-    ///     An application whose domain primitives reach it only through its contracts has not referenced Primitives itself, so it gets no
-    ///     templates, and ASP.NET Core can't describe the domain primitives: each is written by its own JSON converter, whose output ASP.NET
-    ///     Core's schemas can't see, so every domain primitive, a value object too, is an empty schema (<c>{}</c>). A parameter still has the
-    ///     type of the text it is parsed from.
+    ///     An application whose domain primitives reach it only through its contracts has not referenced Primitives itself, so it would get no
+    ///     templates: ASP.NET Core can't describe a domain primitive without them, as each is written by its own JSON converter, whose output
+    ///     ASP.NET Core's schemas can't see, and EF Core can't map one. LaunchPad's analyzer stops the build with LPAD2024 instead.
     /// </summary>
     [Test]
-    public async Task Should_Not_Describe_Domain_Primitives_Without_A_Reference_To_Primitives()
+    public async Task Should_Fail_To_Build_Domain_Primitives_Without_A_Reference_To_Primitives()
     {
         using var tree = await Tree(referencePrimitives: false);
 
-        await tree.Build("app", Cancellation);
+        var failure = await ( (Func<Task>)( () => tree.Build("app", Cancellation) ) ).Should().Throw<InvalidOperationException>();
 
-        await Verify(await tree.Run("app", Cancellation), "json");
+        await failure!.Message.Should().Contain(
+            "error LPAD2024: app uses the domain primitives of contracts with OpenAPI and Entity Framework Core, but doesn't reference Rocket.Surgery.LaunchPad.Primitives"
+        );
     }
 
     /// <summary>

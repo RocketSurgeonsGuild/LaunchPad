@@ -4,7 +4,8 @@ namespace Rocket.Surgery.LaunchPad.Primitives.Analyzers;
 
 /// <summary>
 ///     The rules the domain primitive analyzers report, LPAD2001 to LPAD2099 (the generator's own diagnostics are LPAD2101 and up). Ported from the
-///     DP0001–DP0018 rules of dotnet-domain-primitives and renumbered; LPAD2019 and up are LaunchPad's.
+///     DP0001–DP0018 rules of dotnet-domain-primitives and renumbered; LPAD2019 and up are LaunchPad's. LPAD2024 is taken by LaunchPad's own
+///     analyzer (src/Analyzers/Primitives/PrimitivesReferenceAnalyzer.cs), which runs in an application that doesn't reference Primitives.
 /// </summary>
 internal static class AnalyzerDiagnostics
 {

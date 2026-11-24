@@ -1,0 +1,10 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: LPAD2024,
+      Severity: Error,
+      Location: : (0,0)-(0,0),
+      Message: Shop uses the domain primitives of Contracts with Dapper, but doesn't reference Rocket.Surgery.LaunchPad.Primitives, so it gets none of the Joints that describe domain primitives to them; add a PackageReference to Rocket.Surgery.LaunchPad.Primitives
+    }
+  ]
+}

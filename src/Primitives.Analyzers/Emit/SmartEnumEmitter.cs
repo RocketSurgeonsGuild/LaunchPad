@@ -12,12 +12,16 @@ internal static class SmartEnumEmitter
         var t = model.Name;
         var v = model.Value!;
         var vt = v.Display;
-        var members = model.EnumMembers;
+        var names = model.EnumMembers;
+        // The members as C# code: a member may be named with a keyword (@class).
+        var members = names.Select(Names.Identifier).ToArray();
         var nullable = model.IsStruct ? "" : "?";
 
         PrimitiveEmitter.TypeAttributes(writer, model);
+        if (model.IsUnion) writer.Line("[global::System.Runtime.CompilerServices.Union]");
         writer.Line($"{PrimitiveEmitter.Declaration(model)} :");
         writer.Line($"    {Names.Primitives}.IDomainPrimitive<{t}, {vt}>,");
+        if (model.IsUnion) writer.Line($"    {t}.{UnionMembers},");
         writer.Line($"    global::System.IParsable<{t}>,");
         writer.Line("    global::System.IFormattable");
         writer.Open();
@@ -51,7 +55,7 @@ internal static class SmartEnumEmitter
         writer.Line("/// <inheritdoc />");
         writer.Line($"public static string PrimitiveName => {Names.Literal(t)};");
         writer.Line();
-        var allowed = members.Select(Names.CamelCase).OrderBy(z => z, StringComparer.Ordinal).Select(Names.Literal);
+        var allowed = names.Select(Names.CamelCase).OrderBy(z => z, StringComparer.Ordinal).Select(Names.Literal);
         writer.Line("/// <inheritdoc />");
         writer.Line($"public static {Names.Description}<{t}, {vt}> Description {{ get; }} = new() {{ IsSmartEnum = true, AllowedValues = [{string.Join(", ", allowed)}] }};");
         writer.Line();
@@ -72,10 +76,10 @@ internal static class SmartEnumEmitter
         writer.Line($"public static global::System.Collections.Generic.IReadOnlyList<{t}> All => _all ??= [{string.Join(", ", members)}];");
         writer.Line();
         writer.Line($"private static global::System.Collections.Frozen.FrozenDictionary<{vt}, string> Names => _names ??= global::System.Collections.Frozen.FrozenDictionary.ToFrozenDictionary(");
-        writer.Line($"    new global::System.Collections.Generic.KeyValuePair<{vt}, string>[] {{ {string.Join(", ", members.Select(m => $"new({m}._value, {Names.Literal(m)})"))} }});");
+        writer.Line($"    new global::System.Collections.Generic.KeyValuePair<{vt}, string>[] {{ {string.Join(", ", names.Select(m => $"new({Names.Identifier(m)}._value, {Names.Literal(m)})"))} }});");
         writer.Line();
         writer.Line($"private static global::System.Collections.Frozen.FrozenDictionary<string, {t}> ByName => _byName ??= global::System.Collections.Frozen.FrozenDictionary.ToFrozenDictionary(");
-        writer.Line($"    new global::System.Collections.Generic.KeyValuePair<string, {t}>[] {{ {string.Join(", ", members.Select(m => $"new({Names.Literal(m)}, {m})"))} }}, global::System.StringComparer.Ordinal);");
+        writer.Line($"    new global::System.Collections.Generic.KeyValuePair<string, {t}>[] {{ {string.Join(", ", names.Select(m => $"new({Names.Literal(m)}, {Names.Identifier(m)})"))} }}, global::System.StringComparer.Ordinal);");
         writer.Line();
         writer.Line($"private static global::System.Collections.Frozen.FrozenDictionary<string, {t}> ByNameIgnoringCase => _byNameIgnoringCase ??=");
         writer.Line($"    global::System.Collections.Frozen.FrozenDictionary.ToFrozenDictionary(ByName, global::System.StringComparer.OrdinalIgnoreCase);");
@@ -126,7 +130,7 @@ internal static class SmartEnumEmitter
         writer.Close();
         writer.Line();
 
-        Exhaustive(writer, model);
+        if (model.IsUnion) Union(writer, model);
 
         writer.Line("/// <inheritdoc />");
         writer.Line($"public static {t} Parse(string s, global::System.IFormatProvider? provider) =>");
@@ -174,46 +178,68 @@ internal static class SmartEnumEmitter
         writer.Close();
     }
 
-    private static void Exhaustive(SourceWriter writer, PrimitiveModel model)
+    // The type a union member provider must have, by name: C# 15 reads the union members from it rather than the smart enum, so the smart enum
+    // keeps its own Value. Its members and the case types are named here, and a member of the smart enum with one of these names is LPAD2104.
+    public const string UnionMembers = "IUnionMembers";
+    public const string CasesClass = "Cases";
+
+    // A C# 15 custom union over one case type per member, through a union member provider: the smart enum keeps its typed Value, and a switch
+    // over it with the case types is exhaustive. The smart enum keeps one instance of each case type, so matching allocates nothing.
+    private static void Union(SourceWriter writer, PrimitiveModel model)
     {
         var t = model.Name;
-        var members = model.EnumMembers;
-        if (members.Length == 0) return;
-        string Parameter(string member) => "when" + member;
+        var members = model.EnumMembers.Select(Names.Identifier).ToArray();
         string Is(string member) => $"global::System.Collections.Generic.EqualityComparer<{model.Value!.Display}>.Default.Equals(_value, {member}._value)";
-        var unknown = $"throw new global::System.InvalidOperationException($\"{{this}} is not a member of {t}.\")";
 
-        writer.Line("/// <summary>The result of the function for this member.</summary>");
-        writer.Line($"public TResult Match<TResult>({string.Join(", ", members.Select(m => $"global::System.Func<TResult> {Parameter(m)}"))})");
-        writer.Open();
+        writer.Line($"/// <summary>The case type of each member, for C# 15's patterns: <c>value switch {{ {t}.{CasesClass}.{members[0]} => … }}</c> must handle every member.</summary>");
+        // CS8981: a member in lower case names its case type.
+        writer.Line("#pragma warning disable CS8981");
+        writer.Open($"public static class {CasesClass}");
+        var first = true;
         foreach (var member in members)
         {
-            writer.Line($"if ({Is(member)}) return {Parameter(member)}();");
+            if (!first) writer.Line();
+            first = false;
+            writer.Line($"/// <summary>The case of <see cref=\"{t}.{member}\" />.</summary>");
+            // No members: a member's name is the name of its case type, and a member can't share it (CS0542). Internal, so only this
+            // assembly can make one; the smart enum keeps one of each.
+            writer.Open($"public sealed class {member}");
+            writer.Line($"internal {member}() {{ }}");
+            writer.Close();
         }
 
-        writer.Line(unknown + ";");
+        writer.Close();
+        writer.Line("#pragma warning restore CS8981");
+        writer.Line();
+        // Built when first used, like All: a static initializer of the declaration may match a member before this part's run.
+        writer.Line("private static object[]? _cases;");
+        writer.Line();
+        writer.Line("/// <summary>The members C# 15 reads this smart enum through as a union of <see cref=\"" + CasesClass + "\" />'s case types.</summary>");
+        writer.Line("[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]");
+        writer.Open($"public interface {UnionMembers}");
+        foreach (var member in members)
+        {
+            writer.Line($"/// <summary>The member <see cref=\"{t}.{member}\" />.</summary>");
+            writer.Line($"public static {t} Create({CasesClass}.{member} value) => {t}.{member};");
+            writer.Line();
+        }
+
+        writer.Line("/// <summary>The case type of the member, or null for none.</summary>");
+        writer.Line("public object? Value { get; }");
         writer.Close();
         writer.Line();
-        writer.Line("/// <summary>The result of the function for this member, given the member.</summary>");
-        writer.Line($"public TResult Map<TResult>({string.Join(", ", members.Select(m => $"global::System.Func<{t}, TResult> {Parameter(m)}"))})");
+        writer.Line($"object? {UnionMembers}.Value");
         writer.Open();
-        foreach (var member in members)
+        writer.Open("get");
+        if (model.IsStruct) writer.Line("if (IsDefault) return null;");
+        writer.Line($"var cases = _cases ??= [{string.Join(", ", members.Select(m => $"new {CasesClass}.{m}()"))}];");
+        for (var i = 0; i < members.Length; i++)
         {
-            writer.Line($"if ({Is(member)}) return {Parameter(member)}(this);");
+            writer.Line($"if ({Is(members[i])}) return cases[{i}];");
         }
 
-        writer.Line(unknown + ";");
+        writer.Line("return null;");
         writer.Close();
-        writer.Line();
-        writer.Line("/// <summary>Runs the action for this member.</summary>");
-        writer.Line($"public void Switch({string.Join(", ", members.Select(m => $"global::System.Action {Parameter(m)}"))})");
-        writer.Open();
-        foreach (var member in members)
-        {
-            writer.Line($"if ({Is(member)}) {{ {Parameter(member)}(); return; }}");
-        }
-
-        writer.Line(unknown + ";");
         writer.Close();
         writer.Line();
     }

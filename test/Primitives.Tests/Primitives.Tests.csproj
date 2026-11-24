@@ -6,6 +6,8 @@
         <ProjectReference Include="..\..\src\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />
         <!-- The Primitives generators and analyzers, referenced as an assembly so the tests can run them on their own compilations. -->
         <ProjectReference Include="..\..\src\Primitives.Analyzers\Rocket.Surgery.LaunchPad.Primitives.Analyzers.csproj" />
+        <!-- LaunchPad's analyzer, for LPAD2024, which it reports in an application that doesn't reference Primitives itself. -->
+        <ProjectReference Include="..\..\src\Analyzers\Rocket.Surgery.LaunchPad.Analyzers.csproj" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.Common" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.Features" PrivateAssets="all" />
