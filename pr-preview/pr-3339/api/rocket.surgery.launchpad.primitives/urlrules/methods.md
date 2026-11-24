@@ -1,0 +1,27 @@
+# UrlRules Methods
+
+- Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3339/api/rocket.surgery.launchpad.primitives.md)
+- Type: [UrlRules](/LaunchPad/pr-preview/pr-3339/api/rocket.surgery.launchpad.primitives/urlrules.md)
+- Kind: `Methods`
+- Members: `1`
+
+The rules of a URL: an absolute `http` or `https` URI (RFC 3986 §4.3) with a host.
+
+<a id="define"></a>
+
+## Define
+
+- Name: `Define`
+- Modifiers: `static`
+- Returns: `StrongTypeDefinition<string>`
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3339-merge.Sha.f2b0430cc034379f71251d40ca4b57fa907c264f/src/Primitives/StrongTypes/Url.cs#L28-L32)
+
+```csharp
+public sealed class UrlRules
+{
+    public static StrongTypeDefinition<string> Define()
+    {
+        // ...
+    }
+}
+```
