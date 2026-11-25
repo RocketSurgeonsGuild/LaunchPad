@@ -13,7 +13,7 @@ Registers OpenAPI document generation, with the LaunchPad schema and operation t
 ## Register(IDovetailContext, IServiceCollection)
 
 - Name: `Register(IDovetailContext, IServiceCollection)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.3675b8bfd84082dc0cd600fe8d8fc9c14e97833a/src/AspNetCore/Joints/OpenApiJoint.cs#L25-L43)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.752d0f02a7c5d0592531a44cd02f98c0fc107a63/src/AspNetCore/Joints/OpenApiJoint.cs#L25-L43)
 
 Registers the specified context.
 
