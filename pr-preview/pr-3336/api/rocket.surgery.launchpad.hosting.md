@@ -1,9 +1,9 @@
 # Rocket.Surgery.LaunchPad.Hosting
 
 - Package: `Rocket.Surgery.LaunchPad.Hosting`
-- Version: `2.0.1-pr.1285`
+- Version: `2.0.1-pr.1290`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3336-merge.Sha.28f891b4cf6958b8ac5addf5a93485615fecf518/src/Hosting)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3336-merge.Sha.7cda342c7a30094b955266549c4928a5c52b02bb/src/Hosting)
 - NuGet: [Rocket.Surgery.LaunchPad.Hosting](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Hosting)
 
 ## Namespaces
