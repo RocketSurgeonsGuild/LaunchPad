@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake](/LaunchPad/pr-preview/pr-3336/api/rocket.surgery.launchpad.nodatime.strawberryshake.md)
-- Version: `2.0.1-pr.1290`
+- Version: `2.0.1-pr.1292`
 - Namespace: `Rocket.Surgery.LaunchPad.NodaTime.StrawberryShake.Joints`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.7cda342c7a30094b955266549c4928a5c52b02bb/src/NodaTime.StrawberryShake/Joints/NodaTimeStrawberryShakeJoint.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.9ec91d866bcac66448bc0f439b45a4702f1b73d3/src/NodaTime.StrawberryShake/Joints/NodaTimeStrawberryShakeJoint.cs)
 - Implements: `IDovetailJoint`, `IServiceJoint`
 
 Adds the NodaTime serializers to StrawberryShake

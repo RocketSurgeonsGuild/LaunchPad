@@ -14,7 +14,7 @@ Represents a void or unit type in Hot Chocolate
 - Name: `RuntimeType`
 - Modifiers: `override` `get`
 - Returns: `Type`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.7cda342c7a30094b955266549c4928a5c52b02bb/src/HotChocolate/Types/VoidType.cs#L21)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.9ec91d866bcac66448bc0f439b45a4702f1b73d3/src/HotChocolate/Types/VoidType.cs#L21)
 
 The .NET type representation of this scalar.
 
@@ -29,7 +29,7 @@ public override Type RuntimeType { get; }
 - Name: `SerializationType`
 - Modifiers: `override` `get`
 - Returns: `ScalarSerializationType`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.7cda342c7a30094b955266549c4928a5c52b02bb/src/HotChocolate/Types/VoidType.cs#L24)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.9ec91d866bcac66448bc0f439b45a4702f1b73d3/src/HotChocolate/Types/VoidType.cs#L24)
 
 Gets the possible types that this scalar can serialize to.
 

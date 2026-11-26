@@ -1,9 +1,9 @@
 # Rocket.Surgery.LaunchPad.Primitives
 
 - Package: `Rocket.Surgery.LaunchPad.Primitives`
-- Version: `2.0.1-pr.1290`
+- Version: `2.0.1-pr.1292`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3336-merge.Sha.7cda342c7a30094b955266549c4928a5c52b02bb/src/Primitives)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3336-merge.Sha.9ec91d866bcac66448bc0f439b45a4702f1b73d3/src/Primitives)
 - NuGet: [Rocket.Surgery.LaunchPad.Primitives](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Primitives)
 
 ## Namespaces

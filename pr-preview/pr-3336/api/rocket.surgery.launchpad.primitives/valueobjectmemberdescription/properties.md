@@ -14,7 +14,7 @@ One value a value object holds.
 - Name: `IsNullable`
 - Modifiers: `get; init`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.7cda342c7a30094b955266549c4928a5c52b02bb/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.9ec91d866bcac66448bc0f439b45a4702f1b73d3/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
 
 Whether the value may be missing (a nullable reference or value type).
 
@@ -29,7 +29,7 @@ public bool IsNullable { get; init; }
 - Name: `Name`
 - Modifiers: `get; init`
 - Returns: `string`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.7cda342c7a30094b955266549c4928a5c52b02bb/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.9ec91d866bcac66448bc0f439b45a4702f1b73d3/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
 
 The name of its property.
 
@@ -44,7 +44,7 @@ public string Name { get; init; }
 - Name: `Type`
 - Modifiers: `get; init`
 - Returns: `Type`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.7cda342c7a30094b955266549c4928a5c52b02bb/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.9ec91d866bcac66448bc0f439b45a4702f1b73d3/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
 
 The type of the value.
 

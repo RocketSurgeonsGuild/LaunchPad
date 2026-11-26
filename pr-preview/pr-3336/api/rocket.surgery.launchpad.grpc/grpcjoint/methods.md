@@ -13,7 +13,7 @@ Registers gRPC. An operation reports a failure with a union response, which the 
 ## Register(IDovetailContext, IServiceCollection)
 
 - Name: `Register(IDovetailContext, IServiceCollection)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.7cda342c7a30094b955266549c4928a5c52b02bb/src/Grpc/Joints/GrpcJoint.cs#L16)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.9ec91d866bcac66448bc0f439b45a4702f1b73d3/src/Grpc/Joints/GrpcJoint.cs#L16)
 
 Register the Service part.
 
