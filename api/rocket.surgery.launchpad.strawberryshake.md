@@ -1,9 +1,9 @@
 # Rocket.Surgery.LaunchPad.StrawberryShake
 
 - Package: `Rocket.Surgery.LaunchPad.StrawberryShake`
-- Version: `2.0.1-beta.454`
+- Version: `2.0.1-beta.456`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.main.Sha.752d0f02a7c5d0592531a44cd02f98c0fc107a63/src/StrawberryShake)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.main.Sha.0c205f7c0f7c99d017c3755b484180de4bcb850a/src/StrawberryShake)
 - NuGet: [Rocket.Surgery.LaunchPad.StrawberryShake](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.StrawberryShake)
 
 ## Namespaces

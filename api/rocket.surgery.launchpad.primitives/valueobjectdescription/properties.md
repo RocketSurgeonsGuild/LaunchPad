@@ -14,7 +14,7 @@ What an integration needs to know about one value object: the type and the value
 - Name: `Members`
 - Modifiers: `get; init`
 - Returns: [IReadOnlyList<ValueObjectMemberDescription>](/LaunchPad/api/rocket.surgery.launchpad.primitives/valueobjectmemberdescription.md)
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.752d0f02a7c5d0592531a44cd02f98c0fc107a63/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.0c205f7c0f7c99d017c3755b484180de4bcb850a/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
 
 The values it holds, with their types, in declaration order: what an integration describes the value object with, as its own JSON converter writes it, so the serializer's metadata says nothing of its values.
 
@@ -29,7 +29,7 @@ public IReadOnlyList<ValueObjectMemberDescription> Members { get; init; }
 - Name: `Properties`
 - Modifiers: `get; init`
 - Returns: `IReadOnlyList<string>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.752d0f02a7c5d0592531a44cd02f98c0fc107a63/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.0c205f7c0f7c99d017c3755b484180de4bcb850a/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
 
 The names of the values it holds.
 
@@ -44,7 +44,7 @@ public IReadOnlyList<string> Properties { get; init; }
 - Name: `Type`
 - Modifiers: `get; init`
 - Returns: `Type`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.752d0f02a7c5d0592531a44cd02f98c0fc107a63/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.0c205f7c0f7c99d017c3755b484180de4bcb850a/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
 
 The value object.
 
