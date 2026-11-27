@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.Code;
 using Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
 using static Rocket.Surgery.LaunchPad.Analyzers.Api.Core.ApiSyntax;
 
@@ -64,7 +64,7 @@ public sealed class ControllerGenerator : IIncrementalGenerator
 
     private static string Write(HostModel host, ProfileModel profile, HashSet<string> duplicateNames, SourceProductionContext output)
     {
-        var actions = new List<MemberDeclarationSyntax>();
+        var actions = new List<CodeMember>();
         foreach (var operation in host.Operations)
         {
             if (ServerDispatch.ServiceType(profile, operation) is not { } service)
@@ -92,7 +92,7 @@ public sealed class ControllerGenerator : IIncrementalGenerator
         }
 
         // What the host declares stays; the rest is added: [ApiController], [Route], the ControllerBase base.
-        var attributes = new List<AttributeListSyntax>();
+        var attributes = new List<CodeAttribute>();
         if (!host.DeclaresApiController) attributes.Add(Attribute($"{Mvc}.ApiController"));
         if (host.DeclaredRoute is null) attributes.Add(Attribute($"{Mvc}.Route", Arg(Literal(host.BaseRoute))));
         attributes.Add(Attribute("global::Microsoft.AspNetCore.Http.Tags", Arg(Literal(Naming.HostNoun(host.Name)))));
@@ -100,11 +100,11 @@ public sealed class ControllerGenerator : IIncrementalGenerator
         if (host.HasApiVersioning) attributes.AddRange(ServerEmit.Versions(host).Select(v => Attribute("global::Asp.Versioning.ApiVersion", Arg(Literal(v)))));
         attributes.Add(GeneratedCode("Rocket.Surgery.LaunchPad.Api.Controllers", typeof(ControllerGenerator).Assembly.GetName().Version));
         var controller = Class(host.Name, Modifiers(Accessibility(host.Accessibility), SyntaxKind.PartialKeyword), actions, host.DeclaresBaseType ? [] : [Type($"{Mvc}.ControllerBase")])
-           .WithAttributeLists(SyntaxFactory.List(attributes));
+           .WithAttributeLists(attributes);
         return Render(host.Namespace, [controller]);
     }
 
-    private static MethodDeclarationSyntax Action(HostModel host, ProfileModel profile, OperationModel operation, string service, bool prefixName)
+    private static CodeMethod Action(HostModel host, ProfileModel profile, OperationModel operation, string service, bool prefixName)
     {
         var send = ServerDispatch.Send(profile, operation, Id("__request"), Id(Ct));
         // A stream is returned synchronously unless producing it awaits (Foundatio's InvokeAsync<IAsyncEnumerable<T>>, Immediate.Handlers).
@@ -117,11 +117,11 @@ public sealed class ControllerGenerator : IIncrementalGenerator
                              .Concat(DispatchAndResult(profile, operation, send));
         var name = prefixName ? Naming.HostNoun(host.Name) + operation.EndpointName : operation.EndpointName;
         return Method(modifiers, isAsync ? Task(result) : result, operation.Name, Parameters(ServerEmit.Parameters(operation, null, Ct).Select(p => p.Parameter)), body)
-              .WithAttributeLists(SyntaxFactory.List(ActionAttributes(host, operation, name)))
+              .WithAttributeLists(ActionAttributes(host, operation, name))
               .Summary($"Handles <c>{ServerEmit.Verb(operation.Verb)} /{Xml(RouteText.Join(host.BaseRoute, operation.Route))}</c> by sending <see cref=\"{Cref(operation.RequestType)}\" />.");
     }
 
-    private static IEnumerable<AttributeListSyntax> ActionAttributes(HostModel host, OperationModel operation, string name)
+    private static IEnumerable<CodeAttribute> ActionAttributes(HostModel host, OperationModel operation, string name)
     {
         yield return Attribute($"{Mvc}.Http{operation.Verb}", Arg(Literal(operation.Route.Trim('/'))));
         yield return Attribute("global::Microsoft.AspNetCore.Routing.EndpointName", Arg(Literal(name)));
@@ -131,7 +131,7 @@ public sealed class ControllerGenerator : IIncrementalGenerator
         foreach (var policy in operation.Policies) yield return Attribute(Authorize, Arg("Policy", Literal(policy)));
         if (operation.Roles.Length > 0 || operation.AuthenticationSchemes.Length > 0)
         {
-            var settings = new List<AttributeArgumentSyntax>();
+            var settings = new List<CodeAttributeArgument>();
             if (operation.Roles.Length > 0) settings.Add(Arg("Roles", Literal(string.Join(",", operation.Roles))));
             if (operation.AuthenticationSchemes.Length > 0) settings.Add(Arg("AuthenticationSchemes", Literal(string.Join(",", operation.AuthenticationSchemes))));
             yield return Attribute(Authorize, [.. settings]);
@@ -147,7 +147,7 @@ public sealed class ControllerGenerator : IIncrementalGenerator
     }
 
     // [ProducesResponseType] for every status the action can answer, so ApiExplorer describes it without reading the body.
-    private static IEnumerable<AttributeListSyntax> Produces(OperationModel operation)
+    private static IEnumerable<CodeAttribute> Produces(OperationModel operation)
     {
         switch (operation.Kind)
         {
@@ -183,24 +183,22 @@ public sealed class ControllerGenerator : IIncrementalGenerator
         }
     }
 
-    private static AttributeListSyntax ProducesResponseType(TypeSyntax? type, int status, string? contentType)
+    private static CodeAttribute ProducesResponseType(CodeType? type, int status, string? contentType)
     {
-        var arguments = new List<AttributeArgumentSyntax>();
+        var arguments = new List<CodeAttributeArgument>();
         if (type is { }) arguments.Add(Arg(TypeOf(type)));
         arguments.Add(Arg(Literal(status)));
         if (contentType is { }) arguments.Add(Arg(Literal(contentType)));
         return Attribute($"{Mvc}.ProducesResponseType", [.. arguments]);
     }
 
-    private static IEnumerable<StatementSyntax> DispatchAndResult(ProfileModel profile, OperationModel operation, (ExpressionSyntax Call, bool Awaited) send)
+    private static IEnumerable<CodeStatement> DispatchAndResult(ProfileModel profile, OperationModel operation, (CodeExpression Call, bool Awaited) send)
     {
         if (operation is { Union: { }, Kind: RequestKind.Stream })
         {
             // Each item is mapped to its value or its problem; the result streams values and ends with the first problem.
             var item = Generic($"{Generated}.ApiStreamItem", Type(operation.ResponseTypeNotNull!));
-            var map = SyntaxFactory.SimpleLambdaExpression(SyntaxFactory.Parameter(SyntaxFactory.Identifier("__item")))
-                                   .WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.StaticKeyword)))
-                                   .WithBlock(
+            var map = StaticLambda("__item",
                                         Block(
                                             ServerEmit.UnionResult(
                                                 operation,
@@ -210,7 +208,7 @@ public sealed class ControllerGenerator : IIncrementalGenerator
                                                     Return(
                                                         Invoke(
                                                             Member(item, "Error"),
-                                                            Invoke(Member($"{Generated}.ApiProblems", "Details"), new ExpressionSyntax[] { Literal(error.StatusCode), Literal(error.Name) }.Concat(ServerEmit.ErrorMembers(error, value)))
+                                                            Invoke(Member($"{Generated}.ApiProblems", "Details"), new CodeExpression[] { Literal(error.StatusCode), Literal(error.Name) }.Concat(ServerEmit.ErrorMembers(error, value)))
                                                         )
                                                     ),
                                                 ],
@@ -229,7 +227,7 @@ public sealed class ControllerGenerator : IIncrementalGenerator
             foreach (var statement in ServerEmit.UnionResult(
                          operation,
                          value => [Return(value is null ? New(Type($"{Mvc}.NoContentResult")) : Success(operation, value, value))],
-                         (error, value) => [Return(Invoke(Member($"{Generated}.ApiProblems", "Problem"), new ExpressionSyntax[] { Literal(error.StatusCode), Literal(error.Name) }.Concat(ServerEmit.ErrorMembers(error, value))))],
+                         (error, value) => [Return(Invoke(Member($"{Generated}.ApiProblems", "Problem"), new CodeExpression[] { Literal(error.StatusCode), Literal(error.Name) }.Concat(ServerEmit.ErrorMembers(error, value))))],
                          operation.ResponseNullable ? () => [Return(New(Type($"{Mvc}.NotFoundResult")))] : null
                      ))
             {
@@ -260,7 +258,7 @@ public sealed class ControllerGenerator : IIncrementalGenerator
         yield return Return(operation.ResponseNullable ? Conditional(IsNull(Id("__response")), New(Type($"{Mvc}.NotFoundResult")), success) : success);
     }
 
-    private static ExpressionSyntax Success(OperationModel operation, ExpressionSyntax value, ExpressionSyntax response) => operation.SuccessStatusCode switch
+    private static CodeExpression Success(OperationModel operation, CodeExpression value, CodeExpression response) => operation.SuccessStatusCode switch
     {
         201 when operation.CreatedLocationRoute is { } route => New(Type($"{Mvc}.CreatedResult"), ServerEmit.LocationSyntax(route, operation, Generated, response), value),
         201 => New(Type($"{Mvc}.ObjectResult"), [value], [("StatusCode", Literal(201))]),

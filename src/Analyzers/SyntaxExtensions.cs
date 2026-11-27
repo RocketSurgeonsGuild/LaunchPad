@@ -260,6 +260,9 @@ internal static class SyntaxExtensions
         "CS8669",
     ];
 
+    /// <summary>The warnings every generated file disables, as the <c>#pragma warning</c> directive lists them.</summary>
+    public static readonly string DisabledWarningsText = string.Join(", ", _disabledWarnings);
+
     private static readonly Lazy<ImmutableArray<ExpressionSyntax>> DisabledWarnings = new(
         () => [.. _disabledWarnings.Select(z => (ExpressionSyntax)IdentifierName(z))]
     );

@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.Code;
 using Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
 using static Rocket.Surgery.LaunchPad.Analyzers.Api.Core.ApiSyntax;
 
@@ -90,10 +90,10 @@ public sealed class GraphQLMutationGenerator : IIncrementalGenerator
         if (!host.DeclaresGraphQLType) mutations = mutations.AddAttributeLists(Attribute("global::HotChocolate.Types.ExtendObjectType", Arg(Literal("Mutation"))));
 
         var builder = Type("global::HotChocolate.Execution.Configuration.IRequestExecutorBuilder");
-        var registrations = new List<StatementSyntax>
+        var registrations = new List<CodeStatement>
         {
             ThrowIfNull("builder"),
-            Statement(Invoke(GenericMember(Name("global::Microsoft.Extensions.DependencyInjection.SchemaRequestExecutorBuilderExtensions"), "AddTypeExtension", SyntaxFactory.IdentifierName(host.Name)), Id("builder"))),
+            Statement(Invoke(GenericMember(Name("global::Microsoft.Extensions.DependencyInjection.SchemaRequestExecutorBuilderExtensions"), "AddTypeExtension", Id(host.Name)), Id("builder"))),
         };
         // Nested inputs (CreateRocket.Request) are named with their container; HotChocolate names the others itself (…Input).
         foreach (var (wire, name) in operations.Where(o => o.Operation.WireNeedsGraphQLName).Select(o => (o.Operation.WireType, o.Operation.WireGraphQLName)).Distinct())
@@ -123,24 +123,24 @@ public sealed class GraphQLMutationGenerator : IIncrementalGenerator
     }
 
     // builder.AddInputObjectType<T>(d => d.Name("Name")), or AddObjectType.
-    private static ExpressionSyntax Named(string method, string type, string name) =>
+    private static CodeExpression Named(string method, string type, string name) =>
         Invoke(
             GenericMember(Name("global::Microsoft.Extensions.DependencyInjection.SchemaRequestExecutorBuilderExtensions"), method, Type(type)),
             Id("builder"),
             Lambda("descriptor", Invoke(Member(Id("descriptor"), "Name"), Literal(name)))
         );
 
-    private static MethodDeclarationSyntax Resolver(HostModel host, ProfileModel profile, OperationModel operation, string service)
+    private static CodeMethod Resolver(HostModel host, ProfileModel profile, OperationModel operation, string service)
     {
         var (Call, Awaited) = ServerDispatch.Send(profile, operation, Id("__request"), Id(Ct));
-        var body = new List<StatementSyntax>
+        var body = new List<CodeStatement>
         {
             ThrowIfNull("request"),
             // The sender comes from the request's services, not a parameter: some are internal to the project (ZeroAlloc).
             Var(ServerDispatch.SenderParameter, GetRequiredService(Type(service), Member(Id("context"), "Services"))),
             Var("__request", operation.InputType is { } ? Invoke(Member(Id("request"), "Create")) : Id("request")),
         };
-        TypeSyntax returnType;
+        CodeType returnType;
         if (operation.Union is { })
         {
             // A union: the value case is the field's value (true when void); each error case is a GraphQL error with its code, and its case
@@ -155,7 +155,7 @@ public sealed class GraphQLMutationGenerator : IIncrementalGenerator
                         Throw(
                             Invoke(
                                 Member($"{Generated}.ApiGraphQLErrors", "Error"),
-                                new ExpressionSyntax[] { Literal(error.Name), Literal(error.GraphQLCode) }.Concat(ServerEmit.ErrorMembers(error, value))
+                                new CodeExpression[] { Literal(error.Name), Literal(error.GraphQLCode) }.Concat(ServerEmit.ErrorMembers(error, value))
                             )
                         ),
                     ],
@@ -179,10 +179,10 @@ public sealed class GraphQLMutationGenerator : IIncrementalGenerator
             returnType = Type(operation.ResponseType!);
         }
 
-        var attributes = new List<AttributeListSyntax> { Attribute("global::HotChocolate.GraphQLName", Arg(Literal(operation.GraphQLField))) };
+        var attributes = new List<CodeAttribute> { Attribute("global::HotChocolate.GraphQLName", Arg(Literal(operation.GraphQLField))) };
         if (operation.Summary is { } summary) attributes.Add(Attribute("global::HotChocolate.GraphQLDescription", Arg(Literal(operation.Description is { } d ? summary + "\n\n" + d : summary))));
         foreach (var policy in operation.Policies) attributes.Add(Attribute("global::HotChocolate.Authorization.Authorize", Arg("Policy", Literal(policy))));
-        if (!operation.Roles.IsEmpty) attributes.Add(Attribute("global::HotChocolate.Authorization.Authorize", Arg("Roles", NewArray(Type("string"), operation.Roles.Select(r => (ExpressionSyntax)Literal(r))))));
+        if (!operation.Roles.IsEmpty) attributes.Add(Attribute("global::HotChocolate.Authorization.Authorize", Arg("Roles", NewArray(Type("string"), operation.Roles.Select(r => (CodeExpression)Literal(r))))));
         if (operation.AllowAnonymous) attributes.Add(Attribute("global::HotChocolate.Authorization.AllowAnonymous"));
 
         return Method(
@@ -196,7 +196,7 @@ public sealed class GraphQLMutationGenerator : IIncrementalGenerator
                             ),
                             body
                         )
-                       .WithAttributeLists(SyntaxFactory.List(attributes));
+                       .WithAttributeLists(attributes);
         // No doc comment: HotChocolate would describe the field with it when the operation has no summary of its own.
     }
 

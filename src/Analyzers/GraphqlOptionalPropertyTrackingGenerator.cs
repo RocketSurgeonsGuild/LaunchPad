@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Rocket.Surgery.LaunchPad.Analyzers;
 
@@ -50,15 +49,6 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
         {
             return;
         }
-
-        var classToInherit =
-            ( isRecord
-                ? (TypeDeclarationSyntax)RecordDeclaration(Token(SyntaxKind.RecordKeyword), declaration.Identifier)
-                : ClassDeclaration(declaration.Identifier) )
-           .WithModifiers(TokenList(declaration.Modifiers.Select(z => z.WithoutTrivia())))
-           .WithOpenBraceToken(Token(SyntaxKind.OpenBraceToken))
-           .WithCloseBraceToken(Token(SyntaxKind.CloseBraceToken))
-           .WithAttributeLists(SingletonList(Helpers.CompilerGenerated));
 
         var excludedProperties = new HashSet<string>();
         var symbolMemberNames = symbol.MemberNames.ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
@@ -135,49 +125,12 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                                   )
                           )];
 
-        var createArgumentList = constructor is null
-            ? ArgumentList()
-            : ArgumentList(
-                SeparatedList(constructor.Parameters.Select(z => Argument(IdentifierName(memberNamesSet.TryGetValue(z.Name, out var name) ? name : z.Name))))
-            );
-
-        var createBody = Block()
-           .AddStatements(
-                LocalDeclarationStatement(
-                    VariableDeclaration(
-                            IdentifierName(Identifier(TriviaList(), SyntaxKind.VarKeyword, "var", "var", TriviaList()))
-                        )
-                       .WithVariables(
-                            SingletonSeparatedList(
-                                VariableDeclarator(Identifier("value"))
-                                   .WithInitializer(
-                                        EqualsValueClause(
-                                            ObjectCreationExpression(
-                                                IdentifierName(Identifier(targetSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat))),
-                                                createArgumentList,
-                                                InitializerExpression(
-                                                    SyntaxKind.ObjectInitializerExpression,
-                                                    SeparatedList<ExpressionSyntax>(
-                                                        existingMembers
-                                                           .Select(
-                                                                z => AssignmentExpression(
-                                                                    SyntaxKind.SimpleAssignmentExpression,
-                                                                    IdentifierName(z.Name),
-                                                                    IdentifierName(z.Name)
-                                                                )
-                                                            )
-                                                    )
-                                                )
-                                            )
-                                        )
-                                    )
-                            )
-                        )
-                )
-            );
+        var arguments = constructor is null
+            ? ""
+            : string.Join(", ", constructor.Parameters.Select(z => memberNamesSet.TryGetValue(z.Name, out var name) ? name : z.Name));
 
         var namespaces = new HashSet<string>();
-
+        var members = new List<string>();
         foreach (var propertySymbol in missingProperties)
         {
             var propertyType = propertySymbol.Type is INamedTypeSymbol
@@ -186,22 +139,14 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
             } namedTypeSymbol
                 ? namedTypeSymbol.TypeArguments[0]
                 : propertySymbol.Type;
-            var typeName = ParseTypeName(propertyType.ToDisplayString(NullableFlowState.MaybeNull, SymbolDisplayFormat.MinimallyQualifiedFormat));
-            if (!SymbolEqualityComparer.Default.Equals(propertyType, propertySymbol.Type)
-             && propertyType is { TypeKind: TypeKind.Struct or TypeKind.Enum, }
-             && typeName is not NullableTypeSyntax)
-            {
-                typeName = NullableType(typeName);
-            }
+            var isOwnType = SymbolEqualityComparer.Default.Equals(propertyType, propertySymbol.Type);
+            var typeName = OptionalType(propertyType, nullableValue: !isOwnType);
 
             addNamespacesFromPropertyType(namespaces, propertyType);
-            classToInherit = classToInherit.AddMembers(
-                SymbolEqualityComparer.Default.Equals(propertyType, propertySymbol.Type)
-                    ? GenerateProperty(propertySymbol, typeName)
-                    : GenerateTrackingProperties(propertySymbol, typeName)
-            );
+            members.Add("public " + ( isOwnType ? typeName : "HotChocolate.Optional<" + typeName + ">" ) + " " + propertySymbol.Name + " { get; set; }");
         }
 
+        var changes = new List<(string Name, string Value)>();
         foreach (var propertySymbol in writeableProperties)
         {
             if (excludedProperties.Contains(propertySymbol.Name)) continue;
@@ -211,55 +156,72 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
             } namedTypeSymbol
                 ? namedTypeSymbol.TypeArguments[0]
                 : propertySymbol.Type;
-            var type = ParseTypeName(propertyType.ToDisplayString(NullableFlowState.MaybeNull, SymbolDisplayFormat.MinimallyQualifiedFormat));
-            if (propertyType is { TypeKind: TypeKind.Struct or TypeKind.Enum, } && type is not NullableTypeSyntax) type = NullableType(type);
+            var type = OptionalType(propertyType, nullableValue: true);
 
             addNamespacesFromPropertyType(namespaces, propertyType);
-
-            //            classToInherit = classToInherit.AddMembers(GenerateTrackingProperties(propertySymbol, type));
-            classToInherit = classToInherit.AddMembers(GenerateTrackingProperties(propertySymbol, type));
-            createBody = createBody.AddStatements(
-                GenerateApplyChangesBodyPart(propertySymbol, IdentifierName("value"), targetIsRecord)
+            members.Add("public HotChocolate.Optional<" + type + "> " + propertySymbol.Name + " { get; set; }");
+            changes.Add(
+                (propertySymbol.Name,
+                 propertySymbol.NullableAnnotation == NullableAnnotation.NotAnnotated && propertySymbol.Type.TypeKind == TypeKind.Struct
+                     ? propertySymbol.Name + ".Value ?? default"
+                     : propertySymbol.Name + ".Value")
             );
         }
 
-        // declaration.Members.OfType<ConstructorDeclarationSyntax>();
-        // or primary consturctor list
-
-        var createMethod = MethodDeclaration(
-                               ParseTypeName(targetSymbol.ToDisplayString(NullableFlowState.NotNull, SymbolDisplayFormat.FullyQualifiedFormat)),
-                               "Create"
-                           )
-                          .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
-                          .WithBody(
-                               createBody.AddStatements(
-                                   ReturnStatement(IdentifierName("value"))
-                               )
-                           );
-
-        classToInherit = classToInherit.AddMembers(createMethod);
         var usings = declaration
                     .SyntaxTree.GetCompilationUnitRoot()
                     .Usings
                     .AddDistinctUsingStatements(namespaces.Where(z => !string.IsNullOrWhiteSpace(z)));
 
-        classToInherit = classToInherit.WithMembers(List(classToInherit.Members.Select(z => z.WithAttributeLists(SingletonList(Helpers.CompilerAttributes)))));
+        var writer = new SourceWriter();
+        var opened = writer.OpenFile(usings, symbol.ContainingNamespace, declaration, output);
+        writer.Line(Helpers.CompilerGeneratedText);
+        writer.Line(SourceWriter.Modifiers(declaration.Modifiers) + ( isRecord ? "record " : "class " ) + declaration.Identifier.Text);
+        writer.OpenBlock();
+        foreach (var member in members)
+        {
+            writer.Line(Helpers.CompilerAttributesText);
+            writer.Line(member);
+            writer.Line();
+        }
 
-        var cu = CompilationUnit(
-                List<ExternAliasDirectiveSyntax>(),
-                List(usings),
-                List<AttributeListSyntax>(),
-                SingletonList<MemberDeclarationSyntax>(
-                    symbol.ContainingNamespace.IsGlobalNamespace
-                        ? classToInherit.ReparentDeclaration(output, declaration)
-                        : NamespaceDeclaration(ParseName(symbol.ContainingNamespace.ToDisplayString()))
-                           .WithMembers(SingletonList<MemberDeclarationSyntax>(classToInherit.ReparentDeclaration(output, declaration)))
-                )
-            )
-           .AddSharedTrivia();
+        writer.Line(Helpers.CompilerAttributesText);
+        writer.Line("public " + targetSymbol.ToDisplayString(NullableFlowState.NotNull, SymbolDisplayFormat.FullyQualifiedFormat) + " Create()");
+        writer.OpenBlock();
+        writer.Line("var value = new " + targetSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) + "(" + arguments + ")");
+        writer.Initializer([.. existingMembers.Select(z => z.Name + " = " + z.Name)], ";");
+        foreach (var (name, value) in changes)
+        {
+            writer.Line("if (" + name + ".HasValue)");
+            writer.OpenBlock();
+            if (targetIsRecord)
+            {
+                writer.Line("value = value with");
+                writer.Initializer([name + " = " + value], ";");
+            }
+            else
+            {
+                writer.Line("value." + name + " = " + value + ";");
+            }
 
-        output.AddSource(GeneratedSources.HintNameRelativeTo(declaration, "Optionals"), SyntaxLayout.ToText(cu));
+            writer.CloseBlock();
+            writer.Line();
+        }
+
+        writer.Line("return value;");
+        writer.CloseBlock();
+        writer.CloseBlock();
+        writer.CloseFile(opened);
+
+        output.AddSource(GeneratedSources.HintNameRelativeTo(declaration, "Optionals"), writer.ToString());
         return;
+
+        // A struct or enum is made nullable where an optional value may be absent, unless it already is.
+        static string OptionalType(ITypeSymbol type, bool nullableValue)
+        {
+            var name = type.ToDisplayString(NullableFlowState.MaybeNull, SymbolDisplayFormat.MinimallyQualifiedFormat);
+            return nullableValue && type is { TypeKind: TypeKind.Struct or TypeKind.Enum, } && !name.EndsWith("?", StringComparison.Ordinal) ? name + "?" : name;
+        }
 
         static void addNamespacesFromPropertyType(HashSet<string> namespaces, ITypeSymbol symbol)
         {
@@ -270,128 +232,6 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                 addNamespacesFromPropertyType(namespaces, genericType);
             }
         }
-    }
-
-    private static StatementSyntax GenerateApplyChangesBodyPart(
-        IPropertySymbol propertySymbol,
-        IdentifierNameSyntax valueIdentifier,
-        bool isRecord
-    )
-    {
-        return IfStatement(
-            MemberAccessExpression(
-                SyntaxKind.SimpleMemberAccessExpression,
-                IdentifierName(propertySymbol.Name),
-                IdentifierName("HasValue")
-            ),
-            Block(
-                SingletonList<StatementSyntax>(
-                    ExpressionStatement(
-                        GenerateAssignmentExpression(
-                            propertySymbol,
-                            valueIdentifier,
-                            isRecord,
-                            propertySymbol.NullableAnnotation == NullableAnnotation.NotAnnotated && propertySymbol.Type.TypeKind == TypeKind.Struct
-                                ? BinaryExpression(
-                                    SyntaxKind.CoalesceExpression,
-                                    MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        IdentifierName(propertySymbol.Name),
-                                        IdentifierName("Value")
-                                    ),
-                                    LiteralExpression(
-                                        SyntaxKind.DefaultLiteralExpression,
-                                        Token(SyntaxKind.DefaultKeyword)
-                                    )
-                                )
-                                : MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    IdentifierName(propertySymbol.Name),
-                                    IdentifierName("Value")
-                                )
-                        )
-                    )
-                )
-            )
-        );
-    }
-
-    private static AssignmentExpressionSyntax GenerateAssignmentExpression(
-        IPropertySymbol propertySymbol,
-        IdentifierNameSyntax valueIdentifier,
-        bool isRecord,
-        ExpressionSyntax valueExpression
-    )
-    {
-        return isRecord
-            ? AssignmentExpression(
-                SyntaxKind.SimpleAssignmentExpression,
-                valueIdentifier,
-                WithExpression(
-                    valueIdentifier,
-                    InitializerExpression(
-                        SyntaxKind.WithInitializerExpression,
-                        SingletonSeparatedList<ExpressionSyntax>(
-                            AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
-                                IdentifierName(propertySymbol.Name),
-                                valueExpression
-                            )
-                        )
-                    )
-                )
-            )
-            : AssignmentExpression(
-                SyntaxKind.SimpleAssignmentExpression,
-                MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, valueIdentifier, IdentifierName(propertySymbol.Name)),
-                valueExpression
-            );
-    }
-
-    private static MemberDeclarationSyntax[] GenerateTrackingProperties(IPropertySymbol propertySymbol, TypeSyntax typeSyntax)
-    {
-        var type = GenericName(Identifier("HotChocolate.Optional"))
-           .WithTypeArgumentList(TypeArgumentList(SingletonSeparatedList(typeSyntax)));
-        return
-        [
-            PropertyDeclaration(type, Identifier(propertySymbol.Name))
-               .WithModifiers(
-                    TokenList(
-                        Token(SyntaxKind.PublicKeyword)
-                    )
-                )
-               .WithAccessorList(
-                    AccessorList(
-                        List(
-                            new[]
-                            {
-                                AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
-                                AccessorDeclaration(SyntaxKind.SetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
-                            }
-                        )
-                    )
-                ),
-        ];
-    }
-
-    private static MemberDeclarationSyntax[] GenerateProperty(IPropertySymbol propertySymbol, TypeSyntax typeSyntax)
-    {
-        return
-        [
-            PropertyDeclaration(typeSyntax, Identifier(propertySymbol.Name))
-               .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
-               .WithAccessorList(
-                    AccessorList(
-                        List(
-                            new[]
-                            {
-                                AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
-                                AccessorDeclaration(SyntaxKind.SetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
-                            }
-                        )
-                    )
-                ),
-        ];
     }
 
     /// <inheritdoc />

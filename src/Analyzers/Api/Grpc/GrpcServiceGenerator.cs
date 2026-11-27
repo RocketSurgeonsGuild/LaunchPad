@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.Code;
 using Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
 using static Rocket.Surgery.LaunchPad.Analyzers.Api.Core.ApiSyntax;
 
@@ -65,7 +65,7 @@ public sealed class GrpcServiceGenerator : IIncrementalGenerator
                           GrpcEmit.ModelConfiguration(host, operations.Select(o => o.Operation).ToArray())
                                   .Concat(host.CanExportProto ? [GetProto(host)] : [])
                                   .Concat(operations.Select(o => Operation(host, profile, o.Operation, o.Service))),
-                          SyntaxFactory.IdentifierName(GrpcEmit.ContractName(host))
+                          Id(GrpcEmit.ContractName(host))
                       )
                      .AddAttributeLists(GeneratedCode("Rocket.Surgery.LaunchPad.Api.Grpc", version));
         var map = Method(
@@ -75,7 +75,7 @@ public sealed class GrpcServiceGenerator : IIncrementalGenerator
                 Parameters(This(Type("global::Microsoft.AspNetCore.Routing.IEndpointRouteBuilder"), "endpoints")),
                 [
                     Statement(Invoke(Member(Id(host.Name), "ConfigureGrpcModel"))),
-                    Return(Invoke(GenericMember(Name("global::Microsoft.AspNetCore.Builder.GrpcEndpointRouteBuilderExtensions"), "MapGrpcService", SyntaxFactory.IdentifierName(host.Name)), Id("endpoints"))),
+                    Return(Invoke(GenericMember(Name("global::Microsoft.AspNetCore.Builder.GrpcEndpointRouteBuilderExtensions"), "MapGrpcService", Id(host.Name)), Id("endpoints"))),
                 ]
             )
            .Summary($"Maps <see cref=\"{host.Name}\" />. Register code-first gRPC with <c>services.AddCodeFirstGrpc()</c>.");
@@ -86,12 +86,12 @@ public sealed class GrpcServiceGenerator : IIncrementalGenerator
 
     // The service's .proto, for generating clients in any language: protobuf-net's schema of the generated contract, plus the messages of the
     // union error cases its operations send in the case-bin trailer, so clients can decode them.
-    private static MemberDeclarationSyntax GetProto(HostModel host)
+    private static CodeMember GetProto(HostModel host)
     {
         var generator = Type("global::ProtoBuf.Grpc.Reflection.SchemaGenerator");
-        var contract = SyntaxFactory.IdentifierName(GrpcEmit.ContractName(host));
+        var contract = Id(GrpcEmit.ContractName(host));
         var cases = GrpcEmit.ErrorCaseMessages(host.Operations).ToArray();
-        IEnumerable<StatementSyntax> body = cases.Length == 0
+        IEnumerable<CodeStatement> body = cases.Length == 0
             ? [Statement(Invoke(Id("ConfigureGrpcModel"))), Return(Invoke(GenericMember(New(generator), "GetSchema", contract)))]
             :
             [
@@ -104,7 +104,7 @@ public sealed class GrpcServiceGenerator : IIncrementalGenerator
            .Summary($"The <c>.proto</c> of service <c>{GrpcEmit.PackageName(host)}.{GrpcEmit.ServiceName(host)}</c>, to generate clients from (protobuf-net.Grpc.Reflection).");
     }
 
-    private static MethodDeclarationSyntax Operation(HostModel host, ProfileModel profile, OperationModel operation, string service)
+    private static CodeMethod Operation(HostModel host, ProfileModel profile, OperationModel operation, string service)
     {
         var send = ServerDispatch.Send(profile, operation, Id("__request"), Id(Ct));
         // A stream is relayed item by item when it has to be awaited first (Foundatio, Immediate.Handlers) or its items wrapped.
@@ -112,7 +112,7 @@ public sealed class GrpcServiceGenerator : IIncrementalGenerator
         var isAsync = operation.Kind != RequestKind.Stream || relay;
         var (returnType, parameters) = GrpcEmit.Signature(host, operation, withDefault: false);
         var wire = operation.RequestIsMessage ? Id("request") : Member(Id("request"), "Value");
-        var body = new List<StatementSyntax>
+        var body = new List<CodeStatement>
         {
             Var(
                 ServerDispatch.SenderParameter,
@@ -134,7 +134,7 @@ public sealed class GrpcServiceGenerator : IIncrementalGenerator
         {
             // A union: the value case answers as usual, each error case is the case's status with its name and members in the trailers. A
             // stream of unions relays its value cases and ends with the first error case.
-            StatementSyntax[] Error(UnionCaseModel error, ExpressionSyntax value) =>
+            CodeStatement[] Error(UnionCaseModel error, CodeExpression value) =>
             [
                 Throw(
                     Invoke(
@@ -148,7 +148,7 @@ public sealed class GrpcServiceGenerator : IIncrementalGenerator
                     )
                 ),
             ];
-            ExpressionSyntax Wire(ExpressionSyntax value) => operation.ResponseIsMessage ? value : New(GrpcEmit.WireResponse(host, operation), value);
+            CodeExpression Wire(CodeExpression value) => operation.ResponseIsMessage ? value : New(GrpcEmit.WireResponse(host, operation), value);
             if (operation.Kind == RequestKind.Stream)
             {
                 body.Add(
