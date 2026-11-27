@@ -13,7 +13,7 @@ Resolves the metadata of value types written by a converter in `JsonSerializerOp
 
 - Name: `Add`
 - Returns: [JsonConverterTypeInfoResolver](/LaunchPad/pr-preview/pr-3347/api/rocket.surgery.launchpad.foundation/jsonconvertertypeinforesolver.md)
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3347-merge.Sha.4aab33c5f701c0001e99ba64a669e730647ab45f/src/Foundation/JsonConverterTypeInfoResolver.cs#L28-L29)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3347-merge.Sha.c2b6537b4ab49f853c50fea9f1114836c5d8adf2/src/Foundation/JsonConverterTypeInfoResolver.cs#L28-L29)
 
 Resolves `T` with the converter for it in the options.
 
@@ -37,7 +37,7 @@ public sealed class JsonConverterTypeInfoResolver
 
 - Name: `AddNullable`
 - Returns: [JsonConverterTypeInfoResolver](/LaunchPad/pr-preview/pr-3347/api/rocket.surgery.launchpad.foundation/jsonconvertertypeinforesolver.md)
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3347-merge.Sha.4aab33c5f701c0001e99ba64a669e730647ab45f/src/Foundation/JsonConverterTypeInfoResolver.cs#L39-L41)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3347-merge.Sha.c2b6537b4ab49f853c50fea9f1114836c5d8adf2/src/Foundation/JsonConverterTypeInfoResolver.cs#L39-L41)
 
 Resolves `T` and `Nullable`1` with the converter for `T` in the options.
 
@@ -63,7 +63,7 @@ public sealed class JsonConverterTypeInfoResolver
 - Name: `GetTypeInfo(Type, JsonSerializerOptions)`
 - Modifiers: `nullable`
 - Returns: `JsonTypeInfo?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3347-merge.Sha.4aab33c5f701c0001e99ba64a669e730647ab45f/src/Foundation/JsonConverterTypeInfoResolver.cs#L50)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3347-merge.Sha.c2b6537b4ab49f853c50fea9f1114836c5d8adf2/src/Foundation/JsonConverterTypeInfoResolver.cs#L50)
 
 Resolves a `Metadata.JsonTypeInfo` contract for the requested type and options.
 

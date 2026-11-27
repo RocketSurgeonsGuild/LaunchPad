@@ -2,10 +2,10 @@
 
 - Kind: `interface`
 - Package: [Rocket.Surgery.LaunchPad.Primitives](/LaunchPad/pr-preview/pr-3347/api/rocket.surgery.launchpad.primitives.md)
-- Version: `2.0.1-pr.1299`
+- Version: `2.0.1-pr.1300`
 - Namespace: `Rocket.Surgery.LaunchPad.Primitives`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3347-merge.Sha.4aab33c5f701c0001e99ba64a669e730647ab45f/src/Primitives/IValueObject.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3347-merge.Sha.c2b6537b4ab49f853c50fea9f1114836c5d8adf2/src/Primitives/IValueObject.cs)
 - Implements: [IDomainPrimitive<TSelf>](/LaunchPad/pr-preview/pr-3347/api/rocket.surgery.launchpad.primitives/idomainprimitive-1.md)
 
 A value object: a domain primitive that holds several values, validated together.
