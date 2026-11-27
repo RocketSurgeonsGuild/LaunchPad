@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.Code;
 using Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
 using static Rocket.Surgery.LaunchPad.Analyzers.Api.Core.ApiSyntax;
 
@@ -106,7 +106,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
                           .Documented(
                                $"<summary>\n    Maps the operations of <see cref=\"{host.Name}\" /> under <c>/{Xml(host.BaseRoute)}</c>.\n</summary>\n<returns>The route group, to add metadata or conventions to every operation.</returns>"
                            );
-        var members = new List<MemberDeclarationSyntax> { map };
+        var members = new List<CodeMember> { map };
         foreach (var (operation, service) in mapped)
         {
             members.Add(Handler(host, profile, operation, service));
@@ -126,21 +126,21 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
     }
 
     // var __versionSet = endpoints.NewApiVersionSet().HasApiVersion(…)….Build(); for a host with versions, when Asp.Versioning is referenced.
-    private static IEnumerable<StatementSyntax> VersionSet(HostModel host)
+    private static IEnumerable<CodeStatement> VersionSet(HostModel host)
     {
         var versions = ServerEmit.Versions(host);
         if (!host.HasApiVersioning || versions.Count == 0) yield break;
-        var set = versions.Aggregate((ExpressionSyntax)Invoke(Member(Id("endpoints"), "NewApiVersionSet")), (builder, v) => Invoke(Member(builder, "HasApiVersion"), ServerEmit.ApiVersion(v)));
+        var set = versions.Aggregate((CodeExpression)Invoke(Member(Id("endpoints"), "NewApiVersionSet")), (builder, v) => Invoke(Member(builder, "HasApiVersion"), ServerEmit.ApiVersion(v)));
         yield return Var("__versionSet", Invoke(Member(set, "Build")));
     }
 
     // One endpoint: MapMethods over the generated request delegate, plus the metadata ApiExplorer and OpenAPI read from a typed handler.
-    private static StatementSyntax Mapping(HostModel host, ProfileModel profile, OperationModel operation, string service, bool prefixName)
+    private static CodeStatement Mapping(HostModel host, ProfileModel profile, OperationModel operation, string service, bool prefixName)
     {
         var (result, _) = ReturnType(profile, operation);
         var endpoint = Id("endpoint");
-        ExpressionSyntax WithMetadata(ExpressionSyntax metadata) => Invoke(Member(Endpoints, "WithMetadata"), endpoint, metadata);
-        var statements = new List<StatementSyntax>
+        CodeExpression WithMetadata(CodeExpression metadata) => Invoke(Member(Endpoints, "WithMetadata"), endpoint, metadata);
+        var statements = new List<CodeStatement>
         {
             Var(
                 "endpoint",
@@ -156,7 +156,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
                 "method",
                 NullForgiving(
                     Invoke(
-                        Member(TypeOf(SyntaxFactory.IdentifierName(host.Name)), "GetMethod"),
+                        Member(TypeOf(Id(host.Name)), "GetMethod"),
                         NameOf($"__{operation.Name}"),
                         BitwiseOr(Member("global::System.Reflection.BindingFlags", "NonPublic"), Member("global::System.Reflection.BindingFlags", "Static"))
                     )
@@ -208,11 +208,11 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
         statements.Add(Statement(Invoke(Member(Endpoints, "WithName"), endpoint, Literal(name))));
         if (operation.Summary is { } summary) statements.Add(Statement(Invoke(Member(OpenApi, "WithSummary"), endpoint, Literal(summary))));
         if (operation.Description is { } description) statements.Add(Statement(Invoke(Member(OpenApi, "WithDescription"), endpoint, Literal(description))));
-        if (!operation.Tags.IsEmpty) statements.Add(Statement(Invoke(Member(OpenApi, "WithTags"), new[] { (ExpressionSyntax)endpoint }.Concat(operation.Tags.Select(t => (ExpressionSyntax)Literal(t))))));
+        if (!operation.Tags.IsEmpty) statements.Add(Statement(Invoke(Member(OpenApi, "WithTags"), new[] { (CodeExpression)endpoint }.Concat(operation.Tags.Select(t => (CodeExpression)Literal(t))))));
         foreach (var policy in operation.Policies) statements.Add(Statement(Invoke(Member(Authorization, "RequireAuthorization"), endpoint, Literal(policy))));
         if (!operation.Roles.IsEmpty || !operation.AuthenticationSchemes.IsEmpty)
         {
-            var settings = new List<(string, ExpressionSyntax)>();
+            var settings = new List<(string, CodeExpression)>();
             if (!operation.Roles.IsEmpty) settings.Add(("Roles", Literal(string.Join(",", operation.Roles))));
             if (!operation.AuthenticationSchemes.IsEmpty) settings.Add(("AuthenticationSchemes", Literal(string.Join(",", operation.AuthenticationSchemes))));
             statements.Add(Statement(Invoke(Member(Authorization, "RequireAuthorization"), endpoint, New(Type("global::Microsoft.AspNetCore.Authorization.AuthorizeAttribute"), [], settings))));
@@ -252,7 +252,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
         return Block(statements);
     }
 
-    private static ExpressionSyntax ProblemMetadata(int status) =>
+    private static CodeExpression ProblemMetadata(int status) =>
         New(
             Type("global::Microsoft.AspNetCore.Http.ProducesResponseTypeMetadata"),
             Literal(status),
@@ -261,7 +261,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
         );
 
     // The typed handler: bound values in, the mediator call, a typed result out. Its signature is what OpenAPI describes.
-    private static MethodDeclarationSyntax Handler(HostModel host, ProfileModel profile, OperationModel operation, string service)
+    private static CodeMethod Handler(HostModel host, ProfileModel profile, OperationModel operation, string service)
     {
         var (result, isAsync) = ReturnType(profile, operation);
         var modifiers = isAsync ? Modifiers(SyntaxKind.PrivateKeyword, SyntaxKind.StaticKeyword, SyntaxKind.AsyncKeyword) : Modifiers(SyntaxKind.PrivateKeyword, SyntaxKind.StaticKeyword);
@@ -276,10 +276,10 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
     }
 
     // What the Request Delegate Generator would have written: bind every parameter from the HttpContext, call the handler, execute the result.
-    private static MethodDeclarationSyntax RequestDelegate(ProfileModel profile, OperationModel operation, string service)
+    private static CodeMethod RequestDelegate(ProfileModel profile, OperationModel operation, string service)
     {
         var request = Member(Id("httpContext"), "Request");
-        var body = new List<StatementSyntax> { Var(Ct, Member(Id("httpContext"), "RequestAborted")) };
+        var body = new List<CodeStatement> { Var(Ct, Member(Id("httpContext"), "RequestAborted")) };
         foreach (var member in operation.Members)
         {
             switch (member.Source)
@@ -313,7 +313,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
 
         body.Add(Var(ServerDispatch.SenderParameter, GetRequiredService(Type(service), Member(Id("httpContext"), "RequestServices"))));
         var (_, isAsync) = ReturnType(profile, operation);
-        var call = Invoke(Id($"__{operation.Name}"), ServerEmit.Parameters(operation, service, Ct).Select(p => (ExpressionSyntax)Id(p.Parameter.Identifier.ValueText)));
+        var call = Invoke(Id($"__{operation.Name}"), ServerEmit.Parameters(operation, service, Ct).Select(p => (CodeExpression)Id(p.Parameter.Name)));
         body.Add(Var("__result", isAsync ? Await(call) : call));
         body.Add(Statement(Await(Invoke(Member(Id("__result"), "ExecuteAsync"), Id("httpContext")))));
         return Method(
@@ -326,7 +326,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
     }
 
     // Parses one route, query or header value into a local named after the member. A missing required value or an unparsable one is a 400.
-    private static IEnumerable<StatementSyntax> Parse(MemberModel member, ExpressionSyntax source, string what)
+    private static IEnumerable<CodeStatement> Parse(MemberModel member, CodeExpression source, string what)
     {
         var name = ServerEmit.Parameter(member);
         var raw = "__raw_" + member.Name;
@@ -371,21 +371,21 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
         );
     }
 
-    private static ExpressionSyntax TryParse(MemberModel member, ExpressionSyntax value, string result) => member.ParseKind switch
+    private static CodeExpression TryParse(MemberModel member, CodeExpression value, string result) => member.ParseKind switch
     {
-        ParseKind.Enum => Invoke(GenericMember(Name($"{Generated}.ApiBinding"), "TryParseEnum", Type(member.ParseType!)), [SyntaxFactory.Argument(value), OutVar(result)]),
-        ParseKind.Uri => Invoke(Member("global::System.Uri", "TryCreate"), [SyntaxFactory.Argument(value), SyntaxFactory.Argument(Member("global::System.UriKind", "RelativeOrAbsolute")), OutVar(result)]),
+        ParseKind.Enum => Invoke(GenericMember(Name($"{Generated}.ApiBinding"), "TryParseEnum", Type(member.ParseType!)), [Argument(value), OutVar(result)]),
+        ParseKind.Uri => Invoke(Member("global::System.Uri", "TryCreate"), [Argument(value), Argument(Member("global::System.UriKind", "RelativeOrAbsolute")), OutVar(result)]),
         ParseKind.Parsable or ParseKind.TryParseWithProvider => Invoke(
             Member(Type(member.ParseType!), "TryParse"),
-            [SyntaxFactory.Argument(value), SyntaxFactory.Argument(Member("global::System.Globalization.CultureInfo", "InvariantCulture")), OutVar(result)]
+            [Argument(value), Argument(Member("global::System.Globalization.CultureInfo", "InvariantCulture")), OutVar(result)]
         ),
-        ParseKind.TryParse => Invoke(Member(Type(member.ParseType!), "TryParse"), [SyntaxFactory.Argument(value), OutVar(result)]),
+        ParseKind.TryParse => Invoke(Member(Type(member.ParseType!), "TryParse"), [Argument(value), OutVar(result)]),
         ParseKind.String => Parenthesized(IsVar(value, result)),
         ParseKind.None => Parenthesized(And(IsVar(value, result), False)),
         _ => throw new ArgumentOutOfRangeException(nameof(member)),
     };
 
-    private static IEnumerable<StatementSyntax> DispatchAndResult(ProfileModel profile, OperationModel operation)
+    private static IEnumerable<CodeStatement> DispatchAndResult(ProfileModel profile, OperationModel operation)
     {
         var send = ServerDispatch.Send(profile, operation, Id("__request"), Id(Ct));
         var typedResults = Name($"{Http}.TypedResults");
@@ -393,9 +393,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
         {
             // Each item is mapped to its value or its problem; the result streams values and ends with the first problem.
             var item = Generic($"{Generated}.ApiStreamItem", Type(operation.ResponseTypeNotNull!));
-            var map = SyntaxFactory.SimpleLambdaExpression(SyntaxFactory.Parameter(SyntaxFactory.Identifier("__item")))
-                                   .WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.StaticKeyword)))
-                                   .WithBlock(
+            var map = StaticLambda("__item",
                                         Block(
                                             ServerEmit.UnionResult(
                                                 operation,
@@ -405,7 +403,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
                                                     Return(
                                                         Invoke(
                                                             Member(item, "Error"),
-                                                            Invoke(Member($"{Generated}.ApiProblems", "Details"), new ExpressionSyntax[] { Literal(error.StatusCode), Literal(error.Name) }.Concat(ServerEmit.ErrorMembers(error, value)))
+                                                            Invoke(Member($"{Generated}.ApiProblems", "Details"), new CodeExpression[] { Literal(error.StatusCode), Literal(error.Name) }.Concat(ServerEmit.ErrorMembers(error, value)))
                                                         )
                                                     ),
                                                 ],
@@ -424,7 +422,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
             foreach (var statement in ServerEmit.UnionResult(
                          operation,
                          value => [Return(value is null ? Invoke(Member(typedResults, "NoContent")) : Success(operation, typedResults, value))],
-                         (error, value) => [Return(Invoke(Member($"{Generated}.ApiProblems", "Problem"), new ExpressionSyntax[] { Literal(error.StatusCode), Literal(error.Name) }.Concat(ServerEmit.ErrorMembers(error, value))))],
+                         (error, value) => [Return(Invoke(Member($"{Generated}.ApiProblems", "Problem"), new CodeExpression[] { Literal(error.StatusCode), Literal(error.Name) }.Concat(ServerEmit.ErrorMembers(error, value))))],
                          operation.ResponseNullable ? () => [Return(Invoke(Member(typedResults, "NotFound")))] : null
                      ))
             {
@@ -456,7 +454,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
     }
 
     // The success result: 200, 201 (with a Location when the created resource's GET is known) or 202, carrying the value.
-    private static ExpressionSyntax Success(OperationModel operation, NameSyntax typedResults, ExpressionSyntax value, ExpressionSyntax? response = null) =>
+    private static CodeExpression Success(OperationModel operation, CodeName typedResults, CodeExpression value, CodeExpression? response = null) =>
         operation.SuccessStatusCode switch
         {
             201 when operation.CreatedLocationRoute is { } route => Invoke(Member(typedResults, "Created"), ServerEmit.LocationSyntax(route, operation, Generated, response ?? value), value),
@@ -466,7 +464,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
         };
 
     /// <summary>The handler's result type (an <c>IResult</c>) and whether the handler is async (then it returns a Task of it).</summary>
-    private static (TypeSyntax Result, bool IsAsync) ReturnType(ProfileModel profile, OperationModel operation)
+    private static (CodeType Result, bool IsAsync) ReturnType(ProfileModel profile, OperationModel operation)
     {
         // A stream of unions: values as NDJSON, ended by the first error case's problem.
         if (operation is { Union: { }, Kind: RequestKind.Stream }) return (StreamUnionResult(operation), ServerDispatch.Send(profile, operation, Id("__request"), Id(Ct)).Awaited);
@@ -474,7 +472,7 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
         // A union: its value case's result, 404 for a nullable value case, and ProblemDetails for its error cases.
         if (operation.Union is { })
         {
-            var results = new List<TypeSyntax> { operation.Kind == RequestKind.Void ? Type($"{Results}.NoContent") : SuccessType(operation) };
+            var results = new List<CodeType> { operation.Kind == RequestKind.Void ? Type($"{Results}.NoContent") : SuccessType(operation) };
             if (operation.ResponseNullable) results.Add(Type($"{Results}.NotFound"));
             results.Add(Type($"{Results}.ProblemHttpResult"));
             return (Generic($"{Results}.Results", results), true);
@@ -497,10 +495,10 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
         return (operation.ResponseNullable ? Generic($"{Results}.Results", success, Type($"{Results}.NotFound")) : success, true);
     }
 
-    private static TypeSyntax StreamUnionResult(OperationModel operation) =>
+    private static CodeType StreamUnionResult(OperationModel operation) =>
         Generic($"{Generated}.NdjsonUnionResult", Type(operation.StreamItemType!), Type(operation.ResponseTypeNotNull!));
 
-    private static TypeSyntax SuccessType(OperationModel operation) =>
+    private static CodeType SuccessType(OperationModel operation) =>
         Generic(
             operation.SuccessStatusCode switch
             {

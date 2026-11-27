@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.Code;
 using Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
 using static Rocket.Surgery.LaunchPad.Analyzers.Api.Core.ApiSyntax;
 
@@ -34,7 +34,7 @@ public sealed class GrpcProtoServiceGenerator : IIncrementalGenerator
         context.RegisterSourceOutput(hosts.Combine(mappings).Combine(referenced), static (output, input) => Emit(output, input.Left.Left, input.Left.Right, input.Right));
     }
 
-    private static bool IsClass(SyntaxNode node, CancellationToken _) => node is ClassDeclarationSyntax;
+    private static bool IsClass(SyntaxNode node, CancellationToken _) => node is Microsoft.CodeAnalysis.CSharp.Syntax.ClassDeclarationSyntax;
 
     private static EquatableArray<MappingModel> Flatten(System.Collections.Immutable.ImmutableArray<EquatableArray<MappingModel>> maps, System.Collections.Immutable.ImmutableArray<EquatableArray<MappingModel>> reverseMaps)
     {
@@ -120,7 +120,7 @@ public sealed class GrpcProtoServiceGenerator : IIncrementalGenerator
 
     private static string Write(HostModel host, ProfileModel profile, Dictionary<(string Source, string Destination), MappingModel> mappers, SourceProductionContext output)
     {
-        var methods = new List<MemberDeclarationSyntax>();
+        var methods = new List<CodeMember>();
         foreach (var operation in host.Operations)
         {
             if (ServerDispatch.ServiceType(profile, operation) is not { } service)
@@ -143,7 +143,7 @@ public sealed class GrpcProtoServiceGenerator : IIncrementalGenerator
                 Type("global::Microsoft.AspNetCore.Builder.GrpcServiceEndpointConventionBuilder"),
                 $"Map{host.Name}",
                 Parameters(This(Type("global::Microsoft.AspNetCore.Routing.IEndpointRouteBuilder"), "endpoints")),
-                [Return(Invoke(GenericMember(Name("global::Microsoft.AspNetCore.Builder.GrpcEndpointRouteBuilderExtensions"), "MapGrpcService", SyntaxFactory.IdentifierName(host.Name)), Id("endpoints")))]
+                [Return(Invoke(GenericMember(Name("global::Microsoft.AspNetCore.Builder.GrpcEndpointRouteBuilderExtensions"), "MapGrpcService", Id(host.Name)), Id("endpoints")))]
             )
            .Summary($"Maps <see cref=\"{host.Name}\" />. Register gRPC with <c>services.AddGrpc()</c>.");
         var extensions = Class($"{host.Name}EndpointRouteBuilderExtensions", Modifiers(Accessibility(host.Accessibility), SyntaxKind.StaticKeyword), [map])
@@ -151,7 +151,7 @@ public sealed class GrpcProtoServiceGenerator : IIncrementalGenerator
         return Render(host.Namespace, [implementation, extensions]);
     }
 
-    private static MethodDeclarationSyntax? Operation(
+    private static CodeMethod? Operation(
         HostModel host,
         ProfileModel profile,
         OperationModel operation,
@@ -165,7 +165,7 @@ public sealed class GrpcProtoServiceGenerator : IIncrementalGenerator
         // (the union's value case) to the proto response. A void operation answers an empty proto response.
         var missing = false;
         // A proto message is filled in place: ZeroAlloc.Mapping's constructor form would leave it empty.
-        ExpressionSyntax Call(MappingModel mapping, ExpressionSyntax value)
+        CodeExpression Call(MappingModel mapping, CodeExpression value)
         {
             if (mapping.InPlace) return Invoke(Member($"{Generated}.ApiGrpcProtoMapping", "Into"), value, New(Type(mapping.Destination)), Member(mapping.Mapper, "Map"));
             if (!mapping.DestinationIsProtoMessage) return Invoke(Member(mapping.Mapper, "Map"), value);
@@ -177,7 +177,7 @@ public sealed class GrpcProtoServiceGenerator : IIncrementalGenerator
             return Default;
         }
 
-        ExpressionSyntax Map(string source, string destination, ExpressionSyntax value)
+        CodeExpression Map(string source, string destination, CodeExpression value)
         {
             if (mappers.TryGetValue((source, destination), out var mapping)) return Call(mapping, value);
             output.ReportDiagnostic(
@@ -189,7 +189,7 @@ public sealed class GrpcProtoServiceGenerator : IIncrementalGenerator
         }
 
         var mappedRequest = Map(rpc.RequestMessage, operation.WireType, Id("request"));
-        ExpressionSyntax? Response(ExpressionSyntax? value) =>
+        CodeExpression? Response(CodeExpression? value) =>
             value is null ? New(Type(rpc.ResponseMessage)) : Map(operation.ResponseTypeNotNull!, rpc.ResponseMessage, value);
         // Checked up front, so a missing response mapping is reported once, not per case.
         if (operation.Kind != RequestKind.Void) Response(Id("__value"));
@@ -202,7 +202,7 @@ public sealed class GrpcProtoServiceGenerator : IIncrementalGenerator
         if (missing) return null;
 
         var send = ServerDispatch.Send(profile, operation, Id("__request"), Id(Ct));
-        var body = new List<StatementSyntax>
+        var body = new List<CodeStatement>
         {
             Var(
                 ServerDispatch.SenderParameter,
@@ -217,11 +217,11 @@ public sealed class GrpcProtoServiceGenerator : IIncrementalGenerator
                 New(Type("global::Grpc.Core.Status"), Member("global::Grpc.Core.StatusCode", "NotFound"), Literal(operation.Name + " found nothing"))
             )
         );
-        StatementSyntax Write(ExpressionSyntax value) => Statement(Await(Invoke(Member(Id("responseStream"), "WriteAsync"), Response(value)!)));
+        CodeStatement Write(CodeExpression value) => Statement(Await(Invoke(Member(Id("responseStream"), "WriteAsync"), Response(value)!)));
 
         // A union: the value case answers as usual, each error case is the case's status with its name in the case trailer and, when the user
         // maps the case to a proto message, that message in the case-bin trailer.
-        StatementSyntax[] Error(UnionCaseModel error, ExpressionSyntax value)
+        CodeStatement[] Error(UnionCaseModel error, CodeExpression value)
         {
             var message = FindProtoMessage(mappers, error.Type) is { } mapping ? Call(mapping, value) : Null;
             return

@@ -1,5 +1,5 @@
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.Code;
 using static Rocket.Surgery.LaunchPad.Analyzers.Api.Core.ApiSyntax;
 
 namespace Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
@@ -29,15 +29,15 @@ internal static class GrpcEmit
     public static string ServiceName(HostModel host) =>
         string.Concat(host.Group.Split(['-', '/', '.'], StringSplitOptions.RemoveEmptyEntries).Select(part => char.ToUpperInvariant(part[0]) + part[1..]));
 
-    public static TypeSyntax Message(HostModel host, string type) => SyntaxFactory.QualifiedName(SyntaxFactory.IdentifierName(ContractName(host)), SyntaxFactory.GenericName(SyntaxFactory.Identifier("Message")).AddTypeArgumentListArguments(Type(type)));
+    public static CodeType Message(HostModel host, string type) => Qualified(Id(ContractName(host)), GenericName("Message", Type(type)));
 
-    public static TypeSyntax WireRequest(HostModel host, OperationModel operation) => operation.RequestIsMessage ? Type(operation.WireType) : Message(host, operation.WireType);
+    public static CodeType WireRequest(HostModel host, OperationModel operation) => operation.RequestIsMessage ? Type(operation.WireType) : Message(host, operation.WireType);
 
-    public static TypeSyntax WireResponse(HostModel host, OperationModel operation) =>
+    public static CodeType WireResponse(HostModel host, OperationModel operation) =>
         operation.ResponseIsMessage ? Type(operation.ResponseTypeNotNull!) : Message(host, operation.ResponseTypeNotNull!);
 
     /// <summary>A contract method's return type and parameters (<c>request</c>, <c>context</c>).</summary>
-    public static (TypeSyntax ReturnType, ParameterListSyntax Parameters) Signature(HostModel host, OperationModel operation, bool withDefault)
+    public static (CodeType ReturnType, IReadOnlyList<CodeParameter> Parameters) Signature(HostModel host, OperationModel operation, bool withDefault)
     {
         var parameters = Parameters(
             Parameter(WireRequest(host, operation), "request"),
@@ -53,13 +53,13 @@ internal static class GrpcEmit
         return (returnType, parameters);
     }
 
-    public static InterfaceDeclarationSyntax Contract(HostModel host, IEnumerable<OperationModel> operations, Version? version)
+    public static CodeTypeDeclaration Contract(HostModel host, IEnumerable<OperationModel> operations, Version? version)
     {
         var members = operations.Select(
                                      operation =>
                                      {
                                          var (returnType, parameters) = Signature(host, operation, withDefault: true);
-                                         return (MemberDeclarationSyntax)ApiSyntax.Signature(returnType, operation.Name, parameters)
+                                         return (CodeMember)ApiSyntax.Signature(returnType, operation.Name, parameters)
                                                                                 .AddAttributeLists(Attribute("global::ProtoBuf.Grpc.Configuration.Operation", Arg(Literal(operation.Name))));
                                      }
                                  )
@@ -69,32 +69,28 @@ internal static class GrpcEmit
               .Summary($"The gRPC contract of <see cref=\"{host.Name}\" />: service <c>{PackageName(host)}.{ServiceName(host)}</c>, one operation per listed request.");
     }
 
-    private static ClassDeclarationSyntax MessageClass() =>
+    private static CodeTypeDeclaration MessageClass() =>
         Class(
                 "Message",
                 Modifiers(SyntaxKind.PublicKeyword, SyntaxKind.SealedKeyword),
                 [
                     Constructor("Message", Parameters(), []),
-                    Constructor("Message", Parameters(Parameter(SyntaxFactory.IdentifierName("T"), "value")), [Statement(Assign(Id("Value"), Id("value")))]),
-                    AutoProperty(Modifiers(SyntaxKind.PublicKeyword), SyntaxFactory.IdentifierName("T"), "Value", NullForgiving(Default))
+                    Constructor("Message", Parameters(Parameter(Id("T"), "value")), [Statement(Assign(Id("Value"), Id("value")))]),
+                    AutoProperty(Modifiers(SyntaxKind.PublicKeyword), Id("T"), "Value", NullForgiving(Default))
                        .AddAttributeLists(Attribute("global::System.Runtime.Serialization.DataMember", Arg("Order", Literal(1)))),
                     // What protobuf-net converts through when the carried struct is the surrogate; it converts the (null) existing value too.
-                    Conversion(MessageOfT, SyntaxFactory.IdentifierName("T"), New(MessageOfT, Id("value"))),
-                    Conversion(SyntaxFactory.IdentifierName("T"), MessageOfT, SyntaxFactory.ConditionalExpression(IsNull(Id("value")), NullForgiving(Default), Member(Id("value"), "Value"))),
+                    Conversion(MessageOfT, Id("T"), New(MessageOfT, Id("value"))),
+                    Conversion(Id("T"), MessageOfT, Conditional(IsNull(Id("value")), NullForgiving(Default), Member(Id("value"), "Value"))),
                 ]
             )
-           .WithTypeParameterList(SyntaxFactory.TypeParameterList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.TypeParameter("T"))))
+           .WithTypeParameters("T")
            .AddAttributeLists(Attribute("global::System.Runtime.Serialization.DataContract"))
            .Summary("Carries a request, response or stream item that isn't a class, which protobuf-net.Grpc requires.");
 
-    private static readonly TypeSyntax MessageOfT = SyntaxFactory.GenericName(SyntaxFactory.Identifier("Message")).AddTypeArgumentListArguments(SyntaxFactory.IdentifierName("T"));
+    private static readonly CodeType MessageOfT = GenericName("Message", Id("T"));
 
-    private static ConversionOperatorDeclarationSyntax Conversion(TypeSyntax to, TypeSyntax from, ExpressionSyntax body) =>
-        SyntaxFactory.ConversionOperatorDeclaration(SyntaxFactory.Token(SyntaxKind.ImplicitKeyword), to)
-                     .WithModifiers(Modifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword))
-                     .WithParameterList(Parameters(Parameter(from, "value")))
-                     .WithExpressionBody(SyntaxFactory.ArrowExpressionClause(body))
-                     .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+    private static CodeConversionOperator Conversion(CodeType to, CodeType from, CodeExpression body) =>
+        ImplicitConversion(Modifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword), to, Parameter(from, "value"), body);
 
     /// <summary>The union error cases the operations send as messages in the <c>case-bin</c> trailer: classes with members, once each.</summary>
     public static IEnumerable<UnionCaseModel> ErrorCaseMessages(IEnumerable<OperationModel> operations) =>
@@ -113,7 +109,7 @@ internal static class GrpcEmit
     ///         is marked configured once its types are in, so a second caller waits rather than building serializers from a half-configured model.
     ///     </para>
     /// </summary>
-    public static IEnumerable<MemberDeclarationSyntax> ModelConfiguration(HostModel host, IReadOnlyList<OperationModel> operations)
+    public static IEnumerable<CodeMember> ModelConfiguration(HostModel host, IReadOnlyList<OperationModel> operations)
     {
         var types = operations.SelectMany(
                                    o => new (string? Type, string? Name)[]
@@ -133,14 +129,14 @@ internal static class GrpcEmit
                                 .Distinct(StringComparer.Ordinal)
                                 .ToArray();
         var model = Member("global::ProtoBuf.Meta.RuntimeTypeModel", "Default");
-        yield return Field(Modifiers(SyntaxKind.PrivateKeyword, SyntaxKind.StaticKeyword), SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.BoolKeyword)), "__grpcModelConfigured");
+        yield return Field(Modifiers(SyntaxKind.PrivateKeyword, SyntaxKind.StaticKeyword), BoolType, "__grpcModelConfigured");
         yield return Method(
                 Modifiers(SyntaxKind.InternalKeyword, SyntaxKind.StaticKeyword),
                 VoidType,
                 "ConfigureGrpcModel",
                 Parameters(),
                 [
-                    SyntaxFactory.LockStatement(
+                    Lock(
                         model,
                         Block(
                             new[] { If(Id("__grpcModelConfigured"), Return()) }
@@ -164,9 +160,9 @@ internal static class GrpcEmit
             [
                 // Called under the model's lock. Another host that carries the same type has configured it already. (IsDefined would add it, at the
                 // default level.)
-                SyntaxFactory.ForEachStatement(
+                ForEach(
                     Type("global::ProtoBuf.Meta.MetaType"),
-                    SyntaxFactory.Identifier("existing"),
+                    "existing",
                     Invoke(Member(model, "GetTypes")),
                     If(Equal(Member(Id("existing"), "Type"), Id("type")), Return())
                 ),
@@ -182,9 +178,9 @@ internal static class GrpcEmit
             "__ConfigureGrpcSurrogate",
             Parameters(Parameter(Type("global::System.Type"), "wrapper"), Parameter(Type("global::System.Type"), "type")),
             [
-                SyntaxFactory.ForEachStatement(
+                ForEach(
                     Type("global::ProtoBuf.Meta.MetaType"),
-                    SyntaxFactory.Identifier("existing"),
+                    "existing",
                     Invoke(Member(model, "GetTypes")),
                     If(Equal(Member(Id("existing"), "Type"), Id("wrapper")), Return())
                 ),

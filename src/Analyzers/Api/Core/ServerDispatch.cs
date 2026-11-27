@@ -1,4 +1,4 @@
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.Code;
 using static Rocket.Surgery.LaunchPad.Analyzers.Api.Core.ApiSyntax;
 
 namespace Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
@@ -21,7 +21,7 @@ internal static class ServerDispatch
     ///     the stream itself or (<c>Awaited</c>) an awaitable that produces it (Foundatio's InvokeAsync&lt;IAsyncEnumerable&lt;T&gt;&gt;,
     ///     Immediate.Handlers' HandleAsync).
     /// </summary>
-    public static (ExpressionSyntax Call, bool Awaited) Send(ProfileModel profile, OperationModel operation, ExpressionSyntax request, ExpressionSyntax cancellationToken)
+    public static (CodeExpression Call, bool Awaited) Send(ProfileModel profile, OperationModel operation, CodeExpression request, CodeExpression cancellationToken)
     {
         var sender = Id(SenderParameter);
         if (profile.Dispatch == DispatchKind.HandlerInterface)
@@ -45,5 +45,5 @@ internal static class ServerDispatch
     }
 
     /// <summary>The stream a stream operation produces: the call itself, or the awaited call.</summary>
-    public static ExpressionSyntax Stream((ExpressionSyntax Call, bool Awaited) send) => send.Awaited ? Await(send.Call) : send.Call;
+    public static CodeExpression Stream((CodeExpression Call, bool Awaited) send) => send.Awaited ? Await(send.Call) : send.Call;
 }

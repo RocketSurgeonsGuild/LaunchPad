@@ -1,4 +1,4 @@
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.Code;
 using static Rocket.Surgery.LaunchPad.Analyzers.Api.Core.ApiSyntax;
 
 namespace Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
@@ -31,7 +31,7 @@ internal static class ServerEmit
     ///     The handler's or action's parameters as syntax: route, query (no body), header and service members, the body, then the sender
     ///     (when <paramref name="service" /> is given) and the cancellation token.
     /// </summary>
-    public static IEnumerable<(ParameterSyntax Parameter, bool HasTryParse, bool IsOptional)> Parameters(OperationModel operation, string? service, string cancellationToken)
+    public static IEnumerable<(CodeParameter Parameter, bool HasTryParse, bool IsOptional)> Parameters(OperationModel operation, string? service, string cancellationToken)
     {
         foreach (var member in operation.Members)
         {
@@ -60,7 +60,7 @@ internal static class ServerEmit
     ///     The statements that build <c>__request</c> from the bound parameters: constructor arguments and initializers for GET/DELETE, the body
     ///     with route, header and service values applied on top for POST/PUT/PATCH.
     /// </summary>
-    public static IEnumerable<StatementSyntax> BuildRequest(OperationModel operation)
+    public static IEnumerable<CodeStatement> BuildRequest(OperationModel operation)
     {
         var bound = operation.Members.Where(m => m.Source is BindingSource.Route or BindingSource.Header or BindingSource.Service || !operation.HasBody && m.Source == BindingSource.Query).ToArray();
         if (operation.HasBody)
@@ -68,7 +68,7 @@ internal static class ServerEmit
             yield return Var("__wire", Id("__body"));
             if (bound.Length > 0 && operation.RequestSupportsWith)
             {
-                yield return Statement(Assign(Id("__wire"), With(Id("__wire"), bound.Select(m => (m.Name, (ExpressionSyntax)Id(Parameter(m)))))));
+                yield return Statement(Assign(Id("__wire"), With(Id("__wire"), bound.Select(m => (m.Name, (CodeExpression)Id(Parameter(m)))))));
             }
             else
             {
@@ -80,7 +80,7 @@ internal static class ServerEmit
             var arguments = operation.Members.Where(m => m.ConstructorIndex >= 0)
                                      .OrderBy(m => m.ConstructorIndex)
                                      .Select(m => bound.Contains(m) ? Id(Parameter(m)) : NullForgiving(Default));
-            var initializers = bound.Where(m => m.ConstructorIndex < 0).Select(m => (m.Name, (ExpressionSyntax)Id(Parameter(m))));
+            var initializers = bound.Where(m => m.ConstructorIndex < 0).Select(m => (m.Name, (CodeExpression)Id(Parameter(m))));
             yield return Var("__wire", New(Type(operation.WireType), arguments, initializers));
         }
 
@@ -88,11 +88,11 @@ internal static class ServerEmit
     }
 
     /// <summary>The Location of a created resource: the target operation's full route, filled from the response's members.</summary>
-    public static ExpressionSyntax LocationSyntax(string route, OperationModel operation, string generatedNamespace, ExpressionSyntax response)
+    public static CodeExpression LocationSyntax(string route, OperationModel operation, string generatedNamespace, CodeExpression response)
     {
         var path = "/" + route.Trim('/');
         var tokens = RouteText.Tokens(route).ToArray();
-        var parts = new List<ExpressionSyntax>();
+        var parts = new List<CodeExpression>();
         var position = 0;
         for (var index = 0; index < tokens.Length; index++)
         {
@@ -113,11 +113,11 @@ internal static class ServerEmit
     ///     error case (<c>__error0</c>, …), then a null value (a nullable value case, or a default union) through <paramref name="onNull" />. A
     ///     union holding none of its cases is a bug in the handler, so it throws.
     /// </summary>
-    public static IEnumerable<StatementSyntax> UnionResult(
+    public static IEnumerable<CodeStatement> UnionResult(
         OperationModel operation,
-        Func<ExpressionSyntax?, IEnumerable<StatementSyntax>> onValue,
-        Func<UnionCaseModel, ExpressionSyntax, IEnumerable<StatementSyntax>> onError,
-        Func<IEnumerable<StatementSyntax>>? onNull,
+        Func<CodeExpression?, IEnumerable<CodeStatement>> onValue,
+        Func<UnionCaseModel, CodeExpression, IEnumerable<CodeStatement>> onError,
+        Func<IEnumerable<CodeStatement>>? onNull,
         string response = "__response"
     )
     {
@@ -151,7 +151,7 @@ internal static class ServerEmit
     ///     An error case's members, as the arguments of the generated problem helpers: <c>"id", __error.Id, …</c> after the status, case name
     ///     and transport code; a case with problem data passes it first, under the reserved <c>$</c> keys.
     /// </summary>
-    public static IEnumerable<ExpressionSyntax> ErrorMembers(UnionCaseModel error, ExpressionSyntax value) =>
+    public static IEnumerable<CodeExpression> ErrorMembers(UnionCaseModel error, CodeExpression value) =>
         error.ProblemMembers.Concat(error.Members).SelectMany(m => new[] { Literal(m.WireName), Member(value, m.Name) });
 
     /// <summary>The version an operation is served under: its own, or its host's.</summary>
@@ -171,5 +171,5 @@ internal static class ServerEmit
     }
 
     /// <summary><c>global::Asp.Versioning.ApiVersionParser.Default.Parse("1.0")</c>.</summary>
-    public static ExpressionSyntax ApiVersion(string version) => Invoke(Member(Member("global::Asp.Versioning.ApiVersionParser", "Default"), "Parse"), Literal(version));
+    public static CodeExpression ApiVersion(string version) => Invoke(Member(Member("global::Asp.Versioning.ApiVersionParser", "Default"), "Parse"), Literal(version));
 }

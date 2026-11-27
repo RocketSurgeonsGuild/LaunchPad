@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.Code;
 using static Rocket.Surgery.LaunchPad.Analyzers.Api.Core.ApiSyntax;
 
 namespace Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
@@ -67,7 +67,7 @@ internal static class OpenApiEmit
     ///     The transformer's parameters: <c>(OpenApiOperation operation, OpenApiOperationTransformerContext context, CancellationToken
     ///     cancellationToken)</c>.
     /// </summary>
-    public static ParameterListSyntax TransformerParameters { get; } = Parameters(
+    public static IReadOnlyList<CodeParameter> TransformerParameters { get; } = Parameters(
         Parameter(Type("global::Microsoft.OpenApi.OpenApiOperation"), Operation),
         Parameter(Type("global::Microsoft.AspNetCore.OpenApi.OpenApiOperationTransformerContext"), Context),
         Parameter(Type("global::System.Threading.CancellationToken"), Ct)
@@ -79,9 +79,9 @@ internal static class OpenApiEmit
     ///     from its JSON name as well as its C# name (the Minimal API request delegates do; MVC's model binding only takes the C# names,
     ///     ignoring case).
     /// </summary>
-    public static MethodDeclarationSyntax Transformer(OperationModel operation, string name, string helpers, SyntaxTokenList modifiers, bool bindsEnumJsonNames)
+    public static CodeMethod Transformer(OperationModel operation, string name, string helpers, CodeModifiers modifiers, bool bindsEnumJsonNames)
     {
-        var statements = new List<StatementSyntax>();
+        var statements = new List<CodeStatement>();
         var openApi = $"{helpers}.ApiOpenApi";
         if (operation.CreatedLocationRoute is { }) statements.Add(Statement(Invoke(Member(openApi, "Location"), Id(Operation))));
         if (operation.RequiresAuthorization) statements.Add(Statement(Invoke(Member(openApi, "Authenticate"), Id(Operation))));
@@ -154,12 +154,12 @@ internal static class OpenApiEmit
             var target = member.Source == BindingSource.Body
                 ? Invoke(Member($"{helpers}.ApiSchemaRule", "Body"), Id(Operation), Id(Context), Literal(member.WireName))
                 : Invoke(Member($"{helpers}.ApiSchemaRule", "Parameter"), Id(Operation), Literal(member.WireName));
-            statements.Add(Statement(member.Rules.Aggregate((ExpressionSyntax)target, (chain, rule) => Invoke(Member(chain, rule.Method), rule.Arguments.Select(a => RuleArgument(rule, a))))));
+            statements.Add(Statement(member.Rules.Aggregate((CodeExpression)target, (chain, rule) => Invoke(Member(chain, rule.Method), rule.Arguments.Select(a => RuleArgument(rule, a))))));
         }
 
         var isAsync = CaseStatuses(operation).Any() || EnumParameters(operation).Any();
         if (!isAsync) statements.Add(Return(Member("global::System.Threading.Tasks.Task", "CompletedTask")));
-        return Method(isAsync ? modifiers.Add(SyntaxFactory.Token(SyntaxKind.AsyncKeyword)) : modifiers, Task(), name, TransformerParameters, statements)
+        return Method(isAsync ? modifiers.Add(SyntaxKind.AsyncKeyword) : modifiers, Task(), name, TransformerParameters, statements)
            .Summary($"Describes <c>{operation.Name}</c> in the OpenAPI document: what its endpoint metadata can't say.");
     }
 
@@ -171,11 +171,11 @@ internal static class OpenApiEmit
         return operation.Union?.Errors.Select(e => e.StatusCode).Distinct().Where(s => s != 400 || !binds).OrderBy(s => s) ?? Enumerable.Empty<int>();
     }
 
-    private static IEnumerable<ExpressionSyntax> Cases(OperationModel operation, int status, string helpers) =>
-        operation.Union!.Errors.Where(e => e.StatusCode == status).Select(c => (ExpressionSyntax)Case(c, helpers));
+    private static IEnumerable<CodeExpression> Cases(OperationModel operation, int status, string helpers) =>
+        operation.Union!.Errors.Where(e => e.StatusCode == status).Select(c => (CodeExpression)Case(c, helpers));
 
     // new ApiOpenApiCase("RocketNotFound", "RocketNotFoundProblem", new ApiOpenApiMember[] { new ApiOpenApiMember("id", typeof(Guid)) })
-    private static ObjectCreationExpressionSyntax Case(UnionCaseModel errorCase, string helpers) =>
+    private static CodeObjectCreation Case(UnionCaseModel errorCase, string helpers) =>
         New(
             Type($"{helpers}.ApiOpenApiCase"),
             Literal(errorCase.Name),
@@ -183,15 +183,15 @@ internal static class OpenApiEmit
             Literal(errorCase.Summary),
             NewArray(
                 Type($"{helpers}.ApiOpenApiMember"),
-                errorCase.Members.Where(m => m.Type is { }).Select(m => (ExpressionSyntax)New(Type($"{helpers}.ApiOpenApiMember"), Literal(m.WireName), TypeOf(Type(m.Type!)), Literal(m.Summary)))
+                errorCase.Members.Where(m => m.Type is { }).Select(m => (CodeExpression)New(Type($"{helpers}.ApiOpenApiMember"), Literal(m.WireName), TypeOf(Type(m.Type!)), Literal(m.Summary)))
             )
         );
 
     // new string[] { "name", "summary", … }: pairs of a property's wire name and its description.
-    private static ExpressionSyntax Descriptions(IEnumerable<(string Name, string Summary)> descriptions) =>
-        NewArray(Type("string"), descriptions.SelectMany(d => new ExpressionSyntax[] { Literal(d.Name), Literal(d.Summary) }));
+    private static CodeExpression Descriptions(IEnumerable<(string Name, string Summary)> descriptions) =>
+        NewArray(Type("string"), descriptions.SelectMany(d => new CodeExpression[] { Literal(d.Name), Literal(d.Summary) }));
 
-    private static ExpressionSyntax RuleArgument(SchemaRuleModel rule, string argument) =>
+    private static CodeExpression RuleArgument(SchemaRuleModel rule, string argument) =>
         rule.Method is "MinLength" or "MaxLength" && int.TryParse(argument, out var length) ? Literal(length) : Literal(argument);
 
     /// <summary>
