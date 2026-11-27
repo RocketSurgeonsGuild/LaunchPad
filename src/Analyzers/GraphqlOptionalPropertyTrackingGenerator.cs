@@ -1,9 +1,7 @@
 using System.Collections.Immutable;
-using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Rocket.Surgery.LaunchPad.Analyzers;
@@ -15,7 +13,7 @@ namespace Rocket.Surgery.LaunchPad.Analyzers;
 public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
 {
     private static void GeneratePropertyTracking(
-        SourceProductionContext context,
+        GeneratedSources output,
         TypeDeclarationSyntax declaration,
         INamedTypeSymbol symbol,
         INamedTypeSymbol targetSymbol
@@ -23,7 +21,7 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
     {
         if (!declaration.Modifiers.Any(z => z.IsKind(SyntaxKind.PartialKeyword)))
         {
-            context.ReportDiagnostic(
+            output.ReportDiagnostic(
                 Diagnostic.Create(GeneratorDiagnostics.MustBePartial, declaration.Identifier.GetLocation(), declaration.GetFullMetadataName())
             );
             return;
@@ -36,7 +34,7 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
 
         if (!targetSymbol.IsValueType && targetSymbol.IsRecord != isRecord)
         {
-            context.ReportDiagnostic(
+            output.ReportDiagnostic(
                 Diagnostic.Create(
                     GeneratorDiagnostics.ParameterMustBeSameTypeOfObject,
                     declaration.Keyword.GetLocation(),
@@ -253,14 +251,14 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
                 List<AttributeListSyntax>(),
                 SingletonList<MemberDeclarationSyntax>(
                     symbol.ContainingNamespace.IsGlobalNamespace
-                        ? classToInherit.ReparentDeclaration(context, declaration)
+                        ? classToInherit.ReparentDeclaration(output, declaration)
                         : NamespaceDeclaration(ParseName(symbol.ContainingNamespace.ToDisplayString()))
-                           .WithMembers(SingletonList<MemberDeclarationSyntax>(classToInherit.ReparentDeclaration(context, declaration)))
+                           .WithMembers(SingletonList<MemberDeclarationSyntax>(classToInherit.ReparentDeclaration(output, declaration)))
                 )
             )
            .AddSharedTrivia();
 
-        context.AddSourceRelativeTo(declaration, "Optionals", SourceText.From(SyntaxLayout.ToText(cu), Encoding.UTF8));
+        output.AddSource(GeneratedSources.HintNameRelativeTo(declaration, "Optionals"), SyntaxLayout.ToText(cu));
         return;
 
         static void addNamespacesFromPropertyType(HashSet<string> namespaces, ITypeSymbol symbol)
@@ -399,55 +397,38 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        var values = context
-                    .SyntaxProvider
-                    .CreateSyntaxProvider(
-                         static (node, _) =>
-                             node is ( ClassDeclarationSyntax or RecordDeclarationSyntax )
-                                 and TypeDeclarationSyntax
-                             {
-                                 BaseList: { } baseList,
-                             }
-                          && baseList.Types.Any(
-                                 z => z.Type is GenericNameSyntax qns && qns.Identifier.Text.EndsWith("IOptionalTracking", StringComparison.Ordinal)
-                             ),
-                         static (syntaxContext, token) => (
-                             syntax: (TypeDeclarationSyntax)syntaxContext.Node, semanticModel: syntaxContext.SemanticModel,
-                             // ReSharper disable once NullableWarningSuppressionIsUsed
-                             symbol: syntaxContext.SemanticModel.GetDeclaredSymbol((TypeDeclarationSyntax)syntaxContext.Node, token)!
-                         )
-                     )
-                    .Select(
-                         (tuple, _) =>
-                         {
-                             var interfaceSymbol =
-                                 tuple.symbol.Interfaces.FirstOrDefault(z => z.Name.StartsWith("IOptionalTracking", StringComparison.Ordinal));
-                             return interfaceSymbol is not
-                             {
-                                 ContainingAssembly.Name: "Rocket.Surgery.LaunchPad.HotChocolate",
-                                 TypeArguments: [INamedTypeSymbol targetSymbol,],
-                             }
-                                 ? ((INamedTypeSymbol symbol, TypeDeclarationSyntax syntax, SemanticModel semanticModel, INamedTypeSymbol interfaceSymbol, INamedTypeSymbol targetSymbol))default
-                                 : (
-                                 tuple.symbol,
-                                 tuple.syntax,
-                                 tuple.semanticModel,
-                                 interfaceSymbol,
-                                 targetSymbol
-                             );
-                         }
-                     )
-                    .Where(x => x is { symbol: { }, targetSymbol: { }, });
+        var outputs = context
+                     .SyntaxProvider
+                     .CreateSyntaxProvider(
+                          static (node, _) =>
+                              node is ( ClassDeclarationSyntax or RecordDeclarationSyntax )
+                                  and TypeDeclarationSyntax
+                              {
+                                  BaseList: { } baseList,
+                              }
+                           && baseList.Types.Any(
+                                  z => z.Type is GenericNameSyntax qns && qns.Identifier.Text.EndsWith("IOptionalTracking", StringComparison.Ordinal)
+                              ),
+                          static (syntaxContext, cancellationToken) => Generate(syntaxContext, cancellationToken)
+                      )
+                     .Where(static output => output is { })
+                     .Select(static (output, _) => output!)
+                     .WithTrackingName("OptionalTracking");
 
-        context.RegisterSourceOutput(
-            values,
-            // ReSharper disable once NullableWarningSuppressionIsUsed
-            static (productionContext, tuple) => GeneratePropertyTracking(
-                productionContext,
-                tuple.syntax,
-                tuple.symbol,
-                tuple.targetSymbol!
-            )
-        );
+        context.RegisterSourceOutput(outputs, static (productionContext, output) => output.AddTo(productionContext));
+    }
+
+    // Everything is read from the symbols here, in the transform, so the pipeline carries only text and diagnostics.
+    private static GeneratedSources? Generate(GeneratorSyntaxContext syntaxContext, CancellationToken cancellationToken)
+    {
+        var syntax = (TypeDeclarationSyntax)syntaxContext.Node;
+        if (syntaxContext.SemanticModel.GetDeclaredSymbol(syntax, cancellationToken) is not { } symbol) return null;
+
+        var interfaceSymbol = symbol.Interfaces.FirstOrDefault(z => z.Name.StartsWith("IOptionalTracking", StringComparison.Ordinal));
+        if (interfaceSymbol is not { ContainingAssembly.Name: "Rocket.Surgery.LaunchPad.HotChocolate", TypeArguments: [INamedTypeSymbol targetSymbol,], }) return null;
+
+        var output = new GeneratedSources();
+        GeneratePropertyTracking(output, syntax, symbol, targetSymbol);
+        return output;
     }
 }

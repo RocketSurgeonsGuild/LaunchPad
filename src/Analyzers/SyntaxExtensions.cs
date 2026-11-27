@@ -68,7 +68,7 @@ internal static class SyntaxExtensions
 
     public static TypeDeclarationSyntax ReparentDeclaration(
         this TypeDeclarationSyntax classToNest,
-        SourceProductionContext context,
+        GeneratedSources output,
         TypeDeclarationSyntax source
     )
     {
@@ -85,7 +85,7 @@ internal static class SyntaxExtensions
 
             if (!parentSyntax.Modifiers.Any(SyntaxKind.PartialKeyword))
             {
-                context.ReportDiagnostic(
+                output.ReportDiagnostic(
                     Diagnostic.Create(GeneratorDiagnostics.MustBePartial, parentSyntax.Identifier.GetLocation(), parentSyntax.GetFullMetadataName())
                 );
             }

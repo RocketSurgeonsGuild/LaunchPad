@@ -48,9 +48,9 @@ public class GeneratorBenchmarkTests
     private static GeneratorDriver Driver(IIncrementalGenerator generator) =>
         CSharpGeneratorDriver.Create([generator.AsSourceGenerator()], parseOptions: ParseOptions);
 
-    private static SyntaxTree Parse(string path, string source) => CSharpSyntaxTree.ParseText(source, ParseOptions, path);
+    internal static SyntaxTree Parse(string path, string source) => CSharpSyntaxTree.ParseText(source, ParseOptions, path);
 
-    private static CSharpCompilation Compilation()
+    internal static CSharpCompilation Compilation(int types = Types)
     {
         // What the sources use, plus everything the test process has loaded (the framework).
         var references = AppDomain
@@ -72,7 +72,7 @@ public class GeneratorBenchmarkTests
         return CSharpCompilation.Create(
             "Perf",
             [
-                .. Enumerable.Range(0, Types).Select(i => Parse($"Type{i}.cs", Source(i, extraProperty: false))),
+                .. Enumerable.Range(0, types).Select(i => Parse($"Type{i}.cs", Source(i, extraProperty: false))),
                 Parse("Unrelated.cs", "namespace Perf { public static class Unrelated { public const int Value = 1; } }"),
             ],
             references,
@@ -80,7 +80,7 @@ public class GeneratorBenchmarkTests
         );
     }
 
-    private static string Source(int i, bool extraProperty) => $$"""
+    internal static string Source(int i, bool extraProperty) => $$"""
         using System;
         using System.Collections.Generic;
         using Rocket.Surgery.LaunchPad.Foundation;
@@ -108,6 +108,7 @@ public class GeneratorBenchmarkTests
             public partial record Patch{{i}} : IPropertyTracking<Model{{i}}>, IRequest<Model{{i}}>
             {
                 public Guid Id { get; init; }
+                {{( extraProperty ? "public long PatchExtra { get; set; }" : "" )}}
             }
 
             public partial record Graph{{i}} : IOptionalTracking<Patch{{i}}>
