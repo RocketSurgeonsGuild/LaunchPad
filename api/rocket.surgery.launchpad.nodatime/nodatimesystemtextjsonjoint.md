@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.NodaTime](/LaunchPad/api/rocket.surgery.launchpad.nodatime.md)
-- Version: `2.0.1-beta.457`
+- Version: `2.0.1-beta.458`
 - Namespace: `Rocket.Surgery.LaunchPad.NodaTime.Joints`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.38910164e414562d3509d65b5a4e0133f1c911cc/src/NodaTime/Joints/NodaTimeSystemTextJsonJoint.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6a854476dc50a3b95bf56cf9e7b0d45ee9f0bfa7/src/NodaTime/Joints/NodaTimeSystemTextJsonJoint.cs)
 - Implements: `IDovetailJoint`, `IServiceJoint`
 
 A joint that configures `Json.JsonSerializerOptions` with the NodaTime converters, using the `IDateTimeZoneProvider` that is registered. Implements the `Joints.IServiceJoint`

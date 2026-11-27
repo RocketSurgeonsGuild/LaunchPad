@@ -1,9 +1,9 @@
 # Rocket.Surgery.LaunchPad.Grpc
 
 - Package: `Rocket.Surgery.LaunchPad.Grpc`
-- Version: `2.0.1-beta.457`
+- Version: `2.0.1-beta.458`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.main.Sha.38910164e414562d3509d65b5a4e0133f1c911cc/src/Grpc/Joints)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.main.Sha.6a854476dc50a3b95bf56cf9e7b0d45ee9f0bfa7/src/Grpc/Joints)
 - NuGet: [Rocket.Surgery.LaunchPad.Grpc](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.Grpc)
 
 ## Namespaces

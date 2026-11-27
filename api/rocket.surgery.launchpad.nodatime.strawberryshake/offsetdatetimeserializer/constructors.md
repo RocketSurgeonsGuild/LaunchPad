@@ -12,7 +12,7 @@ Serializes `OffsetDateTime` as the `DateTime` scalar of HotChocolate 16
 ## OffsetDateTimeSerializer
 
 - Name: `Constructor`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.38910164e414562d3509d65b5a4e0133f1c911cc/src/NodaTime.StrawberryShake/OffsetDateTimeSerializer.cs#L17-L19)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6a854476dc50a3b95bf56cf9e7b0d45ee9f0bfa7/src/NodaTime.StrawberryShake/OffsetDateTimeSerializer.cs#L17-L19)
 
 Create a new OffsetDateTimeSerializer
 

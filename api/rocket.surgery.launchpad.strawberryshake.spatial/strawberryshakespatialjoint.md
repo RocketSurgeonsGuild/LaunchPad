@@ -2,10 +2,10 @@
 
 - Kind: `class`
 - Package: [Rocket.Surgery.LaunchPad.StrawberryShake.Spatial](/LaunchPad/api/rocket.surgery.launchpad.strawberryshake.spatial.md)
-- Version: `2.0.1-beta.457`
+- Version: `2.0.1-beta.458`
 - Namespace: `Rocket.Surgery.LaunchPad.StrawberryShake.Spatial.Joints`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.38910164e414562d3509d65b5a4e0133f1c911cc/src/StrawberryShake.Spatial/Joints/StrawberryShakeSpatialJoint.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6a854476dc50a3b95bf56cf9e7b0d45ee9f0bfa7/src/StrawberryShake.Spatial/Joints/StrawberryShakeSpatialJoint.cs)
 - Implements: `IDovetailJoint`, `IServiceJoint`
 
 Adds the spatial serializers to StrawberryShake

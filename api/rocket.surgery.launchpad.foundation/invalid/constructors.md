@@ -13,7 +13,7 @@ The request is malformed or can never succeed as sent. HTTP 400, gRPC `InvalidAr
 ## Invalid(string?)
 
 - Name: `Constructor(string?)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.38910164e414562d3509d65b5a4e0133f1c911cc/src/Foundation/Problems.cs#L42-L45)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6a854476dc50a3b95bf56cf9e7b0d45ee9f0bfa7/src/Foundation/Problems.cs#L42-L45)
 
 The request is malformed or can never succeed as sent. HTTP 400, gRPC `InvalidArgument`, GraphQL `BAD_USER_INPUT`.
 

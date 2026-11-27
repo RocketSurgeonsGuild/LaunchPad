@@ -15,7 +15,7 @@ Represents a void or unit type in Hot Chocolate
 - Name: `CoerceInputLiteral(IValueNode)`
 - Modifiers: `override`
 - Returns: `object`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.38910164e414562d3509d65b5a4e0133f1c911cc/src/HotChocolate/Types/VoidType.cs#L33)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6a854476dc50a3b95bf56cf9e7b0d45ee9f0bfa7/src/HotChocolate/Types/VoidType.cs#L33)
 
 Coerces a GraphQL literal (AST value node) into a runtime value.
 
@@ -52,7 +52,7 @@ public class VoidType
 - Name: `CoerceInputValue(JsonElement, IFeatureProvider)`
 - Modifiers: `override`
 - Returns: `object`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.38910164e414562d3509d65b5a4e0133f1c911cc/src/HotChocolate/Types/VoidType.cs#L36)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6a854476dc50a3b95bf56cf9e7b0d45ee9f0bfa7/src/HotChocolate/Types/VoidType.cs#L36)
 
 Coerces an external input value (deserialized JSON) into a runtime value.
 
@@ -90,7 +90,7 @@ public class VoidType
 
 - Name: `CoerceOutputValue(object, ResultElement)`
 - Modifiers: `override`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.38910164e414562d3509d65b5a4e0133f1c911cc/src/HotChocolate/Types/VoidType.cs#L39)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6a854476dc50a3b95bf56cf9e7b0d45ee9f0bfa7/src/HotChocolate/Types/VoidType.cs#L39)
 
 Coerces a runtime value into an external output representation and writes it to the result.
 
@@ -126,7 +126,7 @@ public class VoidType
 - Name: `IsValueCompatible(IValueNode)`
 - Modifiers: `override`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.38910164e414562d3509d65b5a4e0133f1c911cc/src/HotChocolate/Types/VoidType.cs#L27)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6a854476dc50a3b95bf56cf9e7b0d45ee9f0bfa7/src/HotChocolate/Types/VoidType.cs#L27)
 
 Checks if the value literal is compatible with this scalar type.
 
@@ -157,7 +157,7 @@ public class VoidType
 - Name: `IsValueCompatible(JsonElement)`
 - Modifiers: `override`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.38910164e414562d3509d65b5a4e0133f1c911cc/src/HotChocolate/Types/VoidType.cs#L30)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6a854476dc50a3b95bf56cf9e7b0d45ee9f0bfa7/src/HotChocolate/Types/VoidType.cs#L30)
 
 Determines if the given `inputValue` is compatible with this type.
 
@@ -189,7 +189,7 @@ public class VoidType
 - Name: `ValueToLiteral(object)`
 - Modifiers: `override`
 - Returns: `IValueNode`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.38910164e414562d3509d65b5a4e0133f1c911cc/src/HotChocolate/Types/VoidType.cs#L42)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.6a854476dc50a3b95bf56cf9e7b0d45ee9f0bfa7/src/HotChocolate/Types/VoidType.cs#L42)
 
 Converts a runtime value into a GraphQL literal (AST value node). Used for default value representation in SDL and introspection.
 
