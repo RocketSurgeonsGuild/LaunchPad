@@ -27,6 +27,24 @@ internal sealed record PrimitiveSettings(bool Trim, bool NotEmpty, int MaxLength
             exceptionType is null ? null : exceptionType.StartsWith("global::", StringComparison.Ordinal) ? exceptionType : "global::" + exceptionType
         );
     }
+
+    /// <summary>
+    ///     Applies the settings to a model read without them: <see cref="PrimitiveReader.Read" /> leaves out what only the project's settings
+    ///     decide, so the model of a declaration can be read once in the syntax transform and the settings combined in after.
+    /// </summary>
+    public PrimitiveModel Apply(PrimitiveModel model) =>
+        model with
+        {
+            Strings = model.Strings is { } strings
+                ? strings with
+                {
+                    Trim = strings.Trim || Trim,
+                    NotEmpty = strings.NotEmpty ?? ( NotEmpty ? new("EMPTY", null) : null ),
+                    MaxLength = strings.MaxLength ?? MaxLength,
+                }
+                : null,
+            ExceptionType = ExceptionType,
+        };
 }
 
 /// <summary>
@@ -69,7 +87,6 @@ internal static class PrimitiveReader
         TypeDeclarationSyntax declaration,
         AttributeData primitive,
         Compilation compilation,
-        PrimitiveSettings settings,
         CancellationToken cancellationToken
     )
     {
@@ -198,7 +215,7 @@ internal static class PrimitiveReader
                               .ToEquatableArray();
 
         var strings = shape == PrimitiveShape.String || shape == PrimitiveShape.StrongId && value!.IsString
-            ? ReadStringRules(type, kind, primitive, rules, kindError, settings)
+            ? ReadStringRules(type, kind, primitive, rules, kindError)
             : null;
         var range = shape is PrimitiveShape.Numeric or PrimitiveShape.Date or PrimitiveShape.StrongId && !value!.IsString
             ? ReadRange(kind, primitive, rules, kindError, value!)
@@ -274,7 +291,8 @@ internal static class PrimitiveReader
             enumMembers,
             enumData,
             currency,
-            settings.ExceptionType,
+            // the project's exception type: PrimitiveSettings.Apply
+            null,
             format
         );
         return (model, diagnostics.ToImmutable());
@@ -354,8 +372,7 @@ internal static class PrimitiveReader
         string kind,
         AttributeData primitive,
         AttributeData[] rules,
-        Check? kindError,
-        PrimitiveSettings settings
+        Check? kindError
     )
     {
         bool Has(string name) => rules.Any(z => z.AttributeClass!.Name == name);
@@ -503,10 +520,7 @@ internal static class PrimitiveReader
                 break;
         }
 
-        if (settings.Trim) trim = true;
-        if (settings.NotEmpty) notEmpty ??= new("EMPTY", null);
-        max ??= settings.MaxLength;
-
+        // The project's Trim, NotEmpty and MaxLength settings come in after: PrimitiveSettings.Apply.
         return new(
             trim,
             Has("TrimStartAttribute"),

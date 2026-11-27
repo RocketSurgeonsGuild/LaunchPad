@@ -34,27 +34,18 @@ public sealed class DomainPrimitiveGenerator : IIncrementalGenerator
         );
 
         var settings = context.AnalyzerConfigOptionsProvider.Select(static (provider, _) => PrimitiveSettings.Read(provider.GlobalOptions));
+        // The model is read in the transform, so the pipeline holds no symbol or compilation; the settings, which only adjust a model, are
+        // combined in after.
         var primitives = context.SyntaxProvider
                                 .CreateSyntaxProvider(
                                      static (node, _) => node is RecordDeclarationSyntax { AttributeLists.Count: > 0 } or ClassDeclarationSyntax { AttributeLists.Count: > 0 },
-                                     static (syntax, cancellationToken) => Find(syntax, cancellationToken)
+                                     static (syntax, cancellationToken) => Read(syntax, cancellationToken)
                                  )
                                 .Where(static z => z is not null)
+                                .Select(static (read, _) => read!)
+                                .WithTrackingName("DomainPrimitiveModels")
                                 .Combine(settings)
-                                .Select(
-                                     static (pair, cancellationToken) =>
-                                     {
-                                         var (found, settings) = pair;
-                                         return PrimitiveReader.Read(
-                                             found!.Symbol,
-                                             found.Declaration,
-                                             found.Attribute,
-                                             found.Compilation,
-                                             settings,
-                                             cancellationToken
-                                         );
-                                     }
-                                 )
+                                .Select(static (pair, _) => pair.Left with { Model = pair.Left.Model is { } model ? pair.Right.Apply(model) : null })
                                 .WithTrackingName("DomainPrimitives");
 
         context.RegisterSourceOutput(
@@ -77,13 +68,13 @@ public sealed class DomainPrimitiveGenerator : IIncrementalGenerator
         );
     }
 
-    private sealed record Found(INamedTypeSymbol Symbol, TypeDeclarationSyntax Declaration, AttributeData Attribute, Compilation Compilation);
+    private sealed record Result(PrimitiveModel? Model, EquatableArray<DiagnosticInfo> Diagnostics);
 
     /// <summary>
     ///     The domain primitive a record (or the class of a smart enum) declares, when this declaration carries its primitive attribute (a partial type declared in several
     ///     places is completed once, from the declaration with the attribute).
     /// </summary>
-    private static Found? Find(GeneratorSyntaxContext syntax, CancellationToken cancellationToken)
+    private static Result? Read(GeneratorSyntaxContext syntax, CancellationToken cancellationToken)
     {
         var declaration = (TypeDeclarationSyntax)syntax.Node;
         if (syntax.SemanticModel.GetDeclaredSymbol(declaration, cancellationToken) is not INamedTypeSymbol symbol) return null;
@@ -91,7 +82,8 @@ public sealed class DomainPrimitiveGenerator : IIncrementalGenerator
         {
             if (!PrimitiveReader.IsPrimitiveAttribute(attribute.AttributeClass)) continue;
             if (attribute.ApplicationSyntaxReference?.GetSyntax(cancellationToken) is not { Parent.Parent: { } owner } || owner != declaration) continue;
-            return new(symbol, declaration, attribute, syntax.SemanticModel.Compilation);
+            var (model, diagnostics) = PrimitiveReader.Read(symbol, declaration, attribute, syntax.SemanticModel.Compilation, cancellationToken);
+            return new(model, diagnostics);
         }
 
         return null;
