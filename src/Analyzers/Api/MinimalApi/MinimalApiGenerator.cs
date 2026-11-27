@@ -218,6 +218,8 @@ public sealed class MinimalApiGenerator : IIncrementalGenerator
             statements.Add(Statement(Invoke(Member(Authorization, "RequireAuthorization"), endpoint, New(Type("global::Microsoft.AspNetCore.Authorization.AuthorizeAttribute"), [], settings))));
         }
 
+        // The request's own policies: a group of alternatives is left to the pipeline, so the endpoint only requires a caller.
+        if (operation.RequestAuthenticated) statements.Add(Statement(Invoke(Member(Authorization, "RequireAuthorization"), endpoint)));
         if (operation.AllowAnonymous) statements.Add(Statement(Invoke(Member(Authorization, "AllowAnonymous"), endpoint)));
         if (host.HasApiVersioning && ServerEmit.Versions(host).Count > 0)
         {

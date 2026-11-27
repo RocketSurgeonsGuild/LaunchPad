@@ -11,23 +11,37 @@ using Aspire.Hosting.Dotnet;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
+// The identity provider of the samples: Keycloak, with the realm in Realms/launchpad-realm.json. The realm has a scope for each scope the
+// operations require (rockets:read, rockets:write, launch-records:read, launch-records:write), a public client for a caller who signs in
+// (sample-web: authorization code with PKCE), a confidential client for a service (sample-service: client credentials) and two users, alice
+// and bob, whose passwords are their names. It is for running the samples here and nowhere else. Each API sample validates the access
+// tokens of the realm (Authentication:Authority) and its operations require the scopes their policies declare.
+var keycloak = builder.AddKeycloak("keycloak").WithRealmImport("./Realms");
+var authority = ReferenceExpression.Create($"{keycloak.GetEndpoint("http")}/realms/launchpad");
+
 // ASP.NET Core with controllers, Swashbuckle's UI at /swagger
-var restful = builder.AddSample("restful", "Sample.Restful").WithHttpHealthCheck("/health");
+// Sample.Restful serves its health checks on a port of their own (LaunchPad:HealthChecks:Port in its appsettings.json), where the
+// application's addresses answer 404 for them. Aspire chooses that port here, and probes it.
+var restful = builder
+             .AddSample("restful", "Sample.Restful")
+             .WithIdentity(keycloak, authority)
+             .WithHttpEndpoint(name: "health", env: "LaunchPad__HealthChecks__Port")
+             .WithHttpHealthCheck("/health", endpointName: "health");
 restful.WithUrl($"{restful.GetEndpoint("https")}/swagger", "Swagger UI");
 
-var classicRestful = builder.AddSample("classic-restful", "Sample.Classic.Restful");
+var classicRestful = builder.AddSample("classic-restful", "Sample.Classic.Restful").WithIdentity(keycloak, authority);
 classicRestful.WithUrl($"{classicRestful.GetEndpoint("https")}/swagger", "Swagger UI");
 
 // minimal APIs, Swashbuckle's UI at /swagger
-var minimal = builder.AddSample("minimal", "Sample.Minimal").WithHttpHealthCheck("/health");
+var minimal = builder.AddSample("minimal", "Sample.Minimal").WithIdentity(keycloak, authority).WithHttpHealthCheck("/health");
 minimal.WithUrl($"{minimal.GetEndpoint("https")}/swagger", "Swagger UI");
 
 // Hot Chocolate, Nitro at /graphql
-var graphql = builder.AddSample("graphql", "Sample.Graphql");
+var graphql = builder.AddSample("graphql", "Sample.Graphql").WithIdentity(keycloak, authority);
 graphql.WithUrl($"{graphql.GetEndpoint("https")}/graphql", "Nitro");
 
 // gRPC: its Kestrel serves HTTP/2 only, so it gets the HTTPS endpoint alone
-builder.AddSample("grpc", "Sample.Grpc", http: false);
+builder.AddSample("grpc", "Sample.Grpc", http: false).WithIdentity(keycloak, authority);
 
 builder.AddSample("pages", "Sample.Pages").WithHttpHealthCheck("/health");
 
@@ -93,4 +107,15 @@ internal static class SampleResourceExtensions
 
         return sample;
     }
+
+    /// <summary>
+    ///     Has the sample validate the access tokens of the Keycloak realm, and start once Keycloak has: its
+    ///     <c>Authentication:Authority</c> is the realm's address.
+    /// </summary>
+    public static IResourceBuilder<DotnetProjectResource> WithIdentity(
+        this IResourceBuilder<DotnetProjectResource> sample,
+        IResourceBuilder<KeycloakResource> keycloak,
+        ReferenceExpression authority
+    ) =>
+        sample.WithEnvironment("Authentication__Authority", authority).WaitFor(keycloak);
 }

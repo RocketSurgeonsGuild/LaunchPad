@@ -23,7 +23,8 @@ internal sealed class HealthCheckHost(WebApplication app, HttpClient client) : I
     public static async Task<HealthCheckHost> StartAsync(
         IDictionary<string, string?>? configuration = null,
         Action<WebApplicationBuilder>? configure = null,
-        bool kestrel = false
+        bool kestrel = false,
+        Action<WebApplication>? middleware = null
     )
     {
         var builder = WebApplication.CreateSlimBuilder();
@@ -33,6 +34,7 @@ internal sealed class HealthCheckHost(WebApplication app, HttpClient client) : I
         configure?.Invoke(builder);
 
         var app = builder.Build();
+        middleware?.Invoke(app);
         app.MapGet("/ping", () => "pong");
         app.MapLaunchPadHealthChecks();
         await app.StartAsync();

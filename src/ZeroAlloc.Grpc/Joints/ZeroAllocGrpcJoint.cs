@@ -2,6 +2,7 @@ using Grpc.AspNetCore.Server;
 
 using Microsoft.Extensions.DependencyInjection;
 
+using Rocket.Surgery.LaunchPad.Grpc.Authorization;
 using Rocket.Surgery.LaunchPad.Grpc.Validation;
 
 using ZeroAlloc.Mediator.Validation;
@@ -10,7 +11,8 @@ namespace Rocket.Surgery.LaunchPad.Grpc.Joints;
 
 /// <summary>
 ///     Turns the <see cref="ValidationFailedException" /> the ZeroAlloc mediator throws for an invalid request into
-///     an <see cref="global::Grpc.Core.StatusCode.InvalidArgument" /> status.
+///     an <see cref="global::Grpc.Core.StatusCode.InvalidArgument" /> status, and the denial of a stream request, which the mediator pipeline
+///     throws, into the status of its case.
 ///     Implements the <see cref="IServiceJoint" />
 /// </summary>
 /// <remarks>
@@ -27,5 +29,11 @@ public class ZeroAllocGrpcJoint : IServiceJoint
 {
     /// <inheritdoc />
     public void Register(IDovetailContext context, IServiceCollection services) =>
-        services.Configure<GrpcServiceOptions>(options => options.Interceptors.Add<ZeroAllocValidationInterceptor>());
+        services.Configure<GrpcServiceOptions>(
+            options =>
+            {
+                options.Interceptors.Add<ZeroAllocValidationInterceptor>();
+                options.Interceptors.Add<AuthorizationDeniedInterceptor>();
+            }
+        );
 }

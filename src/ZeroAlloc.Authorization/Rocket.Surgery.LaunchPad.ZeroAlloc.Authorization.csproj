@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
+        <PackageDescription>ZeroAlloc.Authorization for LaunchPad operations: a request's policies are checked in the ZeroAlloc.Mediator pipeline and answer the Unauthorized or Forbidden case of its union response, and a policy declares the scopes it requires.</PackageDescription>
+        <PackageTags>$(PackageTags);dovetail;zeroalloc;zeroalloc-authorization;zeroalloc-mediator;authorization;policies;scopes</PackageTags>
+        <IsAotCompatible>true</IsAotCompatible>
+        <!--
+            The types live in Rocket.Surgery.LaunchPad.Authorization. A namespace of Rocket.Surgery.LaunchPad.ZeroAlloc would shadow
+            ZeroAlloc.* in LaunchPad code.
+        -->
+        <RootNamespace>Rocket.Surgery.LaunchPad.Authorization</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+        <!-- The template of the joint that registers a project's authorization plans, and the targets that declare it -->
+        <None Include="build/*.*" Pack="true" PackagePath="build" />
+        <None Include="buildTransitive/*.*" Pack="true" PackagePath="buildTransitive" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
+        <PackageReference Include="ZeroAlloc.Authorization" />
+        <PackageReference Include="ZeroAlloc.Mediator" />
+        <InternalsVisibleTo Include="ZeroAlloc.Authorization.Tests" />
+        <Using Include="Rocket.Surgery.LaunchPad.Foundation" />
+    </ItemGroup>
+</Project>

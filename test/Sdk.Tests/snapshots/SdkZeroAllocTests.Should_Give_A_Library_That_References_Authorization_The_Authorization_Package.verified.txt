@@ -1,0 +1,8 @@
+﻿{
+  Hosts: [],
+  PackageReferences: [
+    Joinery.Dovetail {DovetailVersion} (SDK),
+    Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization {LaunchPadVersion} (SDK),
+    ZeroAlloc.Authorization
+  ]
+}

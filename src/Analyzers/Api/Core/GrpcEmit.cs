@@ -192,4 +192,16 @@ internal static class GrpcEmit
             ]
         );
     }
+
+    /// <summary>
+    ///     The method with the policies of its request: ASP.NET Core authorizes a gRPC method from the attributes of the method that
+    ///     implements it. A group of alternatives is left to the pipeline, and only requires a caller here.
+    /// </summary>
+    public static MethodDeclarationSyntax Authorize(this MethodDeclarationSyntax method, OperationModel operation)
+    {
+        const string authorize = "global::Microsoft.AspNetCore.Authorization.Authorize";
+        var attributes = operation.RequestPolicyNames.Select(policy => Attribute(authorize, Arg("Policy", Literal(policy)))).ToList();
+        if (operation.RequestAuthenticated) attributes.Add(Attribute(authorize));
+        return attributes.Count == 0 ? method : method.AddAttributeLists([.. attributes]);
+    }
 }

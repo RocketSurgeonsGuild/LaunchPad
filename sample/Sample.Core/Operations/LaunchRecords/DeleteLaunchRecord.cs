@@ -1,13 +1,11 @@
 
 using System.Text.Json.Serialization;
-
 using Riok.Mapperly.Abstractions;
-
 using Rocket.Surgery.LaunchPad.Foundation;
-
+using Sample.Core.Authorization;
 using Sample.Core.Domain;
 using Sample.Core.Models;
-
+using ZeroAlloc.Authorization;
 using ZeroAlloc.Mediator;
 using ZeroAlloc.Validation;
 
@@ -23,13 +21,14 @@ public static partial class DeleteLaunchRecord
     /// </summary>
     /// <param name="Id">The id of the record to delete</param>
     [Validate]
+    [RequirePolicy(Policies.LaunchRecordsWrite)]
     public readonly record struct Request([property: JsonRequired, Must(nameof(Request.IsAssigned))] LaunchRecordId Id) : IRequest<Result>
     {
         internal bool IsAssigned(LaunchRecordId id) => !id.IsDefault && id.Value != Guid.Empty;
     }
 
-    /// <summary>What the operation answers: nothing, not found, or forbidden.</summary>
-    public readonly union Result(Unit, NotFound, Forbidden);
+    /// <summary>What the operation answers: nothing, not found, or forbidden; unauthorized or forbidden when the caller may not ask.</summary>
+    public readonly union Result(Unit, NotFound, Forbidden, Unauthorized);
 
     [UsedImplicitly]
     internal class DeleteLaunchRecordHandler(RocketDbContext dbContext) : IRequestHandler<Request, Result>

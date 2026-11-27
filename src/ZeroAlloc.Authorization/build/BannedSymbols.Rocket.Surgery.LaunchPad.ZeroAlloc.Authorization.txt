@@ -1,0 +1,1 @@
+T:ZeroAlloc.Mediator.Mediator;The static Mediator dispatches without the services of a call, so the policies of a request cannot be checked: dispatch through IMediator, resolved from a service scope

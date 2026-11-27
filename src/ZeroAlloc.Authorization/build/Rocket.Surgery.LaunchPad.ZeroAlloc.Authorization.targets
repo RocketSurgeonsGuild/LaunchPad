@@ -1,0 +1,28 @@
+<Project>
+    <!--
+        Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization.targets
+        Imported into every project that gets the package. The repository's Directory.Build.targets imports it into every project in the
+        repository instead, since a ProjectReference imports no package assets; the guards keep a project that gets both from getting
+        anything twice.
+    -->
+    <!-- The joint that registers the authorization plans of the project's requests, as a template. -->
+    <Import
+        Project="$(MSBuildThisFileDirectory)Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization.Templates.targets"
+        Condition="'$(_LaunchPadAuthorizationTemplatesImported)' != 'true'"
+    />
+    <!--
+        ZeroAlloc.Mediator writes a static Mediator class beside IMediator, which dispatches a request without the services of a call. The
+        policies of a request are checked with those services, so LaunchPad doesn't support it: the project gets the banned API analyzer's
+        list of the class and RS0030 as an error. The analyzer is the application's own (the repository gives it to every project); without
+        it the list does nothing. LaunchPadAuthorizationBanStaticMediator set to false leaves the list out.
+    -->
+    <PropertyGroup Condition="'$(_LaunchPadAuthorizationBannedSymbolsImported)' != 'true'">
+        <_LaunchPadAuthorizationBannedSymbolsImported>true</_LaunchPadAuthorizationBannedSymbolsImported>
+        <LaunchPadAuthorizationBanStaticMediator Condition="'$(LaunchPadAuthorizationBanStaticMediator)' == ''">true</LaunchPadAuthorizationBanStaticMediator>
+        <WarningsAsErrors Condition="'$(LaunchPadAuthorizationBanStaticMediator)' == 'true'">$(WarningsAsErrors);RS0030</WarningsAsErrors>
+        <_LaunchPadAuthorizationBannedSymbols Condition="'$(LaunchPadAuthorizationBanStaticMediator)' == 'true'">$(MSBuildThisFileDirectory)BannedSymbols.Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization.txt</_LaunchPadAuthorizationBannedSymbols>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(_LaunchPadAuthorizationBannedSymbols)' != ''">
+        <AdditionalFiles Include="$(_LaunchPadAuthorizationBannedSymbols)" Visible="false" />
+    </ItemGroup>
+</Project>

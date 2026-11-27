@@ -1,0 +1,54 @@
+<Project>
+    <!--
+        Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization.Templates.targets
+        The joint that registers the authorization plans of a project's requests, shipped as a C# template (*.cs.template next to this file)
+        that Joinery.Dovetail writes into the project and compiles there (Joinery.Dovetail.Templates.targets, the DovetailTemplate item). The
+        plans are the project's own, so their registration is too. The template is only written into a project that
+          - references this package, directly or through another one: a library that declares requests with policies gets the joint, and so
+            does the application that references it,
+          - references every assembly in the template's References,
+          - runs the Dovetail source generator, which is what finds the joint the template declares, and
+          - runs LaunchPad's analyzer (Rocket.Surgery.LaunchPad.Analyzers), which writes what the template calls: a project that turned it
+            off gets no template (_LaunchPadAuthorizationTemplatesRequireAnalyzer below).
+
+        LaunchPadRequestAuthorizationJoint registers the plans: the template declares the joint, and the authorization plan generator of
+        LaunchPad's analyzer writes the AddLaunchPadRequestAuthorization extension it calls, only where the joint is.
+
+        Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization.targets imports this file. The guard keeps the template from being declared twice
+        in a project that gets those targets from the package and from the repository's Directory.Build.targets.
+    -->
+    <PropertyGroup>
+        <_LaunchPadAuthorizationTemplatesImported>true</_LaunchPadAuthorizationTemplatesImported>
+    </PropertyGroup>
+    <ItemGroup>
+        <_LaunchPadAuthorizationTemplate
+            Include="LaunchPadRequestAuthorizationJoint"
+            References="Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization;ZeroAlloc.Authorization;Microsoft.Extensions.DependencyInjection.Abstractions"
+        />
+    </ItemGroup>
+    <ItemGroup>
+        <DovetailTemplate
+            Include="@(_LaunchPadAuthorizationTemplate)"
+            File="$(MSBuildThisFileDirectory)%(Identity).cs.template"
+            Package="Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization"
+            OutputPrefix="LaunchPadAuthorization"
+        />
+    </ItemGroup>
+    <!--
+        A decision the DovetailTemplate metadata can't express. It is made on the declarations, before Joinery.Dovetail.Templates.targets
+        resolves them (the analyzers are known once the references are): removing the last of the resolved templates would leave its writing
+        target an empty batch, since that target's condition is evaluated before the targets that run ahead of it.
+    -->
+    <Target
+        Name="_LaunchPadAuthorizationTemplatesRequireAnalyzer"
+        AfterTargets="ResolveAssemblyReferences"
+        BeforeTargets="DovetailResolveTemplates"
+    >
+        <PropertyGroup>
+            <_LaunchPadAuthorizationAnalyzer>@(Analyzer->AnyHaveMetadataValue('Filename', 'Rocket.Surgery.LaunchPad.Analyzers'))</_LaunchPadAuthorizationAnalyzer>
+        </PropertyGroup>
+        <ItemGroup Condition="'$(_LaunchPadAuthorizationAnalyzer)' != 'true'">
+            <DovetailTemplate Remove="@(_LaunchPadAuthorizationTemplate)" />
+        </ItemGroup>
+    </Target>
+</Project>

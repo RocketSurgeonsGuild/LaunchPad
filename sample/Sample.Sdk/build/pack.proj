@@ -41,6 +41,7 @@
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\HotChocolate\Rocket.Surgery.LaunchPad.HotChocolate.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\Grpc\Rocket.Surgery.LaunchPad.Grpc.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\ZeroAlloc.AspNetCore\Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore.csproj" />
+    <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\ZeroAlloc.Authorization\Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\ZeroAlloc.Blazor\Rocket.Surgery.LaunchPad.ZeroAlloc.Blazor.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\ZeroAlloc.Grpc\Rocket.Surgery.LaunchPad.ZeroAlloc.Grpc.csproj" />
     <_LaunchPadSampleProject Include="$(MSBuildThisFileDirectory)..\..\..\src\ZeroAlloc.HotChocolate\Rocket.Surgery.LaunchPad.ZeroAlloc.HotChocolate.csproj" />

@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
+using Rocket.Surgery.LaunchPad.Testing.Authorization;
+
 namespace Rocket.Surgery.LaunchPad.AspNetCore.Testing;
 
 /// <summary>
@@ -49,6 +51,8 @@ public class LaunchPadExtension(ILoggerFactory loggerFactory) : IAlbaExtension
         // Not the response body: logging it buffers every response through a ResponseBufferingStream, which ASP.NET Core 11 pools
         // (dotnet/aspnetcore#65147). With it on, CI saw one request's bytes turn up in another's request and response bodies.
         builder.ConfigureServices(s => s.AddHttpLogging(options => options.LoggingFields = HttpLoggingFields.All & ~HttpLoggingFields.ResponseBody));
+        // The application trusts the tests' own access tokens, and a request without one is the default test caller's.
+        builder.ConfigureServices(s => s.AddTestTokens());
     }
 }
 #pragma warning restore CA1816, CA1063

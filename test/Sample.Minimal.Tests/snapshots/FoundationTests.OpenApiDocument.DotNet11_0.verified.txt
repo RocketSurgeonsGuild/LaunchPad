@@ -50,8 +50,29 @@
                 }
               }
             }
+          },
+          401: {
+            description: Unauthorized,
+            headers: {
+              WWW-Authenticate: {
+                description: The authentication schemes the server accepts.,
+                schema: {
+                  type: string
+                }
+              }
+            }
+          },
+          403: {
+            description: Forbidden
           }
-        }
+        },
+        security: [
+          {
+            oauth2: [
+              launch-records:read
+            ]
+          }
+        ]
       },
       post: {
         tags: [
@@ -99,6 +120,54 @@
               }
             }
           },
+          401: {
+            description: Unauthorized,
+            headers: {
+              WWW-Authenticate: {
+                description: The authentication schemes the server accepts.,
+                schema: {
+                  type: string
+                }
+              }
+            },
+            content: {
+              application/problem+json: {
+                schema: {
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/UnauthorizedProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      Unauthorized: #/components/schemas/UnauthorizedProblem
+                    }
+                  }
+                }
+              }
+            }
+          },
+          403: {
+            description: Forbidden,
+            content: {
+              application/problem+json: {
+                schema: {
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/ForbiddenProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      Forbidden: #/components/schemas/ForbiddenProblem
+                    }
+                  }
+                }
+              }
+            }
+          },
           404: {
             description: Not Found,
             content: {
@@ -119,7 +188,14 @@
               }
             }
           }
-        }
+        },
+        security: [
+          {
+            oauth2: [
+              launch-records:write
+            ]
+          }
+        ]
       }
     },
     /launch-records/{id}: {
@@ -161,6 +237,54 @@
               }
             }
           },
+          401: {
+            description: Unauthorized,
+            headers: {
+              WWW-Authenticate: {
+                description: The authentication schemes the server accepts.,
+                schema: {
+                  type: string
+                }
+              }
+            },
+            content: {
+              application/problem+json: {
+                schema: {
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/UnauthorizedProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      Unauthorized: #/components/schemas/UnauthorizedProblem
+                    }
+                  }
+                }
+              }
+            }
+          },
+          403: {
+            description: Forbidden,
+            content: {
+              application/problem+json: {
+                schema: {
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/ForbiddenProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      Forbidden: #/components/schemas/ForbiddenProblem
+                    }
+                  }
+                }
+              }
+            }
+          },
           404: {
             description: Not Found,
             content: {
@@ -181,7 +305,14 @@
               }
             }
           }
-        }
+        },
+        security: [
+          {
+            oauth2: [
+              launch-records:read
+            ]
+          }
+        ]
       },
       put: {
         tags: [
@@ -231,6 +362,54 @@
               }
             }
           },
+          401: {
+            description: Unauthorized,
+            headers: {
+              WWW-Authenticate: {
+                description: The authentication schemes the server accepts.,
+                schema: {
+                  type: string
+                }
+              }
+            },
+            content: {
+              application/problem+json: {
+                schema: {
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/UnauthorizedProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      Unauthorized: #/components/schemas/UnauthorizedProblem
+                    }
+                  }
+                }
+              }
+            }
+          },
+          403: {
+            description: Forbidden,
+            content: {
+              application/problem+json: {
+                schema: {
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/ForbiddenProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      Forbidden: #/components/schemas/ForbiddenProblem
+                    }
+                  }
+                }
+              }
+            }
+          },
           404: {
             description: Not Found,
             content: {
@@ -251,7 +430,14 @@
               }
             }
           }
-        }
+        },
+        security: [
+          {
+            oauth2: [
+              launch-records:write
+            ]
+          }
+        ]
       },
       patch: {
         tags: [
@@ -301,55 +487,30 @@
               }
             }
           },
-          404: {
-            description: Not Found,
+          401: {
+            description: Unauthorized,
+            headers: {
+              WWW-Authenticate: {
+                description: The authentication schemes the server accepts.,
+                schema: {
+                  type: string
+                }
+              }
+            },
             content: {
               application/problem+json: {
                 schema: {
                   oneOf: [
                     {
-                      $ref: #/components/schemas/NotFoundProblem
+                      $ref: #/components/schemas/UnauthorizedProblem
                     }
                   ],
                   discriminator: {
                     propertyName: case,
                     mapping: {
-                      NotFound: #/components/schemas/NotFoundProblem
+                      Unauthorized: #/components/schemas/UnauthorizedProblem
                     }
                   }
-                }
-              }
-            }
-          }
-        }
-      },
-      delete: {
-        tags: [
-          LaunchRecords
-        ],
-        summary: The request to delete a launch record,
-        operationId: DeleteLaunchRecord,
-        parameters: [
-          {
-            name: id,
-            in: path,
-            description: The id of the record to delete,
-            required: true,
-            schema: {
-              $ref: #/components/schemas/LaunchRecordId
-            }
-          }
-        ],
-        responses: {
-          204: {
-            description: No Content
-          },
-          400: {
-            description: Bad Request,
-            content: {
-              application/problem+json: {
-                schema: {
-                  $ref: #/components/schemas/ProblemDetails
                 }
               }
             }
@@ -394,7 +555,122 @@
               }
             }
           }
-        }
+        },
+        security: [
+          {
+            oauth2: [
+              launch-records:write
+            ]
+          }
+        ]
+      },
+      delete: {
+        tags: [
+          LaunchRecords
+        ],
+        summary: The request to delete a launch record,
+        operationId: DeleteLaunchRecord,
+        parameters: [
+          {
+            name: id,
+            in: path,
+            description: The id of the record to delete,
+            required: true,
+            schema: {
+              $ref: #/components/schemas/LaunchRecordId
+            }
+          }
+        ],
+        responses: {
+          204: {
+            description: No Content
+          },
+          400: {
+            description: Bad Request,
+            content: {
+              application/problem+json: {
+                schema: {
+                  $ref: #/components/schemas/ProblemDetails
+                }
+              }
+            }
+          },
+          401: {
+            description: Unauthorized,
+            headers: {
+              WWW-Authenticate: {
+                description: The authentication schemes the server accepts.,
+                schema: {
+                  type: string
+                }
+              }
+            },
+            content: {
+              application/problem+json: {
+                schema: {
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/UnauthorizedProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      Unauthorized: #/components/schemas/UnauthorizedProblem
+                    }
+                  }
+                }
+              }
+            }
+          },
+          403: {
+            description: Forbidden,
+            content: {
+              application/problem+json: {
+                schema: {
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/ForbiddenProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      Forbidden: #/components/schemas/ForbiddenProblem
+                    }
+                  }
+                }
+              }
+            }
+          },
+          404: {
+            description: Not Found,
+            content: {
+              application/problem+json: {
+                schema: {
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/NotFoundProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      NotFound: #/components/schemas/NotFoundProblem
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        security: [
+          {
+            oauth2: [
+              launch-records:write
+            ]
+          }
+        ]
       }
     },
     /rockets: {
@@ -437,8 +713,29 @@
                 }
               }
             }
+          },
+          401: {
+            description: Unauthorized,
+            headers: {
+              WWW-Authenticate: {
+                description: The authentication schemes the server accepts.,
+                schema: {
+                  type: string
+                }
+              }
+            }
+          },
+          403: {
+            description: Forbidden
           }
-        }
+        },
+        security: [
+          {
+            oauth2: [
+              rockets:read
+            ]
+          }
+        ]
       },
       post: {
         tags: [
@@ -486,6 +783,54 @@
               }
             }
           },
+          401: {
+            description: Unauthorized,
+            headers: {
+              WWW-Authenticate: {
+                description: The authentication schemes the server accepts.,
+                schema: {
+                  type: string
+                }
+              }
+            },
+            content: {
+              application/problem+json: {
+                schema: {
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/UnauthorizedProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      Unauthorized: #/components/schemas/UnauthorizedProblem
+                    }
+                  }
+                }
+              }
+            }
+          },
+          403: {
+            description: Forbidden,
+            content: {
+              application/problem+json: {
+                schema: {
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/ForbiddenProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      Forbidden: #/components/schemas/ForbiddenProblem
+                    }
+                  }
+                }
+              }
+            }
+          },
           409: {
             description: Conflict,
             content: {
@@ -506,7 +851,14 @@
               }
             }
           }
-        }
+        },
+        security: [
+          {
+            oauth2: [
+              rockets:write
+            ]
+          }
+        ]
       }
     },
     /rockets/{id}: {
@@ -548,6 +900,54 @@
               }
             }
           },
+          401: {
+            description: Unauthorized,
+            headers: {
+              WWW-Authenticate: {
+                description: The authentication schemes the server accepts.,
+                schema: {
+                  type: string
+                }
+              }
+            },
+            content: {
+              application/problem+json: {
+                schema: {
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/UnauthorizedProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      Unauthorized: #/components/schemas/UnauthorizedProblem
+                    }
+                  }
+                }
+              }
+            }
+          },
+          403: {
+            description: Forbidden,
+            content: {
+              application/problem+json: {
+                schema: {
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/ForbiddenProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      Forbidden: #/components/schemas/ForbiddenProblem
+                    }
+                  }
+                }
+              }
+            }
+          },
           404: {
             description: Not Found,
             content: {
@@ -568,7 +968,14 @@
               }
             }
           }
-        }
+        },
+        security: [
+          {
+            oauth2: [
+              rockets:read
+            ]
+          }
+        ]
       },
       put: {
         tags: [
@@ -618,6 +1025,54 @@
               }
             }
           },
+          401: {
+            description: Unauthorized,
+            headers: {
+              WWW-Authenticate: {
+                description: The authentication schemes the server accepts.,
+                schema: {
+                  type: string
+                }
+              }
+            },
+            content: {
+              application/problem+json: {
+                schema: {
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/UnauthorizedProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      Unauthorized: #/components/schemas/UnauthorizedProblem
+                    }
+                  }
+                }
+              }
+            }
+          },
+          403: {
+            description: Forbidden,
+            content: {
+              application/problem+json: {
+                schema: {
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/ForbiddenProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      Forbidden: #/components/schemas/ForbiddenProblem
+                    }
+                  }
+                }
+              }
+            }
+          },
           404: {
             description: Not Found,
             content: {
@@ -638,7 +1093,14 @@
               }
             }
           }
-        }
+        },
+        security: [
+          {
+            oauth2: [
+              rockets:write
+            ]
+          }
+        ]
       },
       patch: {
         tags: [
@@ -688,6 +1150,54 @@
               }
             }
           },
+          401: {
+            description: Unauthorized,
+            headers: {
+              WWW-Authenticate: {
+                description: The authentication schemes the server accepts.,
+                schema: {
+                  type: string
+                }
+              }
+            },
+            content: {
+              application/problem+json: {
+                schema: {
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/UnauthorizedProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      Unauthorized: #/components/schemas/UnauthorizedProblem
+                    }
+                  }
+                }
+              }
+            }
+          },
+          403: {
+            description: Forbidden,
+            content: {
+              application/problem+json: {
+                schema: {
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/ForbiddenProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      Forbidden: #/components/schemas/ForbiddenProblem
+                    }
+                  }
+                }
+              }
+            }
+          },
           404: {
             description: Not Found,
             content: {
@@ -708,7 +1218,14 @@
               }
             }
           }
-        }
+        },
+        security: [
+          {
+            oauth2: [
+              rockets:write
+            ]
+          }
+        ]
       },
       delete: {
         tags: [
@@ -741,6 +1258,54 @@
               }
             }
           },
+          401: {
+            description: Unauthorized,
+            headers: {
+              WWW-Authenticate: {
+                description: The authentication schemes the server accepts.,
+                schema: {
+                  type: string
+                }
+              }
+            },
+            content: {
+              application/problem+json: {
+                schema: {
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/UnauthorizedProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      Unauthorized: #/components/schemas/UnauthorizedProblem
+                    }
+                  }
+                }
+              }
+            }
+          },
+          403: {
+            description: Forbidden,
+            content: {
+              application/problem+json: {
+                schema: {
+                  oneOf: [
+                    {
+                      $ref: #/components/schemas/ForbiddenProblem
+                    }
+                  ],
+                  discriminator: {
+                    propertyName: case,
+                    mapping: {
+                      Forbidden: #/components/schemas/ForbiddenProblem
+                    }
+                  }
+                }
+              }
+            }
+          },
           404: {
             description: Not Found,
             content: {
@@ -761,7 +1326,14 @@
               }
             }
           }
-        }
+        },
+        security: [
+          {
+            oauth2: [
+              rockets:write
+            ]
+          }
+        ]
       }
     }
   },
@@ -1210,6 +1782,36 @@
           falconHeavy,
           atlasV
         ]
+      },
+      UnauthorizedProblem: {
+        allOf: [
+          {
+            $ref: #/components/schemas/ProblemDetails
+          },
+          {
+            required: [
+              case
+            ],
+            type: object,
+            properties: {
+              case: {
+                enum: [
+                  Unauthorized
+                ],
+                type: string
+              }
+            }
+          }
+        ],
+        description: The caller isn't authenticated. HTTP 401, gRPC Unauthenticated, GraphQL UNAUTHENTICATED.
+      }
+    },
+    securitySchemes: {
+      oauth2: {
+        type: http,
+        description: An access token with the scopes the operation requires.,
+        scheme: bearer,
+        bearerFormat: JWT
       }
     }
   },

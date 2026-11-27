@@ -19,6 +19,9 @@
         <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" PrivateAssets="all" />
         <PackageReference Include="Humanizer.Core" />
         <Compile Include="../Shared/SampleOpenApiSchemas.cs" Link="SampleOpenApiSchemas.cs" />
+        <Compile Include="../Shared/SampleAuthentication.cs" Link="SampleAuthentication.cs" />
+        <!-- validates the access tokens of the samples' identity provider (Sample.AppHost runs Keycloak) -->
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
         <PackageReference Include="Joinery.Dovetail.Hosting" />
         <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" />
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" />

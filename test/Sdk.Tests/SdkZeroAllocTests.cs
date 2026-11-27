@@ -6,7 +6,7 @@ namespace Sdk.Tests;
 
 /// <summary>
 ///     The LaunchPad SDK adds the ZeroAlloc integration packages to a project that references ZeroAlloc.Validation (or
-///     ZeroAlloc.Mediator.Validation) directly, each only when its partner is there too: ASP.NET Core (the host model), gRPC
+///     ZeroAlloc.Mediator.Validation, or ZeroAlloc.Authorization) directly, each only when its partner is there too: ASP.NET Core (the host model), gRPC
 ///     (<c>Grpc.AspNetCore</c>), GraphQL (<c>HotChocolate</c>) and Blazor (the WebAssembly host model, or
 ///     <c>Microsoft.AspNetCore.Components.Web</c>). <c>LaunchPadEnableZeroAlloc</c> set to <c>false</c> opts a project out.
 /// </summary>
@@ -53,6 +53,44 @@ public class SdkZeroAllocTests(string targetFramework)
             HostModelShape
                .Project(HostModel.AspNetCore, targetFramework)
                .ItemPackageReference("ZeroAlloc.Mediator.Validation", Repository.PackageVersion("ZeroAlloc.Mediator.Validation", targetFramework))
+        );
+
+        await Verify(await tree.Evaluate("app", Cancellation));
+    }
+
+    /// <summary>
+    ///     A library that references ZeroAlloc.Authorization gets LaunchPad's package for it, which checks the policies of its requests in
+    ///     the mediator pipeline: there is a core package for authorization, with no partner needed.
+    /// </summary>
+    [Test]
+    public async Task Should_Give_A_Library_That_References_Authorization_The_Authorization_Package()
+    {
+        using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
+        tree.AddProject(
+            "library",
+            HostModel.None,
+            HostModelShape
+               .Project(HostModel.None, targetFramework)
+               .ItemPackageReference("ZeroAlloc.Authorization", Repository.PackageVersion("ZeroAlloc.Authorization", targetFramework))
+        );
+
+        await Verify(await tree.Evaluate("library", Cancellation));
+    }
+
+    /// <summary>
+    ///     An ASP.NET Core application that references ZeroAlloc.Authorization also gets the ASP.NET Core package, which checks the
+    ///     policies at the edge.
+    /// </summary>
+    [Test]
+    public async Task Should_Give_An_AspNetCore_Application_That_References_Authorization_The_Edge()
+    {
+        using var tree = new SdkTree(await PackedSdk.Pack(), targetFramework);
+        tree.AddProject(
+            "app",
+            HostModel.AspNetCore,
+            HostModelShape
+               .Project(HostModel.AspNetCore, targetFramework)
+               .ItemPackageReference("ZeroAlloc.Authorization", Repository.PackageVersion("ZeroAlloc.Authorization", targetFramework))
         );
 
         await Verify(await tree.Evaluate("app", Cancellation));

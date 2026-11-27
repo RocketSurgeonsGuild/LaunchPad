@@ -4,12 +4,15 @@ using Sample.Grpc;
 using Sample.Grpc.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSampleAuthentication(builder.Configuration);
 
 var app = await builder.ConfigureDovetail();
 
 app.UseLaunchPadRequestLogging();
 
 app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapGrpcService<LaunchRecordsService>();
 app.MapGrpcService<RocketsService>();

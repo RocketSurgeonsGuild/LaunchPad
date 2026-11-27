@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\ZeroAlloc.Authorization\Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization.csproj" />
+        <PackageReference Include="ZeroAlloc.Authorization" />
+        <PackageReference Include="ZeroAlloc.Mediator" />
+        <!-- Generates the mediator the tests dispatch through, from the handlers in this project. -->
+        <PackageReference Include="ZeroAlloc.Mediator.Generator" PrivateAssets="all" />
+    </ItemGroup>
+</Project>

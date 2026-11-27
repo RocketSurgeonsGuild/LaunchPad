@@ -1,17 +1,13 @@
 
 using System.Text.Json.Serialization;
-
 using Microsoft.EntityFrameworkCore;
-
 using NodaTime;
-
 using Riok.Mapperly.Abstractions;
-
 using Rocket.Surgery.LaunchPad.Foundation;
-
+using Sample.Core.Authorization;
 using Sample.Core.Domain;
 using Sample.Core.Models;
-
+using ZeroAlloc.Authorization;
 using ZeroAlloc.Mediator;
 using ZeroAlloc.Validation;
 
@@ -28,6 +24,7 @@ public static partial class EditLaunchRecord
     ///     The launch record update request
     /// </summary>
     [Validate]
+    [RequirePolicy(Policies.LaunchRecordsWrite)]
     public readonly partial record struct Request : IRequest<Result>
     {
         /// <summary>
@@ -80,10 +77,11 @@ public static partial class EditLaunchRecord
     /// </summary>
     /// <param name="Id">The rocket id</param>
     // A struct has a parameterless constructor too, so JsonRequired keeps the id required, as a class's constructor did
+    [RequirePolicy(Policies.LaunchRecordsWrite)]
     public readonly partial record struct PatchRequest([property: JsonRequired] LaunchRecordId Id) : IRequest<Result>, IPropertyTracking<Request>;
 
-    /// <summary>What the operation answers: the updated launch record, or not found.</summary>
-    public readonly union Result(LaunchRecordModel, NotFound);
+    /// <summary>What the operation answers: the updated launch record, or not found; unauthorized or forbidden when the caller may not ask.</summary>
+    public readonly union Result(LaunchRecordModel, NotFound, Unauthorized, Forbidden);
 
     // The patch is handled here rather than by the generated patch handler, whose GetRequest has to return a request and so cannot answer
     // NotFound: a missing launch record answers NotFound, and otherwise the patch is applied to its current values and sent through the mediator.

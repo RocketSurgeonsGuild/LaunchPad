@@ -274,6 +274,7 @@ public sealed class GrpcProtoServiceGenerator : IIncrementalGenerator
                 parameters,
                 body
             )
+           .Authorize(operation)
            .Summary($"Sends <see cref=\"{Cref(operation.RequestType)}\" /> through the mediator.");
     }
 

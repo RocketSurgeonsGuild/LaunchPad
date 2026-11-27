@@ -183,7 +183,20 @@ public sealed class GraphQLMutationGenerator : IIncrementalGenerator
         if (operation.Summary is { } summary) attributes.Add(Attribute("global::HotChocolate.GraphQLDescription", Arg(Literal(operation.Description is { } d ? summary + "\n\n" + d : summary))));
         foreach (var policy in operation.Policies) attributes.Add(Attribute("global::HotChocolate.Authorization.Authorize", Arg("Policy", Literal(policy))));
         if (!operation.Roles.IsEmpty) attributes.Add(Attribute("global::HotChocolate.Authorization.Authorize", Arg("Roles", NewArray(Type("string"), operation.Roles.Select(r => (ExpressionSyntax)Literal(r))))));
+        // A group of alternatives among the request's policies is left to the pipeline: the field only requires a caller.
+        if (operation.RequestAuthenticated) attributes.Add(Attribute("global::HotChocolate.Authorization.Authorize"));
         if (operation.AllowAnonymous) attributes.Add(Attribute("global::HotChocolate.Authorization.AllowAnonymous"));
+        if (operation.GraphQLScopes) attributes.Add(Scopes(operation));
+
+        // The scopes of the request's policies, in the schema: each alternative a space separated argument. An alternative of no scopes
+        // means none is required, and the field states only that the caller is authenticated.
+        static AttributeListSyntax Scopes(OperationModel operation) =>
+            operation.ScopeAlternatives.Any(a => a.IsEmpty)
+                ? Attribute("global::Rocket.Surgery.LaunchPad.HotChocolate.Authorization.GraphQLAuthenticated")
+                : Attribute(
+                    "global::Rocket.Surgery.LaunchPad.HotChocolate.Authorization.GraphQLRequiresScopes",
+                    [.. operation.ScopeAlternatives.Select(a => Arg(Literal(string.Join(" ", a))))]
+                );
 
         return Method(
                             Modifiers(SyntaxKind.PublicKeyword, SyntaxKind.AsyncKeyword),

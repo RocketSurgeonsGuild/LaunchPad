@@ -3,8 +3,10 @@ using NodaTime;
 using Riok.Mapperly.Abstractions;
 using Rocket.Surgery.LaunchPad.Api;
 using Rocket.Surgery.LaunchPad.Foundation;
+using Sample.Core.Authorization;
 using Sample.Core.Domain;
 using Sample.Core.Models;
+using ZeroAlloc.Authorization;
 using ZeroAlloc.Mediator;
 using ZeroAlloc.Validation;
 
@@ -21,6 +23,7 @@ public static partial class CreateLaunchRecord
     ///     Create a launch record
     /// </summary>
     [Validate]
+    [RequirePolicy(Policies.LaunchRecordsWrite)]
     public readonly record struct Request : IRequest<Result>
     {
         /// <summary>
@@ -75,8 +78,8 @@ public static partial class CreateLaunchRecord
         public LaunchRecordId Id { get; init; }
     }
 
-    /// <summary>What the operation answers: the new launch record's id, or not found when its rocket doesn't exist.</summary>
-    public readonly union Result(Response, NotFound);
+    /// <summary>What the operation answers: the new launch record's id, or not found when its rocket doesn't exist; unauthorized or forbidden when the caller may not ask.</summary>
+    public readonly union Result(Response, NotFound, Unauthorized, Forbidden);
 
     internal class CreateLaunchRecordHandler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
     {

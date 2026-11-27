@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>$(LaunchPadTargetFrameworks)</TargetFrameworks>
-        <PackageDescription>ZeroAlloc.Mediator and ZeroAlloc.Validation for LaunchPad ASP.NET Core applications: a rejected request answers 422 with problem details that list the failures by property, and the validation attributes show in the OpenAPI schemas.</PackageDescription>
-        <PackageTags>$(PackageTags);dovetail;zeroalloc;zeroalloc-validation;zeroalloc-mediator;validation;aspnetcore;problem-details;openapi</PackageTags>
+        <PackageDescription>ZeroAlloc.Mediator, ZeroAlloc.Validation and ZeroAlloc.Authorization for LaunchPad ASP.NET Core applications: a rejected request answers 422 with problem details that list the failures by property, the validation attributes show in the OpenAPI schemas, and a request's policies are checked before it is bound, answer 401 or 403 as problem details and show as the scopes of its OpenAPI operation.</PackageDescription>
+        <PackageTags>$(PackageTags);dovetail;zeroalloc;zeroalloc-validation;zeroalloc-mediator;zeroalloc-authorization;validation;authorization;scopes;aspnetcore;problem-details;openapi</PackageTags>
         <!--
             The types live in the Rocket.Surgery.LaunchPad.AspNetCore namespaces. A namespace of Rocket.Surgery.LaunchPad.ZeroAlloc would shadow
             ZeroAlloc.* in LaunchPad code. The export class is named for the package so it does not collide with the host package's.
@@ -16,6 +16,8 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
+        <!-- The request policies this package checks at the edge and describes in the OpenAPI document. -->
+        <ProjectReference Include="..\ZeroAlloc.Authorization\Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization.csproj" />
         <PackageReference Include="ZeroAlloc.Mediator.Validation" />
         <PackageReference Include="ZeroAlloc.Validation" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" />

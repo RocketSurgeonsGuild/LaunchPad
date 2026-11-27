@@ -1,0 +1,13 @@
+<!--
+    Integration tests of the samples as Sample.AppHost runs them: Aspire's testing host starts Keycloak (a container, so Docker is needed)
+    and the samples the tests call, and the tests get real access tokens from the realm. Without Docker the tests are skipped.
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>$(LaunchPadLatestTargetFramework)</TargetFramework>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Aspire.Hosting.Testing" />
+        <ProjectReference Include="..\..\sample\Sample.AppHost\Sample.AppHost.csproj" />
+    </ItemGroup>
+</Project>

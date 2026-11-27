@@ -7,6 +7,7 @@ using Sample.Graphql;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpLogging(_ => { });
+builder.Services.AddSampleAuthentication(builder.Configuration);
 
 builder
    .Services
@@ -44,6 +45,8 @@ app.UseHttpLogging();
 app.UseLaunchPadRequestLogging();
 
 app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapGraphQL();
 

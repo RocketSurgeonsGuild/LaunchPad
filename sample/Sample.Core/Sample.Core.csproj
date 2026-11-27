@@ -12,6 +12,8 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="Riok.Mapperly" ExcludeAssets="runtime" />
     <!-- ZeroAlloc.Mediator generates the mediator from the handlers in this project; the generators stay out of the projects that reference it -->
+    <!-- The policies of the operations; LaunchPad's pipeline behavior checks them (Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization, below) -->
+    <PackageReference Include="ZeroAlloc.Authorization" />
     <PackageReference Include="ZeroAlloc.Mediator" />
     <PackageReference Include="ZeroAlloc.Mediator.Generator" PrivateAssets="all" />
     <PackageReference Include="ZeroAlloc.Mediator.Validation" />
@@ -38,6 +40,7 @@
     <ProjectReference
       Include="..\..\src\EntityFramework\Rocket.Surgery.LaunchPad.EntityFramework.csproj" />
     <ProjectReference Include="..\..\src\Foundation\Rocket.Surgery.LaunchPad.Foundation.csproj" />
+    <ProjectReference Include="..\..\src\ZeroAlloc.Authorization\Rocket.Surgery.LaunchPad.ZeroAlloc.Authorization.csproj" />
     <ProjectReference Include="..\..\src\NodaTime\Rocket.Surgery.LaunchPad.NodaTime.csproj" />
     <!-- the strong IDs of the models (RocketId, LaunchRecordId) are domain primitives -->
     <ProjectReference Include="..\..\src\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />

@@ -11,6 +11,9 @@ using Joinery.Dovetail.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
+using Rocket.Surgery.LaunchPad.Authorization;
+using Rocket.Surgery.LaunchPad.Foundation;
+using Rocket.Surgery.LaunchPad.Grpc.Authorization;
 using Rocket.Surgery.LaunchPad.Grpc.Joints;
 using Rocket.Surgery.LaunchPad.Grpc.Rivets;
 using Rocket.Surgery.LaunchPad.Grpc.Validation;
@@ -41,7 +44,27 @@ public class ZeroAllocGrpcJointTests
         new ZeroAllocGrpcJoint().Register(await Context(), services);
         using var provider = services.BuildServiceProvider();
 
-        await provider.GetRequiredService<IOptions<GrpcServiceOptions>>().Value.Interceptors.Select(x => x.Type).Should().BeEquivalentTo([typeof(ZeroAllocValidationInterceptor)], CollectionOrdering.Matching);
+        await provider.GetRequiredService<IOptions<GrpcServiceOptions>>().Value.Interceptors.Select(x => x.Type).Should().BeEquivalentTo([typeof(ZeroAllocValidationInterceptor), typeof(AuthorizationDeniedInterceptor)], CollectionOrdering.Matching);
+    }
+
+    [Test]
+    [Arguments(true, StatusCode.Unauthenticated, "Unauthorized")]
+    [Arguments(false, StatusCode.PermissionDenied, "Forbidden")]
+    public async Task Answers_A_Denial_The_Pipeline_Threw_With_The_Status_And_Case_Of_Its_Problem(bool anonymous, StatusCode status, string @case)
+    {
+        var interceptor = new AuthorizationDeniedInterceptor();
+        Problem problem = anonymous ? new Unauthorized("Authentication is required.") : new Forbidden("The caller may not do this.");
+
+        var exception = await ( (Func<Task>)( () => interceptor.ServerStreamingServerHandler(
+                "request",
+                Mock.Of<IServerStreamWriter<string>>().Object,
+                Mock.Of<ServerCallContext>().Object,
+                (_, _, _) => throw new AuthorizationDeniedException(problem)
+            ) ) ).Should().Throw<RpcException>();
+
+        await exception.StatusCode.Should().BeEqualTo(status);
+        await exception.Status.Detail.Should().BeEqualTo(problem.Detail);
+        await exception.Trailers.GetValue("case").Should().BeEqualTo(@case);
     }
 
     [Test]

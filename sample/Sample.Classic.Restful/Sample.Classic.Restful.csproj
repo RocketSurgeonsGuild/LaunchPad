@@ -15,6 +15,9 @@
         <!-- a direct reference, so the Primitives joints (the strong IDs in Entity Framework and OpenAPI, and the domain primitive metrics) are written into the application -->
         <ProjectReference Include="..\..\src\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />
         <PackageReference Include="Joinery.Dovetail.Hosting" />
+        <Compile Include="../Shared/SampleAuthentication.cs" Link="SampleAuthentication.cs" />
+        <!-- validates the access tokens of the samples' identity provider (Sample.AppHost runs Keycloak) -->
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
         <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" />
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" />
     </ItemGroup>

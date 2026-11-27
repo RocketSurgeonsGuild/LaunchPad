@@ -1,14 +1,12 @@
 
 using Microsoft.EntityFrameworkCore;
-
 using Riok.Mapperly.Abstractions;
-
 using Rocket.Surgery.LaunchPad.Api;
 using Rocket.Surgery.LaunchPad.Foundation;
-
+using Sample.Core.Authorization;
 using Sample.Core.Domain;
 using Sample.Core.Models;
-
+using ZeroAlloc.Authorization;
 using ZeroAlloc.Mediator;
 using ZeroAlloc.Validation;
 
@@ -25,6 +23,7 @@ public static partial class CreateRocket
     ///     The operation to create a new rocket record
     /// </summary>
     [Validate]
+    [RequirePolicy(Policies.RocketsWrite)]
     public readonly record struct Request : IRequest<Result>
     {
         /// <summary>
@@ -67,8 +66,8 @@ public static partial class CreateRocket
     [IncludeInJsonContext]
     public sealed record ExistingRocket(RocketId Id, RocketType Type, string Sn);
 
-    /// <summary>What the operation answers: the new rocket's id, or a conflict with an existing rocket.</summary>
-    public readonly union Result(Response, Conflict);
+    /// <summary>What the operation answers: the new rocket's id, or a conflict with an existing rocket; unauthorized or forbidden when the caller may not ask.</summary>
+    public readonly union Result(Response, Conflict, Unauthorized, Forbidden);
 
     internal class CreateRocketHandler(RocketDbContext dbContext) : IRequestHandler<Request, Result>
     {

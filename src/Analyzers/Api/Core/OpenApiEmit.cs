@@ -85,6 +85,20 @@ internal static class OpenApiEmit
         var openApi = $"{helpers}.ApiOpenApi";
         if (operation.CreatedLocationRoute is { }) statements.Add(Statement(Invoke(Member(openApi, "Location"), Id(Operation))));
         if (operation.RequiresAuthorization) statements.Add(Statement(Invoke(Member(openApi, "Authenticate"), Id(Operation))));
+        // The scopes the policies of the request require: the server's own, read from the request's plan where the document is written.
+        if (operation.RequestPolicies is { } request)
+        {
+            statements.Add(
+                Statement(
+                    Invoke(
+                        GenericMember(Name("global::Rocket.Surgery.LaunchPad.AspNetCore.Authorization.OpenApiAuthorization"), "RequireScopes", Type(request)),
+                        Id(Operation),
+                        Id(Context)
+                    )
+                )
+            );
+        }
+
 
         foreach (var status in CaseStatuses(operation))
         {

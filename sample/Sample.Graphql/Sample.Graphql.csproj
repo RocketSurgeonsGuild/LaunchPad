@@ -17,11 +17,16 @@
     <ProjectReference Include="..\..\src\NodaTime.HotChocolate\Rocket.Surgery.LaunchPad.NodaTime.HotChocolate.csproj" />
     <ProjectReference Include="..\..\src\Spatial\Rocket.Surgery.LaunchPad.Spatial.csproj" />
     <ProjectReference Include="..\..\src\AspNetCore\Rocket.Surgery.LaunchPad.AspNetCore.csproj" />
+    <!-- knows the caller policies see from the access token, and checks a request's policies before it is bound -->
+    <ProjectReference Include="..\..\src\ZeroAlloc.AspNetCore\Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore.csproj" />
     <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
     <!-- a direct reference, so the Primitives joints (the strong IDs in Entity Framework, GraphQL and OpenAPI, and the domain primitive metrics) are written into the application -->
     <ProjectReference Include="..\..\src\Primitives\Rocket.Surgery.LaunchPad.Primitives.csproj" />
     <PackageReference Include="HotChocolate.AspNetCore" />
     <PackageReference Include="Joinery.Dovetail.Hosting" />
+    <Compile Include="../Shared/SampleAuthentication.cs" Link="SampleAuthentication.cs" />
+    <!-- validates the access tokens of the samples' identity provider (Sample.AppHost runs Keycloak) -->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <PackageReference Include="HotChocolate.Types.CursorPagination" />
     <PackageReference Include="HotChocolate.Types.OffsetPagination" />
     <PackageReference Include="HotChocolate.Types.Analyzers" />

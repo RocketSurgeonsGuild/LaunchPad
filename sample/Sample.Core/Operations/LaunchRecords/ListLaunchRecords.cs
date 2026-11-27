@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Riok.Mapperly.Abstractions;
+using Sample.Core.Authorization;
 using Sample.Core.Domain;
 using Sample.Core.Models;
+using ZeroAlloc.Authorization;
 using ZeroAlloc.Mediator;
 using NodaTimeMapper = Sample.Core.Models.NodaTimeMapper;
 
@@ -19,6 +21,7 @@ public static partial class ListLaunchRecords
     /// </summary>
     /// <param name="RocketType">The rocket type</param>
     // TODO: Paging model!
+    [RequirePolicy(Policies.LaunchRecordsRead)]
     public record Request(RocketType? RocketType) : IStreamRequest<LaunchRecordModel>;
 
     internal class ListLaunchRecordsHandler(RocketDbContext dbContext) : IStreamRequestHandler<Request, LaunchRecordModel>
