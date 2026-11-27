@@ -14,7 +14,7 @@ Thrown when a domain primitive is created from a value its rules reject, unless 
 - Name: `Error`
 - Modifiers: `get`
 - Returns: [PrimitiveError](/LaunchPad/api/rocket.surgery.launchpad.primitives/primitiveerror.md)
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.8446cfb49f81338ce4d090fef0bb3afa0711fa3f/src/Primitives/DomainPrimitiveValidationException.cs#L43)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.cd7db14e49b12478b13b2f21edf214c613078b4c/src/Primitives/DomainPrimitiveValidationException.cs#L43)
 
 Why the value was rejected.
 

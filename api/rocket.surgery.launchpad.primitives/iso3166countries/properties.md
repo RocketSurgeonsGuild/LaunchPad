@@ -14,7 +14,7 @@ The 249 officially assigned ISO 3166-1 alpha-2 codes (the list Debian iso-codes 
 - Name: `Codes`
 - Modifiers: `static` `get`
 - Returns: `FrozenSet<string>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.8446cfb49f81338ce4d090fef0bb3afa0711fa3f/src/Primitives/Registries/Iso3166Countries.cs#L16)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.cd7db14e49b12478b13b2f21edf214c613078b4c/src/Primitives/Registries/Iso3166Countries.cs#L16)
 
 The codes.
 

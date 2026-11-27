@@ -13,7 +13,7 @@ A single validation failure.
 ## ValidationFailureDetail(string, string, string?)
 
 - Name: `Constructor(string, string, string?)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.8446cfb49f81338ce4d090fef0bb3afa0711fa3f/src/ZeroAlloc.AspNetCore/Validation/ValidationFailureProblemDetails.cs#L49)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.cd7db14e49b12478b13b2f21edf214c613078b4c/src/ZeroAlloc.AspNetCore/Validation/ValidationFailureProblemDetails.cs#L49)
 
 A single validation failure.
 
