@@ -3,6 +3,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Rocket.Surgery.LaunchPad.Analyzers;
@@ -259,7 +260,7 @@ public class GraphqlOptionalPropertyTrackingGenerator : IIncrementalGenerator
             )
            .AddSharedTrivia();
 
-        context.AddSourceRelativeTo(declaration, "Optionals", cu.NormalizeWhitespace().GetText(Encoding.UTF8));
+        context.AddSourceRelativeTo(declaration, "Optionals", SourceText.From(SyntaxLayout.ToText(cu), Encoding.UTF8));
         return;
 
         static void addNamespacesFromPropertyType(HashSet<string> namespaces, ITypeSymbol symbol)

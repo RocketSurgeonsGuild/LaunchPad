@@ -3,6 +3,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Rocket.Surgery.LaunchPad.Analyzers;
@@ -225,7 +226,7 @@ public class InheritFromGenerator : IIncrementalGenerator
             )
            .AddSharedTrivia();
 
-        context.AddSourceRelativeTo(declaration, "InheritFrom", cu.NormalizeWhitespace().GetText(Encoding.UTF8));
+        context.AddSourceRelativeTo(declaration, "InheritFrom", SourceText.From(SyntaxLayout.ToText(cu), Encoding.UTF8));
     }
 
     private static ImmutableArray<MemberDeclarationSyntax> GetInheritableMembers(
