@@ -96,6 +96,14 @@ internal static class Helpers
         return builder.ToString();
     }
 
+    /// <summary>The <see cref="CompilerGenerated" /> attribute list as text.</summary>
+    internal static readonly string CompilerGeneratedText =
+        $"[System.CodeDom.Compiler.GeneratedCode(\"{AssemblyInfo.Project.AssemblyName}\", \"{AssemblyInfo.Attributes.FileVersion}\"), System.Runtime.CompilerServices.CompilerGenerated]";
+
+    /// <summary>The <see cref="CompilerAttributes" /> attribute list as text.</summary>
+    internal static readonly string CompilerAttributesText =
+        $"[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage, System.CodeDom.Compiler.GeneratedCode(\"{AssemblyInfo.Project.AssemblyName}\", \"{AssemblyInfo.Attributes.FileVersion}\"), System.Runtime.CompilerServices.CompilerGenerated]";
+
     internal static AttributeListSyntax ExcludeFromCodeCoverage =
         AttributeList(SingletonSeparatedList(Attribute(ParseName("System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage"))));
 

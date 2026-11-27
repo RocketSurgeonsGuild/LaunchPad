@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 
 namespace Rocket.Surgery.LaunchPad.Analyzers;
@@ -47,23 +46,6 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
         // resetting the changes makes a copy instead of changing it.
         var isStruct = declaration is RecordDeclarationSyntax record && record.ClassOrStructKeyword.IsKind(SyntaxKind.StructKeyword);
         var isReadOnly = isStruct && symbol.IsReadOnly;
-        var classToInherit =
-            ( isStruct
-                ? RecordDeclaration(SyntaxKind.RecordStructDeclaration, Token(SyntaxKind.RecordKeyword), declaration.Identifier)
-                   .WithClassOrStructKeyword(Token(SyntaxKind.StructKeyword))
-                : isRecord
-                    ? (TypeDeclarationSyntax)RecordDeclaration(Token(SyntaxKind.RecordKeyword), declaration.Identifier)
-                    : ClassDeclaration(declaration.Identifier) )
-           .WithModifiers(TokenList(declaration.Modifiers.Select(z => z.WithoutTrivia())))
-           .WithOpenBraceToken(Token(SyntaxKind.OpenBraceToken))
-           .WithCloseBraceToken(Token(SyntaxKind.CloseBraceToken))
-           .WithAttributeLists(
-                isStruct
-                    // the tracking properties' fields are in this part and the type's own in the other: no field order between them (CS0282)
-                    ? List([Helpers.CompilerGenerated, AttributeList(SingletonSeparatedList(Attribute(ParseName("global::System.Runtime.InteropServices.StructLayout"), AttributeArgumentList(SingletonSeparatedList(AttributeArgument(ParseExpression("global::System.Runtime.InteropServices.LayoutKind.Auto")))))))])
-                    : SingletonList(Helpers.CompilerGenerated)
-            );
-
         var targetMembers = targetSymbol.FilterProperties().ToImmutableArray();
         var excludedProperties = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var inheritedMembers = InheritFromGenerator.GetInheritableMemberSymbols(targetSymbol, excludedProperties);
@@ -84,15 +66,6 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                                  .Where(z => targetSymbol.IsRecord || z is { SetMethod.IsInitOnly: false, GetMethod.IsReadOnly: false, })
                                  .ToArray();
 
-        var changesRecord = RecordDeclaration(Token(SyntaxKind.RecordKeyword), "Changes")
-                           .WithModifiers(SyntaxTokenList.Create(Token(SyntaxKind.PublicKeyword)))
-                           .WithOpenBraceToken(Token(SyntaxKind.OpenBraceToken))
-                           .WithCloseBraceToken(Token(SyntaxKind.CloseBraceToken));
-
-        var getChangedStateMethodInitializer = InitializerExpression(SyntaxKind.ObjectInitializerExpression);
-        var resetChangesInitializer = InitializerExpression(SyntaxKind.WithInitializerExpression);
-        var applyChangesBody = Block();
-        var resetChangesBody = Block();
         var constructor = symbol
                          .Constructors
                          .Where(z => !z.Parameters.Any(x => SymbolEqualityComparer.Default.Equals(x.Type, targetSymbol)))
@@ -111,302 +84,151 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                             .Except(writeableProperties)
                             .ToArray();
 
-        var constructorParams = constructor?.Parameters.Select(z => z.Name).ToImmutableHashSet(StringComparer.OrdinalIgnoreCase)
-         ?? [];
+        var constructorParams = constructor?.Parameters.Select(z => z.Name).ToImmutableHashSet(StringComparer.OrdinalIgnoreCase) ?? [];
+        var target = targetSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
 
-        var constructorArguments = constructor
- ?
-.Parameters
-                                  .Select(
-                                       param => Argument(
-                                           targetSymbolInheritedMemberNames.TryGetValue(param.Name, out var name)
-                                               ? MemberAccessExpression(
-                                                   SyntaxKind.SimpleMemberAccessExpression,
-                                                   IdentifierName("value"),
-                                                   IdentifierName(name)
-                                               )
-                                               : IdentifierName(Helpers.Camelize(param.Name))
-                                       )
+        // TrackChanges(value, …): the constructor's arguments come from the value where it has the member, and are parameters otherwise.
+        var constructorArguments = constructor?.Parameters.Select(
+                                       param => targetSymbolInheritedMemberNames.TryGetValue(param.Name, out var name) ? "value." + name : Helpers.Camelize(param.Name)
                                    )
-                                  .ToImmutableArray()
          ?? [];
+        var createParameters = new List<string> { target + " value" };
+        createParameters.AddRange(
+            constructor?.Parameters
+                        .Where(param => !missingMembers.Any(z => z.Name.Equals(param.Name, StringComparison.OrdinalIgnoreCase)))
+                        .Where(param => !targetSymbolInheritedMemberNames.Contains(param.Name))
+                        .Select(param => param.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) + " " + Helpers.Camelize(param.Name))
+         ?? []
+        );
+        createParameters.AddRange(missingMembers.Select(z => z.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) + " " + Helpers.Camelize(z.Name)));
 
-        var constructorParameters = constructor
- ?
-.Parameters
-                                   .Where(param => !missingMembers.Any(z => z.Name.Equals(param.Name, StringComparison.OrdinalIgnoreCase)))
-                                   .Where(param => !targetSymbolInheritedMemberNames.Contains(param.Name))
-                                   .Select(
-                                        param => Parameter(Identifier(Helpers.Camelize(param.Name)))
-                                           .WithType(ParseTypeName(param.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)))
-                                    )
-                                   .ToImmutableArray()
-         ?? [];
-
-        var createParameterList =
-            ParameterList(
-                    SingletonSeparatedList(
-                        Parameter(Identifier("value"))
-                           .WithType(
-                                ParseTypeName(targetSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat))
-                            )
-                    )
-                )
-               .AddParameters([.. constructorParameters])
-               .AddParameters(
-                    [.. missingMembers
-                       .Select(
-                            z => Parameter(Identifier(Helpers.Camelize(z.Name)))
-                               .WithType(ParseTypeName(z.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)))
-                        )]
-                );
-        var createArgumentList = ArgumentList(SeparatedList(constructorArguments));
-
-        var createMethodInitializer = InitializerExpression(SyntaxKind.ObjectInitializerExpression)
-                                     .AddExpressions(
-                                          [.. existingMembers
-                                             .Where(z => !constructorParams.Contains(z.Name))
-                                             .Select(
-                                                  z =>
-                                                      AssignmentExpression(
-                                                          SyntaxKind.SimpleAssignmentExpression,
-                                                          IdentifierName(z.Name),
-                                                          MemberAccessExpression(
-                                                              SyntaxKind.SimpleMemberAccessExpression,
-                                                              IdentifierName("value"),
-                                                              IdentifierName(z.Name)
-                                                          )
-                                                      )
-                                              )
-                                             .OfType<ExpressionSyntax>()]
-                                      )
-                                     .AddExpressions(
-                                          [.. missingMembers
-                                             .Where(z => !constructorParams.Contains(z.Name))
-                                             .Select(
-                                                  z =>
-                                                      AssignmentExpression(
-                                                          SyntaxKind.SimpleAssignmentExpression,
-                                                          IdentifierName(z.Name),
-                                                          IdentifierName(Helpers.Camelize(z.Name))
-                                                      )
-                                              )
-                                             .OfType<ExpressionSyntax>()]
-                                      );
+        var createInitializer = new List<string>();
+        createInitializer.AddRange(existingMembers.Where(z => !constructorParams.Contains(z.Name)).Select(z => z.Name + " = value." + z.Name));
+        createInitializer.AddRange(missingMembers.Where(z => !constructorParams.Contains(z.Name)).Select(z => z.Name + " = " + Helpers.Camelize(z.Name)));
 
         var namespaces = new HashSet<string>();
-
+        var tracked = new List<(string Name, string Assigned, string Converter)>(writeableProperties.Length);
         foreach (var propertySymbol in writeableProperties)
         {
-            var type = ParseTypeName(propertySymbol.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat));
             addNamespacesFromPropertyType(namespaces, propertySymbol.Type);
-
-            var assignedType = GenericName(Identifier("Rocket.Surgery.LaunchPad.Foundation.Assigned"))
-               .WithTypeArgumentList(TypeArgumentList(SingletonSeparatedList(type)));
-
+            var assigned = "Rocket.Surgery.LaunchPad.Foundation.Assigned<" + propertySymbol.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat) + ">";
             // typeof can't name a nullable reference type, so the converter is closed over the type without its annotation
-            var converterType = GenericName(Identifier("global::Rocket.Surgery.LaunchPad.Foundation.AssignedJsonConverter"))
-               .WithTypeArgumentList(
-                    TypeArgumentList(
-                        SingletonSeparatedList(
-                            ParseTypeName(
-                                propertySymbol.Type.WithNullableAnnotation(NullableAnnotation.NotAnnotated).ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)
-                            )
-                        )
-                    )
-                );
-            classToInherit = classToInherit.AddMembers(GenerateTrackingProperties(propertySymbol, assignedType, converterType, isStruct, isReadOnly));
-            changesRecord = changesRecord.AddMembers(
-                PropertyDeclaration(PredefinedType(Token(SyntaxKind.BoolKeyword)), Identifier(propertySymbol.Name))
-                   .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
-                   .WithAccessorList(
-                        AccessorList(
-                            List(
-                                new[]
-                                {
-                                    AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
-                                    AccessorDeclaration(SyntaxKind.InitAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
-                                }
-                            )
-                        )
-                    )
-            );
-            getChangedStateMethodInitializer = getChangedStateMethodInitializer.AddExpressions(
-                AssignmentExpression(
-                    SyntaxKind.SimpleAssignmentExpression,
-                    IdentifierName(propertySymbol.Name),
-                        MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            IdentifierName(propertySymbol.Name),
-                            IdentifierName("HasValue")
-                        )
-                )
-            );
-            createMethodInitializer = createMethodInitializer.AddExpressions(
-                AssignmentExpression(
-                    SyntaxKind.SimpleAssignmentExpression,
-                    IdentifierName(propertySymbol.Name),
-                    InvocationExpression(
-                            MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                assignedType,
-                                IdentifierName("Empty")
-                            )
-                        )
-                       .WithArgumentList(
-                            ArgumentList(
-                                SingletonSeparatedList(
-                                    Argument(
-                                        MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            IdentifierName("value"),
-                                            IdentifierName(propertySymbol.Name)
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                )
-            );
-            applyChangesBody = applyChangesBody.AddStatements(
-                GenerateApplyChangesBodyPart(propertySymbol, IdentifierName("state"), isRecord)
-            );
-            var resetAssignment = AssignmentExpression(
-                SyntaxKind.SimpleAssignmentExpression,
-                IdentifierName(propertySymbol.Name),
-                InvocationExpression(
-                        MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            GenericName(Identifier("Rocket.Surgery.LaunchPad.Foundation.Assigned"))
-                               .WithTypeArgumentList(TypeArgumentList(SingletonSeparatedList(type))),
-                            IdentifierName("Empty")
-                        )
-                    )
-                   .WithArgumentList(
-                        ArgumentList(
-                            SingletonSeparatedList(
-                                Argument(
-                                    IdentifierName(propertySymbol.Name)
-                                )
-                            )
-                        )
-                    )
-            );
-            resetChangesBody = resetChangesBody.AddStatements(ExpressionStatement(resetAssignment));
-            resetChangesInitializer = resetChangesInitializer.AddExpressions(resetAssignment);
+            var converter = propertySymbol.Type.WithNullableAnnotation(NullableAnnotation.NotAnnotated).ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            tracked.Add((propertySymbol.Name, assigned, converter));
+            createInitializer.Add(propertySymbol.Name + " = " + assigned + ".Empty(value." + propertySymbol.Name + ")");
         }
-
-        var getChangedStateMethod =
-            MethodDeclaration(
-                    ParseTypeName("Changes"),
-                    Identifier("GetChangedState")
-                )
-               .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
-               .WithBody(
-                    Block(
-                        SingletonList<StatementSyntax>(
-                            ReturnStatement(
-                                ObjectCreationExpression(IdentifierName("Changes"))
-                                   .WithArgumentList(ArgumentList())
-                                   .WithInitializer(getChangedStateMethodInitializer)
-                            )
-                        )
-                    )
-                );
-
-        var applyChangesMethod = MethodDeclaration(ParseTypeName(targetSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)), "ApplyChanges")
-                                .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
-                                .WithParameterList(
-                                     ParameterList(
-                                         SingletonSeparatedList(
-                                             Parameter(Identifier("state"))
-                                                .WithType(
-                                                     IdentifierName(targetSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat))
-                                                 )
-                                         )
-                                     )
-                                 )
-                                .WithBody(
-                                     isReadOnly
-                                         ? applyChangesBody.AddStatements(ReturnStatement(IdentifierName("state")))
-                                         : applyChangesBody.AddStatements(
-                                             ExpressionStatement(InvocationExpression(IdentifierName("ResetChanges"))),
-                                             ReturnStatement(IdentifierName("state"))
-                                         )
-                                 );
-        var resetChangesMethod = MethodDeclaration(IdentifierName(symbol.Name), "ResetChanges")
-                                .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
-                                .WithBody(
-                                     isReadOnly
-                                         ? Block(ReturnStatement(WithExpression(ThisExpression(), resetChangesInitializer)))
-                                         : resetChangesBody.AddStatements(ReturnStatement(ThisExpression()))
-                                 );
-        var resetChangesImplementation = MethodDeclaration(PredefinedType(Token(SyntaxKind.VoidKeyword)), "ResetChanges")
-                                        .WithExplicitInterfaceSpecifier(
-                                             ExplicitInterfaceSpecifier(
-                                                 GenericName(Identifier("IPropertyTracking"))
-                                                    .WithTypeArgumentList(
-                                                         TypeArgumentList(
-                                                             SingletonSeparatedList<TypeSyntax>(
-                                                                 IdentifierName(targetSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat))
-                                                             )
-                                                         )
-                                                     )
-                                             )
-                                         )
-                                        // a readonly struct can't be reset in place: ResetChanges() returns the reset copy instead
-                                        .WithBody(isReadOnly ? Block() : Block().AddStatements(ExpressionStatement(InvocationExpression(IdentifierName("ResetChanges")))));
-
-
-        var createMethod = MethodDeclaration(
-                               ParseTypeName(symbol.ToDisplayString(NullableFlowState.NotNull, SymbolDisplayFormat.FullyQualifiedFormat)),
-                               "TrackChanges"
-                           )
-                          .WithParameterList(createParameterList)
-                          .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.StaticKeyword)))
-                          .WithExpressionBody(
-                               ArrowExpressionClause(
-                                   ObjectCreationExpression(
-                                       IdentifierName(Identifier(symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat))),
-                                       createArgumentList,
-                                       createMethodInitializer
-                                   )
-                               )
-                           )
-                          .WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
-
-        classToInherit = classToInherit
-           .AddMembers(
-                changesRecord,
-                getChangedStateMethod,
-                applyChangesMethod,
-                resetChangesMethod,
-                resetChangesImplementation,
-                createMethod
-            );
 
         var usings = declaration
                     .SyntaxTree.GetCompilationUnitRoot()
                     .Usings
                     .AddDistinctUsingStatements(namespaces.Where(z => !string.IsNullOrWhiteSpace(z)));
 
+        var writer = new SourceWriter();
+        var opened = writer.OpenFile(usings, symbol.ContainingNamespace, declaration, output);
+
+        writer.Line(Helpers.CompilerGeneratedText);
+        // the tracking properties' fields are in this part and the type's own in the other: no field order between them (CS0282)
+        if (isStruct) writer.Line("[global::System.Runtime.InteropServices.StructLayout(global::System.Runtime.InteropServices.LayoutKind.Auto)]");
+        writer.Line(SourceWriter.Modifiers(declaration.Modifiers) + ( isStruct ? "record struct " : isRecord ? "record " : "class " ) + declaration.Identifier.Text);
+        writer.OpenBlock();
+
         // the compiler attributes go first, before an attribute a member already has (the JSON converter of a tracking property)
-        classToInherit = classToInherit.WithMembers(List(classToInherit.Members.Select(z => z.WithAttributeLists(z.AttributeLists.Insert(0, Helpers.CompilerAttributes)))));
+        foreach (var (name, assigned, converter) in tracked)
+        {
+            writer.Line(Helpers.CompilerAttributesText);
+            writer.Line("[global::System.Text.Json.Serialization.JsonConverter(typeof(global::Rocket.Surgery.LaunchPad.Foundation.AssignedJsonConverter<" + converter + ">))]");
+            // A struct has no initializers without a constructor, and default(T) skips them anyway: an unset property reads as unassigned.
+            writer.Line(
+                isStruct
+                    ? "public " + assigned + " " + name + " { get => field ?? " + assigned + ".Empty(default); " + ( isReadOnly ? "init" : "set" ) + "; }"
+                    : "public " + assigned + " " + name + " { get; set; } = " + assigned + ".Empty(default);"
+            );
+            writer.Line();
+        }
 
-        var cu = CompilationUnit(
-                List<ExternAliasDirectiveSyntax>(),
-                List(usings),
-                List<AttributeListSyntax>(),
-                SingletonList<MemberDeclarationSyntax>(
-                    symbol.ContainingNamespace.IsGlobalNamespace
-                        ? classToInherit.ReparentDeclaration(output, declaration)
-                        : NamespaceDeclaration(ParseName(symbol.ContainingNamespace.ToDisplayString()))
-                           .WithMembers(SingletonList<MemberDeclarationSyntax>(classToInherit.ReparentDeclaration(output, declaration)))
-                )
-            )
-           .AddSharedTrivia();
+        writer.Line(Helpers.CompilerAttributesText);
+        writer.Line("public record Changes");
+        writer.OpenBlock();
+        foreach (var (name, _, _) in tracked) writer.Line("public bool " + name + " { get; init; }");
+        writer.CloseBlock();
+        writer.Line();
 
-        output.AddSource(GeneratedSources.HintNameRelativeTo(declaration, "PropertyTracking"), SyntaxLayout.ToText(cu));
+        writer.Line(Helpers.CompilerAttributesText);
+        writer.Line("public Changes GetChangedState()");
+        writer.OpenBlock();
+        writer.Line("return new Changes()");
+        writer.Initializer([.. tracked.Select(z => z.Name + " = " + z.Name + ".HasValue")], ";");
+        writer.CloseBlock();
+        writer.Line();
+
+        writer.Line(Helpers.CompilerAttributesText);
+        writer.Line("public " + target + " ApplyChanges(" + target + " state)");
+        writer.OpenBlock();
+        foreach (var (name, _, _) in tracked)
+        {
+            writer.Line("if (" + name + ".HasValue)");
+            writer.OpenBlock();
+            if (isRecord)
+            {
+                writer.Line("state = state with");
+                writer.Initializer([name + " = " + name + "!"], ";");
+            }
+            else
+            {
+                writer.Line("state." + name + " = " + name + "!;");
+            }
+
+            writer.CloseBlock();
+            writer.Line();
+        }
+
+        if (!isReadOnly) writer.Line("ResetChanges();");
+        writer.Line("return state;");
+        writer.CloseBlock();
+        writer.Line();
+
+        writer.Line(Helpers.CompilerAttributesText);
+        writer.Line("public " + symbol.Name + " ResetChanges()");
+        writer.OpenBlock();
+        if (isReadOnly)
+        {
+            writer.Line("return this with");
+            writer.Initializer([.. tracked.Select(z => z.Name + " = " + z.Assigned + ".Empty(" + z.Name + ")")], ";");
+        }
+        else
+        {
+            foreach (var (name, assigned, _) in tracked) writer.Line(name + " = " + assigned + ".Empty(" + name + ");");
+            writer.Line("return this;");
+        }
+
+        writer.CloseBlock();
+        writer.Line();
+
+        writer.Line(Helpers.CompilerAttributesText);
+        writer.Line("void IPropertyTracking<" + target + ">.ResetChanges()");
+        writer.OpenBlock();
+        // a readonly struct can't be reset in place: ResetChanges() returns the reset copy instead
+        if (!isReadOnly) writer.Line("ResetChanges();");
+        writer.CloseBlock();
+        writer.Line();
+
+        writer.Line(Helpers.CompilerAttributesText);
+        writer.Line(
+            "public static "
+          + symbol.ToDisplayString(NullableFlowState.NotNull, SymbolDisplayFormat.FullyQualifiedFormat)
+          + " TrackChanges("
+          + string.Join(", ", createParameters)
+          + ") => new "
+          + symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)
+          + "("
+          + string.Join(", ", constructorArguments)
+          + ")"
+        );
+        writer.Initializer(createInitializer, ";");
+        writer.CloseBlock();
+
+        writer.CloseFile(opened);
+        output.AddSource(GeneratedSources.HintNameRelativeTo(declaration, "PropertyTracking"), writer.ToString());
         return;
 
         static void addNamespacesFromPropertyType(HashSet<string> namespaces, ITypeSymbol symbol)
@@ -418,138 +240,6 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                 addNamespacesFromPropertyType(namespaces, genericType);
             }
         }
-    }
-
-    private static StatementSyntax GenerateApplyChangesBodyPart(
-        IPropertySymbol propertySymbol,
-        IdentifierNameSyntax valueIdentifier,
-        bool isRecord
-    )
-    {
-        return IfStatement(
-                MemberAccessExpression(
-                    SyntaxKind.SimpleMemberAccessExpression,
-                    IdentifierName(propertySymbol.Name),
-                    IdentifierName("HasValue")
-                ),
-            Block(
-                SingletonList<StatementSyntax>(
-                    ExpressionStatement(
-                        isRecord
-                            ? AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
-                                valueIdentifier,
-                                WithExpression(
-                                    valueIdentifier,
-                                    InitializerExpression(
-                                        SyntaxKind.WithInitializerExpression,
-                                        SingletonSeparatedList<ExpressionSyntax>(
-                                            AssignmentExpression(
-                                                SyntaxKind.SimpleAssignmentExpression,
-                                                IdentifierName(propertySymbol.Name),
-                                                PostfixUnaryExpression(SyntaxKind.SuppressNullableWarningExpression, IdentifierName(propertySymbol.Name))
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                            : AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
-                                MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, valueIdentifier, IdentifierName(propertySymbol.Name)),
-                                PostfixUnaryExpression(SyntaxKind.SuppressNullableWarningExpression, IdentifierName(propertySymbol.Name))
-                            )
-                    )
-                )
-            )
-        );
-    }
-
-    private static MemberDeclarationSyntax[] GenerateTrackingProperties(
-        IPropertySymbol propertySymbol,
-        GenericNameSyntax assignedType,
-        TypeSyntax converterType,
-        bool isStruct,
-        bool isReadOnly
-    )
-    {
-        var unassigned = InvocationExpression(
-                MemberAccessExpression(
-                    SyntaxKind.SimpleMemberAccessExpression,
-                    assignedType,
-                    IdentifierName("Empty")
-                )
-            )
-           .WithArgumentList(
-                ArgumentList(
-                    SingletonSeparatedList(
-                        Argument(
-                            LiteralExpression(
-                                SyntaxKind.DefaultLiteralExpression,
-                                Token(SyntaxKind.DefaultKeyword)
-                            )
-                        )
-                    )
-                )
-            );
-        var property = PropertyDeclaration(assignedType, Identifier(propertySymbol.Name))
-               // on the wire the property is the bare value: present is assigned, absent is unassigned
-               .WithAttributeLists(
-                    SingletonList(
-                        AttributeList(
-                            SingletonSeparatedList(
-                                Attribute(
-                                    ParseName("global::System.Text.Json.Serialization.JsonConverter"),
-                                    AttributeArgumentList(SingletonSeparatedList(AttributeArgument(TypeOfExpression(converterType))))
-                                )
-                            )
-                        )
-                    )
-                )
-               .WithModifiers(
-                    TokenList(
-                        Token(SyntaxKind.PublicKeyword)
-                    )
-                )
-               ;
-        if (!isStruct)
-        {
-            return
-            [
-                property
-                   .WithAccessorList(
-                        AccessorList(
-                            List(
-                                new[]
-                                {
-                                    AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
-                                    AccessorDeclaration(SyntaxKind.SetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
-                                }
-                            )
-                        )
-                    )
-                   .WithInitializer(EqualsValueClause(unassigned))
-                   .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
-            ];
-        }
-
-        // A struct has no initializers without a constructor, and default(T) skips them anyway: an unset property reads as unassigned.
-        return
-        [
-            property.WithAccessorList(
-                AccessorList(
-                    List(
-                        new[]
-                        {
-                            AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-                               .WithExpressionBody(ArrowExpressionClause(BinaryExpression(SyntaxKind.CoalesceExpression, FieldExpression(), unassigned)))
-                               .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
-                            AccessorDeclaration(isReadOnly ? SyntaxKind.InitAccessorDeclaration : SyntaxKind.SetAccessorDeclaration)
-                               .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
-                        }
-                    )
-                )
-            ),
-        ];
     }
 
     /// <inheritdoc />
