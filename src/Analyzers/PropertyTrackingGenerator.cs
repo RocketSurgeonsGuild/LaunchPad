@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -15,7 +14,7 @@ namespace Rocket.Surgery.LaunchPad.Analyzers;
 public class PropertyTrackingGenerator : IIncrementalGenerator
 {
     private static void GeneratePropertyTracking(
-        SourceProductionContext context,
+        GeneratedSources output,
         TypeDeclarationSyntax declaration,
         INamedTypeSymbol symbol,
         INamedTypeSymbol targetSymbol
@@ -23,7 +22,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
     {
         if (!declaration.Modifiers.Any(z => z.IsKind(SyntaxKind.PartialKeyword)))
         {
-            context.ReportDiagnostic(
+            output.ReportDiagnostic(
                 Diagnostic.Create(GeneratorDiagnostics.MustBePartial, declaration.Identifier.GetLocation(), declaration.GetFullMetadataName())
             );
             return;
@@ -33,7 +32,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
 
         if (targetSymbol.IsRecord != isRecord)
         {
-            context.ReportDiagnostic(
+            output.ReportDiagnostic(
                 Diagnostic.Create(
                     GeneratorDiagnostics.ParameterMustBeSameTypeOfObject,
                     declaration.Keyword.GetLocation(),
@@ -400,14 +399,14 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                 List<AttributeListSyntax>(),
                 SingletonList<MemberDeclarationSyntax>(
                     symbol.ContainingNamespace.IsGlobalNamespace
-                        ? classToInherit.ReparentDeclaration(context, declaration)
+                        ? classToInherit.ReparentDeclaration(output, declaration)
                         : NamespaceDeclaration(ParseName(symbol.ContainingNamespace.ToDisplayString()))
-                           .WithMembers(SingletonList<MemberDeclarationSyntax>(classToInherit.ReparentDeclaration(context, declaration)))
+                           .WithMembers(SingletonList<MemberDeclarationSyntax>(classToInherit.ReparentDeclaration(output, declaration)))
                 )
             )
            .AddSharedTrivia();
 
-        context.AddSourceRelativeTo(declaration, "PropertyTracking", cu.NormalizeWhitespace().GetText(Encoding.UTF8));
+        output.AddSource(GeneratedSources.HintNameRelativeTo(declaration, "PropertyTracking"), SyntaxLayout.ToText(cu));
         return;
 
         static void addNamespacesFromPropertyType(HashSet<string> namespaces, ITypeSymbol symbol)
@@ -556,50 +555,38 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        var values = context
-                    .SyntaxProvider
-                    .CreateSyntaxProvider(
-                         static (node, _) =>
-                             node is ( ClassDeclarationSyntax or RecordDeclarationSyntax )
-                                 and TypeDeclarationSyntax
-                             {
-                                 BaseList: { } baseList,
-                             }
-                          && baseList.Types.Any(
-                                 z => z.Type is GenericNameSyntax qns && qns.Identifier.Text.EndsWith("IPropertyTracking", StringComparison.Ordinal)
-                             ),
-                         static (syntaxContext, token) => (
-                             syntax: (TypeDeclarationSyntax)syntaxContext.Node, semanticModel: syntaxContext.SemanticModel,
-                             // ReSharper disable once NullableWarningSuppressionIsUsed
-                             symbol: syntaxContext.SemanticModel.GetDeclaredSymbol((TypeDeclarationSyntax)syntaxContext.Node, token)!
-                         )
-                     )
-                    .Select(
-                         (tuple, _) =>
-                         {
-                             var interfaceSymbol =
-                                 tuple.symbol.Interfaces.FirstOrDefault(z => z.Name.StartsWith("IPropertyTracking", StringComparison.Ordinal));
-                             return interfaceSymbol is not
-                             {
-                                 ContainingAssembly.Name: "Rocket.Surgery.LaunchPad.Foundation",
-                                 TypeArguments: [INamedTypeSymbol targetSymbol,],
-                             }
-                                 ? ((INamedTypeSymbol symbol, TypeDeclarationSyntax syntax, SemanticModel semanticModel, INamedTypeSymbol interfaceSymbol, INamedTypeSymbol targetSymbol))default
-                                 : (
-                                 tuple.symbol,
-                                 tuple.syntax,
-                                 tuple.semanticModel,
-                                 interfaceSymbol,
-                                 targetSymbol
-                             );
-                         }
-                     )
-                    .Where(x => x is { symbol: { }, targetSymbol: { }, });
+        var outputs = context
+                     .SyntaxProvider
+                     .CreateSyntaxProvider(
+                          static (node, _) =>
+                              node is ( ClassDeclarationSyntax or RecordDeclarationSyntax )
+                                  and TypeDeclarationSyntax
+                              {
+                                  BaseList: { } baseList,
+                              }
+                           && baseList.Types.Any(
+                                  z => z.Type is GenericNameSyntax qns && qns.Identifier.Text.EndsWith("IPropertyTracking", StringComparison.Ordinal)
+                              ),
+                          static (syntaxContext, cancellationToken) => Generate(syntaxContext, cancellationToken)
+                      )
+                     .Where(static output => output is { })
+                     .Select(static (output, _) => output!)
+                     .WithTrackingName("PropertyTracking");
 
-        context.RegisterSourceOutput(
-            values,
-            // ReSharper disable once NullableWarningSuppressionIsUsed
-            static (productionContext, tuple) => GeneratePropertyTracking(productionContext, tuple.syntax, tuple.symbol, tuple.targetSymbol!)
-        );
+        context.RegisterSourceOutput(outputs, static (productionContext, output) => output.AddTo(productionContext));
+    }
+
+    // Everything is read from the symbols here, in the transform, so the pipeline carries only text and diagnostics.
+    private static GeneratedSources? Generate(GeneratorSyntaxContext syntaxContext, CancellationToken cancellationToken)
+    {
+        var syntax = (TypeDeclarationSyntax)syntaxContext.Node;
+        if (syntaxContext.SemanticModel.GetDeclaredSymbol(syntax, cancellationToken) is not { } symbol) return null;
+
+        var interfaceSymbol = symbol.Interfaces.FirstOrDefault(z => z.Name.StartsWith("IPropertyTracking", StringComparison.Ordinal));
+        if (interfaceSymbol is not { ContainingAssembly.Name: "Rocket.Surgery.LaunchPad.Foundation", TypeArguments: [INamedTypeSymbol targetSymbol,], }) return null;
+
+        var output = new GeneratedSources();
+        GeneratePropertyTracking(output, syntax, symbol, targetSymbol);
+        return output;
     }
 }

@@ -79,6 +79,13 @@ internal sealed class ApiImports : CSharpSyntaxRewriter
         "ZeroAlloc.Mediator",
     ];
 
+    // Every namespace in Namespaces and every dotted prefix of one: ProtoBuf.Grpc.Reflection makes ProtoBuf and ProtoBuf.Grpc namespaces too.
+    private static readonly HashSet<string> NamespacesAndPrefixes = NamespacePrefixes();
+
+    // The namespace each name visited stands for (null for none), so a long name's prefixes are worked out once, not again at every level the
+    // rewriter descends through.
+    private readonly Dictionary<NameSyntax, string?> _namespaces = [];
+
     // alias name → the type it names; (generic name, arity) → its namespace.
     private readonly Dictionary<string, string> _aliases = [with(StringComparer.Ordinal)];
     private readonly Dictionary<(string Name, int Arity), string> _generics = [];
@@ -163,13 +170,32 @@ internal sealed class ApiImports : CSharpSyntaxRewriter
     // Leaves directives and namespace declarations as they are.
     public override SyntaxNode? VisitUsingDirective(UsingDirectiveSyntax node) => node;
 
-    private static bool IsNamespace(string name) => Namespaces.Contains(name) || Namespaces.Any(n => n.StartsWith(name + ".", StringComparison.Ordinal));
+    private static bool IsNamespace(string name) => NamespacesAndPrefixes.Contains(name);
+
+    private static HashSet<string> NamespacePrefixes()
+    {
+        var prefixes = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var name in Namespaces)
+        {
+            prefixes.Add(name);
+            for (var dot = name.IndexOf('.'); dot >= 0; dot = name.IndexOf('.', dot + 1)) prefixes.Add(name[..dot]);
+        }
+
+        return prefixes;
+    }
 
     // The dotted namespace a name stands for, without global::; null for anything else.
-    private static string? Namespace(NameSyntax name) => name switch
+    private string? Namespace(NameSyntax name)
     {
-        AliasQualifiedNameSyntax { Alias.Identifier.ValueText: "global", Name: IdentifierNameSyntax root } => root.Identifier.ValueText,
-        QualifiedNameSyntax { Right: IdentifierNameSyntax right } qualified when Namespace(qualified.Left) is { } left => left + "." + right.Identifier.ValueText,
-        _ => null,
-    };
+        if (_namespaces.TryGetValue(name, out var known)) return known;
+        var result = name switch
+        {
+            AliasQualifiedNameSyntax { Alias.Identifier.ValueText: "global", Name: IdentifierNameSyntax root } => root.Identifier.ValueText,
+            // Only a name under a namespace LaunchPad knows can be shortened, so the walk stops at the first prefix that isn't one.
+            QualifiedNameSyntax { Right: IdentifierNameSyntax right } qualified when Namespace(qualified.Left) is { } left && IsNamespace(left) => left + "." + right.Identifier.ValueText,
+            _ => null,
+        };
+        _namespaces[name] = result;
+        return result;
+    }
 }

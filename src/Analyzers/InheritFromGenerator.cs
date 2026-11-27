@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -125,7 +124,7 @@ public class InheritFromGenerator : IIncrementalGenerator
     }
 
     private static void GenerateInheritance(
-        SourceProductionContext context,
+        GeneratedSources output,
         Compilation compilation,
         TypeDeclarationSyntax declaration,
         INamedTypeSymbol targetSymbol,
@@ -134,7 +133,7 @@ public class InheritFromGenerator : IIncrementalGenerator
     {
         if (!declaration.Modifiers.Any(z => z.IsKind(SyntaxKind.PartialKeyword)))
         {
-            context.ReportDiagnostic(
+            output.ReportDiagnostic(
                 Diagnostic.Create(GeneratorDiagnostics.MustBePartial, declaration.Identifier.GetLocation(), declaration.GetFullMetadataName())
             );
             return;
@@ -161,7 +160,7 @@ public class InheritFromGenerator : IIncrementalGenerator
             TypeSyntax inheritFromTypeSyntax;
             if (IsFromOtherAssembly(targetSymbol, inheritFromSymbol))
             {
-                inheritableMembers = GetInheritableMembersFromMetadata(context, compilation, attribute, targetSymbol, inheritFromSymbol);
+                inheritableMembers = GetInheritableMembersFromMetadata(output, compilation, attribute, targetSymbol, inheritFromSymbol);
                 inheritFromTypeSyntax = ParseTypeName(inheritFromSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
                 classToInherit = AddInheritableMembersFromMetadata(
                     classToInherit,
@@ -218,14 +217,14 @@ public class InheritFromGenerator : IIncrementalGenerator
                 List<AttributeListSyntax>(),
                 SingletonList<MemberDeclarationSyntax>(
                     targetSymbol.ContainingNamespace.IsGlobalNamespace
-                        ? classToInherit.ReparentDeclaration(context, declaration)
+                        ? classToInherit.ReparentDeclaration(output, declaration)
                         : NamespaceDeclaration(ParseName(targetSymbol.ContainingNamespace.ToDisplayString()))
-                           .WithMembers(SingletonList<MemberDeclarationSyntax>(classToInherit.ReparentDeclaration(context, declaration)))
+                           .WithMembers(SingletonList<MemberDeclarationSyntax>(classToInherit.ReparentDeclaration(output, declaration)))
                 )
             )
            .AddSharedTrivia();
 
-        context.AddSourceRelativeTo(declaration, "InheritFrom", cu.NormalizeWhitespace().GetText(Encoding.UTF8));
+        output.AddSource(GeneratedSources.HintNameRelativeTo(declaration, "InheritFrom"), SyntaxLayout.ToText(cu));
     }
 
     private static ImmutableArray<MemberDeclarationSyntax> GetInheritableMembers(
@@ -286,7 +285,7 @@ public class InheritFromGenerator : IIncrementalGenerator
     ///     is not. Any other public member the source type declares is reported with LPAD0002 instead of being copied.
     /// </summary>
     private static ImmutableArray<MemberDeclarationSyntax> GetInheritableMembersFromMetadata(
-        SourceProductionContext context,
+        GeneratedSources output,
         Compilation compilation,
         AttributeData attribute,
         INamedTypeSymbol targetSymbol,
@@ -309,7 +308,7 @@ public class InheritFromGenerator : IIncrementalGenerator
                 case IPropertySymbol or IFieldSymbol or IEventSymbol or IMethodSymbol { MethodKind: MethodKind.Ordinary, }:
                     if (member is not { DeclaredAccessibility: Accessibility.Public, CanBeReferencedByName: true, } || IsCompilerGenerated(member))
                         continue;
-                    context.ReportDiagnostic(
+                    output.ReportDiagnostic(
                         Diagnostic.Create(
                             GeneratorDiagnostics.MemberCannotBeCopiedFromMetadata,
                             attribute.ApplicationSyntaxReference?.GetSyntax().GetLocation(),
@@ -628,94 +627,36 @@ public class InheritFromGenerator : IIncrementalGenerator
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-#if ROSLYN4_4
-        var values = context
-                    .SyntaxProvider.ForAttributeWithMetadataName(
-                         "Rocket.Surgery.LaunchPad.Foundation.InheritFromAttribute",
-                         (node, _) => node is ClassDeclarationSyntax or RecordDeclarationSyntax,
-                         (syntaxContext, _) => syntaxContext
-                     )
-                    .Combine(context.CompilationProvider)
-                    .Select(
-                         static (tuple, _) => (
-                             syntax: (TypeDeclarationSyntax)tuple.Left.TargetNode,
-                             semanticModel: tuple.Left.SemanticModel,
-                             symbol: (INamedTypeSymbol)tuple.Left.TargetSymbol,
-                             compilation: tuple.Right,
-                             attributes: tuple
-                                        .Left.Attributes
-                                        .Where(z => z.AttributeClass?.Name is "InheritFromAttribute")
-                                        .ToArray()
-                         )
-                     );
-        var values2 = context
+        var outputs = context
                      .SyntaxProvider.ForAttributeWithMetadataName(
-                          "Rocket.Surgery.LaunchPad.Foundation.InheritFromAttribute`1",
-                          (node, _) => node is ClassDeclarationSyntax or RecordDeclarationSyntax,
-                          (syntaxContext, _) => syntaxContext
+                          "Rocket.Surgery.LaunchPad.Foundation.InheritFromAttribute",
+                          static (node, _) => node is ClassDeclarationSyntax or RecordDeclarationSyntax,
+                          static (syntaxContext, _) => Generate(syntaxContext)
                       )
-                     .Combine(context.CompilationProvider)
-                     .Select(
-                          static (tuple, _) => (
-                              syntax: (TypeDeclarationSyntax)tuple.Left.TargetNode,
-                              semanticModel: tuple.Left.SemanticModel,
-                              symbol: (INamedTypeSymbol)tuple.Left.TargetSymbol,
-                              compilation: tuple.Right,
-                              attributes: tuple
-                                         .Left.Attributes
-                                         .Where(z => z.AttributeClass?.Name is "InheritFromAttribute")
-                                         .ToArray()
-                          )
-                      );
-        context.RegisterSourceOutput(
-            values2,
-            // ReSharper disable once NullableWarningSuppressionIsUsed
-            static (productionContext, tuple) => GenerateInheritance(productionContext, tuple.compilation, tuple.syntax, tuple.symbol, tuple.attributes!)
-        );
-#else
-        var values = context
-                    .SyntaxProvider
-                    .CreateSyntaxProvider(
-                         static (node, _) =>
-                             node is (ClassDeclarationSyntax or RecordDeclarationSyntax)
-                                 and TypeDeclarationSyntax
-                                     {
-                                         AttributeLists: { Count: > 0, },
-                                     } recordDeclarationSyntax
-                          && recordDeclarationSyntax.AttributeLists.ContainsAttribute("InheritFrom"),
-                         static (syntaxContext, token) => (
-                             syntax: (TypeDeclarationSyntax)syntaxContext.Node, semanticModel: syntaxContext.SemanticModel,
-                             // ReSharper disable once NullableWarningSuppressionIsUsed
-                             symbol: syntaxContext.SemanticModel.GetDeclaredSymbol((TypeDeclarationSyntax)syntaxContext.Node, token)! )
-                     )
-                    .Combine(
-                         context.CompilationProvider
-                                .Select(
-                                     static (z, _) => (
-                                         compilation: z,
-                                         // ReSharper disable once NullableWarningSuppressionIsUsed
-                                         inheritFromAttribute: z.GetTypeByMetadataName("Rocket.Surgery.LaunchPad.Foundation.InheritFromAttribute")! )
-                                 )
-                     )
-                    .Select(
-                         static (tuple, _) => (
-                             tuple.Left.syntax,
-                             tuple.Left.semanticModel,
-                             tuple.Left.symbol,
-                             tuple.Right.compilation,
-                             attributes: tuple
-                                        .Left.symbol?.GetAttributes()
-                                        .Where(z => SymbolEqualityComparer.Default.Equals(tuple.Right.inheritFromAttribute, z.AttributeClass))
-                                        .ToArray()
-                         )
-                     )
-                    .Where(x => !( x.symbol is null || x.attributes is null or { Length: 0, } ));
-#endif
+                     .WithTrackingName("InheritFrom");
+        var genericOutputs = context
+                            .SyntaxProvider.ForAttributeWithMetadataName(
+                                 "Rocket.Surgery.LaunchPad.Foundation.InheritFromAttribute`1",
+                                 static (node, _) => node is ClassDeclarationSyntax or RecordDeclarationSyntax,
+                                 static (syntaxContext, _) => Generate(syntaxContext)
+                             )
+                            .WithTrackingName("GenericInheritFrom");
 
-        context.RegisterSourceOutput(
-            values,
-            // ReSharper disable once NullableWarningSuppressionIsUsed
-            static (productionContext, tuple) => GenerateInheritance(productionContext, tuple.compilation, tuple.syntax, tuple.symbol, tuple.attributes!)
+        context.RegisterSourceOutput(outputs, static (productionContext, output) => output.AddTo(productionContext));
+        context.RegisterSourceOutput(genericOutputs, static (productionContext, output) => output.AddTo(productionContext));
+    }
+
+    // Everything is read from the symbols here, in the transform, so the pipeline carries only text and diagnostics.
+    private static GeneratedSources Generate(GeneratorAttributeSyntaxContext syntaxContext)
+    {
+        var output = new GeneratedSources();
+        GenerateInheritance(
+            output,
+            syntaxContext.SemanticModel.Compilation,
+            (TypeDeclarationSyntax)syntaxContext.TargetNode,
+            (INamedTypeSymbol)syntaxContext.TargetSymbol,
+            [.. syntaxContext.Attributes.Where(z => z.AttributeClass?.Name is "InheritFromAttribute")]
         );
+        return output;
     }
 }

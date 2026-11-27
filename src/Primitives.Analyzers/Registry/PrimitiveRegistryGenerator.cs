@@ -1,6 +1,8 @@
+using System.Collections.Immutable;
 using System.Text;
 
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 
@@ -43,7 +45,24 @@ public sealed class PrimitiveRegistryGenerator : IIncrementalGenerator
             )
         );
 
-        var model = context.CompilationProvider.Select(static (compilation, cancellationToken) => Read(compilation, cancellationToken));
+        // The project's own types are read a declaration at a time, so an edit re-reads only the candidates (a type with an attribute or a base
+        // list) instead of every type of the project; what the compilation decides (the flags, the registry's partial methods, the referenced
+        // assemblies' types, whose symbols outlive an edit) is read from it.
+        var local = context.SyntaxProvider
+                           .CreateSyntaxProvider(
+                                static (node, _) => node is TypeDeclarationSyntax { AttributeLists.Count: > 0 } or TypeDeclarationSyntax { BaseList: { } },
+                                static (syntax, cancellationToken) => ReadLocal(syntax, cancellationToken)
+                            )
+                           .Where(static entry => entry is not null)
+                           .Select(static (entry, _) => entry!)
+                           .Collect()
+                           .WithTrackingName("PrimitiveRegistryLocalTypes");
+        var model = context
+                   .CompilationProvider.Select(static (compilation, cancellationToken) => Read(compilation, cancellationToken))
+                   .WithTrackingName("PrimitiveRegistryReferences")
+                   .Combine(local)
+                   .Select(static (pair, _) => Merge(pair.Left, pair.Right))
+                   .WithTrackingName("PrimitiveRegistry");
         context.RegisterSourceOutput(
             model.Combine(representations),
             static (production, input) =>
@@ -78,6 +97,68 @@ public sealed class PrimitiveRegistryGenerator : IIncrementalGenerator
         string? ConverterParameter
     );
 
+    // One type of the project: a domain primitive, a value object or a DbContext.
+    private sealed record LocalEntry(PrimitiveEntry? Primitive, string? ValueObject, string? DbContext);
+
+    private static LocalEntry? ReadLocal(GeneratorSyntaxContext syntax, CancellationToken cancellationToken)
+    {
+        var declaration = (TypeDeclarationSyntax)syntax.Node;
+        if (syntax.SemanticModel.GetDeclaredSymbol(declaration, cancellationToken) is not INamedTypeSymbol type) return null;
+        // A partial type is read once, from its first declaration.
+        if (type.DeclaringSyntaxReferences is not [var first, ..] || first.SyntaxTree != declaration.SyntaxTree || first.Span != declaration.Span) return null;
+        if (type is not { IsGenericType: false, IsFileLocal: false, TypeKind: TypeKind.Class or TypeKind.Struct }) return null;
+
+        var compilation = syntax.SemanticModel.Compilation;
+        if (!compilation.IsSymbolAccessibleWithin(type, compilation.Assembly)) return null;
+        var name = type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+        var dbContext = type is { TypeKind: TypeKind.Class, IsAbstract: false } && DerivesFromDbContext(type) ? name : null;
+        if (!IsCompleted(type, cancellationToken)) return dbContext is null ? null : new(null, null, dbContext);
+        if (IsValueObject(type)) return new(null, name, dbContext);
+        var primitive = Entry(type, name, compilation, cancellationToken);
+        return primitive is null && dbContext is null ? null : new(primitive, null, dbContext);
+    }
+
+    private static PrimitiveEntry? Entry(INamedTypeSymbol type, string name, Compilation compilation, CancellationToken cancellationToken)
+    {
+        if (PrimitiveReader.PrimitiveValueOf(type, compilation) is not { } value) return null;
+        var isStrongId = IsStrongId(type);
+        var memberClasses = new List<string>();
+        foreach (var memberClass in PrimitiveReader.SmartEnumMemberClasses(type, compilation, cancellationToken))
+        {
+            memberClasses.Add($"{name}.{memberClass}");
+        }
+
+        return new(name, ValueTypeInfo.From(value).Display, isStrongId && value.MetadataName == "Guid", isStrongId, memberClasses.ToEquatableArray());
+    }
+
+    private static bool DerivesFromDbContext(INamedTypeSymbol type)
+    {
+        for (var current = type.BaseType; current is not null; current = current.BaseType)
+        {
+            if (current is { Name: "DbContext", ContainingNamespace: { Name: "EntityFrameworkCore", ContainingNamespace: { Name: "Microsoft", ContainingNamespace.IsGlobalNamespace: true } } }) return true;
+        }
+
+        return false;
+    }
+
+    // The registry of the compilation with the project's own types added, each list in order.
+    private static RegistryModel Merge(RegistryModel references, ImmutableArray<LocalEntry> local)
+    {
+        if (!references.HasRegistry && !references.HasDapper) return references;
+        var primitives = references.Primitives.Concat(local.Where(static z => z.Primitive is { }).Select(static z => z.Primitive!));
+        var valueObjects = references.ValueObjects.Concat(local.Where(static z => z.ValueObject is { }).Select(static z => z.ValueObject!));
+        var dbContexts = references.DbContextParameter is null
+            ? references.DbContexts
+            : references.DbContexts.Concat(local.Where(static z => z.DbContext is { }).Select(static z => z.DbContext!));
+        return references with
+        {
+            Primitives = primitives.OrderBy(static z => z.Type, StringComparer.Ordinal).ToEquatableArray(),
+            ValueObjects = valueObjects.OrderBy(static z => z, StringComparer.Ordinal).ToEquatableArray(),
+            DbContexts = dbContexts.OrderBy(static z => z, StringComparer.Ordinal).ToEquatableArray(),
+        };
+    }
+
+    // The flags, the registry's partial methods and the types of the referenced assemblies; the project's own types are LocalEntry.
     private static RegistryModel Read(Compilation compilation, CancellationToken cancellationToken)
     {
         var registry = compilation.GetTypeByMetadataName(RegistryName) is { DeclaringSyntaxReferences.Length: > 0 } declared ? declared : null;
@@ -90,13 +171,12 @@ public sealed class PrimitiveRegistryGenerator : IIncrementalGenerator
 
         var primitives = new List<PrimitiveEntry>();
         var valueObjects = new List<string>();
-        foreach (var type in Types(compilation, Library, cancellationToken))
+        foreach (var type in ReferencedTypes(compilation, Library, cancellationToken))
         {
             // A type of this compilation is a domain primitive only when the generator completes it: a record, or a smart enum that is a closed
             // class or a record struct. A record struct of a referenced assembly isn't a record in metadata (only a record class has a <Clone>$ to tell), so there
             // the interfaces decide.
             if (type is not { IsGenericType: false, IsFileLocal: false, TypeKind: TypeKind.Class or TypeKind.Struct }) continue;
-            if (SymbolEqualityComparer.Default.Equals(type.ContainingAssembly, compilation.Assembly) && !IsCompleted(type, cancellationToken)) continue;
             if (!compilation.IsSymbolAccessibleWithin(type, compilation.Assembly)) continue;
             var name = type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
             if (IsValueObject(type))
@@ -105,15 +185,7 @@ public sealed class PrimitiveRegistryGenerator : IIncrementalGenerator
                 continue;
             }
 
-            if (PrimitiveReader.PrimitiveValueOf(type, compilation) is not { } value) continue;
-            var isStrongId = IsStrongId(type);
-            var memberClasses = new List<string>();
-            foreach (var memberClass in PrimitiveReader.SmartEnumMemberClasses(type, compilation, cancellationToken))
-            {
-                memberClasses.Add($"{name}.{memberClass}");
-            }
-
-            primitives.Add(new(name, ValueTypeInfo.From(value).Display, isStrongId && value.MetadataName == "Guid", isStrongId, memberClasses.ToEquatableArray()));
+            if (Entry(type, name, compilation, cancellationToken) is { } primitive) primitives.Add(primitive);
         }
 
         var dbContexts = new List<string>();
@@ -124,7 +196,7 @@ public sealed class PrimitiveRegistryGenerator : IIncrementalGenerator
          && compilation.GetTypeByMetadataName("Microsoft.EntityFrameworkCore.DbContext") is { } dbContext)
         {
             dbContextParameter = dbContextVisitor.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-            foreach (var type in Types(compilation, "Microsoft.EntityFrameworkCore", cancellationToken))
+            foreach (var type in ReferencedTypes(compilation, "Microsoft.EntityFrameworkCore", cancellationToken))
             {
                 if (type is not { TypeKind: TypeKind.Class, IsAbstract: false, IsGenericType: false, IsFileLocal: false }) continue;
                 if (!compilation.IsSymbolAccessibleWithin(type, compilation.Assembly) || !DerivesFrom(type, dbContext)) continue;
@@ -188,14 +260,9 @@ public sealed class PrimitiveRegistryGenerator : IIncrementalGenerator
         return null;
     }
 
-    // The types of the compilation, and of every referenced assembly that references the library (by its assembly name).
-    private static IEnumerable<INamedTypeSymbol> Types(Compilation compilation, string library, CancellationToken cancellationToken)
+    // The types of every referenced assembly that is the library or references it (by its assembly name).
+    private static IEnumerable<INamedTypeSymbol> ReferencedTypes(Compilation compilation, string library, CancellationToken cancellationToken)
     {
-        foreach (var type in Types(compilation.Assembly.GlobalNamespace, cancellationToken))
-        {
-            yield return type;
-        }
-
         foreach (var assembly in compilation.SourceModule.ReferencedAssemblySymbols)
         {
             cancellationToken.ThrowIfCancellationRequested();
