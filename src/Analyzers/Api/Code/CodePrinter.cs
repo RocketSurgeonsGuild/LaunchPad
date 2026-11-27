@@ -213,9 +213,9 @@ internal sealed class CodePrinter
     // member that ends with a semicolon (a field, an expression-bodied or body-less method) is followed directly by the next.
     private static int LineBreaksBetween(CodeMember member, CodeMember next)
     {
-        return  member is CodeProperty 
-            ?  next is CodeProperty { AttributeLists.Count: 0 } ? 1 : 2 
-            :  member is CodeTypeDeclaration or CodeConstructor or CodeMethod { Body: { } } ? 2 : 1;
+        return member is CodeProperty
+            ? next is CodeProperty { AttributeLists.Count: 0 } ? 1 : 2
+            : member is CodeTypeDeclaration or CodeConstructor or CodeMethod { Body: { } } ? 2 : 1;
     }
 
     private void WriteMember(CodeMember member)
