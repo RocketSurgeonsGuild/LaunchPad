@@ -6,8 +6,6 @@
     <ItemGroup>
         <!-- The explicit generator benchmarks share their harness. -->
         <Compile Include="../Shared/GeneratorBenchmark.cs" Link="Shared/GeneratorBenchmark.cs" />
-        <!-- SyntaxLayoutTests compares the generators' layout with NormalizeWhitespace; the analyzer assembly keeps it internal. -->
-        <Compile Include="../../src/Analyzers/SyntaxLayout.cs" Link="Shared/SyntaxLayout.cs" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.Common" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.Features" PrivateAssets="all" />

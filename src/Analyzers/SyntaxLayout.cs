@@ -279,7 +279,7 @@ internal sealed class SyntaxLayout
         }
         else if (last.TrailingTrivia is { Count: > 0 } trailing)
         {
-            var lastTrivia = trailing[^1 ];
+            var lastTrivia = trailing[^1];
             return EndsInLineBreak(lastTrivia.Kind(), lastTrivia.ToFullString());
         }
 
@@ -294,8 +294,8 @@ internal sealed class SyntaxLayout
     {
         var leading = token.LeadingTrivia;
         return leading.Count >= 2
-         && leading[^2 ].IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia)
-         && leading[^1 ].IsKind(SyntaxKind.EndOfLineTrivia)
+         && leading[^2].IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia)
+         && leading[^1].IsKind(SyntaxKind.EndOfLineTrivia)
                 ? 1
                 : 0;
     }
@@ -337,10 +337,11 @@ internal sealed class SyntaxLayout
         if (current == SyntaxKind.CloseParenToken)
         {
             // Not inside a positional pattern, nor before the brace of an initializer in a single-line context.
-            if (currentToken.Parent is PositionalPatternClauseSyntax) return 0;
-            return  nextToken.IsKind(SyntaxKind.OpenBraceToken) && IsInitializerInSingleLineContext(nextToken.Parent) 
-                ?  0 
-                :  ( currentToken.Parent is StatementSyntax && nextToken.Parent != currentToken.Parent )
+            return currentToken.Parent is PositionalPatternClauseSyntax
+                ? 0
+                : nextToken.IsKind(SyntaxKind.OpenBraceToken) && IsInitializerInSingleLineContext(nextToken.Parent)
+                ? 0
+                : ( currentToken.Parent is StatementSyntax && nextToken.Parent != currentToken.Parent )
              || nextToken.IsKind(SyntaxKind.OpenBraceToken)
              || nextToken.IsKind(SyntaxKind.WhereKeyword)
                 ? 1
@@ -357,9 +358,9 @@ internal sealed class SyntaxLayout
         }
         else if (current == SyntaxKind.CommaToken)
         {
-            return  currentToken.Parent is InitializerExpressionSyntax or AnonymousObjectCreationExpressionSyntax && !IsSingleLineInitializerContext(nextToken.Parent) 
-                ?  1 
-                :  currentToken.Parent is EnumDeclarationSyntax or SwitchExpressionSyntax ? 1 : 0;
+            return currentToken.Parent is InitializerExpressionSyntax or AnonymousObjectCreationExpressionSyntax && !IsSingleLineInitializerContext(nextToken.Parent)
+                ? 1
+                : currentToken.Parent is EnumDeclarationSyntax or SwitchExpressionSyntax ? 1 : 0;
         }
         else if (current == SyntaxKind.ElseKeyword)
         {
@@ -377,11 +378,15 @@ internal sealed class SyntaxLayout
         if (StartsQueryClause(nextToken)) return 1;
 
         var next = nextToken.Kind();
-        if (next == SyntaxKind.OpenBraceToken) return LineBreaksBeforeOpenBrace(nextToken);
-        if (next == SyntaxKind.CloseBraceToken) return LineBreaksBeforeCloseBrace(nextToken);
-        if (next is SyntaxKind.ElseKeyword or SyntaxKind.FinallyKeyword) return 1;
-        if (next == SyntaxKind.OpenBracketToken) return nextToken.Parent is AttributeListSyntax && nextToken.Parent.Parent is not ParameterSyntax ? 1 : 0;
-        return  next == SyntaxKind.WhereKeyword  ?  currentToken.Parent is TypeParameterListSyntax ? 1 : 0  :  0;
+        return next == SyntaxKind.OpenBraceToken
+            ? LineBreaksBeforeOpenBrace(nextToken)
+            : next == SyntaxKind.CloseBraceToken
+            ? LineBreaksBeforeCloseBrace(nextToken)
+            : next is SyntaxKind.ElseKeyword or SyntaxKind.FinallyKeyword
+            ? 1
+            : next == SyntaxKind.OpenBracketToken
+            ? nextToken.Parent is AttributeListSyntax && nextToken.Parent.Parent is not ParameterSyntax ? 1 : 0
+            : next == SyntaxKind.WhereKeyword ? currentToken.Parent is TypeParameterListSyntax ? 1 : 0 : 0;
     }
 
     private static bool StartsQueryClause(SyntaxToken token) =>
@@ -459,51 +464,49 @@ internal sealed class SyntaxLayout
         }
 
         var next = nextToken.Kind();
-        return  next is SyntaxKind.EndOfFileToken or SyntaxKind.CloseBraceToken or SyntaxKind.CatchKeyword or SyntaxKind.FinallyKeyword or SyntaxKind.ElseKeyword 
-            ?  1 
-            :  next == SyntaxKind.WhileKeyword && nextToken.Parent.IsKind(SyntaxKind.DoStatement) ? 1 : 2;
+        return next is SyntaxKind.EndOfFileToken or SyntaxKind.CloseBraceToken or SyntaxKind.CatchKeyword or SyntaxKind.FinallyKeyword or SyntaxKind.ElseKeyword
+            ? 1
+            : next == SyntaxKind.WhileKeyword && nextToken.Parent.IsKind(SyntaxKind.DoStatement) ? 1 : 2;
     }
 
     private static int LineBreaksAfterSemicolon(SyntaxToken currentToken, SyntaxToken nextToken)
     {
         var parent = currentToken.Parent;
-        if (parent.IsKind(SyntaxKind.ForStatement)) return 0;
-        if (nextToken.IsKind(SyntaxKind.CloseBraceToken)) return 1;
-        if (parent.IsKind(SyntaxKind.UsingDirective)) return nextToken.Parent.IsKind(SyntaxKind.UsingDirective) ? 1 : 2;
-        if (parent.IsKind(SyntaxKind.ExternAliasDirective)) return nextToken.Parent.IsKind(SyntaxKind.ExternAliasDirective) ? 1 : 2;
-        if (parent is AccessorDeclarationSyntax && IsAccessorListWithoutAccessorsWithBlockBody(parent.Parent)) return 0;
-        return  parent is PropertyDeclarationSyntax property 
-            ?  IsSingleLineProperty(property) && nextToken.Parent is PropertyDeclarationSyntax nextProperty && IsSingleLineProperty(nextProperty) ? 1 : 2 
-            :  1;
+        return parent.IsKind(SyntaxKind.ForStatement)
+            ? 0
+            : nextToken.IsKind(SyntaxKind.CloseBraceToken)
+            ? 1
+            : parent.IsKind(SyntaxKind.UsingDirective)
+            ? nextToken.Parent.IsKind(SyntaxKind.UsingDirective) ? 1 : 2
+            : parent.IsKind(SyntaxKind.ExternAliasDirective)
+            ? nextToken.Parent.IsKind(SyntaxKind.ExternAliasDirective) ? 1 : 2
+            : parent is AccessorDeclarationSyntax && IsAccessorListWithoutAccessorsWithBlockBody(parent.Parent)
+            ? 0
+            : parent is PropertyDeclarationSyntax property
+            ? IsSingleLineProperty(property) && nextToken.Parent is PropertyDeclarationSyntax nextProperty && IsSingleLineProperty(nextProperty) ? 1 : 2
+            : 1;
     }
 
     private static bool NeedsSeparatorForPropertyPattern(SyntaxToken token, SyntaxToken next)
     {
         var propertyPattern = token.Parent as PropertyPatternClauseSyntax ?? next.Parent as PropertyPatternClauseSyntax;
-        if (propertyPattern is null) return false;
-        if (token.IsKind(SyntaxKind.OpenBraceToken) || next.IsKind(SyntaxKind.CloseBraceToken)) return true;
-        if (propertyPattern.Parent is not RecursivePatternSyntax recursive) return false;
-        return  next.IsKind(SyntaxKind.OpenBraceToken) 
-            ?  recursive.Type is { } || recursive.PositionalPatternClause is { } 
-            :  token.IsKind(SyntaxKind.CloseBraceToken) && recursive.Designation is { };
+        return propertyPattern is not null && ( token.IsKind(SyntaxKind.OpenBraceToken) || next.IsKind(SyntaxKind.CloseBraceToken) || propertyPattern.Parent is RecursivePatternSyntax recursive && ( next.IsKind(SyntaxKind.OpenBraceToken)
+            ? recursive.Type is { } || recursive.PositionalPatternClause is { }
+            : token.IsKind(SyntaxKind.CloseBraceToken) && recursive.Designation is { } ) );
     }
 
     private static bool NeedsSeparatorForPositionalPattern(SyntaxToken token, SyntaxToken next)
     {
         var positionalPattern = token.Parent as PositionalPatternClauseSyntax ?? next.Parent as PositionalPatternClauseSyntax;
-        if (positionalPattern is null) return false;
-        if (token.IsKind(SyntaxKind.OpenParenToken) || next.IsKind(SyntaxKind.CloseParenToken)) return false;
-        if (positionalPattern.Parent is not RecursivePatternSyntax recursive) return false;
-        return  next.IsKind(SyntaxKind.OpenParenToken) 
-            ?  recursive.Type is { } 
-            :  token.IsKind(SyntaxKind.CloseParenToken) && recursive.PropertyPatternClause is null && recursive.Designation is { };
+        return positionalPattern is not null && !token.IsKind(SyntaxKind.OpenParenToken) && !next.IsKind(SyntaxKind.CloseParenToken) && positionalPattern.Parent is RecursivePatternSyntax recursive && ( next.IsKind(SyntaxKind.OpenParenToken)
+            ? recursive.Type is { }
+            : token.IsKind(SyntaxKind.CloseParenToken) && recursive.PropertyPatternClause is null && recursive.Designation is { } );
     }
 
     private static bool NeedsSeparatorForListPattern(SyntaxToken token, SyntaxToken next)
     {
         var listPattern = token.Parent as ListPatternSyntax ?? next.Parent as ListPatternSyntax;
-        if (listPattern is null) return false;
-        return  next.IsKind(SyntaxKind.OpenBracketToken)  ?  true  :  token.IsKind(SyntaxKind.OpenBracketToken) && listPattern.Designation is { };
+        return listPattern is not null && ( next.IsKind(SyntaxKind.OpenBracketToken) || token.IsKind(SyntaxKind.OpenBracketToken) && listPattern.Designation is { } );
     }
 
     private static bool NeedsSeparator(SyntaxToken token, SyntaxToken next)
@@ -597,12 +600,7 @@ internal sealed class SyntaxLayout
             if (last == next.Text[0] && last is '+' or '-' or '<' or ':' or '?' or '=' or '"') return true;
         }
 
-        if (token.Parent is RelationalPatternSyntax) return true;
-        if (nextKind is SyntaxKind.AndKeyword or SyntaxKind.OrKeyword) return true;
-        if (tokenKind is SyntaxKind.AndKeyword or SyntaxKind.OrKeyword or SyntaxKind.NotKeyword) return true;
-        return  NeedsSeparatorForPropertyPattern(token, next) || NeedsSeparatorForPositionalPattern(token, next) || NeedsSeparatorForListPattern(token, next) 
-            ?  true 
-            :  ( token.Parent.IsKind(SyntaxKind.LineSpanDirectiveTrivia) && next.Parent.IsKind(SyntaxKind.LineDirectivePosition) )
+        return token.Parent is RelationalPatternSyntax || nextKind is SyntaxKind.AndKeyword or SyntaxKind.OrKeyword || tokenKind is SyntaxKind.AndKeyword or SyntaxKind.OrKeyword or SyntaxKind.NotKeyword || NeedsSeparatorForPropertyPattern(token, next) || NeedsSeparatorForPositionalPattern(token, next) || NeedsSeparatorForListPattern(token, next) || ( token.Parent.IsKind(SyntaxKind.LineSpanDirectiveTrivia) && next.Parent.IsKind(SyntaxKind.LineDirectivePosition) )
          || ( token.Parent.IsKind(SyntaxKind.LineDirectivePosition) && next.Parent.IsKind(SyntaxKind.LineSpanDirectiveTrivia) );
     }
 
@@ -648,8 +646,9 @@ internal sealed class SyntaxLayout
             if (nextKind is SyntaxKind.CommaToken or SyntaxKind.CloseBracketToken) return false;
         }
 
-        if (tokenKind == SyntaxKind.LessThanToken && token.Parent.IsKind(SyntaxKind.FunctionPointerParameterList)) return false;
-        return  nextKind == SyntaxKind.GreaterThanToken && next.Parent.IsKind(SyntaxKind.FunctionPointerParameterList)  ?   false   :   null;
+        return tokenKind == SyntaxKind.LessThanToken && token.Parent.IsKind(SyntaxKind.FunctionPointerParameterList)
+            ? false
+            : nextKind == SyntaxKind.GreaterThanToken && next.Parent.IsKind(SyntaxKind.FunctionPointerParameterList) ? false : null;
     }
 
     private static bool KeywordNeedsSeparatorBeforeOpenParen(SyntaxKind kind) =>

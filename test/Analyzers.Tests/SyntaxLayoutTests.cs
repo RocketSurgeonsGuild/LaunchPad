@@ -7,13 +7,19 @@ using Rocket.Surgery.LaunchPad.Analyzers;
 namespace Analyzers.Tests;
 
 /// <summary>
-///     <see cref="SyntaxLayout" /> must write exactly what <c>NormalizeWhitespace</c> writes. The generators' snapshots cover the trees they
+///     The generators' <c>SyntaxLayout</c> must write exactly what <c>NormalizeWhitespace</c> writes. The generators' snapshots cover the trees they
 ///     build; these cover everything else C# can hold (comments, directives, documentation, patterns, queries), using the repository's own
 ///     sources as the corpus.
 /// </summary>
 public class SyntaxLayoutTests
 {
     private static readonly CSharpParseOptions ParseOptions = new(LanguageVersion.Preview, DocumentationMode.Diagnose);
+
+    // SyntaxLayout is internal to the analyzer assembly, which gives the test project no access: its ToText(SyntaxNode, string) is bound once.
+    private static readonly Func<SyntaxNode, string, string> ToText = typeof(PropertyTrackingGenerator)
+                                                                      .Assembly.GetType("Rocket.Surgery.LaunchPad.Analyzers.SyntaxLayout", throwOnError: true)!
+                                                                      .GetMethod("ToText", [typeof(SyntaxNode), typeof(string)])!
+                                                                      .CreateDelegate<Func<SyntaxNode, string, string>>();
 
     private static readonly string[] SourceFolders = ["src", "sample", "test"];
 
@@ -35,8 +41,8 @@ public class SyntaxLayoutTests
         var tree = CSharpSyntaxTree.ParseText(await File.ReadAllTextAsync(Path.Combine(RepositoryRoot(), path)), ParseOptions);
         var root = await tree.GetRootAsync();
 
-        await SyntaxLayout.ToText(root).Should().BeEqualTo(root.NormalizeWhitespace().ToFullString());
-        await SyntaxLayout.ToText(root, "\n").Should().BeEqualTo(root.NormalizeWhitespace(eol: "\n").ToFullString());
+        await ToText(root, "\r\n").Should().BeEqualTo(root.NormalizeWhitespace().ToFullString());
+        await ToText(root, "\n").Should().BeEqualTo(root.NormalizeWhitespace(eol: "\n").ToFullString());
     }
 
     [Test]
@@ -53,7 +59,7 @@ public class SyntaxLayoutTests
         );
         var stripped = (CompilationUnitSyntax)new WhitespaceStripper().Visit(root);
 
-        await SyntaxLayout.ToText(stripped).Should().BeEqualTo(stripped.NormalizeWhitespace().ToFullString());
+        await ToText(stripped, "\r\n").Should().BeEqualTo(stripped.NormalizeWhitespace().ToFullString());
     }
 
     private static string RepositoryRoot([CallerFilePath] string file = "") => Path.GetFullPath(Path.Combine(Path.GetDirectoryName(file)!, "..", ".."));
