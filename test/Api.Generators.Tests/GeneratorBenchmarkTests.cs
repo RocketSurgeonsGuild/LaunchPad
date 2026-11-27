@@ -10,7 +10,7 @@ using Rocket.Surgery.LaunchPad.Tests;
 namespace Api.Generators.Tests;
 
 /// <summary>
-///     Times the transport generators over <see cref="Operations" /> operations in <see cref="Files" /> contract files, each listed on a
+///     Times the transport generators over two operations for each of <see cref="Operations" /> indexes (a query and a command) in <see cref="Files" /> contract files, each listed on a
 ///     minimal API host, a controller, a gRPC service and a GraphQL mutation type. Explicit: it measures, and asserts nothing beyond the
 ///     generators running cleanly.
 /// </summary>
@@ -45,7 +45,7 @@ public class GeneratorBenchmarkTests() : GeneratorTest()
         }
 
         await errors.ConvertAll(d => d.ToString()).Should().BeEmpty();
-        GeneratorBenchmark.Report($"Api ({Operations} operations)", measurements);
+        GeneratorBenchmark.Report($"Api ({Operations * 2} operations)", measurements);
     }
 
     private static GeneratorDriver Driver(IIncrementalGenerator generator) =>
