@@ -12,7 +12,7 @@ General purpose LocalTime Serializer
 ## LocalTimeSerializer
 
 - Name: `Constructor`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.0c205f7c0f7c99d017c3755b484180de4bcb850a/src/NodaTime.StrawberryShake/LocalTimeSerializer.cs#L14-L16)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.38910164e414562d3509d65b5a4e0133f1c911cc/src/NodaTime.StrawberryShake/LocalTimeSerializer.cs#L14-L16)
 
 Create a new LocalTimeSerializer
 

@@ -13,7 +13,7 @@ One value a value object holds.
 ## ValueObjectMemberDescription(string, Type, bool)
 
 - Name: `Constructor(string, Type, bool)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.0c205f7c0f7c99d017c3755b484180de4bcb850a/src/Primitives/Descriptions/DomainPrimitiveDescription.cs#L167)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.38910164e414562d3509d65b5a4e0133f1c911cc/src/Primitives/Descriptions/DomainPrimitiveDescription.cs#L167)
 
 One value a value object holds.
 

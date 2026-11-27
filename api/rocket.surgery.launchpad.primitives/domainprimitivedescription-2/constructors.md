@@ -12,7 +12,7 @@ The description of one domain primitive, which knows the domain primitive and it
 ## DomainPrimitiveDescription
 
 - Name: `Constructor`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.0c205f7c0f7c99d017c3755b484180de4bcb850a/src/Primitives/Descriptions/DomainPrimitiveDescription.cs#L16-L56)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.38910164e414562d3509d65b5a4e0133f1c911cc/src/Primitives/Descriptions/DomainPrimitiveDescription.cs#L16-L56)
 
 Creates the description; the Primitives generator writes one for every domain primitive.
 
