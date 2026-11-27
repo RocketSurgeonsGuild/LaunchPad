@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
 
 
 namespace Rocket.Surgery.LaunchPad.Analyzers;
@@ -12,26 +13,42 @@ namespace Rocket.Surgery.LaunchPad.Analyzers;
 [Generator]
 public class PropertyTrackingGenerator : IIncrementalGenerator
 {
-    private static void GeneratePropertyTracking(
-        GeneratedSources output,
-        TypeDeclarationSyntax declaration,
-        INamedTypeSymbol symbol,
-        INamedTypeSymbol targetSymbol
-    )
+    /// <summary>What the generated part of a declaration needs, read from its symbols: text and flags only, compared by value.</summary>
+    private sealed record TrackingModel(
+        string HintName,
+        GeneratedFileFrame Frame,
+        string Declaration,
+        bool IsStruct,
+        bool IsReadOnly,
+        bool IsRecord,
+        string Target,
+        string Name,
+        string TrackedType,
+        string CreatedType,
+        EquatableArray<string> CreateParameters,
+        EquatableArray<string> ConstructorArguments,
+        EquatableArray<string> CreateInitializer,
+        EquatableArray<TrackedProperty> Tracked
+    );
+
+    /// <summary>A tracking property: its name, its <c>Assigned&lt;T&gt;</c> type and the type its JSON converter is closed over.</summary>
+    private sealed record TrackedProperty(string Name, string Assigned, string Converter);
+
+    /// <summary>The model of a declaration, or null when it gets no part, and what it reports.</summary>
+    private sealed record Result(TrackingModel? Model, EquatableArray<Diagnostic> Diagnostics);
+
+    private static Result Read(TypeDeclarationSyntax declaration, INamedTypeSymbol symbol, INamedTypeSymbol targetSymbol)
     {
         if (!declaration.Modifiers.Any(z => z.IsKind(SyntaxKind.PartialKeyword)))
         {
-            output.ReportDiagnostic(
-                Diagnostic.Create(GeneratorDiagnostics.MustBePartial, declaration.Identifier.GetLocation(), declaration.GetFullMetadataName())
-            );
-            return;
+            return Reported(Diagnostic.Create(GeneratorDiagnostics.MustBePartial, declaration.Identifier.GetLocation(), declaration.GetFullMetadataName()));
         }
 
         var isRecord = declaration is RecordDeclarationSyntax;
 
         if (targetSymbol.IsRecord != isRecord)
         {
-            output.ReportDiagnostic(
+            return Reported(
                 Diagnostic.Create(
                     GeneratorDiagnostics.ParameterMustBeSameTypeOfObject,
                     declaration.Keyword.GetLocation(),
@@ -39,7 +56,6 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
                     targetSymbol.IsRecord ? "record" : "class"
                 )
             );
-            return;
         }
 
         // A record struct gets a record struct part. A readonly one can't change after it's made: its tracking properties are init only, and
@@ -107,33 +123,65 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
         createInitializer.AddRange(missingMembers.Where(z => !constructorParams.Contains(z.Name)).Select(z => z.Name + " = " + Helpers.Camelize(z.Name)));
 
         var namespaces = new HashSet<string>();
-        var tracked = new List<(string Name, string Assigned, string Converter)>(writeableProperties.Length);
+        var tracked = new List<TrackedProperty>(writeableProperties.Length);
         foreach (var propertySymbol in writeableProperties)
         {
             addNamespacesFromPropertyType(namespaces, propertySymbol.Type);
             var assigned = "Rocket.Surgery.LaunchPad.Foundation.Assigned<" + propertySymbol.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat) + ">";
             // typeof can't name a nullable reference type, so the converter is closed over the type without its annotation
             var converter = propertySymbol.Type.WithNullableAnnotation(NullableAnnotation.NotAnnotated).ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-            tracked.Add((propertySymbol.Name, assigned, converter));
+            tracked.Add(new(propertySymbol.Name, assigned, converter));
             createInitializer.Add(propertySymbol.Name + " = " + assigned + ".Empty(value." + propertySymbol.Name + ")");
         }
 
-        var usings = declaration
-                    .SyntaxTree.GetCompilationUnitRoot()
-                    .Usings
-                    .AddDistinctUsingStatements(namespaces.Where(z => !string.IsNullOrWhiteSpace(z)));
+        var diagnostics = new List<Diagnostic>();
+        var frame = GeneratedFileFrame.Read(declaration, symbol.ContainingNamespace, namespaces, diagnostics);
+        var model = new TrackingModel(
+            GeneratedSources.HintNameRelativeTo(declaration, "PropertyTracking"),
+            frame,
+            SourceWriter.Modifiers(declaration.Modifiers) + ( isStruct ? "record struct " : isRecord ? "record " : "class " ) + declaration.Identifier.Text,
+            isStruct,
+            isReadOnly,
+            isRecord,
+            target,
+            symbol.Name,
+            symbol.ToDisplayString(NullableFlowState.NotNull, SymbolDisplayFormat.FullyQualifiedFormat),
+            symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+            createParameters.ToEquatableArray(),
+            constructorArguments.ToEquatableArray(),
+            createInitializer.ToEquatableArray(),
+            tracked.ToEquatableArray()
+        );
+        return new(model, diagnostics.ToEquatableArray());
 
+        static void addNamespacesFromPropertyType(HashSet<string> namespaces, ITypeSymbol symbol)
+        {
+            namespaces.Add(symbol.ContainingNamespace.GetFullMetadataName());
+            if (symbol is not INamedTypeSymbol { IsGenericType: true, } namedTypeSymbol) return;
+            foreach (var genericType in namedTypeSymbol.TypeArguments)
+            {
+                addNamespacesFromPropertyType(namespaces, genericType);
+            }
+        }
+    }
+
+    private static Result Reported(Diagnostic diagnostic) => new(null, new[] { diagnostic }.ToEquatableArray());
+
+    // The text of the part: written only when the model changed, in the output step.
+    private static string Render(TrackingModel model)
+    {
+        var (isStruct, isReadOnly, isRecord, target) = (model.IsStruct, model.IsReadOnly, model.IsRecord, model.Target);
         var writer = new SourceWriter();
-        var opened = writer.OpenFile(usings, symbol.ContainingNamespace, declaration, output);
+        var opened = writer.OpenFile(model.Frame);
 
         writer.Line(Helpers.CompilerGeneratedText);
         // the tracking properties' fields are in this part and the type's own in the other: no field order between them (CS0282)
         if (isStruct) writer.Line("[global::System.Runtime.InteropServices.StructLayout(global::System.Runtime.InteropServices.LayoutKind.Auto)]");
-        writer.Line(SourceWriter.Modifiers(declaration.Modifiers) + ( isStruct ? "record struct " : isRecord ? "record " : "class " ) + declaration.Identifier.Text);
+        writer.Line(model.Declaration);
         writer.OpenBlock();
 
         // the compiler attributes go first, before an attribute a member already has (the JSON converter of a tracking property)
-        foreach (var (name, assigned, converter) in tracked)
+        foreach (var (name, assigned, converter) in model.Tracked)
         {
             writer.Line(Helpers.CompilerAttributesText);
             writer.Line("[global::System.Text.Json.Serialization.JsonConverter(typeof(global::Rocket.Surgery.LaunchPad.Foundation.AssignedJsonConverter<" + converter + ">))]");
@@ -149,7 +197,7 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
         writer.Line(Helpers.CompilerAttributesText);
         writer.Line("public record Changes");
         writer.OpenBlock();
-        foreach (var (name, _, _) in tracked) writer.Line("public bool " + name + " { get; init; }");
+        foreach (var property in model.Tracked) writer.Line("public bool " + property.Name + " { get; init; }");
         writer.CloseBlock();
         writer.Line();
 
@@ -157,25 +205,25 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
         writer.Line("public Changes GetChangedState()");
         writer.OpenBlock();
         writer.Line("return new Changes()");
-        writer.Initializer([.. tracked.Select(z => z.Name + " = " + z.Name + ".HasValue")], ";");
+        writer.Initializer([.. model.Tracked.Select(z => z.Name + " = " + z.Name + ".HasValue")], ";");
         writer.CloseBlock();
         writer.Line();
 
         writer.Line(Helpers.CompilerAttributesText);
         writer.Line("public " + target + " ApplyChanges(" + target + " state)");
         writer.OpenBlock();
-        foreach (var (name, _, _) in tracked)
+        foreach (var property in model.Tracked)
         {
-            writer.Line("if (" + name + ".HasValue)");
+            writer.Line("if (" + property.Name + ".HasValue)");
             writer.OpenBlock();
             if (isRecord)
             {
                 writer.Line("state = state with");
-                writer.Initializer([name + " = " + name + "!"], ";");
+                writer.Initializer([property.Name + " = " + property.Name + "!"], ";");
             }
             else
             {
-                writer.Line("state." + name + " = " + name + "!;");
+                writer.Line("state." + property.Name + " = " + property.Name + "!;");
             }
 
             writer.CloseBlock();
@@ -188,16 +236,16 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
         writer.Line();
 
         writer.Line(Helpers.CompilerAttributesText);
-        writer.Line("public " + symbol.Name + " ResetChanges()");
+        writer.Line("public " + model.Name + " ResetChanges()");
         writer.OpenBlock();
         if (isReadOnly)
         {
             writer.Line("return this with");
-            writer.Initializer([.. tracked.Select(z => z.Name + " = " + z.Assigned + ".Empty(" + z.Name + ")")], ";");
+            writer.Initializer([.. model.Tracked.Select(z => z.Name + " = " + z.Assigned + ".Empty(" + z.Name + ")")], ";");
         }
         else
         {
-            foreach (var (name, assigned, _) in tracked) writer.Line(name + " = " + assigned + ".Empty(" + name + ");");
+            foreach (var (name, assigned, _) in model.Tracked) writer.Line(name + " = " + assigned + ".Empty(" + name + ");");
             writer.Line("return this;");
         }
 
@@ -214,69 +262,56 @@ public class PropertyTrackingGenerator : IIncrementalGenerator
 
         writer.Line(Helpers.CompilerAttributesText);
         writer.Line(
-            "public static "
-          + symbol.ToDisplayString(NullableFlowState.NotNull, SymbolDisplayFormat.FullyQualifiedFormat)
-          + " TrackChanges("
-          + string.Join(", ", createParameters)
-          + ") => new "
-          + symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)
-          + "("
-          + string.Join(", ", constructorArguments)
-          + ")"
+            "public static " + model.TrackedType + " TrackChanges(" + string.Join(", ", model.CreateParameters) + ") => new " + model.CreatedType + "(" + string.Join(", ", model.ConstructorArguments) + ")"
         );
-        writer.Initializer(createInitializer, ";");
+        writer.Initializer([.. model.CreateInitializer], ";");
         writer.CloseBlock();
 
         writer.CloseFile(opened);
-        output.AddSource(GeneratedSources.HintNameRelativeTo(declaration, "PropertyTracking"), writer.ToString());
-        return;
-
-        static void addNamespacesFromPropertyType(HashSet<string> namespaces, ITypeSymbol symbol)
-        {
-            namespaces.Add(symbol.ContainingNamespace.GetFullMetadataName());
-            if (symbol is not INamedTypeSymbol { IsGenericType: true, } namedTypeSymbol) return;
-            foreach (var genericType in namedTypeSymbol.TypeArguments)
-            {
-                addNamespacesFromPropertyType(namespaces, genericType);
-            }
-        }
+        return writer.ToString();
     }
 
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        var outputs = context
-                     .SyntaxProvider
-                     .CreateSyntaxProvider(
-                          static (node, _) =>
-                              node is ( ClassDeclarationSyntax or RecordDeclarationSyntax )
-                                  and TypeDeclarationSyntax
-                              {
-                                  BaseList: { } baseList,
-                              }
-                           && baseList.Types.Any(
-                                  z => z.Type is GenericNameSyntax qns && qns.Identifier.Text.EndsWith("IPropertyTracking", StringComparison.Ordinal)
-                              ),
-                          static (syntaxContext, cancellationToken) => Generate(syntaxContext, cancellationToken)
-                      )
-                     .Where(static output => output is { })
-                     .Select(static (output, _) => output!)
-                     .WithTrackingName("PropertyTracking");
+        var models = context
+                    .SyntaxProvider
+                    .CreateSyntaxProvider(
+                         static (node, _) =>
+                             node is ( ClassDeclarationSyntax or RecordDeclarationSyntax )
+                                 and TypeDeclarationSyntax
+                             {
+                                 BaseList: { } baseList,
+                             }
+                          && baseList.Types.Any(
+                                 z => z.Type is GenericNameSyntax qns && qns.Identifier.Text.EndsWith("IPropertyTracking", StringComparison.Ordinal)
+                             ),
+                         static (syntaxContext, cancellationToken) => Read(syntaxContext, cancellationToken)
+                     )
+                    .Where(static result => result is { })
+                    .Select(static (result, _) => result!)
+                    .WithTrackingName("PropertyTracking");
 
-        context.RegisterSourceOutput(outputs, static (productionContext, output) => output.AddTo(productionContext));
+        // Only an edit that changes a model reaches here: the text is written then, not on every keystroke.
+        context.RegisterSourceOutput(
+            models,
+            static (productionContext, result) =>
+            {
+                foreach (var diagnostic in result.Diagnostics) productionContext.ReportDiagnostic(diagnostic);
+                if (result.Model is { } model) productionContext.AddSource(model.HintName, Microsoft.CodeAnalysis.Text.SourceText.From(Render(model), System.Text.Encoding.UTF8));
+            }
+        );
     }
 
-    // Everything is read from the symbols here, in the transform, so the pipeline carries only text and diagnostics.
-    private static GeneratedSources? Generate(GeneratorSyntaxContext syntaxContext, CancellationToken cancellationToken)
+    // The transform reads the symbols into a model; the pipeline carries only that model and the diagnostics.
+    private static Result? Read(GeneratorSyntaxContext syntaxContext, CancellationToken cancellationToken)
     {
         var syntax = (TypeDeclarationSyntax)syntaxContext.Node;
         if (syntaxContext.SemanticModel.GetDeclaredSymbol(syntax, cancellationToken) is not { } symbol) return null;
 
         var interfaceSymbol = symbol.Interfaces.FirstOrDefault(z => z.Name.StartsWith("IPropertyTracking", StringComparison.Ordinal));
-        if (interfaceSymbol is not { ContainingAssembly.Name: "Rocket.Surgery.LaunchPad.Foundation", TypeArguments: [INamedTypeSymbol targetSymbol,], }) return null;
-
-        var output = new GeneratedSources();
-        GeneratePropertyTracking(output, syntax, symbol, targetSymbol);
-        return output;
+        return interfaceSymbol is not { ContainingAssembly.Name: "Rocket.Surgery.LaunchPad.Foundation", TypeArguments: [INamedTypeSymbol targetSymbol,], }
+            ? null
+            : Read(syntax, symbol, targetSymbol);
     }
 }

@@ -2,6 +2,8 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
+using Rocket.Surgery.LaunchPad.Analyzers.Api.Core;
 
 namespace Rocket.Surgery.LaunchPad.Analyzers;
 
@@ -59,16 +61,19 @@ internal sealed class SourceWriter(string endOfLine = SourceWriter.DefaultEndOfL
     public override string ToString() => _text.ToString();
 
     /// <summary>
-    ///     The start of a file for a partial part of <paramref name="declaration" />: <c>#nullable enable</c>, the disabled warnings, the
-    ///     <paramref name="usings" />, the namespace and the types it is nested in, each opened. <see cref="CloseFile" /> closes them.
+    ///     The start of a file for a partial part of a declaration: <c>#nullable enable</c>, the disabled warnings, the usings, the namespace
+    ///     and the types the declaration is nested in, each opened, all from <paramref name="frame" />. <see cref="CloseFile" /> closes them.
     /// </summary>
     /// <remarks>
-    ///     The usings are the declaring file's, copied as the user wrote them, so they are laid out from their syntax.
+    ///     The declaring file's usings are copied as the user wrote them, so they are laid out from their syntax, read again from the text the
+    ///     frame keeps; this runs only when the frame or what follows it changed.
     /// </remarks>
-    public int OpenFile(SyntaxList<UsingDirectiveSyntax> usings, INamespaceSymbol containingNamespace, TypeDeclarationSyntax declaration, GeneratedSources output)
+    public int OpenFile(GeneratedFileFrame frame)
     {
         Line("#nullable enable");
         Line("#pragma warning disable " + SyntaxExtensions.DisabledWarningsText);
+        var usings = frame.Usings is { } written ? SyntaxFactory.ParseCompilationUnit(written).Usings : default;
+        foreach (var added in frame.AddedUsings) usings = usings.Add(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(added)));
         if (usings.Count > 0)
         {
             // The shared header replaces what led the first using, as it did when it was the file's leading trivia.
@@ -77,31 +82,18 @@ internal sealed class SourceWriter(string endOfLine = SourceWriter.DefaultEndOfL
         }
 
         var opened = 0;
-        if (!containingNamespace.IsGlobalNamespace)
+        if (frame.Namespace is { } @namespace)
         {
-            Line("namespace " + containingNamespace.ToDisplayString());
+            Line("namespace " + @namespace);
             OpenBlock();
             opened++;
         }
 
-        // The types the declaration is nested in, outermost first: each must be partial too.
-        var parents = new List<TypeDeclarationSyntax>();
-        for (var parent = declaration.Parent; parent is TypeDeclarationSyntax type; parent = type.Parent) parents.Add(type);
-        for (var i = parents.Count - 1; i >= 0; i--)
+        foreach (var containingType in frame.ContainingTypes)
         {
-            var parent = parents[i];
-            Line(Modifiers(parent.Modifiers) + ( parent is RecordDeclarationSyntax ? "record " : "class " ) + parent.Identifier.Text);
+            Line(containingType);
             OpenBlock();
             opened++;
-        }
-
-        // Reported innermost first, as the syntax version reparented them.
-        foreach (var parent in parents)
-        {
-            if (!parent.Modifiers.Any(SyntaxKind.PartialKeyword))
-            {
-                output.ReportDiagnostic(Diagnostic.Create(GeneratorDiagnostics.MustBePartial, parent.Identifier.GetLocation(), parent.GetFullMetadataName()));
-            }
         }
 
         return opened;
@@ -121,5 +113,57 @@ internal sealed class SourceWriter(string endOfLine = SourceWriter.DefaultEndOfL
         var text = new StringBuilder();
         foreach (var modifier in modifiers) text.Append(modifier.Text).Append(' ');
         return text.ToString();
+    }
+}
+
+/// <summary>
+///     What the start of a generated file takes from the declaration it completes, as text, so a generator can read it in its transform and
+///     compare it by value.
+/// </summary>
+/// <param name="Usings">The declaring file's using directives as written, or null for none.</param>
+/// <param name="AddedUsings">The namespaces to import that the declaring file doesn't.</param>
+/// <param name="Namespace">The declaration's namespace, or null for the global one.</param>
+/// <param name="ContainingTypes">The types the declaration is nested in, outermost first, as their declaration lines.</param>
+internal sealed record GeneratedFileFrame(string? Usings, EquatableArray<string> AddedUsings, string? Namespace, EquatableArray<string> ContainingTypes)
+{
+    /// <summary>
+    ///     Reads the frame of <paramref name="declaration" />, importing <paramref name="namespaces" /> the file doesn't, and reports each
+    ///     containing type that isn't partial (LPAD0001), innermost first.
+    /// </summary>
+    public static GeneratedFileFrame Read(
+        TypeDeclarationSyntax declaration,
+        INamespaceSymbol containingNamespace,
+        IEnumerable<string> namespaces,
+        ICollection<Diagnostic> diagnostics
+    )
+    {
+        var usings = declaration.SyntaxTree.GetCompilationUnitRoot().Usings;
+        var written = usings.Count == 0 ? null : declaration.SyntaxTree.GetText().ToString(TextSpan.FromBounds(usings[0].FullSpan.Start, usings[^1].FullSpan.End));
+
+        // A namespace the file already imports, under any name, isn't imported again.
+        var imported = new HashSet<string?>(StringComparer.Ordinal);
+        foreach (var directive in usings) imported.Add(directive.Name?.ToString());
+        var added = new List<string>();
+        foreach (var name in namespaces)
+        {
+            if (!string.IsNullOrWhiteSpace(name) && imported.Add(name)) added.Add(name);
+        }
+
+        var containingTypes = new List<string>();
+        for (var parent = declaration.Parent; parent is TypeDeclarationSyntax type; parent = type.Parent)
+        {
+            containingTypes.Insert(0, SourceWriter.Modifiers(type.Modifiers) + ( type is RecordDeclarationSyntax ? "record " : "class " ) + type.Identifier.Text);
+            if (!type.Modifiers.Any(SyntaxKind.PartialKeyword))
+            {
+                diagnostics.Add(Diagnostic.Create(GeneratorDiagnostics.MustBePartial, type.Identifier.GetLocation(), type.GetFullMetadataName()));
+            }
+        }
+
+        return new(
+            written,
+            added.ToEquatableArray(),
+            containingNamespace.IsGlobalNamespace ? null : containingNamespace.ToDisplayString(),
+            containingTypes.ToEquatableArray()
+        );
     }
 }
