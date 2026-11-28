@@ -14,7 +14,7 @@ The base of LaunchPad's standard error cases: what a handler returns, as a case 
 - Name: `Detail`
 - Modifiers: `nullable` `get; init`
 - Returns: `string?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.cd7db14e49b12478b13b2f21edf214c613078b4c/src/Foundation/Problems.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.be289a136371fe2ae7f777d7d311fefdb5490824/src/Foundation/Problems.cs)
 
 A human-readable explanation specific to this occurrence of the problem.
 
@@ -29,7 +29,7 @@ public string? Detail { get; init; }
 - Name: `Instance`
 - Modifiers: `nullable` `get; init`
 - Returns: `string?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.cd7db14e49b12478b13b2f21edf214c613078b4c/src/Foundation/Problems.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.be289a136371fe2ae7f777d7d311fefdb5490824/src/Foundation/Problems.cs)
 
 The instance for the request
 
@@ -44,7 +44,7 @@ public string? Instance { get; init; }
 - Name: `Link`
 - Modifiers: `nullable` `get; init`
 - Returns: `string?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.cd7db14e49b12478b13b2f21edf214c613078b4c/src/Foundation/Problems.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.be289a136371fe2ae7f777d7d311fefdb5490824/src/Foundation/Problems.cs)
 
 Request Type
 
@@ -59,7 +59,7 @@ public string? Link { get; init; }
 - Name: `Properties`
 - Modifiers: `get; init`
 - Returns: `IDictionary<string, object?>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.cd7db14e49b12478b13b2f21edf214c613078b4c/src/Foundation/Problems.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.be289a136371fe2ae7f777d7d311fefdb5490824/src/Foundation/Problems.cs)
 
 Additional properties
 
@@ -74,7 +74,7 @@ public IDictionary<string, object?> Properties { get; init; }
 - Name: `Title`
 - Modifiers: `nullable` `get; init`
 - Returns: `string?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.cd7db14e49b12478b13b2f21edf214c613078b4c/src/Foundation/Problems.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.be289a136371fe2ae7f777d7d311fefdb5490824/src/Foundation/Problems.cs)
 
 Request title
 

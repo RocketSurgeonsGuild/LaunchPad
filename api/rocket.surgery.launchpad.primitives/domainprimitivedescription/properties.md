@@ -14,7 +14,7 @@ What an integration needs to know about one domain primitive that holds one valu
 - Name: `AllowedValues`
 - Modifiers: `nullable` `get; init`
 - Returns: `IReadOnlyList<string>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.cd7db14e49b12478b13b2f21edf214c613078b4c/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.be289a136371fe2ae7f777d7d311fefdb5490824/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
 
 The only values allowed, in ordinal order, when the rules list them (a smart enum's names).
 
@@ -29,7 +29,7 @@ public IReadOnlyList<string>? AllowedValues { get; init; }
 - Name: `Format`
 - Modifiers: `nullable` `get; init`
 - Returns: `string?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.cd7db14e49b12478b13b2f21edf214c613078b4c/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.be289a136371fe2ae7f777d7d311fefdb5490824/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
 
 The format of the value (an OpenAPI / JSON Schema format such as `email` or `uri`), when its kind has one.
 
@@ -44,7 +44,7 @@ public string? Format { get; init; }
 - Name: `IsSmartEnum`
 - Modifiers: `get; init`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.cd7db14e49b12478b13b2f21edf214c613078b4c/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.be289a136371fe2ae7f777d7d311fefdb5490824/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
 
 Whether the domain primitive is a smart enum, whose [DomainPrimitiveDescription.AllowedValues](/LaunchPad/api/rocket.surgery.launchpad.primitives/domainprimitivedescription/properties.md#allowedvalues) are its names.
 
@@ -59,7 +59,7 @@ public bool IsSmartEnum { get; init; }
 - Name: `IsStrongId`
 - Modifiers: `get; init`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.cd7db14e49b12478b13b2f21edf214c613078b4c/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.be289a136371fe2ae7f777d7d311fefdb5490824/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
 
 Whether the domain primitive is a strong ID.
 
@@ -74,7 +74,7 @@ public bool IsStrongId { get; init; }
 - Name: `Maximum`
 - Modifiers: `nullable` `get; init`
 - Returns: `string?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.cd7db14e49b12478b13b2f21edf214c613078b4c/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.be289a136371fe2ae7f777d7d311fefdb5490824/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
 
 The most a value may be, written in the invariant culture.
 
@@ -89,7 +89,7 @@ public string? Maximum { get; init; }
 - Name: `MaximumIsExclusive`
 - Modifiers: `get; init`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.cd7db14e49b12478b13b2f21edf214c613078b4c/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.be289a136371fe2ae7f777d7d311fefdb5490824/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
 
 Whether [DomainPrimitiveDescription.Maximum](/LaunchPad/api/rocket.surgery.launchpad.primitives/domainprimitivedescription/properties.md#maximum) itself is excluded.
 
@@ -104,7 +104,7 @@ public bool MaximumIsExclusive { get; init; }
 - Name: `MaxLength`
 - Modifiers: `nullable` `get; init`
 - Returns: `int?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.cd7db14e49b12478b13b2f21edf214c613078b4c/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.be289a136371fe2ae7f777d7d311fefdb5490824/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
 
 The longest a text value may be.
 
@@ -119,7 +119,7 @@ public int? MaxLength { get; init; }
 - Name: `Minimum`
 - Modifiers: `nullable` `get; init`
 - Returns: `string?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.cd7db14e49b12478b13b2f21edf214c613078b4c/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.be289a136371fe2ae7f777d7d311fefdb5490824/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
 
 The least a value may be, written in the invariant culture.
 
@@ -134,7 +134,7 @@ public string? Minimum { get; init; }
 - Name: `MinimumIsExclusive`
 - Modifiers: `get; init`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.cd7db14e49b12478b13b2f21edf214c613078b4c/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.be289a136371fe2ae7f777d7d311fefdb5490824/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
 
 Whether [DomainPrimitiveDescription.Minimum](/LaunchPad/api/rocket.surgery.launchpad.primitives/domainprimitivedescription/properties.md#minimum) itself is excluded.
 
@@ -149,7 +149,7 @@ public bool MinimumIsExclusive { get; init; }
 - Name: `MinLength`
 - Modifiers: `nullable` `get; init`
 - Returns: `int?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.cd7db14e49b12478b13b2f21edf214c613078b4c/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.be289a136371fe2ae7f777d7d311fefdb5490824/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
 
 The shortest a text value may be.
 
@@ -164,7 +164,7 @@ public int? MinLength { get; init; }
 - Name: `Patterns`
 - Modifiers: `get; init`
 - Returns: `IReadOnlyList<string>`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.cd7db14e49b12478b13b2f21edf214c613078b4c/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.be289a136371fe2ae7f777d7d311fefdb5490824/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
 
 The regular expressions a text value must match, every one of them.
 
@@ -179,7 +179,7 @@ public IReadOnlyList<string> Patterns { get; init; }
 - Name: `Scale`
 - Modifiers: `nullable` `get; init`
 - Returns: `int?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.cd7db14e49b12478b13b2f21edf214c613078b4c/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.be289a136371fe2ae7f777d7d311fefdb5490824/src/Primitives/Descriptions/DomainPrimitiveDescription.cs)
 
 The number of digits after the decimal point a decimal value keeps, when its kind sets one.
 
