@@ -1,9 +1,9 @@
 # Rocket.Surgery.LaunchPad.ZeroAlloc.HotChocolate
 
 - Package: `Rocket.Surgery.LaunchPad.ZeroAlloc.HotChocolate`
-- Version: `2.0.1-pr.1286`
+- Version: `2.0.1-pr.1300`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3340-merge.Sha.81423ee355475dd82d0d0154e14549a2ec9af188/src/ZeroAlloc.HotChocolate)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3340-merge.Sha.1fd0124e0c52f2b8f0975bb6854b707a6a798292/src/ZeroAlloc.HotChocolate)
 - NuGet: [Rocket.Surgery.LaunchPad.ZeroAlloc.HotChocolate](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.ZeroAlloc.HotChocolate)
 
 ## Namespaces

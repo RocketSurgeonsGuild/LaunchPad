@@ -13,7 +13,7 @@ A joint that adds the standard resilience handler to every `Http.HttpClient` the
 ## Register(IDovetailContext, IServiceCollection)
 
 - Name: `Register(IDovetailContext, IServiceCollection)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3340-merge.Sha.81423ee355475dd82d0d0154e14549a2ec9af188/src/Foundation/Joints/StandardResilienceJoint.cs#L16-L19)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3340-merge.Sha.1fd0124e0c52f2b8f0975bb6854b707a6a798292/src/Foundation/Joints/StandardResilienceJoint.cs#L16-L19)
 
 Register the Service part.
 

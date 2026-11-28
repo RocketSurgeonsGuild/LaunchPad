@@ -14,7 +14,7 @@ Allows you copy the properties of the another class or interface, and include a 
 - Name: `Exclude`
 - Modifiers: `get; init`
 - Returns: `string[]`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3340-merge.Sha.81423ee355475dd82d0d0154e14549a2ec9af188/src/Foundation/InheritFromAttribute.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3340-merge.Sha.1fd0124e0c52f2b8f0975bb6854b707a6a798292/src/Foundation/InheritFromAttribute.cs)
 
 Exclude the given properties from the copy
 

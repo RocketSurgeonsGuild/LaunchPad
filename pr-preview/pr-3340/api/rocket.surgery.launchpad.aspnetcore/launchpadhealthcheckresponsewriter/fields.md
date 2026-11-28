@@ -14,7 +14,7 @@ Writes a `HealthChecks.HealthReport` as JSON in the shape the HealthChecks.UI da
 - Name: `ContentType`
 - Modifiers: `static` `const`
 - Returns: `string`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3340-merge.Sha.81423ee355475dd82d0d0154e14549a2ec9af188/src/AspNetCore/HealthChecks/LaunchPadHealthCheckResponseWriter.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3340-merge.Sha.1fd0124e0c52f2b8f0975bb6854b707a6a798292/src/AspNetCore/HealthChecks/LaunchPadHealthCheckResponseWriter.cs)
 
 The content type the report is written with.
 
