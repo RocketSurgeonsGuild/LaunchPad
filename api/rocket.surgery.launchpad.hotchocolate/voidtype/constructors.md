@@ -12,7 +12,7 @@ Represents a void or unit type in Hot Chocolate
 ## VoidType
 
 - Name: `Constructor`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.b4901080d5186942ba234e171537f676572c6f35/src/HotChocolate/Types/VoidType.cs#L18-L21)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.accb8cccadcfe11a9558e1e30ee2e6f231346f67/src/HotChocolate/Types/VoidType.cs#L18-L21)
 
 THe constructor
 

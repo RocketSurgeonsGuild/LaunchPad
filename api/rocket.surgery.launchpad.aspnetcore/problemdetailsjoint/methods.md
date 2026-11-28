@@ -13,7 +13,7 @@ Registers problem details. Rocket.Surgery.LaunchPad.AspNetCore.Mvc also fills in
 ## Register(IDovetailContext, IServiceCollection)
 
 - Name: `Register(IDovetailContext, IServiceCollection)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.b4901080d5186942ba234e171537f676572c6f35/src/AspNetCore/Joints/ProblemDetailsJoint.cs#L16)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.accb8cccadcfe11a9558e1e30ee2e6f231346f67/src/AspNetCore/Joints/ProblemDetailsJoint.cs#L16)
 
 Register the Service part.
 

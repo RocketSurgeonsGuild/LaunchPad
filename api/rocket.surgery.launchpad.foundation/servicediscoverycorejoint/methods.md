@@ -13,7 +13,7 @@ A joint that registers service discovery and adds it to every `Http.HttpClient` 
 ## Register(IDovetailContext, IServiceCollection)
 
 - Name: `Register(IDovetailContext, IServiceCollection)`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.b4901080d5186942ba234e171537f676572c6f35/src/Foundation/Joints/ServiceDiscoveryCoreJoint.cs#L16-L20)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.accb8cccadcfe11a9558e1e30ee2e6f231346f67/src/Foundation/Joints/ServiceDiscoveryCoreJoint.cs#L16-L20)
 
 Register the Service part.
 
