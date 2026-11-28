@@ -1,9 +1,9 @@
 # Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore
 
 - Package: `Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore`
-- Version: `2.0.1-beta.466`
+- Version: `2.0.1-beta.468`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.main.Sha.8fad8144321d59e157ec1f0adfb0c30ad2256abf/src/ZeroAlloc.AspNetCore)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.main.Sha.b4901080d5186942ba234e171537f676572c6f35/src/ZeroAlloc.AspNetCore)
 - NuGet: [Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.ZeroAlloc.AspNetCore)
 
 ## Namespaces

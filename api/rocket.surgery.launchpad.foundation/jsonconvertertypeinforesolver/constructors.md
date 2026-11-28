@@ -12,7 +12,7 @@ Resolves the metadata of value types written by a converter in `JsonSerializerOp
 ## JsonConverterTypeInfoResolver
 
 - Name: `Constructor`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.8fad8144321d59e157ec1f0adfb0c30ad2256abf/src/Foundation/JsonConverterTypeInfoResolver.cs#L19)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.b4901080d5186942ba234e171537f676572c6f35/src/Foundation/JsonConverterTypeInfoResolver.cs#L19)
 
 ```csharp
 public sealed class JsonConverterTypeInfoResolver
