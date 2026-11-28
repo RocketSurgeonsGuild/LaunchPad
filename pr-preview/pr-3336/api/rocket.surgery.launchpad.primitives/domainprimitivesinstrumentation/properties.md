@@ -14,7 +14,7 @@ The metrics and trace events of domain primitives, which the generated `Create` 
 - Name: `ActivitySource`
 - Modifiers: `static` `get`
 - Returns: `ActivitySource`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.9ec91d866bcac66448bc0f439b45a4702f1b73d3/src/Primitives/Diagnostics/DomainPrimitivesInstrumentation.cs#L29)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.52b728c7d35f7e5541d5238c567b2b39c033d3c7/src/Primitives/Diagnostics/DomainPrimitivesInstrumentation.cs#L29)
 
 The activity source. A rejected value adds a `domain_primitive.validation.failure` event to the current activity while it has a listener.
 
@@ -29,7 +29,7 @@ public static ActivitySource ActivitySource { get; }
 - Name: `Meter`
 - Modifiers: `static` `get`
 - Returns: `Meter`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.9ec91d866bcac66448bc0f439b45a4702f1b73d3/src/Primitives/Diagnostics/DomainPrimitivesInstrumentation.cs#L23)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.52b728c7d35f7e5541d5238c567b2b39c033d3c7/src/Primitives/Diagnostics/DomainPrimitivesInstrumentation.cs#L23)
 
 The meter.
 

@@ -1,9 +1,9 @@
 # Rocket.Surgery.LaunchPad.NodaTime.HotChocolate
 
 - Package: `Rocket.Surgery.LaunchPad.NodaTime.HotChocolate`
-- Version: `2.0.1-pr.1292`
+- Version: `2.0.1-pr.1300`
 - Target framework: `net11.0`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3336-merge.Sha.9ec91d866bcac66448bc0f439b45a4702f1b73d3/src/NodaTime.HotChocolate)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/tree/Branch.pull-3336-merge.Sha.52b728c7d35f7e5541d5238c567b2b39c033d3c7/src/NodaTime.HotChocolate)
 - NuGet: [Rocket.Surgery.LaunchPad.NodaTime.HotChocolate](https://www.nuget.org/packages/Rocket.Surgery.LaunchPad.NodaTime.HotChocolate)
 
 ## Namespaces

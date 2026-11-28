@@ -14,7 +14,7 @@ Creates a domain primitive with rules of the caller's own on top of its rules.
 
 - Name: `Build(TPrimitive?)`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.9ec91d866bcac66448bc0f439b45a4702f1b73d3/src/Primitives/PrimitiveBuilder.cs#L71-L79)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.52b728c7d35f7e5541d5238c567b2b39c033d3c7/src/Primitives/PrimitiveBuilder.cs#L71-L79)
 
 Creates the domain primitive, unless a rule rejects the value.
 
@@ -43,7 +43,7 @@ public sealed class PrimitiveBuilder<TPrimitive, TValue>
 
 - Name: `BuildOrThrow`
 - Returns: `TPrimitive`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.9ec91d866bcac66448bc0f439b45a4702f1b73d3/src/Primitives/PrimitiveBuilder.cs#L55-L61)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.52b728c7d35f7e5541d5238c567b2b39c033d3c7/src/Primitives/PrimitiveBuilder.cs#L55-L61)
 
 Creates the domain primitive, or throws when a rule rejects the value.
 
@@ -68,7 +68,7 @@ public sealed class PrimitiveBuilder<TPrimitive, TValue>
 - Name: `For`
 - Modifiers: `static`
 - Returns: [PrimitiveBuilder<TPrimitive, TValue>](/LaunchPad/pr-preview/pr-3336/api/rocket.surgery.launchpad.primitives/primitivebuilder-2.md)
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.9ec91d866bcac66448bc0f439b45a4702f1b73d3/src/Primitives/PrimitiveBuilder.cs#L20)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.52b728c7d35f7e5541d5238c567b2b39c033d3c7/src/Primitives/PrimitiveBuilder.cs#L20)
 
 Starts a builder.
 
@@ -93,7 +93,7 @@ public sealed class PrimitiveBuilder<TPrimitive, TValue>
 
 - Name: `Must(Func<TValue, bool>, string, string)`
 - Returns: [PrimitiveBuilder<TPrimitive, TValue>](/LaunchPad/pr-preview/pr-3336/api/rocket.surgery.launchpad.primitives/primitivebuilder-2.md)
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.9ec91d866bcac66448bc0f439b45a4702f1b73d3/src/Primitives/PrimitiveBuilder.cs#L44-L46)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.52b728c7d35f7e5541d5238c567b2b39c033d3c7/src/Primitives/PrimitiveBuilder.cs#L44-L46)
 
 Adds a rule.
 
@@ -127,7 +127,7 @@ public sealed class PrimitiveBuilder<TPrimitive, TValue>
 
 - Name: `WithValue(TValue)`
 - Returns: [PrimitiveBuilder<TPrimitive, TValue>](/LaunchPad/pr-preview/pr-3336/api/rocket.surgery.launchpad.primitives/primitivebuilder-2.md)
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.9ec91d866bcac66448bc0f439b45a4702f1b73d3/src/Primitives/PrimitiveBuilder.cs#L31-L32)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.52b728c7d35f7e5541d5238c567b2b39c033d3c7/src/Primitives/PrimitiveBuilder.cs#L31-L32)
 
 Sets the value.
 

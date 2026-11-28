@@ -14,7 +14,7 @@ The metrics and trace events of domain primitives, which the generated `Create` 
 
 - Name: `RecordCreation(string)`
 - Modifiers: `static`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.9ec91d866bcac66448bc0f439b45a4702f1b73d3/src/Primitives/Diagnostics/DomainPrimitivesInstrumentation.cs#L37-L39)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.52b728c7d35f7e5541d5238c567b2b39c033d3c7/src/Primitives/Diagnostics/DomainPrimitivesInstrumentation.cs#L37-L39)
 
 Records that a domain primitive was created.
 
@@ -41,7 +41,7 @@ public static class DomainPrimitivesInstrumentation
 
 - Name: `RecordValidationFailure(string, PrimitiveError)`
 - Modifiers: `static`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.9ec91d866bcac66448bc0f439b45a4702f1b73d3/src/Primitives/Diagnostics/DomainPrimitivesInstrumentation.cs#L58-L79)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.52b728c7d35f7e5541d5238c567b2b39c033d3c7/src/Primitives/Diagnostics/DomainPrimitivesInstrumentation.cs#L58-L79)
 
 Records that a domain primitive rejected a value.
 
@@ -71,7 +71,7 @@ public static class DomainPrimitivesInstrumentation
 
 - Name: `RecordValidationSuccess(string)`
 - Modifiers: `static`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.9ec91d866bcac66448bc0f439b45a4702f1b73d3/src/Primitives/Diagnostics/DomainPrimitivesInstrumentation.cs#L47-L49)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.pull-3336-merge.Sha.52b728c7d35f7e5541d5238c567b2b39c033d3c7/src/Primitives/Diagnostics/DomainPrimitivesInstrumentation.cs#L47-L49)
 
 Records that a domain primitive accepted a value.
 
