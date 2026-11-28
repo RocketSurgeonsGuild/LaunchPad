@@ -47,7 +47,7 @@
         <PackageVersion Include="ZeroAlloc.Mediator.Generator" Version="7.0.1" />
         <PackageVersion Include="ZeroAlloc.Mediator.Validation" Version="7.0.1" />
         <!-- Maps proto messages to and from requests and responses on proto-first gRPC hosts (approved 2026-11-08). -->
-        <PackageVersion Include="ZeroAlloc.Mapping" Version="1.7.1" />
+        <PackageVersion Include="ZeroAlloc.Mapping" Version="2.0.1" />
         <PackageVersion Include="ZeroAlloc.Validation" Version="3.0.1" />
         <PackageVersion Include="ZeroAlloc.Validation.Inject" Version="3.0.1" />
         <PackageVersion Include="ZeroAlloc.Validation.Options" Version="3.0.1" />
