@@ -14,7 +14,7 @@ Why a domain primitive rejected a value: a code ( `LENGTH`, `FORMAT`, `RANGE`, .
 - Name: `Code`
 - Modifiers: `nullable` `get; init`
 - Returns: `string?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.be289a136371fe2ae7f777d7d311fefdb5490824/src/Primitives/PrimitiveError.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.8fad8144321d59e157ec1f0adfb0c30ad2256abf/src/Primitives/PrimitiveError.cs)
 
 The code, or `null` when there is no error.
 
@@ -29,7 +29,7 @@ public string? Code { get; init; }
 - Name: `IsError`
 - Modifiers: `get`
 - Returns: `bool`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.be289a136371fe2ae7f777d7d311fefdb5490824/src/Primitives/PrimitiveError.cs#L19)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.8fad8144321d59e157ec1f0adfb0c30ad2256abf/src/Primitives/PrimitiveError.cs#L19)
 
 Whether this is an error.
 
@@ -44,7 +44,7 @@ public bool IsError { get; }
 - Name: `Message`
 - Modifiers: `nullable` `get; init`
 - Returns: `string?`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.be289a136371fe2ae7f777d7d311fefdb5490824/src/Primitives/PrimitiveError.cs)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.8fad8144321d59e157ec1f0adfb0c30ad2256abf/src/Primitives/PrimitiveError.cs)
 
 The message.
 
@@ -59,7 +59,7 @@ public string? Message { get; init; }
 - Name: `None`
 - Modifiers: `static` `get`
 - Returns: [PrimitiveError](/LaunchPad/api/rocket.surgery.launchpad.primitives/primitiveerror.md)
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.be289a136371fe2ae7f777d7d311fefdb5490824/src/Primitives/PrimitiveError.cs#L14)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.8fad8144321d59e157ec1f0adfb0c30ad2256abf/src/Primitives/PrimitiveError.cs#L14)
 
 No error.
 

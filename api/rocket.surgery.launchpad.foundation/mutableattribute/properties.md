@@ -14,7 +14,7 @@ Makes the partial class it marks a mutable view model of another type: the gener
 - Name: `Type`
 - Modifiers: `get`
 - Returns: `Type`
-- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.be289a136371fe2ae7f777d7d311fefdb5490824/src/Foundation/MutableAttribute.cs#L27)
+- Source: [GitHub](https://github.com/RocketSurgeonsGuild/LaunchPad/blob/Branch.main.Sha.8fad8144321d59e157ec1f0adfb0c30ad2256abf/src/Foundation/MutableAttribute.cs#L27)
 
 The type the class is a mutable view model of.
 
